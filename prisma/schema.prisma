@@ -6,21 +6,147 @@ generator client {
 }
 
 datasource db {
-    provider = "sqlite"
-    // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-    // Further reading:
-    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
-    url      = env("DATABASE_URL")
+    provider     = "mysql"
+    url          = env("DATABASE_URL")
+    relationMode = "prisma"
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+// ================ OBJECT MODELS ================
+
+model Client {
+    id               Int          @id @default(autoincrement())
+    name             String
+    address          String
+    description      String
+    poc              String
+    poc_contact_info String
+    Site             Site[]
+    Engagement       Engagement[]
 }
+
+model Site {
+    id               Int    @id @default(autoincrement())
+    name             String
+    address          String
+    description      String
+    poc              String
+    poc_contact_info String
+
+    client_id  Int
+    client     Client       @relation(fields: [client_id], references: [id])
+    Assessment Assessment[]
+
+    @@index([client_id])
+}
+
+model Staff {
+    id           Int    @id @default(autoincrement())
+    name         String
+    title        String
+    contact_info String
+}
+
+model Question {
+    id                        Int      @id @default(autoincrement())
+    question                  String
+    pillar                    String
+    practice_area             String
+    topic_area                String
+    active                    String
+    hints                     String
+    level_1                   String
+    level_2                   String
+    level_3                   String
+    level_4                   String
+    level_5                   String
+    interview_guide_questions String
+    references                String
+    api_segment               String
+    industry_segment          String
+    customized                Int
+    customized_engagement_id  Int
+    customized_site_id        Int
+    Rubric                    Rubric[]
+}
+
+model Rating {
+    id               Int      @id @default(autoincrement())
+    level_1          String
+    level_2          String
+    level_3          String
+    level_4          String
+    level_5          String
+    api_segment      String
+    industry_segment String
+    active           String
+    Rubric           Rubric[]
+}
+
+model Rubric {
+    id               Int    @id @default(autoincrement())
+    api_segment      String
+    industry_segment String
+    active           String
+    standard         String
+
+    question_id Int
+    question    Question @relation(fields: [question_id], references: [id])
+
+    rating_id  Int
+    rating     Rating       @relation(fields: [rating_id], references: [id])
+    Assessment Assessment[]
+
+    @@index([question_id])
+    @@index([rating_id])
+}
+
+model Engagement {
+    id                      Int      @id @default(autoincrement())
+    start_date              DateTime
+    end_date                DateTime
+    description             String
+    status                  String
+    shabas_poc              String
+    shabas_poc_contact_info String
+    client_poc              String
+    client_poc_role         String
+    client_poc_contact_info String
+    lead_assessor           String
+
+    client_id  Int
+    client     Client       @relation(fields: [client_id], references: [id])
+    Assessment Assessment[]
+
+    @@index([client_id])
+}
+
+model Assessment {
+    id     Int      @id @default(autoincrement())
+    status String
+    export String
+    dates  DateTime
+
+    site_id          Int
+    site             Site   @relation(fields: [site_id], references: [id])
+    side_description String
+    side_address     String
+
+    engagement_id Int
+    engagement    Engagement @relation(fields: [engagement_id], references: [id])
+
+    rubric_id   Int
+    rubric      Rubric @relation(fields: [rubric_id], references: [id])
+    rubric_used String
+
+    @@index([site_id])
+    @@index([engagement_id])
+    @@index([rubric_id])
+}
+
+// ================ AUTHENTICATION ================
 
 // Necessary for Next auth
+
 model Account {
     id                String  @id @default(cuid())
     userId            String
@@ -37,6 +163,7 @@ model Account {
     user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@unique([provider, providerAccountId])
+    @@index([userId])
 }
 
 model Session {
@@ -45,6 +172,8 @@ model Session {
     userId       String
     expires      DateTime
     user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([userId])
 }
 
 model User {
