@@ -3,12 +3,12 @@ import { type AppType } from "next/app";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 
-import { api } from "~/utils/api";
-
-import "~/styles/index.scss";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import theme from '../styles/_Theme.module.scss';
 import { CssBaseline } from '@mui/material';
+
+import { api } from "~/utils/api";
+import theme from '../styles/_Theme.module.scss';
+import '../styles/Index.scss';
 
 
 // TODO: Fix errors with possible undefined

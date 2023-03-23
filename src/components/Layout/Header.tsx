@@ -1,9 +1,16 @@
 import * as React from 'react';
-import { AppBar, IconButton, Menu, MenuItem, Typography } from '@mui/material';
+import { IconButton, Menu, MenuItem, Typography } from '@mui/material';
 import { Settings } from '@mui/icons-material';
 import Link from 'next/link';
+import { Tabs } from './Layout';
 
-export const Header: React.FC = () => {
+interface Props {
+    active: Tabs;
+}
+
+export const Header: React.FC<Props> = (props) => {
+    const { active } = props;
+
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -19,22 +26,29 @@ export const Header: React.FC = () => {
                 Shabas Logo
             </div>
             <div className='nav-items'>
-                <Link href={'/admin-dashboard'}>
+                <Link href={'/'} className={active == 'dashboard' ? 'active' : ''}>
                     <Typography>
                         Dashboard
                     </Typography>
                 </Link>
-                <Link href={'/admin-assessment'}>
+                <Link href={'/admin-questions'} className={active == 'assessments' ? 'active' : ''}>
                     <Typography>
                         Assessments
                     </Typography>
                 </Link>
-                <Typography>
-                    Questions
-                </Typography>
-                <Link href={'/assessor-assessment'}>
+                <Link href={'/admin-questions'} className={active == 'questions' ? 'active' : ''}>
                     <Typography>
-                        Temporary
+                        Questions
+                    </Typography>
+                </Link>
+                <Link href={'/assessor-ongoing-assessments'} className={active == 'ongoing-assessments' ? 'active' : ''}>
+                    <Typography>
+                        Ongoing Assessments
+                    </Typography>
+                </Link>
+                <Link href={'/assessor-review-assessments'} className={active == 'review-assessments' ? 'active' : ''}>
+                    <Typography>
+                        Review Assessments
                     </Typography>
                 </Link>
                 <IconButton onClick={handleClick}>
