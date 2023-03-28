@@ -14,90 +14,201 @@ datasource db {
 // ================ OBJECT MODELS ================
 
 model Client {
-    id               Int          @id @default(autoincrement())
-    name             String
-    address          String
-    description      String
-    poc              String
-    poc_contact_info String
-    Site             Site[]
-    Engagement       Engagement[]
+    id             Int    @id @default(autoincrement())
+    first_name     String
+    last_name      String
+    street_address String
+    city           String
+    state          String
+    country        String
+    zip_code       String
+    description    String
+
+    Site       Site[]
+    Engagement Engagement[]
+
+    created_at      DateTime
+    last_updated    DateTime
+    created_by      String
+    last_updated_by String
+    POC             POC[]
 }
 
 model Site {
-    id               Int    @id @default(autoincrement())
-    name             String
-    address          String
-    description      String
-    poc              String
-    poc_contact_info String
+    id             Int    @id @default(autoincrement())
+    name           String
+    street_address String
+    city           String
+    state          String
+    country        String
+    zip_code       String
+    description    String
 
     client_id  Int
     client     Client       @relation(fields: [client_id], references: [id])
     Assessment Assessment[]
 
+    created_at      DateTime
+    last_updated    DateTime
+    created_by      String
+    last_updated_by String
+    POC             POC[]
+    Rating          Rating[]
+    Interview_Guide Interview_Guide[]
+
     @@index([client_id])
 }
 
-model Staff {
-    id           Int    @id @default(autoincrement())
-    name         String
-    title        String
-    contact_info String
+model POC {
+    id                  Int    @id @default(autoincrement())
+    first_name          String
+    last_name           String
+    title               String
+    mobile_phone_number String
+    work_phone_number   String
+    email               String
+    staff               String
+
+    user_id Int
+    user    User @relation(fields: [user_id], references: [id])
+
+    client_id Int
+    Client    Client @relation(fields: [client_id], references: [id])
+
+    engagement_id Int
+    engagement    Engagement @relation(fields: [engagement_id], references: [id])
+
+    site_id Int
+    site    Site @relation(fields: [site_id], references: [id])
+
+    created_at      DateTime
+    last_updated    DateTime
+    created_by      String
+    last_updated_by String
+
+    @@index([user_id])
+    @@index([client_id])
+    @@index([engagement_id])
+    @@index([site_id])
 }
 
 model Question {
-    id                        Int      @id @default(autoincrement())
-    question                  String
-    pillar                    String
-    practice_area             String
-    topic_area                String
-    active                    String
-    hints                     String
-    level_1                   String
-    level_2                   String
-    level_3                   String
-    level_4                   String
-    level_5                   String
-    interview_guide_questions String
-    references                String
-    api_segment               String
-    industry_segment          String
-    customized                Int
-    customized_engagement_id  Int
-    customized_site_id        Int
-    Rubric                    Rubric[]
+    id            Int    @id @default(autoincrement())
+    active        String
+    question      String
+    pillar        String
+    practice_area String
+    topic_area    String
+    hint          String
+    priority      String
+
+    Rating Rating[]
+
+    created_at          DateTime
+    last_updated        DateTime
+    created_by          String
+    last_updated_by     String
+    Reference           Reference[]
+    SME                 SME[]
+    Interview_Guide     Interview_Guide[]
+    Assessment_Question Assessment_Question[]
+    Answer              Answer[]
 }
 
 model Rating {
-    id               Int      @id @default(autoincrement())
-    level_1          String
-    level_2          String
-    level_3          String
-    level_4          String
-    level_5          String
-    api_segment      String
-    industry_segment String
-    active           String
-    Rubric           Rubric[]
-}
-
-model Rubric {
-    id               Int    @id @default(autoincrement())
-    api_segment      String
-    industry_segment String
-    active           String
-    standard         String
+    id                    Int    @id @default(autoincrement())
+    active                String
+    level_number          String
+    criteria              String
+    progression_statement String
+    api_segment           String
+    industry_segment      String
 
     question_id Int
     question    Question @relation(fields: [question_id], references: [id])
 
-    rating_id  Int
-    rating     Rating       @relation(fields: [rating_id], references: [id])
-    Assessment Assessment[]
+    site_id Int
+    site    Site @relation(fields: [site_id], references: [id])
+
+    filter_id Int
+    filter    Filter @relation(fields: [filter_id], references: [id])
+
+    created_at      DateTime
+    last_updated    DateTime
+    created_by      String
+    last_updated_by String
 
     @@index([question_id])
-    @@index([rating_id])
+    @@index([site_id])
+    @@index([filter_id])
+}
+
+model Reference {
+    id          Int      @id @default(autoincrement())
+    citation    String
+    question_id Int
+    question    Question @relation(fields: [question_id], references: [id])
+
+    created_at      DateTime
+    last_updated    DateTime
+    created_by      String
+    last_updated_by String
+
+    @@index([question_id])
+}
+
+model SME {
+    id                  Int      @id @default(autoincrement())
+    first_name          String
+    last_name           String
+    mobile_phone_number String
+    email               String
+    question_id         Int
+    question            Question @relation(fields: [question_id], references: [id])
+
+    created_at      DateTime
+    last_updated    DateTime
+    created_by      String
+    last_updated_by String
+
+    @@index([question_id])
+}
+
+model Interview_Guide {
+    id                 Int    @id @default(autoincrement())
+    active             String
+    interview_question String
+
+    question_id Int
+    question    Question @relation(fields: [question_id], references: [id])
+
+    site_id Int
+    site    Site @relation(fields: [site_id], references: [id])
+
+    filter_id Int
+    filter    Filter @relation(fields: [filter_id], references: [id])
+
+    created_at      DateTime
+    last_updated    DateTime
+    created_by      String
+    last_updated_by String
+
+    @@index([question_id])
+    @@index([site_id])
+    @@index([filter_id])
+}
+
+model Filter {
+    id   Int    @id @default(autoincrement())
+    type String
+    name String
+
+    created_at      DateTime
+    last_updated    DateTime
+    created_by      String
+    last_updated_by String
+    Rating          Rating[]
+    Interview_Guide Interview_Guide[]
 }
 
 model Engagement {
@@ -117,30 +228,114 @@ model Engagement {
     client     Client       @relation(fields: [client_id], references: [id])
     Assessment Assessment[]
 
+    created_at      DateTime
+    last_updated    DateTime
+    created_by      String
+    last_updated_by String
+    POC             POC[]
+
     @@index([client_id])
 }
 
 model Assessment {
-    id     Int      @id @default(autoincrement())
-    status String
-    export String
-    dates  DateTime
-
-    site_id          Int
-    site             Site   @relation(fields: [site_id], references: [id])
+    id               Int      @id @default(autoincrement())
+    status           String
+    export           String
+    dates            DateTime
     side_description String
     side_address     String
+
+    site_id Int
+    site    Site @relation(fields: [site_id], references: [id])
 
     engagement_id Int
     engagement    Engagement @relation(fields: [engagement_id], references: [id])
 
-    rubric_id   Int
-    rubric      Rubric @relation(fields: [rubric_id], references: [id])
-    rubric_used String
+    created_at          DateTime
+    last_updated        DateTime
+    created_by          String
+    last_updated_by     String
+    Assessment_User     Assessment_User[]
+    Assessment_Question Assessment_Question[]
 
     @@index([site_id])
     @@index([engagement_id])
-    @@index([rubric_id])
+}
+
+model Assessment_User {
+    id Int @id @default(autoincrement())
+
+    user_id Int
+    user    User @relation(fields: [user_id], references: [id])
+
+    assessment_id Int
+    assessment    Assessment @relation(fields: [assessment_id], references: [id])
+
+    created_at      DateTime
+    last_updated    DateTime
+    created_by      String
+    last_updated_by String
+
+    @@index([user_id])
+    @@index([assessment_id])
+}
+
+model Assessment_Question {
+    id          Int      @id @default(autoincrement())
+    question_id Int
+    question    Question @relation(fields: [question_id], references: [id])
+
+    assessment_id Int
+    assessment    Assessment @relation(fields: [assessment_id], references: [id])
+
+    created_at      DateTime
+    last_updated    DateTime
+    created_by      String
+    last_updated_by String
+
+    @@index([question_id])
+    @@index([assessment_id])
+}
+
+model Answer {
+    id                    Int          @id @default(autoincrement())
+    assessor_rating       String
+    assessor_explanation  String
+    assessor_evidence     String
+    consensus_rating      String
+    consensus_explanation String
+    consensus_evidence    String
+    oversight_concurrence String
+    oversight_explanation String
+    oversight_evidence    String
+    client_concurrence    String
+    client_explanation    String
+    client_evidence       String
+    user_id               Int
+    user                  User         @relation(fields: [user_id], references: [id])
+    question_id           Int
+    question              Question     @relation(fields: [question_id], references: [id])
+    created_at            DateTime
+    last_updated          DateTime
+    created_by            String
+    last_updated_by       String
+    Start_Time            Start_Time[]
+
+    @@index([user_id])
+    @@index([question_id])
+}
+
+model Start_Time {
+    id              Int      @id @default(autoincrement())
+    time            DateTime
+    answer_id       Int
+    answer          Answer   @relation(fields: [answer_id], references: [id])
+    created_at      DateTime
+    last_updated    DateTime
+    created_by      String
+    last_updated_by String
+
+    @@index([answer_id])
 }
 
 // ================ AUTHENTICATION ================
@@ -160,10 +355,11 @@ model Account {
     scope             String?
     id_token          String? // @db.Text
     session_state     String?
-    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    user_id           Int
+    user              User    @relation(fields: [user_id], references: [id])
 
     @@unique([provider, providerAccountId])
-    @@index([userId])
+    @@index([user_id])
 }
 
 model Session {
@@ -171,19 +367,23 @@ model Session {
     sessionToken String   @unique
     userId       String
     expires      DateTime
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    user_id      Int
+    user         User     @relation(fields: [user_id], references: [id])
 
-    @@index([userId])
+    @@index([user_id])
 }
 
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
+    id              Int               @id @default(autoincrement())
+    first_name      String
+    last_name       String
+    email           String            @unique
+    emailVerified   DateTime
+    accounts        Account[]
+    sessions        Session[]
+    POC             POC[]
+    Assessment_User Assessment_User[]
+    Answer          Answer[]
 }
 
 model VerificationToken {
