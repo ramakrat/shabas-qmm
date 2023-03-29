@@ -36,15 +36,14 @@ model Client {
 }
 
 model Site {
-    id Int @id @default(autoincrement())
-
+    id             Int    @id @default(autoincrement())
+    description    String
     name           String
     street_address String
     city           String
     state          String
     country        String
     zip_code       String
-    description    String
 
     client_id Int
     client    Client @relation(fields: [client_id], references: [id])
@@ -68,8 +67,8 @@ model POC {
     first_name          String
     last_name           String
     title               String
-    mobile_phone_number String
-    work_phone_number   String
+    mobile_phone String
+    work_phone   String
     email               String
     staff               String
 
@@ -127,8 +126,6 @@ model Rating {
     level_number          String
     criteria              String
     progression_statement String
-    api_segment           String
-    industry_segment      String
 
     question_id Int
     question    Question @relation(fields: [question_id], references: [id])
@@ -170,7 +167,7 @@ model SME {
 
     first_name          String
     last_name           String
-    mobile_phone_number String
+    mobile_phone String
     email               String
 
     question_id Int
@@ -225,18 +222,11 @@ model Filter {
 }
 
 model Engagement {
-    id Int @id @default(autoincrement())
-
-    start_date              DateTime
-    end_date                DateTime
-    description             String
-    status                  String
-    shabas_poc              String
-    shabas_poc_contact_info String
-    client_poc              String
-    client_poc_role         String
-    client_poc_contact_info String
-    lead_assessor           String
+    id          Int      @id @default(autoincrement())
+    description String
+    status      String
+    start_date  DateTime
+    end_date    DateTime
 
     client_id Int
     client    Client @relation(fields: [client_id], references: [id])
@@ -253,13 +243,11 @@ model Engagement {
 }
 
 model Assessment {
-    id Int @id @default(autoincrement())
-
-    status           String
-    export           String
-    dates            DateTime
-    side_description String
-    side_address     String
+    id          Int      @id @default(autoincrement())
+    description String
+    status      String
+    start_date  DateTime
+    end_date    DateTime
 
     site_id Int
     site    Site @relation(fields: [site_id], references: [id])
