@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Card, CardActions, CardContent, CardHeader, IconButton, Modal, Paper, Step, StepButton, Stepper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
+import { Button, Card, CardActions, CardContent, CardHeader, FormControl, IconButton, InputLabel, Modal, Paper, Select, Step, StepButton, Stepper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
 import { Add, Close } from "@mui/icons-material";
 
 interface Props {
@@ -64,8 +64,16 @@ const AssessmentModal: React.FC<Props> = (props) => {
                     </Stepper>
                     {activeStep == 0 &&
                         <div className='form-info'>
-                            <TextField id='title' name='title' label='title' size='small' />
-                            <TextField id='title' name='title' label='title' size='small' />
+                            <FormControl>
+                                <InputLabel size="small">Client</InputLabel>
+                                <Select name='client' size='small'>
+                                </Select>
+                            </FormControl>
+                            <FormControl>
+                                <InputLabel size="small">Engagement</InputLabel>
+                                <Select name='engagement' size='small'>
+                                </Select>
+                            </FormControl>
                         </div>
                     }
                     {activeStep == 1 &&

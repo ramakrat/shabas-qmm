@@ -1,4 +1,4 @@
-import { Button, Card, CardActions, CardContent, CardHeader, IconButton, Modal, TextField } from "@mui/material";
+import { Button, Card, CardActions, CardContent, CardHeader, FormControl, IconButton, InputLabel, Modal, Select, TextField } from "@mui/material";
 import { Close } from "@mui/icons-material";
 
 interface Props {
@@ -22,8 +22,17 @@ const SiteModal: React.FC<Props> = (props) => {
                     }
                 />
                 <CardContent>
-                    <TextField id='title' name='title' label='title' size='small' />
-                    <TextField id='title' name='title' label='title' size='small' />
+                    <FormControl>
+                        <InputLabel size="small">Client</InputLabel>
+                        <Select name='country' size='small'>
+                        </Select>
+                    </FormControl>
+                    <TextField name='name' label='Site Name' size='small' />
+                    <TextField name='streetAddress' label='Street Address' size='small' />
+                    <TextField name='city' label='City' size='small' />
+                    <TextField name='state' label='State' size='small' />
+                    <TextField name='zipCode' label='Zip Code' size='small' />
+                    <TextField name='description' label='Description' size='small' />
                 </CardContent>
                 <CardActions>
                     <Button variant='contained' color='error' onClick={() => setOpen(false)}>Cancel</Button>

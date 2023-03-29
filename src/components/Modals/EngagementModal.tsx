@@ -1,5 +1,5 @@
-import { Button, Card, CardActions, CardContent, CardHeader, IconButton, Modal, TextField } from "@mui/material";
-import { Close } from "@mui/icons-material";
+import { Button, Card, CardActions, CardContent, CardHeader, FormControl, IconButton, InputLabel, Modal, Select, TextareaAutosize, TextField } from "@mui/material";
+import { Close, DateRange } from "@mui/icons-material";
 
 interface Props {
     open: boolean;
@@ -22,8 +22,12 @@ const EngagementModal: React.FC<Props> = (props) => {
                     }
                 />
                 <CardContent>
-                    <TextField id='title' name='title' label='title' size='small' />
-                    <TextField id='title' name='title' label='title' size='small' />
+                    <FormControl>
+                        <InputLabel size="small">Client</InputLabel>
+                        <Select name='country' size='small'>
+                        </Select>
+                    </FormControl>
+                    <TextField name='description' label='Description' size='medium' />
                 </CardContent>
                 <CardActions>
                     <Button variant='contained' color='error' onClick={() => setOpen(false)}>Cancel</Button>
