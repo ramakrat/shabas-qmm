@@ -14,7 +14,8 @@ datasource db {
 // ================ OBJECT MODELS ================
 
 model Client {
-    id             Int    @id @default(autoincrement())
+    id Int @id @default(autoincrement())
+
     first_name     String
     last_name      String
     street_address String
@@ -26,16 +27,17 @@ model Client {
 
     Site       Site[]
     Engagement Engagement[]
+    POC        POC[]
 
-    created_at      DateTime @default(now())
-    last_updated    DateTime @default(now())
-    created_by      String
-    last_updated_by String
-    POC             POC[]
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now())
+    created_by String
+    updated_by String
 }
 
 model Site {
-    id             Int    @id @default(autoincrement())
+    id Int @id @default(autoincrement())
+
     name           String
     street_address String
     city           String
@@ -44,23 +46,25 @@ model Site {
     zip_code       String
     description    String
 
-    client_id  Int
-    client     Client       @relation(fields: [client_id], references: [id])
-    Assessment Assessment[]
+    client_id Int
+    client    Client @relation(fields: [client_id], references: [id])
 
-    created_at      DateTime          @default(now())
-    last_updated    DateTime          @default(now())
-    created_by      String
-    last_updated_by String
     POC             POC[]
     Rating          Rating[]
-    Interview_Guide Interview_Guide[]
+    Interview_Guide InterviewGuide[]
+    Assessment      Assessment[]
+
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now())
+    created_by String
+    updated_by String
 
     @@index([client_id])
 }
 
 model POC {
-    id                  Int    @id @default(autoincrement())
+    id Int @id @default(autoincrement())
+
     first_name          String
     last_name           String
     title               String
@@ -81,10 +85,10 @@ model POC {
     site_id Int
     site    Site @relation(fields: [site_id], references: [id])
 
-    created_at      DateTime @default(now())
-    last_updated    DateTime @default(now())
-    created_by      String
-    last_updated_by String
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now())
+    created_by String
+    updated_by String
 
     @@index([user_id])
     @@index([client_id])
@@ -93,7 +97,8 @@ model POC {
 }
 
 model Question {
-    id            Int    @id @default(autoincrement())
+    id Int @id @default(autoincrement())
+
     active        String
     question      String
     pillar        String
@@ -102,21 +107,22 @@ model Question {
     hint          String
     priority      String
 
-    Rating Rating[]
+    Reference          Reference[]
+    SME                SME[]
+    InterviewGuide     InterviewGuide[]
+    AssessmentQuestion AssessmentQuestion[]
+    Answer             Answer[]
+    Rating             Rating[]
 
-    created_at          DateTime              @default(now())
-    last_updated        DateTime              @default(now())
-    created_by          String
-    last_updated_by     String
-    Reference           Reference[]
-    SME                 SME[]
-    Interview_Guide     Interview_Guide[]
-    Assessment_Question Assessment_Question[]
-    Answer              Answer[]
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now())
+    created_by String
+    updated_by String
 }
 
 model Rating {
-    id                    Int    @id @default(autoincrement())
+    id Int @id @default(autoincrement())
+
     active                String
     level_number          String
     criteria              String
@@ -133,10 +139,10 @@ model Rating {
     filter_id Int
     filter    Filter @relation(fields: [filter_id], references: [id])
 
-    created_at      DateTime @default(now())
-    last_updated    DateTime @default(now())
-    created_by      String
-    last_updated_by String
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now())
+    created_by String
+    updated_by String
 
     @@index([question_id])
     @@index([site_id])
@@ -144,38 +150,43 @@ model Rating {
 }
 
 model Reference {
-    id          Int      @id @default(autoincrement())
-    citation    String
+    id Int @id @default(autoincrement())
+
+    citation String
+
     question_id Int
     question    Question @relation(fields: [question_id], references: [id])
 
-    created_at      DateTime @default(now())
-    last_updated    DateTime @default(now())
-    created_by      String
-    last_updated_by String
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now())
+    created_by String
+    updated_by String
 
     @@index([question_id])
 }
 
 model SME {
-    id                  Int      @id @default(autoincrement())
+    id Int @id @default(autoincrement())
+
     first_name          String
     last_name           String
     mobile_phone_number String
     email               String
-    question_id         Int
-    question            Question @relation(fields: [question_id], references: [id])
 
-    created_at      DateTime @default(now())
-    last_updated    DateTime @default(now())
-    created_by      String
-    last_updated_by String
+    question_id Int
+    question    Question @relation(fields: [question_id], references: [id])
+
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now())
+    created_by String
+    updated_by String
 
     @@index([question_id])
 }
 
-model Interview_Guide {
-    id                 Int    @id @default(autoincrement())
+model InterviewGuide {
+    id Int @id @default(autoincrement())
+
     active             String
     interview_question String
 
@@ -188,10 +199,10 @@ model Interview_Guide {
     filter_id Int
     filter    Filter @relation(fields: [filter_id], references: [id])
 
-    created_at      DateTime @default(now())
-    last_updated    DateTime @default(now())
-    created_by      String
-    last_updated_by String
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now())
+    created_by String
+    updated_by String
 
     @@index([question_id])
     @@index([site_id])
@@ -199,20 +210,23 @@ model Interview_Guide {
 }
 
 model Filter {
-    id   Int    @id @default(autoincrement())
+    id Int @id @default(autoincrement())
+
     type String
     name String
 
-    created_at      DateTime          @default(now())
-    last_updated    DateTime          @default(now())
-    created_by      String
-    last_updated_by String
     Rating          Rating[]
-    Interview_Guide Interview_Guide[]
+    Interview_Guide InterviewGuide[]
+
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now())
+    created_by String
+    updated_by String
 }
 
 model Engagement {
-    id                      Int      @id @default(autoincrement())
+    id Int @id @default(autoincrement())
+
     start_date              DateTime
     end_date                DateTime
     description             String
@@ -224,21 +238,23 @@ model Engagement {
     client_poc_contact_info String
     lead_assessor           String
 
-    client_id  Int
-    client     Client       @relation(fields: [client_id], references: [id])
+    client_id Int
+    client    Client @relation(fields: [client_id], references: [id])
+
+    POC        POC[]
     Assessment Assessment[]
 
-    created_at      DateTime @default(now())
-    last_updated    DateTime @default(now())
-    created_by      String
-    last_updated_by String
-    POC             POC[]
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now())
+    created_by String
+    updated_by String
 
     @@index([client_id])
 }
 
 model Assessment {
-    id               Int      @id @default(autoincrement())
+    id Int @id @default(autoincrement())
+
     status           String
     export           String
     dates            DateTime
@@ -251,18 +267,19 @@ model Assessment {
     engagement_id Int
     engagement    Engagement @relation(fields: [engagement_id], references: [id])
 
-    created_at          DateTime              @default(now())
-    last_updated        DateTime              @default(now())
-    created_by          String
-    last_updated_by     String
-    Assessment_User     Assessment_User[]
-    Assessment_Question Assessment_Question[]
+    Assessment_User     AssessmentUser[]
+    Assessment_Question AssessmentQuestion[]
+
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now())
+    created_by String
+    updated_by String
 
     @@index([site_id])
     @@index([engagement_id])
 }
 
-model Assessment_User {
+model AssessmentUser {
     id Int @id @default(autoincrement())
 
     user_id Int
@@ -271,34 +288,38 @@ model Assessment_User {
     assessment_id Int
     assessment    Assessment @relation(fields: [assessment_id], references: [id])
 
-    created_at      DateTime @default(now())
-    last_updated    DateTime @default(now())
-    created_by      String
-    last_updated_by String
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now())
+    created_by String
+    updated_by String
 
     @@index([user_id])
     @@index([assessment_id])
+    @@map("Assessment_User")
 }
 
-model Assessment_Question {
-    id          Int      @id @default(autoincrement())
+model AssessmentQuestion {
+    id Int @id @default(autoincrement())
+
     question_id Int
     question    Question @relation(fields: [question_id], references: [id])
 
     assessment_id Int
     assessment    Assessment @relation(fields: [assessment_id], references: [id])
 
-    created_at      DateTime @default(now())
-    last_updated    DateTime @default(now())
-    created_by      String
-    last_updated_by String
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now())
+    created_by String
+    updated_by String
 
     @@index([question_id])
     @@index([assessment_id])
+    @@map("Assessment_Question")
 }
 
 model Answer {
-    id                    Int          @id @default(autoincrement())
+    id Int @id @default(autoincrement())
+
     assessor_rating       String
     assessor_explanation  String
     assessor_evidence     String
@@ -311,29 +332,36 @@ model Answer {
     client_concurrence    String
     client_explanation    String
     client_evidence       String
-    user_id               Int
-    user                  User         @relation(fields: [user_id], references: [id])
-    question_id           Int
-    question              Question     @relation(fields: [question_id], references: [id])
-    created_at            DateTime     @default(now())
-    last_updated          DateTime     @default(now())
-    created_by            String
-    last_updated_by       String
-    Start_Time            Start_Time[]
+
+    user_id Int
+    user    User @relation(fields: [user_id], references: [id])
+
+    question_id Int
+    question    Question @relation(fields: [question_id], references: [id])
+
+    Start_Time Start_Time[]
+
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now())
+    created_by String
+    updated_by String
 
     @@index([user_id])
     @@index([question_id])
 }
 
 model Start_Time {
-    id              Int      @id @default(autoincrement())
-    time            DateTime
-    answer_id       Int
-    answer          Answer   @relation(fields: [answer_id], references: [id])
-    created_at      DateTime @default(now())
-    last_updated    DateTime @default(now())
-    created_by      String
-    last_updated_by String
+    id Int @id @default(autoincrement())
+
+    time DateTime
+
+    answer_id Int
+    answer    Answer @relation(fields: [answer_id], references: [id])
+
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now())
+    created_by String
+    updated_by String
 
     @@index([answer_id])
 }
@@ -374,15 +402,15 @@ model Session {
 }
 
 model User {
-    id              Int               @id @default(autoincrement())
+    id              Int              @id @default(autoincrement())
     first_name      String
     last_name       String
-    email           String            @unique
+    email           String           @unique
     emailVerified   DateTime
     accounts        Account[]
     sessions        Session[]
     POC             POC[]
-    Assessment_User Assessment_User[]
+    Assessment_User AssessmentUser[]
     Answer          Answer[]
 
     role Role @default(ASSESSOR)
