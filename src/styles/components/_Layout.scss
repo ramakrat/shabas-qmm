@@ -1,0 +1,50 @@
+.header {
+    height: 70px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 10px 30px;
+
+    box-shadow: shadows(2);
+
+    background-color: white;
+
+
+
+    .logo {
+        flex-grow: 1;
+    }
+
+    .nav-items {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        .MuiTypography-root {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-right: 20px;
+            padding: 5px 10px;
+        }
+
+        .active {
+            .MuiTypography-root {
+                font-weight: 600 !important;
+                border-radius: shape(borderRadius);
+                background-color: lighten(palette(secondary, main), 45%);
+                position: relative;
+
+                &:before {
+                    content: '';
+                    position: absolute;
+                    padding: 16px;
+                    left: 0;
+                    right: 0;
+                    border-bottom: 4px solid palette(secondary, main);
+                }
+            }
+        }
+    }
+}

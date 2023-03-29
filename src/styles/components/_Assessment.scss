@@ -1,0 +1,150 @@
+.assessment {
+    display: flex;
+    flex-direction: row;
+    margin: 20px 30px 40px;
+
+    .questions-sidebar {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+
+        .question-steppers {
+            .MuiButton-root {
+                margin: 0px 5px;
+            }
+        }
+
+        .MuiTypography-root {
+            padding: 5px 25px;
+            margin: 10px;
+            font-size: 1.3rem;
+            cursor: pointer;
+        }
+
+        .active {
+            font-weight: 600;
+            border-radius: shape(borderRadius);
+            background-color: lighten(palette(secondary, main), 45%);
+        }
+    }
+
+    .context {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 10px;
+
+        >div {
+            .MuiTypography-root:first-child {
+                font-size: 1rem;
+                font-weight: 500;
+            }
+        }
+    }
+
+    .filters {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 10px;
+        margin-bottom: 16px;
+
+        >.MuiTypography-root {
+            font-size: 1rem;
+            font-weight: 500;
+            padding-right: 10px;
+        }
+
+        .MuiInputBase-root {
+            margin-right: 15px;
+        }
+    }
+
+    .pre-questions {
+        padding: 10px;
+        margin-bottom: 16px;
+    }
+
+    .question-content {
+        padding: 10px;
+
+        >.MuiTypography-root {
+            font-size: 1rem;
+            font-weight: 500;
+            padding-bottom: 5px;
+        }
+
+        .MuiTextField-root {
+            width: 100%;
+            padding-bottom: 10px;
+        }
+
+    }
+
+    .save {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .rating {
+        display: flex;
+        flex-direction: column;
+
+        .rating-input {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .MuiTypography-root:first-child {
+            font-size: 1rem;
+            font-weight: 500;
+            padding-right: 5px;
+        }
+
+        .MuiSvgIcon-root {
+            margin-right: 10px;
+            color: palette(greyscale, 500);
+            cursor: pointer;
+        }
+
+        .MuiTextField-root {
+            width: 48px;
+        }
+    }
+
+
+    .reference {
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+
+        >div {
+            padding-bottom: 30px;
+
+            .MuiTypography-root:first-child {
+                font-size: 1rem;
+                font-weight: 500;
+                padding-bottom: 10px;
+            }
+        }
+    }
+
+    .actions {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+        &.simple {
+            justify-content: flex-end;
+            margin-top: 16px;
+        }
+
+        .MuiButton-root {
+            margin: 10px;
+        }
+    }
+}
