@@ -339,7 +339,7 @@ model Answer {
     question_id Int
     question    Question @relation(fields: [question_id], references: [id])
 
-    Start_Time Start_Time[]
+    StartTime StartTime[]
 
     created_at DateTime @default(now())
     updated_at DateTime @default(now())
@@ -350,7 +350,7 @@ model Answer {
     @@index([question_id])
 }
 
-model Start_Time {
+model StartTime {
     id Int @id @default(autoincrement())
 
     time DateTime
