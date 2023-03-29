@@ -1,0 +1,103 @@
+.dashboard {
+    margin: 10px 30px 40px;
+
+    .basic-rows {
+
+        .MuiCard-root {
+            padding: 10px;
+            margin: 10px 0px;
+        }
+    }
+
+    .MuiAccordion-root:before {
+        background-color: transparent !important;
+    }
+
+    .MuiAccordionSummary-root {
+        margin: 10px 0px;
+    }
+
+    .MuiAccordionSummary-content {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding-right: 30px;
+    }
+
+    .MuiAccordionDetails-root {
+        border-top: 2px solid palette(secondary, dark);
+        padding: 0px 10px;
+
+        .MuiCard-root {
+            padding: 10px;
+            background-color: transparent;
+            box-shadow: none;
+        }
+    }
+
+    .data-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+
+        .attribute {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            .MuiTypography-root:first-child {
+                color: palette(secondary, dark);
+                font-weight: 600;
+                text-decoration: underline;
+            }
+
+            .MuiTypography-root:last-child {
+                padding: 8px 0px;
+            }
+
+        }
+
+        &.row-header {
+            .MuiTypography-root {
+                color: palette(secondary, dark);
+                font-weight: 600;
+                text-decoration: underline;
+            }
+        }
+    }
+
+    .add-new-buttons {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        padding-bottom: 10px;
+
+        .MuiButton-root {
+            margin: 10px;
+        }
+    }
+
+    .filters {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .filter {
+        padding: 0px 15px;
+
+        span:first-of-type {
+            cursor: pointer;
+        }
+
+        span:last-of-type {
+            border-radius: 3px !important;
+            background-color: palette(greyscale, 400) !important;
+            font-size: 0.875rem;
+            font-weight: 600;
+            padding: 2px 7px !important;
+            margin-left: 7px !important;
+        }
+
+    }
+}

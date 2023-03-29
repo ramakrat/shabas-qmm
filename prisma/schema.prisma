@@ -6,21 +6,342 @@ generator client {
 }
 
 datasource db {
-    provider = "sqlite"
-    // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.Text annotations in model Account below
-    // Further reading:
-    // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
-    // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
-    url      = env("DATABASE_URL")
+    provider     = "mysql"
+    url          = env("DATABASE_URL")
+    relationMode = "prisma"
 }
 
-model Example {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
+// ================ OBJECT MODELS ================
+
+model Client {
+    id             Int    @id @default(autoincrement())
+    first_name     String
+    last_name      String
+    street_address String
+    city           String
+    state          String
+    country        String
+    zip_code       String
+    description    String
+
+    Site       Site[]
+    Engagement Engagement[]
+
+    created_at      DateTime @default(now())
+    last_updated    DateTime @default(now())
+    created_by      String
+    last_updated_by String
+    POC             POC[]
 }
+
+model Site {
+    id             Int    @id @default(autoincrement())
+    name           String
+    street_address String
+    city           String
+    state          String
+    country        String
+    zip_code       String
+    description    String
+
+    client_id  Int
+    client     Client       @relation(fields: [client_id], references: [id])
+    Assessment Assessment[]
+
+    created_at      DateTime          @default(now())
+    last_updated    DateTime          @default(now())
+    created_by      String
+    last_updated_by String
+    POC             POC[]
+    Rating          Rating[]
+    Interview_Guide Interview_Guide[]
+
+    @@index([client_id])
+}
+
+model POC {
+    id                  Int    @id @default(autoincrement())
+    first_name          String
+    last_name           String
+    title               String
+    mobile_phone_number String
+    work_phone_number   String
+    email               String
+    staff               String
+
+    user_id Int
+    user    User @relation(fields: [user_id], references: [id])
+
+    client_id Int
+    Client    Client @relation(fields: [client_id], references: [id])
+
+    engagement_id Int
+    engagement    Engagement @relation(fields: [engagement_id], references: [id])
+
+    site_id Int
+    site    Site @relation(fields: [site_id], references: [id])
+
+    created_at      DateTime @default(now())
+    last_updated    DateTime @default(now())
+    created_by      String
+    last_updated_by String
+
+    @@index([user_id])
+    @@index([client_id])
+    @@index([engagement_id])
+    @@index([site_id])
+}
+
+model Question {
+    id            Int    @id @default(autoincrement())
+    active        String
+    question      String
+    pillar        String
+    practice_area String
+    topic_area    String
+    hint          String
+    priority      String
+
+    Rating Rating[]
+
+    created_at          DateTime              @default(now())
+    last_updated        DateTime              @default(now())
+    created_by          String
+    last_updated_by     String
+    Reference           Reference[]
+    SME                 SME[]
+    Interview_Guide     Interview_Guide[]
+    Assessment_Question Assessment_Question[]
+    Answer              Answer[]
+}
+
+model Rating {
+    id                    Int    @id @default(autoincrement())
+    active                String
+    level_number          String
+    criteria              String
+    progression_statement String
+    api_segment           String
+    industry_segment      String
+
+    question_id Int
+    question    Question @relation(fields: [question_id], references: [id])
+
+    site_id Int
+    site    Site @relation(fields: [site_id], references: [id])
+
+    filter_id Int
+    filter    Filter @relation(fields: [filter_id], references: [id])
+
+    created_at      DateTime @default(now())
+    last_updated    DateTime @default(now())
+    created_by      String
+    last_updated_by String
+
+    @@index([question_id])
+    @@index([site_id])
+    @@index([filter_id])
+}
+
+model Reference {
+    id          Int      @id @default(autoincrement())
+    citation    String
+    question_id Int
+    question    Question @relation(fields: [question_id], references: [id])
+
+    created_at      DateTime @default(now())
+    last_updated    DateTime @default(now())
+    created_by      String
+    last_updated_by String
+
+    @@index([question_id])
+}
+
+model SME {
+    id                  Int      @id @default(autoincrement())
+    first_name          String
+    last_name           String
+    mobile_phone_number String
+    email               String
+    question_id         Int
+    question            Question @relation(fields: [question_id], references: [id])
+
+    created_at      DateTime @default(now())
+    last_updated    DateTime @default(now())
+    created_by      String
+    last_updated_by String
+
+    @@index([question_id])
+}
+
+model Interview_Guide {
+    id                 Int    @id @default(autoincrement())
+    active             String
+    interview_question String
+
+    question_id Int
+    question    Question @relation(fields: [question_id], references: [id])
+
+    site_id Int
+    site    Site @relation(fields: [site_id], references: [id])
+
+    filter_id Int
+    filter    Filter @relation(fields: [filter_id], references: [id])
+
+    created_at      DateTime @default(now())
+    last_updated    DateTime @default(now())
+    created_by      String
+    last_updated_by String
+
+    @@index([question_id])
+    @@index([site_id])
+    @@index([filter_id])
+}
+
+model Filter {
+    id   Int    @id @default(autoincrement())
+    type String
+    name String
+
+    created_at      DateTime          @default(now())
+    last_updated    DateTime          @default(now())
+    created_by      String
+    last_updated_by String
+    Rating          Rating[]
+    Interview_Guide Interview_Guide[]
+}
+
+model Engagement {
+    id                      Int      @id @default(autoincrement())
+    start_date              DateTime
+    end_date                DateTime
+    description             String
+    status                  String
+    shabas_poc              String
+    shabas_poc_contact_info String
+    client_poc              String
+    client_poc_role         String
+    client_poc_contact_info String
+    lead_assessor           String
+
+    client_id  Int
+    client     Client       @relation(fields: [client_id], references: [id])
+    Assessment Assessment[]
+
+    created_at      DateTime @default(now())
+    last_updated    DateTime @default(now())
+    created_by      String
+    last_updated_by String
+    POC             POC[]
+
+    @@index([client_id])
+}
+
+model Assessment {
+    id               Int      @id @default(autoincrement())
+    status           String
+    export           String
+    dates            DateTime
+    side_description String
+    side_address     String
+
+    site_id Int
+    site    Site @relation(fields: [site_id], references: [id])
+
+    engagement_id Int
+    engagement    Engagement @relation(fields: [engagement_id], references: [id])
+
+    created_at          DateTime              @default(now())
+    last_updated        DateTime              @default(now())
+    created_by          String
+    last_updated_by     String
+    Assessment_User     Assessment_User[]
+    Assessment_Question Assessment_Question[]
+
+    @@index([site_id])
+    @@index([engagement_id])
+}
+
+model Assessment_User {
+    id Int @id @default(autoincrement())
+
+    user_id Int
+    user    User @relation(fields: [user_id], references: [id])
+
+    assessment_id Int
+    assessment    Assessment @relation(fields: [assessment_id], references: [id])
+
+    created_at      DateTime @default(now())
+    last_updated    DateTime @default(now())
+    created_by      String
+    last_updated_by String
+
+    @@index([user_id])
+    @@index([assessment_id])
+}
+
+model Assessment_Question {
+    id          Int      @id @default(autoincrement())
+    question_id Int
+    question    Question @relation(fields: [question_id], references: [id])
+
+    assessment_id Int
+    assessment    Assessment @relation(fields: [assessment_id], references: [id])
+
+    created_at      DateTime @default(now())
+    last_updated    DateTime @default(now())
+    created_by      String
+    last_updated_by String
+
+    @@index([question_id])
+    @@index([assessment_id])
+}
+
+model Answer {
+    id                    Int          @id @default(autoincrement())
+    assessor_rating       String
+    assessor_explanation  String
+    assessor_evidence     String
+    consensus_rating      String
+    consensus_explanation String
+    consensus_evidence    String
+    oversight_concurrence String
+    oversight_explanation String
+    oversight_evidence    String
+    client_concurrence    String
+    client_explanation    String
+    client_evidence       String
+    user_id               Int
+    user                  User         @relation(fields: [user_id], references: [id])
+    question_id           Int
+    question              Question     @relation(fields: [question_id], references: [id])
+    created_at            DateTime     @default(now())
+    last_updated          DateTime     @default(now())
+    created_by            String
+    last_updated_by       String
+    Start_Time            Start_Time[]
+
+    @@index([user_id])
+    @@index([question_id])
+}
+
+model Start_Time {
+    id              Int      @id @default(autoincrement())
+    time            DateTime
+    answer_id       Int
+    answer          Answer   @relation(fields: [answer_id], references: [id])
+    created_at      DateTime @default(now())
+    last_updated    DateTime @default(now())
+    created_by      String
+    last_updated_by String
+
+    @@index([answer_id])
+}
+
+// ================ AUTHENTICATION ================
 
 // Necessary for Next auth
+
 model Account {
     id                String  @id @default(cuid())
     userId            String
@@ -34,9 +355,11 @@ model Account {
     scope             String?
     id_token          String? // @db.Text
     session_state     String?
-    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+    user_id           Int
+    user              User    @relation(fields: [user_id], references: [id])
 
     @@unique([provider, providerAccountId])
+    @@index([user_id])
 }
 
 model Session {
@@ -44,17 +367,25 @@ model Session {
     sessionToken String   @unique
     userId       String
     expires      DateTime
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    user_id      Int
+    user         User     @relation(fields: [user_id], references: [id])
+
+    @@index([user_id])
 }
 
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
+    id              Int               @id @default(autoincrement())
+    first_name      String
+    last_name       String
+    email           String            @unique
+    emailVerified   DateTime
+    accounts        Account[]
+    sessions        Session[]
+    POC             POC[]
+    Assessment_User Assessment_User[]
+    Answer          Answer[]
+
+    role Role @default(ASSESSOR)
 }
 
 model VerificationToken {
@@ -63,4 +394,10 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+enum Role {
+    ADMIN
+    LEAD_ASSESSOR
+    ASSESSOR
 }
