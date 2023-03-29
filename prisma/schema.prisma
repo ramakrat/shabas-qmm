@@ -27,8 +27,8 @@ model Client {
     Site       Site[]
     Engagement Engagement[]
 
-    created_at      DateTime
-    last_updated    DateTime
+    created_at      DateTime @default(now())
+    last_updated    DateTime @default(now())
     created_by      String
     last_updated_by String
     POC             POC[]
@@ -48,8 +48,8 @@ model Site {
     client     Client       @relation(fields: [client_id], references: [id])
     Assessment Assessment[]
 
-    created_at      DateTime
-    last_updated    DateTime
+    created_at      DateTime          @default(now())
+    last_updated    DateTime          @default(now())
     created_by      String
     last_updated_by String
     POC             POC[]
@@ -81,8 +81,8 @@ model POC {
     site_id Int
     site    Site @relation(fields: [site_id], references: [id])
 
-    created_at      DateTime
-    last_updated    DateTime
+    created_at      DateTime @default(now())
+    last_updated    DateTime @default(now())
     created_by      String
     last_updated_by String
 
@@ -104,8 +104,8 @@ model Question {
 
     Rating Rating[]
 
-    created_at          DateTime
-    last_updated        DateTime
+    created_at          DateTime              @default(now())
+    last_updated        DateTime              @default(now())
     created_by          String
     last_updated_by     String
     Reference           Reference[]
@@ -133,8 +133,8 @@ model Rating {
     filter_id Int
     filter    Filter @relation(fields: [filter_id], references: [id])
 
-    created_at      DateTime
-    last_updated    DateTime
+    created_at      DateTime @default(now())
+    last_updated    DateTime @default(now())
     created_by      String
     last_updated_by String
 
@@ -149,8 +149,8 @@ model Reference {
     question_id Int
     question    Question @relation(fields: [question_id], references: [id])
 
-    created_at      DateTime
-    last_updated    DateTime
+    created_at      DateTime @default(now())
+    last_updated    DateTime @default(now())
     created_by      String
     last_updated_by String
 
@@ -166,8 +166,8 @@ model SME {
     question_id         Int
     question            Question @relation(fields: [question_id], references: [id])
 
-    created_at      DateTime
-    last_updated    DateTime
+    created_at      DateTime @default(now())
+    last_updated    DateTime @default(now())
     created_by      String
     last_updated_by String
 
@@ -188,8 +188,8 @@ model Interview_Guide {
     filter_id Int
     filter    Filter @relation(fields: [filter_id], references: [id])
 
-    created_at      DateTime
-    last_updated    DateTime
+    created_at      DateTime @default(now())
+    last_updated    DateTime @default(now())
     created_by      String
     last_updated_by String
 
@@ -203,8 +203,8 @@ model Filter {
     type String
     name String
 
-    created_at      DateTime
-    last_updated    DateTime
+    created_at      DateTime          @default(now())
+    last_updated    DateTime          @default(now())
     created_by      String
     last_updated_by String
     Rating          Rating[]
@@ -228,8 +228,8 @@ model Engagement {
     client     Client       @relation(fields: [client_id], references: [id])
     Assessment Assessment[]
 
-    created_at      DateTime
-    last_updated    DateTime
+    created_at      DateTime @default(now())
+    last_updated    DateTime @default(now())
     created_by      String
     last_updated_by String
     POC             POC[]
@@ -251,8 +251,8 @@ model Assessment {
     engagement_id Int
     engagement    Engagement @relation(fields: [engagement_id], references: [id])
 
-    created_at          DateTime
-    last_updated        DateTime
+    created_at          DateTime              @default(now())
+    last_updated        DateTime              @default(now())
     created_by          String
     last_updated_by     String
     Assessment_User     Assessment_User[]
@@ -271,8 +271,8 @@ model Assessment_User {
     assessment_id Int
     assessment    Assessment @relation(fields: [assessment_id], references: [id])
 
-    created_at      DateTime
-    last_updated    DateTime
+    created_at      DateTime @default(now())
+    last_updated    DateTime @default(now())
     created_by      String
     last_updated_by String
 
@@ -288,8 +288,8 @@ model Assessment_Question {
     assessment_id Int
     assessment    Assessment @relation(fields: [assessment_id], references: [id])
 
-    created_at      DateTime
-    last_updated    DateTime
+    created_at      DateTime @default(now())
+    last_updated    DateTime @default(now())
     created_by      String
     last_updated_by String
 
@@ -315,8 +315,8 @@ model Answer {
     user                  User         @relation(fields: [user_id], references: [id])
     question_id           Int
     question              Question     @relation(fields: [question_id], references: [id])
-    created_at            DateTime
-    last_updated          DateTime
+    created_at            DateTime     @default(now())
+    last_updated          DateTime     @default(now())
     created_by            String
     last_updated_by       String
     Start_Time            Start_Time[]
@@ -330,8 +330,8 @@ model Start_Time {
     time            DateTime
     answer_id       Int
     answer          Answer   @relation(fields: [answer_id], references: [id])
-    created_at      DateTime
-    last_updated    DateTime
+    created_at      DateTime @default(now())
+    last_updated    DateTime @default(now())
     created_by      String
     last_updated_by String
 
@@ -384,6 +384,8 @@ model User {
     POC             POC[]
     Assessment_User Assessment_User[]
     Answer          Answer[]
+
+    role Role @default(ASSESSOR)
 }
 
 model VerificationToken {
@@ -392,4 +394,10 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+enum Role {
+    ADMIN
+    LEAD_ASSESSOR
+    ASSESSOR
 }
