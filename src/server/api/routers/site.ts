@@ -29,9 +29,9 @@ export const siteRouter = createTRPCRouter({
                     country: input.country,
                     zip_code: input.zip_code,
                     description: input.description,
-                    last_updated: new Date(),
-                    last_updated_by: '',
                     client_id: input.client_id,
+                    updated_at: new Date(),
+                    updated_by: '',
                 },
                 create: {
                     name: input.name,
@@ -41,9 +41,9 @@ export const siteRouter = createTRPCRouter({
                     country: input.country,
                     zip_code: input.zip_code,
                     description: input.description,
-                    created_by: '',
-                    last_updated_by: '',
                     client_id: input.client_id,
+                    created_by: '',
+                    updated_by: '',
                 }
             })
         }),

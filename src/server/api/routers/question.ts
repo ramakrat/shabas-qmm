@@ -28,8 +28,8 @@ export const questionRouter = createTRPCRouter({
                     topic_area: input.topic_area,
                     hint: input.hint,
                     priority: input.priority,
-                    last_updated: new Date(),
-                    last_updated_by: '',
+                    updated_at: new Date(),
+                    updated_by: '',
                 },
                 create: {
                     active: input.active,
@@ -40,7 +40,7 @@ export const questionRouter = createTRPCRouter({
                     hint: input.hint,
                     priority: input.priority,
                     created_by: '',
-                    last_updated_by: '',
+                    updated_by: '',
                 }
             })
         }),

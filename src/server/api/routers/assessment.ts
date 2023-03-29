@@ -26,10 +26,10 @@ export const assessmentRouter = createTRPCRouter({
                     dates: input.dates,
                     side_description: input.side_description,
                     side_address: input.side_address,
-                    last_updated: new Date(),
-                    last_updated_by: '',
                     site_id: input.site_id,
                     engagement_id: input.engagement_id,
+                    updated_at: new Date(),
+                    updated_by: '',
                 },
                 create: {
                     status: input.status,
@@ -37,10 +37,10 @@ export const assessmentRouter = createTRPCRouter({
                     dates: input.dates,
                     side_description: input.side_description,
                     side_address: input.side_address,
-                    created_by: '',
-                    last_updated_by: '',
                     site_id: input.site_id,
                     engagement_id: input.engagement_id,
+                    created_by: '',
+                    updated_by: '',
                 }
             })
         }),

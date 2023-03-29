@@ -30,8 +30,8 @@ export const clientRouter = createTRPCRouter({
                     country: input.country,
                     zip_code: input.zip_code,
                     description: input.description,
-                    last_updated: new Date(),
-                    last_updated_by: '',
+                    updated_at: new Date(),
+                    updated_by: '',
                 },
                 create: {
                     first_name: input.first_name,
@@ -43,7 +43,7 @@ export const clientRouter = createTRPCRouter({
                     zip_code: input.zip_code,
                     description: input.description,
                     created_by: '',
-                    last_updated_by: '',
+                    updated_by: '',
                 }
             })
         }),
