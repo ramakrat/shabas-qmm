@@ -3,50 +3,50 @@ import { number } from "zod";
 export interface Client {
     id: Number;
 
-    first_name: String;
-    last_name: String;
-    street_address: String
-    city: String;
-    state: String;
-    country: String;
-    zip_code: String;
-    description: String;
+    first_name: string;
+    last_name: string;
+    street_address: string
+    city: string;
+    state: string;
+    country: string;
+    zip_code: string;
+    description: string;
 
     created_at: DateTime;
     updated_at: DateTime;
-    created_by: String;
-    updated_by: String;
+    created_by: string;
+    updated_by: string;
 }
 
 export interface Site {
     id: Number;
 
-    name: String;
-    street_address: String
-    city: String;
-    state: String;
-    country: String;
-    zip_code: String;
-    description: String;
+    name: string;
+    street_address: string
+    city: string;
+    state: string;
+    country: string;
+    zip_code: string;
+    description: string;
 
     client_id: Number;
 
     created_at: DateTime;
     updated_at: DateTime;
-    created_by: String;
-    updated_by: String;
+    created_by: string;
+    updated_by: string;
 }
 
 export interface POC {
     id: Number;
 
-    first_name: String;
-    last_name: String;
-    title: String;
-    mobile_phone_number: String;
-    work_phone_number: String;
-    email: String;
-    staff: String;
+    first_name: string;
+    last_name: string;
+    title: string;
+    mobile_phone_number: string;
+    work_phone_number: string;
+    email: string;
+    staff: string;
 
     user_id: Number;
     client_id: Number;
@@ -55,36 +55,36 @@ export interface POC {
 
     created_at: DateTime;
     updated_at: DateTime;
-    created_by: String;
-    updated_by: String;
+    created_by: string;
+    updated_by: string;
 }
 
 export interface Question {
     id: Number;
 
-    active: String;
-    question: String;
-    pillar: String;
-    practice_area: String;
-    topic_area: String;
-    hint: String;
-    priority: String;
+    active: string;
+    question: string;
+    pillar: string;
+    practice_area: string;
+    topic_area: string;
+    hint: string;
+    priority: string;
 
     created_at: DateTime;
     updated_at: DateTime;
-    created_by: String;
-    updated_by: String;
+    created_by: string;
+    updated_by: string;
 }
 
 export interface Rating {
     id: Number;
 
-    active: String;
-    level_number: String;
-    criteria: String;
-    progression_statement: String;
-    api_segment: String;
-    industry_segment: String;
+    active: string;
+    level_number: string;
+    criteria: string;
+    progression_statement: string;
+    api_segment: string;
+    industry_segment: string;
 
     question_id: Number;
     site_id: Number;
@@ -92,44 +92,44 @@ export interface Rating {
 
     created_at: DateTime;
     updated_at: DateTime;
-    created_by: String;
-    updated_by: String;
+    created_by: string;
+    updated_by: string;
 }
 
 export interface Reference {
     id: Number;
 
-    citation: String;
+    citation: string;
 
     question_id: Number;
 
     created_at: DateTime;
     updated_at: DateTime;
-    created_by: String;
-    updated_by: String;
+    created_by: string;
+    updated_by: string;
 }
 
 export interface SME {
     id: Number;
 
-    first_name: String;
-    last_name: String;
-    mobile_phone_number: String;
-    email: String;
+    first_name: string;
+    last_name: string;
+    mobile_phone_number: string;
+    email: string;
 
     question_id: Number;
 
     created_at: DateTime;
     updated_at: DateTime;
-    created_by: String;
-    updated_by: String;
+    created_by: string;
+    updated_by: string;
 }
 
 export interface InterviewGuide {
     id: Number;
 
-    active: String;
-    interview_question: String;
+    active: string;
+    interview_question: string;
 
     question_id: Number;
     site_id: Number;
@@ -137,20 +137,20 @@ export interface InterviewGuide {
 
     created_at: DateTime;
     updated_at: DateTime;
-    created_by: String;
-    updated_by: String;
+    created_by: string;
+    updated_by: string;
 }
 
 export interface Filter {
     id: Number;
 
-    type: String;
-    name: String;
+    type: string;
+    name: string;
 
     created_at: DateTime;
     updated_at: DateTime;
-    created_by: String;
-    updated_by: String;
+    created_by: string;
+    updated_by: string;
 }
 
 export interface Engagement {
@@ -158,39 +158,39 @@ export interface Engagement {
 
     start_date: DateTime;
     end_date: DateTime;
-    description: String;
-    status: String;
-    shabas_poc: String;
-    shabas_poc_contact_info: String;
-    client_poc: String;
-    client_poc_role: String;
-    client_poc_contact_info: String;
-    lead_assessor: String;
+    description: string;
+    status: string;
+    shabas_poc: string;
+    shabas_poc_contact_info: string;
+    client_poc: string;
+    client_poc_role: string;
+    client_poc_contact_info: string;
+    lead_assessor: string;
 
     client_id: Number;
 
     created_at: DateTime;
     updated_at: DateTime;
-    created_by: String;
-    updated_by: String;
+    created_by: string;
+    updated_by: string;
 }
 
 export interface Assessment {
     id: Number;
 
-    status: String;
-    export: String;
+    status: string;
+    export: string;
     dates: DateTime;
-    side_description: String;
-    side_address: String;
+    side_description: string;
+    side_address: string;
 
     site_id: Number;
     engagement_id: Number;
 
     created_at: DateTime;
     updated_at: DateTime;
-    created_by: String;
-    updated_by: String;
+    created_by: string;
+    updated_by: string;
 }
 
 export interface AssessmentUser {
@@ -201,8 +201,8 @@ export interface AssessmentUser {
 
     created_at: DateTime;
     updated_at: DateTime;
-    created_by: String;
-    updated_by: String;
+    created_by: string;
+    updated_by: string;
 }
 
 export interface AssessmentQuestion {
@@ -213,33 +213,33 @@ export interface AssessmentQuestion {
 
     created_at: DateTime;
     updated_at: DateTime;
-    created_by: String;
-    updated_by: String;
+    created_by: string;
+    updated_by: string;
 }
 
 export interface Answer {
     id: Number;
 
-    assessor_rating: String;
-    assessor_explanation: String;
-    assessor_evidence: String;
-    consensus_rating: String;
-    consensus_explanation: String;
-    consensus_evidence: String;
-    oversight_concurrence: String;
-    oversight_explanation: String;
-    oversight_evidence: String;
-    client_concurrence: String;
-    client_explanation: String;
-    client_evidence: String;
+    assessor_rating: string;
+    assessor_explanation: string;
+    assessor_evidence: string;
+    consensus_rating: string;
+    consensus_explanation: string;
+    consensus_evidence: string;
+    oversight_concurrence: string;
+    oversight_explanation: string;
+    oversight_evidence: string;
+    client_concurrence: string;
+    client_explanation: string;
+    client_evidence: string;
 
     user_id: number;
     question_id: number;
 
     created_at: DateTime;
     updated_at: DateTime;
-    created_by: String;
-    updated_by: String;
+    created_by: string;
+    updated_by: string;
 }
 
 export interface StartTime {
@@ -251,6 +251,6 @@ export interface StartTime {
 
     created_at: DateTime;
     updated_at: DateTime;
-    created_by: String;
-    updated_by: String;
+    created_by: string;
+    updated_by: string;
 }
