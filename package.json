@@ -22,6 +22,7 @@
     "@trpc/next": "^10.9.0",
     "@trpc/react-query": "^10.9.0",
     "@trpc/server": "^10.9.0",
+    "formik": "^2.2.9",
     "next": "^13.2.1",
     "next-auth": "^4.19.0",
     "react": "18.2.0",
@@ -37,12 +38,19 @@
     "@types/react-dom": "^18.0.11",
     "@typescript-eslint/eslint-plugin": "^5.53.0",
     "@typescript-eslint/parser": "^5.53.0",
-    "eslint": "^8.34.0",
+    "eslint": "^8.37.0",
     "eslint-config-next": "^13.2.1",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "prisma": "^4.9.0",
     "typescript": "^4.9.5"
   },
   "ct3aMetadata": {
     "initVersion": "7.7.0"
-  }
+  },
+  "extends": [
+    "plugin:react-hooks/recommended"
+  ],
+  "main": "index.js",
+  "repository": "git@github.com:jeanie-lam/shabas-qmm.git",
+  "author": "Jeanie Lam <ljeaniez@gmail.com>"
 }
