@@ -5,61 +5,63 @@ import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/
 
 const inputType = z.object({
     id: z.number().optional(),
-    description: z.string(),
     status: z.string(),
+    description: z.string(),
     start_date: z.date(),
     end_date: z.date(),
-    site_id: z.number(),
-    engagement_id: z.number(),
+    client_id: z.number(),
 })
 
-export const assessmentRouter = createTRPCRouter({
+export const engagementRouter = createTRPCRouter({
     create: publicProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
-            return ctx.prisma.assessment.create({
+            return ctx.prisma.engagement.create({
                 data: {
-                    description: input.description,
                     status: input.status,
+                    description: input.description,
                     start_date: input.start_date,
                     end_date: input.end_date,
-                    site_id: input.site_id,
-                    engagement_id: input.engagement_id,
+                    client_id: input.client_id,
                     created_by: '',
                     updated_by: '',
                 }
-            });
+            })
         }),
     update: publicProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
-            return ctx.prisma.assessment.update({
+            return ctx.prisma.engagement.update({
                 where: { id: input.id },
                 data: {
-                    description: input.description,
                     status: input.status,
+                    description: input.description,
                     start_date: input.start_date,
                     end_date: input.end_date,
-                    site_id: input.site_id,
-                    engagement_id: input.engagement_id,
+                    client_id: input.client_id,
                     updated_at: new Date(),
                     updated_by: '',
-                },
-            });
+                }
+            })
         }),
     getById: publicProcedure
         .input(z.object({ id: z.number() }))
         .query(({ input, ctx }) => {
-            return ctx.prisma.assessment.findUnique({
+            return ctx.prisma.engagement.findUnique({
                 where: { id: input.id }
             });
         }),
     getAll: publicProcedure
         .query(({ ctx }) => {
-            return ctx.prisma.assessment.findMany();
+            return ctx.prisma.engagement.findMany({
+                include: {
+                    Assessment: true,
+                    POC: true,
+                }
+            });
         }),
     getTotalCount: publicProcedure
         .query(({ ctx }) => {
-            return ctx.prisma.assessment.count();
+            return ctx.prisma.engagement.count();
         }),
 });

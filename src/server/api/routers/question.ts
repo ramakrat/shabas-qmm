@@ -2,7 +2,6 @@ import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/api/trpc";
 
-
 const inputType = z.object({
     id: z.number().optional(),
     active: z.string(),
@@ -15,23 +14,11 @@ const inputType = z.object({
 })
 
 export const questionRouter = createTRPCRouter({
-    upsert: publicProcedure
+    create: publicProcedure
         .input(inputType)
-        .query(({ input, ctx }) => {
-            return ctx.prisma.question.upsert({
-                where: { id: input.id },
-                update: {
-                    active: input.active,
-                    question: input.question,
-                    pillar: input.pillar,
-                    practice_area: input.practice_area,
-                    topic_area: input.topic_area,
-                    hint: input.hint,
-                    priority: input.priority,
-                    updated_at: new Date(),
-                    updated_by: '',
-                },
-                create: {
+        .mutation(({ input, ctx }) => {
+            return ctx.prisma.question.create({
+                data: {
                     active: input.active,
                     question: input.question,
                     pillar: input.pillar,
@@ -40,6 +27,24 @@ export const questionRouter = createTRPCRouter({
                     hint: input.hint,
                     priority: input.priority,
                     created_by: '',
+                    updated_by: '',
+                }
+            })
+        }),
+    update: publicProcedure
+        .input(inputType)
+        .mutation(({ input, ctx }) => {
+            return ctx.prisma.question.update({
+                where: { id: input.id },
+                data: {
+                    active: input.active,
+                    question: input.question,
+                    pillar: input.pillar,
+                    practice_area: input.practice_area,
+                    topic_area: input.topic_area,
+                    hint: input.hint,
+                    priority: input.priority,
+                    updated_at: new Date(),
                     updated_by: '',
                 }
             })
