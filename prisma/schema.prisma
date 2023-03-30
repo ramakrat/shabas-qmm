@@ -38,13 +38,13 @@ model Client {
 model Site {
     id Int @id @default(autoincrement())
 
+    description    String
     name           String
     street_address String
     city           String
     state          String
     country        String
     zip_code       String
-    description    String
 
     client_id Int
     client    Client @relation(fields: [client_id], references: [id])
@@ -65,13 +65,13 @@ model Site {
 model POC {
     id Int @id @default(autoincrement())
 
-    first_name          String
-    last_name           String
-    title               String
-    mobile_phone_number String
-    work_phone_number   String
-    email               String
-    staff               String
+    first_name   String
+    last_name    String
+    title        String
+    mobile_phone String
+    work_phone   String
+    email        String
+    staff        String
 
     user_id Int
     user    User @relation(fields: [user_id], references: [id])
@@ -127,8 +127,6 @@ model Rating {
     level_number          String
     criteria              String
     progression_statement String
-    api_segment           String
-    industry_segment      String
 
     question_id Int
     question    Question @relation(fields: [question_id], references: [id])
@@ -168,10 +166,10 @@ model Reference {
 model SME {
     id Int @id @default(autoincrement())
 
-    first_name          String
-    last_name           String
-    mobile_phone_number String
-    email               String
+    first_name   String
+    last_name    String
+    mobile_phone String
+    email        String
 
     question_id Int
     question    Question @relation(fields: [question_id], references: [id])
@@ -227,16 +225,10 @@ model Filter {
 model Engagement {
     id Int @id @default(autoincrement())
 
-    start_date              DateTime
-    end_date                DateTime
-    description             String
-    status                  String
-    shabas_poc              String
-    shabas_poc_contact_info String
-    client_poc              String
-    client_poc_role         String
-    client_poc_contact_info String
-    lead_assessor           String
+    description String
+    status      String
+    start_date  DateTime
+    end_date    DateTime
 
     client_id Int
     client    Client @relation(fields: [client_id], references: [id])
@@ -255,11 +247,10 @@ model Engagement {
 model Assessment {
     id Int @id @default(autoincrement())
 
-    status           String
-    export           String
-    dates            DateTime
-    side_description String
-    side_address     String
+    description String
+    status      String
+    start_date  DateTime
+    end_date    DateTime
 
     site_id Int
     site    Site @relation(fields: [site_id], references: [id])
@@ -267,8 +258,8 @@ model Assessment {
     engagement_id Int
     engagement    Engagement @relation(fields: [engagement_id], references: [id])
 
-    Assessment_User     AssessmentUser[]
-    Assessment_Question AssessmentQuestion[]
+    AssessmentUser     AssessmentUser[]
+    AssessmentQuestion AssessmentQuestion[]
 
     created_at DateTime @default(now())
     updated_at DateTime @default(now())
@@ -295,7 +286,6 @@ model AssessmentUser {
 
     @@index([user_id])
     @@index([assessment_id])
-    @@map("Assessment_User")
 }
 
 model AssessmentQuestion {
@@ -314,7 +304,6 @@ model AssessmentQuestion {
 
     @@index([question_id])
     @@index([assessment_id])
-    @@map("Assessment_Question")
 }
 
 model Answer {
