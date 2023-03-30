@@ -2,13 +2,14 @@ import * as React from 'react';
 import { type NextPage } from "next";
 
 import Layout from "~/components/Layout/Layout";
-import { Button, Card, Checkbox, Grid, IconButton, MenuItem, Select, TextField, Typography } from '@mui/material';
-import { Add, CheckBox } from '@mui/icons-material';
+import { Button, Card, Grid, IconButton, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { Add } from '@mui/icons-material';
 import IndustryModal from '~/components/Modals/QuestionFilters/IndustryModal';
 import ApiSegmentModal from '~/components/Modals/QuestionFilters/ApiSegmentModal';
 import SiteSpecificModal from '~/components/Modals/QuestionFilters/SiteSpecificModal';
 import QuestionsSidebar from '~/components/Assessment/QuestionsSidebar';
 import QuestionContext from '~/components/Assessment/QuestionContext';
+import { api } from "~/utils/api";
 
 const AdminDashboard: NextPage = () => {
 
@@ -17,6 +18,10 @@ const AdminDashboard: NextPage = () => {
     const [addApiSegment, setAddApiSegment] = React.useState<boolean>(false);
     const [addSiteSpecific, setAddSiteSpecific] = React.useState<boolean>(false);
 
+    // =========== Retrieve Form Context ===========
+
+    const questions = api.question.getAll.useQuery().data;
+
     // TODO: Title the set of questions based on what mode is selected
 
     return (
@@ -24,7 +29,14 @@ const AdminDashboard: NextPage = () => {
             <div className='assessment'>
                 <Grid container spacing={2}>
                     <Grid item xs={2}>
-                        <QuestionsSidebar question={question} setQuestion={setQuestion} />
+                        {questions &&
+                            <QuestionsSidebar
+                                questions={questions}
+                                question={question}
+                                setQuestion={setQuestion}
+                                addOption
+                            />
+                        }
                     </Grid>
                     <Grid item xs={10} container spacing={2}>
                         <Grid item xs={12}>
