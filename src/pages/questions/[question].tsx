@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-plus-operands */
 import * as React from 'react';
 import { type NextPage } from "next";
 import { useRouter } from 'next/router';
@@ -351,7 +352,7 @@ const Question: NextPage = () => {
     }
 
     const setQuestionSelection = (question: number) => {
-        push('/questions/' + question);
+        void push(`/questions/${question}`);
     }
 
     // =========== Retrieve Form Context ===========
@@ -469,7 +470,7 @@ const Question: NextPage = () => {
                             </Grid>
                             <Grid item xs={8}>
                                 <Card className='filters'>
-                                    <ToggleButtonGroup exclusive size='small' value={filterType} onChange={(_event, value) => setFilterType(value)}>
+                                    <ToggleButtonGroup exclusive size='small' value={filterType} onChange={(_event, value: string) => setFilterType(value)}>
                                         <ToggleButton value='standard'>Standard</ToggleButton>
                                         <ToggleButton value='industry'>Industry</ToggleButton>
                                         <ToggleButton value='api-segment'>API Segment</ToggleButton>
@@ -532,7 +533,8 @@ const Question: NextPage = () => {
                                         variant='outlined' startIcon={<Add />}
                                         onClick={() => {
                                             let num = existingRatings.length + 1;
-                                            if (ratings.length > 0) num = ratings[ratings.length - 1].level_number + 1;
+                                            const last = ratings[ratings.length - 1];
+                                            if (ratings.length > 0 && last) num = last.level_number + 1;
                                             setRatings([
                                                 ...ratings,
                                                 {
@@ -581,7 +583,10 @@ const Question: NextPage = () => {
                                                             onChange={(event) => handleGuideChange(o.num, event.target.value)}
                                                         />
                                                         <IconButton
-                                                            onClick={() => setGuide([...guide, { num: guide[guide.length - 1].num + 1, criteria: '' }])}
+                                                            onClick={() => {
+                                                                const last = guide[guide.length - 1];
+                                                                if (last) setGuide([...guide, { num: last.num + 1, interview_question: '' }])
+                                                            }}
                                                         ><Add /></IconButton>
                                                     </div>
                                                 )
@@ -645,7 +650,10 @@ const Question: NextPage = () => {
                                                             onChange={(event) => handleReferenceChange(o.num, event.target.value)}
                                                         />
                                                         <IconButton
-                                                            onClick={() => setReferences([...references, { num: references[references.length - 1].num + 1, citation: '' }])}
+                                                            onClick={() => {
+                                                                const last = references[references.length - 1];
+                                                                if (last) setReferences([...references, { num: last.num + 1, citation: '' }])
+                                                            }}
                                                         ><Add /></IconButton>
                                                     </div>
                                                 )
