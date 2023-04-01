@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Card, CardActions, CardContent, CardHeader, FormControl, IconButton, InputLabel, MenuItem, Modal, Select, TextField } from "@mui/material";
+import { Button, Card, CardActions, CardContent, CardHeader, FormControl, FormControlLabel, IconButton, InputLabel, MenuItem, Modal, Select, Switch, TextField } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { Countries } from "~/utils/utils";
 import { api } from "~/utils/api";
@@ -17,7 +17,8 @@ const QuestionModal: React.FC<Props> = (props) => {
 
     // =========== Input Field States ===========
 
-    const [active, setActive] = React.useState<string>('');
+    const [active, setActive] = React.useState<boolean>(true);
+    const [number, setNumber] = React.useState<string>('');
     const [question, setQuestion] = React.useState<string>('');
     const [pillar, setPillar] = React.useState<string>('');
     const [practiceArea, setPracticeArea] = React.useState<string>('');
@@ -55,6 +56,7 @@ const QuestionModal: React.FC<Props> = (props) => {
             update.mutate({
                 id: data.id,
                 active: active,
+                number: number,
                 question: question,
                 pillar: pillar,
                 practice_area: practiceArea,
@@ -65,6 +67,7 @@ const QuestionModal: React.FC<Props> = (props) => {
         } else {
             create.mutate({
                 active: active,
+                number: number,
                 question: question,
                 pillar: pillar,
                 practice_area: practiceArea,
@@ -92,9 +95,9 @@ const QuestionModal: React.FC<Props> = (props) => {
                     />
                     <CardContent>
                         <TextField
-                            name='active' label='Active' size='small'
-                            value={active}
-                            onChange={e => setActive(e.target.value)}
+                            name='number' label='Question #' size='small'
+                            value={number}
+                            onChange={e => setNumber(e.target.value)}
                         />
                         <TextField
                             name='question' label='Question' size='small'
@@ -125,6 +128,17 @@ const QuestionModal: React.FC<Props> = (props) => {
                             name='priority' label='Priority' size='small'
                             value={priority}
                             onChange={e => setPriority(e.target.value)}
+                        />
+                        <FormControlLabel
+                            label="Active"
+                            labelPlacement="top"
+                            className="switch"
+                            control={
+                                <Switch
+                                    checked={active}
+                                    onChange={(_event, checked) => setActive(checked)}
+                                />
+                            }
                         />
                     </CardContent>
                     <CardActions>
