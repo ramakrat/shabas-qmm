@@ -1,7 +1,7 @@
 import { number } from "zod";
 
 export interface Client {
-    id: Number;
+    id: number;
 
     first_name: string;
     last_name: string;
@@ -19,7 +19,7 @@ export interface Client {
 }
 
 export interface Site {
-    id: Number;
+    id: number;
 
     name: string;
     street_address: string
@@ -29,7 +29,7 @@ export interface Site {
     zip_code: string;
     description: string;
 
-    client_id: Number;
+    client_id: number;
 
     created_at: DateTime;
     updated_at: DateTime;
@@ -38,7 +38,7 @@ export interface Site {
 }
 
 export interface POC {
-    id: Number;
+    id: number;
 
     first_name: string;
     last_name: string;
@@ -48,10 +48,10 @@ export interface POC {
     email: string;
     staff: string;
 
-    user_id: Number;
-    client_id: Number;
-    engagement_id: Number;
-    site_id: Number;
+    user_id: number;
+    client_id: number;
+    engagement_id: number;
+    site_id: number;
 
     created_at: DateTime;
     updated_at: DateTime;
@@ -60,7 +60,7 @@ export interface POC {
 }
 
 export interface Question {
-    id: Number;
+    id: number;
 
     active: string;
     question: string;
@@ -77,7 +77,7 @@ export interface Question {
 }
 
 export interface Rating {
-    id: Number;
+    id: number;
 
     active: string;
     level_number: string;
@@ -86,9 +86,9 @@ export interface Rating {
     api_segment: string;
     industry_segment: string;
 
-    question_id: Number;
-    site_id: Number;
-    filter_id: Number;
+    question_id: number;
+    site_id: number;
+    filter_id: number;
 
     created_at: DateTime;
     updated_at: DateTime;
@@ -97,11 +97,11 @@ export interface Rating {
 }
 
 export interface Reference {
-    id: Number;
+    id: number;
 
     citation: string;
 
-    question_id: Number;
+    question_id: number;
 
     created_at: DateTime;
     updated_at: DateTime;
@@ -110,14 +110,14 @@ export interface Reference {
 }
 
 export interface SME {
-    id: Number;
+    id: number;
 
     first_name: string;
     last_name: string;
     mobile_phone_number: string;
     email: string;
 
-    question_id: Number;
+    question_id: number;
 
     created_at: DateTime;
     updated_at: DateTime;
@@ -126,14 +126,14 @@ export interface SME {
 }
 
 export interface InterviewGuide {
-    id: Number;
+    id: number;
 
     active: string;
     interview_question: string;
 
-    question_id: Number;
-    site_id: Number;
-    filter_id: Number;
+    question_id: number;
+    site_id: number;
+    filter_id: number;
 
     created_at: DateTime;
     updated_at: DateTime;
@@ -142,7 +142,7 @@ export interface InterviewGuide {
 }
 
 export interface Filter {
-    id: Number;
+    id: number;
 
     type: string;
     name: string;
@@ -154,7 +154,7 @@ export interface Filter {
 }
 
 export interface Engagement {
-    id: Number;
+    id: number;
 
     start_date: DateTime;
     end_date: DateTime;
@@ -167,7 +167,7 @@ export interface Engagement {
     client_poc_contact_info: string;
     lead_assessor: string;
 
-    client_id: Number;
+    client_id: number;
 
     created_at: DateTime;
     updated_at: DateTime;
@@ -176,7 +176,7 @@ export interface Engagement {
 }
 
 export interface Assessment {
-    id: Number;
+    id: number;
 
     status: string;
     export: string;
@@ -184,8 +184,8 @@ export interface Assessment {
     side_description: string;
     side_address: string;
 
-    site_id: Number;
-    engagement_id: Number;
+    site_id: number;
+    engagement_id: number;
 
     created_at: DateTime;
     updated_at: DateTime;
@@ -194,10 +194,10 @@ export interface Assessment {
 }
 
 export interface AssessmentUser {
-    id: Number;
+    id: number;
 
-    user_id: Number;
-    assessment_id: Number;
+    user_id: number;
+    assessment_id: number;
 
     created_at: DateTime;
     updated_at: DateTime;
@@ -206,10 +206,10 @@ export interface AssessmentUser {
 }
 
 export interface AssessmentQuestion {
-    id: Number;
+    id: number;
 
-    question_id: Number;
-    assessment_id: Number;
+    question_id: number;
+    assessment_id: number;
 
     created_at: DateTime;
     updated_at: DateTime;
@@ -218,7 +218,7 @@ export interface AssessmentQuestion {
 }
 
 export interface Answer {
-    id: Number;
+    id: number;
 
     assessor_rating: string;
     assessor_explanation: string;
@@ -243,11 +243,11 @@ export interface Answer {
 }
 
 export interface StartTime {
-    id: Number;
+    id: number;
 
     time: DateTime;
 
-    answer_id: Number;
+    answer_id: number;
 
     created_at: DateTime;
     updated_at: DateTime;
