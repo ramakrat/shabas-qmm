@@ -4,7 +4,8 @@ import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/
 
 const inputType = z.object({
     id: z.number().optional(),
-    active: z.string(),
+    active: z.boolean(),
+    number: z.string(),
     question: z.string(),
     pillar: z.string(),
     practice_area: z.string(),
@@ -20,6 +21,7 @@ export const questionRouter = createTRPCRouter({
             return ctx.prisma.question.create({
                 data: {
                     active: input.active,
+                    number: input.number,
                     question: input.question,
                     pillar: input.pillar,
                     practice_area: input.practice_area,
@@ -38,6 +40,7 @@ export const questionRouter = createTRPCRouter({
                 where: { id: input.id },
                 data: {
                     active: input.active,
+                    number: input.number,
                     question: input.question,
                     pillar: input.pillar,
                     practice_area: input.practice_area,

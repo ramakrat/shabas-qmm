@@ -10,24 +10,37 @@ const inputType = z.object({
 })
 
 export const referenceRouter = createTRPCRouter({
-    upsert: publicProcedure
+    create: publicProcedure
         .input(inputType)
-        .query(({ input, ctx }) => {
-            return ctx.prisma.reference.upsert({
-                where: { id: input.id },
-                update: {
-                    citation: input.citation,
-                    question_id: input.question_id,
-                    last_updated: new Date(),
-                    last_updated_by: '',
-                },
-                create: {
+        .mutation(({ input, ctx }) => {
+            return ctx.prisma.reference.create({
+                data: {
                     citation: input.citation,
                     question_id: input.question_id,
                     created_by: '',
-                    last_updated_by: '',
+                    updated_by: '',
                 }
             })
+        }),
+    update: publicProcedure
+        .input(inputType)
+        .mutation(({ input, ctx }) => {
+            return ctx.prisma.reference.update({
+                where: { id: input.id },
+                data: {
+                    citation: input.citation,
+                    question_id: input.question_id,
+                    updated_at: new Date(),
+                    updated_by: '',
+                },
+            })
+        }),
+    getByQuestionId: publicProcedure
+        .input(z.object({ id: z.number() }))
+        .query(({ input, ctx }) => {
+            return ctx.prisma.reference.findMany({
+                where: { question_id: input.id }
+            });
         }),
     getById: publicProcedure
         .input(z.object({ id: z.number() }))

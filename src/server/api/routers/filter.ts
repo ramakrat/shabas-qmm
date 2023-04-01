@@ -10,24 +10,48 @@ const inputType = z.object({
 })
 
 export const filterRouter = createTRPCRouter({
-    upsert: publicProcedure
+    create: publicProcedure
         .input(inputType)
-        .query(({ input, ctx }) => {
-            return ctx.prisma.filter.upsert({
-                where: { id: input.id },
-                update: {
-                    type: input.type,
-                    name: input.name,
-                    last_updated: new Date(),
-                    last_updated_by: '',
-                },
-                create: {
+        .mutation(({ input, ctx }) => {
+            return ctx.prisma.filter.create({
+                data: {
                     type: input.type,
                     name: input.name,
                     created_by: '',
-                    last_updated_by: '',
+                    updated_by: '',
                 }
-            })
+            });
+        }),
+    update: publicProcedure
+        .input(inputType)
+        .mutation(({ input, ctx }) => {
+            return ctx.prisma.filter.update({
+                where: { id: input.id },
+                data: {
+                    type: input.type,
+                    name: input.name,
+                    created_by: '',
+                    updated_by: '',
+                }
+            });
+        }),
+    getAllIndustry: publicProcedure
+        .query(({ ctx }) => {
+            return ctx.prisma.filter.findMany({
+                where: { type: 'industry' }
+            });
+        }),
+    getAllApiSegment: publicProcedure
+        .query(({ ctx }) => {
+            return ctx.prisma.filter.findMany({
+                where: { type: 'api-segment' }
+            });
+        }),
+    getAllSiteSpecific: publicProcedure
+        .query(({ ctx }) => {
+            return ctx.prisma.filter.findMany({
+                where: { type: 'site-specific' }
+            });
         }),
     getById: publicProcedure
         .input(z.object({ id: z.number() }))

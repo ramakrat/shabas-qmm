@@ -12,41 +12,54 @@ const inputType = z.object({
     question_id: z.number(),
 })
 
-export const startTimeRouter = createTRPCRouter({
-    upsert: publicProcedure
+export const smeRouter = createTRPCRouter({
+    create: publicProcedure
         .input(inputType)
-        .query(({ input, ctx }) => {
-            return ctx.prisma.sme.upsert({
-                where: { id: input.id },
-                update: {
+        .mutation(({ input, ctx }) => {
+            return ctx.prisma.sME.create({
+                data: {
                     first_name: input.first_name,
                     last_name: input.last_name,
-                    mobile_phone: input.mobile_phone_number,
-                    email: input.email,
-                    question_id: input.question_id,
-                    last_updated: new Date(),
-                    last_updated_by: '',
-                },
-                create: {
-                    first_name: input.first_name,
-                    last_name: input.last_name,
-                    mobile_phone: input.mobile_phone_number,
+                    mobile_phone: input.mobile_phone,
                     email: input.email,
                     question_id: input.question_id,
                     created_by: '',
-                    last_updated_by: '',
+                    updated_by: '',
                 }
             })
+        }),
+    update: publicProcedure
+        .input(inputType)
+        .mutation(({ input, ctx }) => {
+            return ctx.prisma.sME.update({
+                where: { id: input.id },
+                data: {
+                    first_name: input.first_name,
+                    last_name: input.last_name,
+                    mobile_phone: input.mobile_phone,
+                    email: input.email,
+                    question_id: input.question_id,
+                    updated_at: new Date(),
+                    updated_by: '',
+                },
+            })
+        }),
+    getByQuestionId: publicProcedure
+        .input(z.object({ id: z.number() }))
+        .query(({ input, ctx }) => {
+            return ctx.prisma.sME.findFirst({
+                where: { question_id: input.id }
+            });
         }),
     getById: publicProcedure
         .input(z.object({ id: z.number() }))
         .query(({ input, ctx }) => {
-            return ctx.prisma.sme.findUnique({
+            return ctx.prisma.sME.findUnique({
                 where: { id: input.id }
             });
         }),
     getAll: publicProcedure
         .query(({ ctx }) => {
-            return ctx.prisma.sme.findMany();
+            return ctx.prisma.sME.findMany();
         }),
 });

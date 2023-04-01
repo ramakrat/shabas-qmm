@@ -5,39 +5,39 @@ import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/
 
 const inputType = z.object({
     id: z.number().optional(),
-    user_id: z.user_id(),
-    assessment_id: z.assessment_id(),
+    user_id: z.number(),
+    assessment_id: z.number(),
 })
 
 export const assessmentUserRouter = createTRPCRouter({
     upsert: publicProcedure
         .input(inputType)
         .query(({ input, ctx }) => {
-            return ctx.prisma.assessmentuser.upsert({
+            return ctx.prisma.assessmentUser.upsert({
                 where: { id: input.id },
                 update: {
                     user_id: input.user_id,
                     assessment_id: input.assessment_id,
-                    last_updated: new Date(),
-                    last_updated_by: '',
+                    updated_at: new Date(),
+                    updated_by: '',
                 },
                 create: {
                     user_id: input.user_id,
                     assessment_id: input.assessment_id,
                     created_by: '',
-                    last_updated_by: '',
+                    updated_by: '',
                 }
             })
         }),
     getById: publicProcedure
         .input(z.object({ id: z.number() }))
         .query(({ input, ctx }) => {
-            return ctx.prisma.assessmentuser.findUnique({
+            return ctx.prisma.assessmentUser.findUnique({
                 where: { id: input.id }
             });
         }),
     getAll: publicProcedure
         .query(({ ctx }) => {
-            return ctx.prisma.assessmentuser.findMany();
+            return ctx.prisma.assessmentUser .findMany();
         }),
 });

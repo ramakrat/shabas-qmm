@@ -10,13 +10,13 @@ const inputType = z.object({
     assessor_evidence: z.string(),
     consensus_rating: z.string(),
     consensus_explanation: z.string(),
-    consensus_evidence: z.number(),
+    consensus_evidence: z.string(),
     oversight_concurrence: z.string(),
     oversight_explanation: z.string(),
-    oversight_evidence: z.number(),
+    oversight_evidence: z.string(),
     client_concurrence: z.string(),
     client_explanation: z.string(),
-    client_evidence: z.number(),
+    client_evidence: z.string(),
     user_id: z.number(),
     question_id: z.number(),
 })
@@ -42,8 +42,8 @@ export const answerRouter = createTRPCRouter({
                     client_evidence: input.client_evidence,
                     user_id: input.user_id,
                     question_id: input.question_id,
-                    last_updated: new Date(),
-                    last_updated_by: '',
+                    updated_at: new Date(),
+                    updated_by: '',
                 },
                 create: {
                     assessor_rating: input.assessor_rating,
@@ -61,7 +61,7 @@ export const answerRouter = createTRPCRouter({
                     user_id: input.user_id,
                     question_id: input.question_id,
                     created_by: '',
-                    last_updated_by: '',
+                    updated_by: '',
                 }
             })
         }),
