@@ -118,7 +118,7 @@ const BrowseAssessments: NextPage = () => {
             </div>
             {data && data.map((e, i) => {
                 return (
-                    <Accordion>
+                    <Accordion key={i}>
                         <AccordionSummary expandIcon={<ExpandMore />}>
                             <TableContainer>
                                 <Table sx={{ minWidth: 650 }} size="small">
