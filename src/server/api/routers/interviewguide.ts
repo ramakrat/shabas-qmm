@@ -48,7 +48,8 @@ export const interviewGuideRouter = createTRPCRouter({
         .input(z.object({ id: z.number() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.interviewGuide.findMany({
-                where: { question_id: input.id }
+                where: { question_id: input.id },
+                orderBy: { id: 'asc' }
             });
         }),
     getById: publicProcedure
