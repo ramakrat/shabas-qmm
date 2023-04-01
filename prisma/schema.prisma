@@ -99,7 +99,8 @@ model POC {
 model Question {
     id Int @id @default(autoincrement())
 
-    active        String
+    active        Boolean
+    number        String
     question      String
     pillar        String
     practice_area String
@@ -123,7 +124,7 @@ model Question {
 model Rating {
     id Int @id @default(autoincrement())
 
-    active                String
+    active                Boolean
     level_number          String
     criteria              String
     progression_statement String
@@ -131,11 +132,11 @@ model Rating {
     question_id Int
     question    Question @relation(fields: [question_id], references: [id])
 
-    site_id Int
-    site    Site @relation(fields: [site_id], references: [id])
+    site_id Int?
+    site    Site? @relation(fields: [site_id], references: [id])
 
-    filter_id Int
-    filter    Filter @relation(fields: [filter_id], references: [id])
+    filter_id Int?
+    filter    Filter? @relation(fields: [filter_id], references: [id])
 
     created_at DateTime @default(now())
     updated_at DateTime @default(now())
@@ -185,7 +186,7 @@ model SME {
 model InterviewGuide {
     id Int @id @default(autoincrement())
 
-    active             String
+    active             Boolean
     interview_question String
 
     question_id Int
