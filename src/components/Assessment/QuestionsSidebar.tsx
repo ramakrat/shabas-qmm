@@ -9,7 +9,7 @@ interface Props {
     questions: Question[];
     question: number;
     setQuestion: any;
-    addOption: boolean;
+    addOption?: boolean;
 }
 
 const QuestionsSidebar: React.FC<Props> = (props) => {
@@ -24,14 +24,14 @@ const QuestionsSidebar: React.FC<Props> = (props) => {
                 <div className='question-steppers'>
                     <Button
                         variant='contained'
-                        disabled={question == 1}
+                        disabled={questions[0] ? (question == questions[0].id) : false}
                         onClick={() => setQuestion(question - 1)}
                     >
                         Previous
                     </Button>
                     <Button
                         variant='contained'
-                        disabled={question == 7}
+                        disabled={questions[questions.length] ? (question == (questions[questions.length] as Question).id) : false}
                         onClick={() => setQuestion(question + 1)}
                     >
                         Next
@@ -44,7 +44,7 @@ const QuestionsSidebar: React.FC<Props> = (props) => {
                             className={question == 1 ? 'active' : ''}
                             onClick={() => setQuestion(o.id)}
                         >
-                            {o.id}
+                            {o.number}
                         </Typography>
                     )
                 })}
@@ -54,14 +54,16 @@ const QuestionsSidebar: React.FC<Props> = (props) => {
                 <Typography className={question == 5 ? 'active' : ''} onClick={() => setQuestion(5)}>S5</Typography>
                 <Typography className={question == 6 ? 'active' : ''} onClick={() => setQuestion(6)}>S6</Typography>
                 <Typography className={question == 7 ? 'active' : ''} onClick={() => setQuestion(7)}>S7</Typography>
-                <Button
-                    variant='outlined'
-                    disabled={question == 7}
-                    onClick={() => setQuestionModal(true)}
-                    startIcon={<Add />}
-                >
-                    Add Question
-                </Button>
+                {addOption &&
+                    <Button
+                        variant='outlined'
+                        disabled={question == 7}
+                        onClick={() => setQuestionModal(true)}
+                        startIcon={<Add />}
+                    >
+                        Add Question
+                    </Button>
+                }
             </Card>
             <QuestionModal open={questionModal} setOpen={setQuestionModal} />
         </>
