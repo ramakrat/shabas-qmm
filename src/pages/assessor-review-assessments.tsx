@@ -18,7 +18,7 @@ const ReviewAssessment: NextPage = () => {
             <div className='assessment'>
                 <Grid container spacing={2}>
                     <Grid item xs={2}>
-                        <QuestionsSidebar question={question} setQuestion={setQuestion} />
+                        <QuestionsSidebar questions={[]} question={question} setQuestion={setQuestion} />
                     </Grid>
                     <Grid item xs={10} container spacing={2}>
                         <Grid item xs={12}>
