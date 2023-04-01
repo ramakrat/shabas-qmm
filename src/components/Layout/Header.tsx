@@ -20,6 +20,7 @@ export const Header: React.FC<Props> = (props) => {
         setAnchorEl(null);
     };
 
+
     return (
         <div className='header'>
             <div className='logo'>
@@ -36,7 +37,7 @@ export const Header: React.FC<Props> = (props) => {
                         Assessments
                     </Typography>
                 </Link>
-                <Link href={'/admin-questions'} className={active == 'questions' ? 'active' : ''}>
+                <Link href={'/questions/1'} className={active == 'questions' ? 'active' : ''}>
                     <Typography>
                         Questions
                     </Typography>
