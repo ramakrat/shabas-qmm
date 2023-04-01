@@ -40,7 +40,7 @@ const QuestionsSidebar: React.FC<Props> = (props) => {
                     return (
                         <Typography
                             key={o.id}
-                            className={question == 1 ? 'active' : ''}
+                            className={o.id == question ? 'active' : ''}
                             onClick={() => setQuestion(o.id)}
                         >
                             {o.number}
