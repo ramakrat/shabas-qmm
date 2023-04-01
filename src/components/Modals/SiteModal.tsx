@@ -17,7 +17,7 @@ const SiteModal: React.FC<Props> = (props) => {
 
     // =========== Retrieve Form Context ===========
 
-    const clients = api.client.getAll.useQuery().data;
+    const clients = api.client.getAll.useQuery(true).data;
 
     // =========== Input Field States ===========
 
@@ -48,11 +48,6 @@ const SiteModal: React.FC<Props> = (props) => {
         }
     }, [data])
 
-    React.useEffect(() => {
-        if (create.isSuccess || update.isSuccess == true)
-            setOpen(false)
-    }, [create, update, setOpen])
-
     const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (data) {
@@ -66,6 +61,8 @@ const SiteModal: React.FC<Props> = (props) => {
                 zip_code: zipCode,
                 description: description,
                 client_id: clientId,
+            }, {
+                onSuccess() { setOpen(false) }
             })
         } else {
             create.mutate({
@@ -77,6 +74,8 @@ const SiteModal: React.FC<Props> = (props) => {
                 zip_code: zipCode,
                 description: description,
                 client_id: clientId,
+            }, {
+                onSuccess() { setOpen(false) }
             })
         }
     }

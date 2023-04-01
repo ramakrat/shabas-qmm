@@ -51,7 +51,18 @@ export const engagementRouter = createTRPCRouter({
                 where: { id: input.id }
             });
         }),
+    getAllInclude: publicProcedure
+        .input(z.array(z.boolean()))
+        .query(({ ctx }) => {
+            return ctx.prisma.engagement.findMany({
+                include: {
+                    Assessment: true,
+                    POC: true,
+                }
+            });
+        }),
     getAll: publicProcedure
+        .input(z.boolean())
         .query(({ ctx }) => {
             return ctx.prisma.engagement.findMany({
                 include: {

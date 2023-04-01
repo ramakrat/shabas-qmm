@@ -10,7 +10,8 @@ const BrowseClients: React.FC = () => {
     const [clientData, setClientData] = React.useState<Client | undefined>(undefined);
     const [clientModal, setClientModal] = React.useState<boolean>(false);
 
-    const clients = api.client.getAll.useQuery().data;
+    // TODO: Don't run query unless modal closed
+    const clients = api.client.getAll.useQuery(clientModal).data;
 
     return (
         <>

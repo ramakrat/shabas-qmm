@@ -45,11 +45,6 @@ const ClientModal: React.FC<Props> = (props) => {
         }
     }, [data])
 
-    // React.useEffect(() => {
-    //     if (create.isSuccess == true || update.isSuccess == true)
-    //         setOpen(false)
-    // }, [create, update])
-
     const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (data) {
@@ -63,6 +58,8 @@ const ClientModal: React.FC<Props> = (props) => {
                 country: country,
                 zip_code: zipCode,
                 description: description,
+            }, {
+                onSuccess() { setOpen(false) }
             })
         } else {
             create.mutate({
@@ -74,10 +71,10 @@ const ClientModal: React.FC<Props> = (props) => {
                 country: country,
                 zip_code: zipCode,
                 description: description,
+            }, {
+                onSuccess() { setOpen(false) }
             })
         }
-        if (create.isSuccess || update.isSuccess)
-            setOpen(false)
     }
 
 

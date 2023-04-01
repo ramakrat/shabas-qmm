@@ -10,14 +10,8 @@ const BrowseSites: React.FC = () => {
     const [siteData, setSiteData] = React.useState<Site | undefined>(undefined);
     const [siteModal, setSiteModal] = React.useState<boolean>(false);
 
-    // const [sites, setSites] = React.useState<Site[]>([]);
-
-    const sites = api.site.getAll.useQuery().data;
-
-    // React.useEffect(() => {
-    //     m.mutate()
-    //     if (m.data) setSites(m.data)
-    // }, [])
+    // TODO: Don't run query unless modal closed
+    const sites = api.site.getAll.useQuery(siteModal).data;
 
     return (
         <>

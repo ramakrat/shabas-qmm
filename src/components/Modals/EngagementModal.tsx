@@ -16,7 +16,7 @@ const EngagementModal: React.FC<Props> = (props) => {
 
     // =========== Retrieve Form Context ===========
 
-    const clients = api.client.getAll.useQuery().data;
+    const clients = api.client.getAll.useQuery(true).data;
 
     // =========== Input Field States ===========
 
@@ -51,6 +51,8 @@ const EngagementModal: React.FC<Props> = (props) => {
                 end_date: endDate,
                 description: description,
                 client_id: clientId,
+            }, {
+                onSuccess() { setOpen(false) }
             })
         } else {
             create.mutate({
@@ -59,10 +61,10 @@ const EngagementModal: React.FC<Props> = (props) => {
                 end_date: endDate,
                 description: description,
                 client_id: clientId,
+            }, {
+                onSuccess() { setOpen(false) }
             })
         }
-        if (create.isSuccess || update.isSuccess)
-            setOpen(false)
     }
 
     return (

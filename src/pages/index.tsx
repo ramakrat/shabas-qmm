@@ -39,6 +39,7 @@ const AdminDashboard: NextPage = () => {
         );
     }
 
+    // TODO: Make dynamic
     const totalClient = api.client.getTotalCount.useQuery().data;
     const totalSite = api.site.getTotalCount.useQuery().data;
     const totalEngagement = api.engagement.getTotalCount.useQuery().data;

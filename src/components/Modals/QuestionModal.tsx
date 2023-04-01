@@ -44,11 +44,6 @@ const QuestionModal: React.FC<Props> = (props) => {
         }
     }, [data])
 
-    // React.useEffect(() => {
-    //     if (create.isSuccess == true || update.isSuccess == true)
-    //         setOpen(false)
-    // }, [create, update])
-
     const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (data) {
@@ -62,6 +57,8 @@ const QuestionModal: React.FC<Props> = (props) => {
                 topic_area: topicArea,
                 hint: hint,
                 priority: priority,
+            }, {
+                onSuccess() { setOpen(false) }
             })
         } else {
             create.mutate({
@@ -73,10 +70,10 @@ const QuestionModal: React.FC<Props> = (props) => {
                 topic_area: topicArea,
                 hint: hint,
                 priority: priority,
+            }, {
+                onSuccess() { setOpen(false) }
             })
         }
-        if (create.isSuccess || update.isSuccess)
-            setOpen(false)
     }
 
 

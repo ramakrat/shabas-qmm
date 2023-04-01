@@ -19,15 +19,14 @@ const ApiSegmentModal: React.FC<Props> = (props) => {
 
     const create = api.filter.create.useMutation();
 
-
     const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
         event.preventDefault();
         create.mutate({
             type: 'api-segment',
             name: name,
+        }, {
+            onSuccess() { setOpen(false) }
         })
-        if (create.isSuccess)
-            setOpen(false)
     }
 
     return (

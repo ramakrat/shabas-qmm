@@ -20,7 +20,8 @@ const BrowseAssessments: React.FC = () => {
     type SecondaryFilters = 'ongoing' | 'assessor-review' | 'oversight' | 'client-review' | 'completed';
     const [secondaryFilter, setSecondaryFilter] = React.useState<SecondaryFilters>('ongoing');
 
-    const { data } = api.engagement.getAll.useQuery();
+    // TODO: Don't run query unless modal closed
+    const { data } = api.engagement.getAllInclude.useQuery([engagementModal, assessmentModal]);
 
     return (
         <>

@@ -16,8 +16,8 @@ const AssessmentModal: React.FC<Props> = (props) => {
 
     // =========== Retrieve Form Context ===========
 
-    const sites = api.site.getAll.useQuery().data;
-    const engagements = api.engagement.getAll.useQuery().data;
+    const sites = api.site.getAll.useQuery(true).data;
+    const engagements = api.engagement.getAll.useQuery(true).data;
 
     // =========== Input Field States ===========
 
@@ -55,6 +55,8 @@ const AssessmentModal: React.FC<Props> = (props) => {
                 description: description,
                 site_id: siteId,
                 engagement_id: engagementId,
+            }, {
+                onSuccess() { setOpen(false) }
             })
         } else {
             create.mutate({
@@ -64,10 +66,10 @@ const AssessmentModal: React.FC<Props> = (props) => {
                 description: description,
                 site_id: siteId,
                 engagement_id: engagementId,
+            }, {
+                onSuccess() { setOpen(false) }
             })
         }
-        if (create.isSuccess || update.isSuccess)
-            setOpen(false)
     }
 
 

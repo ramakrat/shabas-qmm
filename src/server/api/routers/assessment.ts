@@ -55,6 +55,7 @@ export const assessmentRouter = createTRPCRouter({
             });
         }),
     getAll: publicProcedure
+        .input(z.boolean())
         .query(({ ctx }) => {
             return ctx.prisma.assessment.findMany();
         }),
