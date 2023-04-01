@@ -3,6 +3,7 @@
     flex-direction: row;
     margin: 20px 30px 40px;
 
+
     .questions-sidebar {
         display: flex;
         flex-direction: column;
@@ -130,6 +131,12 @@
                 font-weight: 500;
                 padding-bottom: 10px;
             }
+        }
+
+        .input-row {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
         }
     }
 

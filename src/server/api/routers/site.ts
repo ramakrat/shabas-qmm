@@ -5,23 +5,22 @@ import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/
 
 const inputType = z.object({
     id: z.number().optional(),
+    description: z.string(),
     name: z.string(),
     street_address: z.string(),
     city: z.string(),
     state: z.string(),
     country: z.string(),
     zip_code: z.string(),
-    description: z.string(),
     client_id: z.number(),
 })
 
 export const siteRouter = createTRPCRouter({
-    upsert: publicProcedure
+    create: publicProcedure
         .input(inputType)
-        .query(({ input, ctx }) => {
-            return ctx.prisma.site.upsert({
-                where: { id: input.id },
-                update: {
+        .mutation(({ input, ctx }) => {
+            return ctx.prisma.site.create({
+                data: {
                     name: input.name,
                     street_address: input.street_address,
                     city: input.city,
@@ -29,23 +28,30 @@ export const siteRouter = createTRPCRouter({
                     country: input.country,
                     zip_code: input.zip_code,
                     description: input.description,
-                    last_updated: new Date(),
-                    last_updated_by: '',
                     client_id: input.client_id,
-                },
-                create: {
-                    name: input.name,
-                    street_address: input.street_address,
-                    city: input.city,
-                    state: input.state,
-                    country: input.country,
-                    zip_code: input.zip_code,
-                    description: input.description,
                     created_by: '',
-                    last_updated_by: '',
-                    client_id: input.client_id,
+                    updated_by: '',
                 }
-            })
+            });
+        }),
+    update: publicProcedure
+        .input(inputType)
+        .mutation(({ input, ctx }) => {
+            return ctx.prisma.site.update({
+                where: { id: input.id },
+                data: {
+                    name: input.name,
+                    street_address: input.street_address,
+                    city: input.city,
+                    state: input.state,
+                    country: input.country,
+                    zip_code: input.zip_code,
+                    description: input.description,
+                    client_id: input.client_id,
+                    updated_at: new Date(),
+                    updated_by: '',
+                },
+            });
         }),
     getById: publicProcedure
         .input(z.object({ id: z.number() }))
@@ -57,5 +63,9 @@ export const siteRouter = createTRPCRouter({
     getAll: publicProcedure
         .query(({ ctx }) => {
             return ctx.prisma.site.findMany();
+        }),
+    getTotalCount: publicProcedure
+        .query(({ ctx }) => {
+            return ctx.prisma.site.count();
         }),
 });

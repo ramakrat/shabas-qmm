@@ -1,14 +1,10 @@
 import * as React from 'react';
 import { type NextPage } from "next";
 
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Card, IconButton, Tab, Tabs, Typography } from '@mui/material';
-import { Add, Edit, ExpandMore } from '@mui/icons-material';
+import { Box, Tab, Tabs } from '@mui/material';
 
+import { api } from '~/utils/api';
 import Layout from "~/components/Layout/Layout";
-import ClientModal from '~/components/Modals/ClientModal';
-import SiteModal from '~/components/Modals/SiteModal';
-import EngagementModal from '~/components/Modals/EngagementModal';
-import AssessmentModal from '~/components/Modals/AssessmentModal';
 import BrowseClients from '~/components/Browse/BrowseClients';
 import BrowseSites from '~/components/Browse/BrowseSites';
 import BrowseAssessments from '~/components/Browse/BrowseAssessments';
@@ -43,6 +39,12 @@ const AdminDashboard: NextPage = () => {
         );
     }
 
+    const totalClient = api.client.getTotalCount.useQuery().data;
+    const totalSite = api.site.getTotalCount.useQuery().data;
+    const totalEngagement = api.engagement.getTotalCount.useQuery().data;
+    const totalAssessment = api.assessment.getTotalCount.useQuery().data;
+    const totaleEngageAssess = (totalEngagement ?? 0) + (totalAssessment ?? 0);
+
     return (
         <Layout active='dashboard'>
             <div className='dashboard'>
@@ -51,24 +53,23 @@ const AdminDashboard: NextPage = () => {
                         <Tabs
                             value={value}
                             onChange={(_event: React.SyntheticEvent, newValue: number) => setValue(newValue)}
-                            className='filters'
                         >
                             <Tab label={
                                 <div className='filter'>
                                     <span>Clients</span>
-                                    <span>1</span>
+                                    <span>{totalClient}</span>
                                 </div>
                             } />
                             <Tab label={
                                 <div className='filter'>
                                     <span>Sites</span>
-                                    <span>4</span>
+                                    <span>{totalSite}</span>
                                 </div>
                             } />
                             <Tab label={
                                 <div className='filter'>
                                     <span>Engagement/Assessments</span>
-                                    <span>15</span>
+                                    <span>{totaleEngageAssess}</span>
                                 </div>
                             } />
                         </Tabs>

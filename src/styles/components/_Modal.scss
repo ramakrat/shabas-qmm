@@ -3,16 +3,20 @@
     justify-content: center;
     align-items: center;
 
-    &.lg .MuiCard-root {
+    &.lg form {
         max-width: breakpoints(lg);
     }
 
-    .MuiCard-root {
+    form {
         max-height: 100%;
         max-width: breakpoints(sm);
         width: 100%;
         padding: 10px;
         margin: 10px;
+    }
+
+    .MuiCard-root {
+        width: 100%;
     }
 
     .MuiCardContent-root {
@@ -22,7 +26,7 @@
         max-height: calc(100vh - 200px);
         overflow-y: auto;
 
-        .MuiTextField-root {
+        .MuiFormControl-root {
             margin: 10px;
         }
 
@@ -41,6 +45,11 @@
                 width: 100%;
                 margin: 20px 0px;
             }
+        }
+
+        .switch {
+            margin: 0px !important;
+            
         }
 
         .MuiStepper-root {

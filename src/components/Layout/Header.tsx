@@ -1,8 +1,8 @@
 import * as React from 'react';
+import Link from 'next/link';
 import { IconButton, Menu, MenuItem, Typography } from '@mui/material';
 import { Settings } from '@mui/icons-material';
-import Link from 'next/link';
-import { Tabs } from './Layout';
+import type { Tabs } from './Layout';
 
 interface Props {
     active: Tabs;
@@ -20,6 +20,7 @@ export const Header: React.FC<Props> = (props) => {
         setAnchorEl(null);
     };
 
+
     return (
         <div className='header'>
             <div className='logo'>
@@ -36,7 +37,7 @@ export const Header: React.FC<Props> = (props) => {
                         Assessments
                     </Typography>
                 </Link>
-                <Link href={'/admin-questions'} className={active == 'questions' ? 'active' : ''}>
+                <Link href={'/questions/1'} className={active == 'questions' ? 'active' : ''}>
                     <Typography>
                         Questions
                     </Typography>

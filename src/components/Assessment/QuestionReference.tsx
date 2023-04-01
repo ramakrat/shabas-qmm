@@ -1,7 +1,8 @@
-import { Button, Card, Typography } from "@mui/material";
+import type { Question } from "@prisma/client";
+import { Card, Typography } from "@mui/material";
 
 interface Props {
-    data?: any;
+    data?: Question;
 }
 
 const QuestionReference: React.FC<Props> = (props) => {

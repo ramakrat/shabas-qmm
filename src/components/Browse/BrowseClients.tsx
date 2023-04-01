@@ -1,49 +1,70 @@
 import React from "react";
-import { NextPage } from "next";
-import { Button, Card, Typography, IconButton } from "@mui/material";
+import type { Client } from "@prisma/client";
+import { Button, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { Add, Edit } from "@mui/icons-material";
+import { api } from "~/utils/api";
 import ClientModal from "../Modals/ClientModal";
 
-const clientList = [{
-    id: 'Client ID',
-    name: 'Client Name',
-    address: '123456 Main Street, City, NY 123456',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-}]
+const BrowseClients: React.FC = () => {
 
-const BrowseClients: NextPage = () => {
-    const [clientData, setClientData] = React.useState<any>(null);
+    const [clientData, setClientData] = React.useState<Client | undefined>(undefined);
     const [clientModal, setClientModal] = React.useState<boolean>(false);
+
+    const clients = api.client.getAll.useQuery().data;
 
     return (
         <>
-            <div>
-                <Button variant='contained' endIcon={<Add />} onClick={() => { setClientData(null); setClientModal(true) }}>
+            <div className='browse-add'>
+                <Button
+                    variant='contained'
+                    endIcon={<Add />}
+                    onClick={() => { setClientData(undefined); setClientModal(true) }}
+                >
                     New Client
                 </Button>
-                <div className='basic-rows'>
-                    <Card className='data-row row-header'>
-                        <Typography>Client ID</Typography>
-                        <Typography>Name</Typography>
-                        <Typography>Address</Typography>
-                        <Typography>Description</Typography>
-                        <Typography>Edit</Typography>
-                    </Card>
-                    {clientList.map((data, i) => {
-                        return (
-                            <Card className='data-row' key={i}>
-                                <Typography>{data.id}</Typography>
-                                <Typography>{data.name}</Typography>
-                                <Typography>{data.address}</Typography>
-                                <Typography>{data.description}</Typography>
-                                <IconButton onClick={() => { setClientData(1); setClientModal(true) }}>
-                                    <Edit fontSize='small' />
-                                </IconButton>
-                            </Card>
-                        )
-                    })}
-                </div>
             </div>
+            <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 650 }} size="small">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell align="center">Client ID</TableCell>
+                            <TableCell align="left">Name</TableCell>
+                            <TableCell align="left">Address</TableCell>
+                            <TableCell align="left">Description</TableCell>
+                            <TableCell align="center">Edit</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {clients && clients.map((data, i) => {
+                            return (
+                                <TableRow
+                                    key={i}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell align="center">
+                                        {data.id}
+                                    </TableCell>
+                                    <TableCell align="left">
+                                        {data.first_name} {data.last_name}
+                                    </TableCell>
+                                    <TableCell align="left">
+                                        {data.street_address}<br />
+                                        {data.city} {data.state}, {data.zip_code}
+                                    </TableCell>
+                                    <TableCell align="left">
+                                        {data.description}
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        <IconButton onClick={() => { setClientData(data); setClientModal(true) }}>
+                                            <Edit fontSize='small' />
+                                        </IconButton>
+                                    </TableCell>
+                                </TableRow>
+                            )
+                        })}
+                    </TableBody>
+                </Table>
+            </TableContainer>
             <ClientModal open={clientModal} setOpen={setClientModal} data={clientData} />
         </>
     );

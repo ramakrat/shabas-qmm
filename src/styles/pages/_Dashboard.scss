@@ -1,46 +1,44 @@
 .dashboard {
     margin: 10px 30px 40px;
 
-    .basic-rows {
+    // =========== ACCORDIONS ===========
 
-        .MuiCard-root {
-            padding: 10px;
-            margin: 10px 0px;
-        }
+    .MuiAccordion-root {
+        margin: 10px 0px;
     }
 
     .MuiAccordion-root:before {
-        background-color: transparent !important;
+        background-color: white !important;
     }
 
     .MuiAccordionSummary-root {
-        margin: 10px 0px;
+        margin: 0px;
+        padding: 0px;
+        // border: 2px solid palette(secondary, light);
+        // border: 2px solid palette(greyscale, 300);
+        // border-radius: shape(borderRadius) shape(borderRadius) 0px 0px;
+
+        .MuiAccordionSummary-expandIconWrapper {
+            padding: 10px;
+        }
+
+
     }
 
     .MuiAccordionSummary-content {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        padding-right: 30px;
+        padding: 0px !important;
+        margin: 0px !important;
     }
 
     .MuiAccordionDetails-root {
-        border-top: 2px solid palette(secondary, dark);
+        border-top: 2px solid palette(primary, main);
         padding: 0px 10px;
-
-        .MuiCard-root {
-            padding: 10px;
-            background-color: transparent;
-            box-shadow: none;
-        }
     }
 
     .data-row {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-
-
         .attribute {
             display: flex;
             flex-direction: column;
@@ -57,13 +55,25 @@
             }
 
         }
+    }
 
-        &.row-header {
-            .MuiTypography-root {
-                color: palette(secondary, dark);
-                font-weight: 600;
-                text-decoration: underline;
-            }
+    // =========== TABLE ===========
+
+    .MuiTableCell-head {
+        // color: palette(secondary, dark);
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    // =========== OTHER ===========
+
+    .browse-add {
+        display: flex;
+        justify-content: flex-end;
+        padding: 0px 0px 20px;
+
+        .MuiButton-root:last-child {
+            margin-left: 10px;
         }
     }
 
@@ -81,6 +91,8 @@
     .filters {
         display: flex;
         flex-direction: row;
+        justify-content: center;
+        padding: 5px 0px 15px;
     }
 
     .filter {
