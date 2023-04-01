@@ -269,6 +269,8 @@ const Question: NextPage = () => {
                 hint: hint,
                 priority: priority,
             })
+
+
             existingGuide.forEach(o => {
                 updateGuide.mutate({
                     id: o.id,
@@ -279,7 +281,7 @@ const Question: NextPage = () => {
                     filter_id: filterSelection.id ?? 1,
                 })
             })
-            guide.forEach(o => {
+            guide.slice().reverse().forEach(o => {
                 if (o.interview_question != '') {
                     createGuide.mutate({
                         active: true,
@@ -290,6 +292,8 @@ const Question: NextPage = () => {
                     })
                 }
             })
+
+
             existingReferences.forEach(o => {
                 updateReference.mutate({
                     id: o.id,
@@ -297,7 +301,7 @@ const Question: NextPage = () => {
                     question_id: data.id,
                 })
             })
-            references.forEach(o => {
+            references.slice().reverse().forEach(o => {
                 if (o.citation != '') {
                     createReference.mutate({
                         citation: o.citation,
@@ -305,6 +309,7 @@ const Question: NextPage = () => {
                     })
                 }
             })
+
 
             existingRatings.forEach(o => {
                 updateRating.mutate({
@@ -317,7 +322,7 @@ const Question: NextPage = () => {
                     filter_id: filterType != 'standard' ? filterSelection.id : undefined,
                 })
             })
-            ratings.forEach(o => {
+            ratings.slice().reverse().forEach(o => {
                 if (o.criteria != '' || o.progression_statement != '') {
                     createRating.mutate({
                         active: true,
@@ -329,6 +334,7 @@ const Question: NextPage = () => {
                     })
                 }
             })
+
 
             if (SME) {
                 updateSME.mutate({
@@ -352,7 +358,8 @@ const Question: NextPage = () => {
     }
 
     const setQuestionSelection = (question: number) => {
-        void push(`/questions/${question}`);
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        push(`/questions/${question}`);
     }
 
     // =========== Retrieve Form Context ===========
