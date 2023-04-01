@@ -1,80 +1,19 @@
 import React from "react";
 import { NextPage } from "next";
-import { Button, Card, Typography, IconButton, Accordion, AccordionDetails, AccordionSummary, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import {
+    Button, IconButton, Accordion, AccordionDetails, AccordionSummary,
+    Table, TableBody, TableCell, TableContainer, TableHead, TableRow
+} from "@mui/material";
 import { Add, Edit, ExpandMore } from "@mui/icons-material";
 import AssessmentModal from "../Modals/AssessmentModal";
 import EngagementModal from "../Modals/EngagementModal";
 import { api } from "~/utils/api";
-
-// const engagementList = [{
-//     id: 'Engagement ID',
-//     client: 'Client ID',
-//     startDate: new Date(),
-//     endDate: new Date(),
-//     poc: 'FirstName Last Name',
-//     shabasPoc: 'FirstName Last Name',
-// }, {
-//     id: 'Engagement ID',
-//     client: 'Client ID',
-//     startDate: new Date(),
-//     endDate: new Date(),
-//     poc: 'FirstName Last Name',
-//     shabasPoc: 'FirstName Last Name',
-// }, {
-//     id: 'Engagement ID',
-//     client: 'Client ID',
-//     startDate: new Date(),
-//     endDate: new Date(),
-//     poc: 'FirstName Last Name',
-//     shabasPoc: 'FirstName Last Name',
-// }]
-
-// const assessmentList = [{
-//     id: 'Assessment ID',
-//     site: 'Site ID',
-//     startDate: new Date(),
-//     endDate: new Date(),
-//     clientPoc: 'FirstName Last Name',
-//     assessors: 'FirstName Last Name',
-//     status: 'Open',
-// }, {
-//     id: 'Assessment ID',
-//     site: 'Site ID',
-//     startDate: new Date(),
-//     endDate: new Date(),
-//     clientPoc: 'FirstName Last Name',
-//     assessors: 'FirstName Last Name',
-//     status: 'Open',
-// }, {
-//     id: 'Assessment ID',
-//     site: 'Site ID',
-//     startDate: new Date(),
-//     endDate: new Date(),
-//     clientPoc: 'FirstName Last Name',
-//     assessors: 'FirstName Last Name',
-//     status: 'Open',
-// }, {
-//     id: 'Assessment ID',
-//     site: 'Site ID',
-//     startDate: new Date(),
-//     endDate: new Date(),
-//     clientPoc: 'FirstName Last Name',
-//     assessors: 'FirstName Last Name',
-//     status: 'Open',
-// }, {
-//     id: 'Assessment ID',
-//     site: 'Site ID',
-//     startDate: new Date(),
-//     endDate: new Date(),
-//     clientPoc: 'FirstName Last Name',
-//     assessors: 'FirstName Last Name',
-//     status: 'Open',
-// }]
+import { Assessment, Engagement, POC } from "@prisma/client";
 
 const BrowseAssessments: NextPage = () => {
 
-    const [engagementData, setEngagementData] = React.useState<any>(null);
-    const [assessmentData, setAssessmentData] = React.useState<any>(null);
+    const [engagementData, setEngagementData] = React.useState<Engagement | null>(null);
+    const [assessmentData, setAssessmentData] = React.useState<Assessment | null>(null);
 
     const [engagementModal, setEngagementModal] = React.useState<boolean>(false);
     const [assessmentModal, setAssessmentModal] = React.useState<boolean>(false);
@@ -116,7 +55,7 @@ const BrowseAssessments: NextPage = () => {
                     <span>15</span>
                 </div>
             </div>
-            {data && data.map((e, i) => {
+            {data && data.map((e: Engagement & { POC: POC[]; Assessment: Assessment[]; }, i) => {
                 return (
                     <Accordion key={i}>
                         <AccordionSummary expandIcon={<ExpandMore />}>
@@ -168,7 +107,7 @@ const BrowseAssessments: NextPage = () => {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {e.Assessment.map((a, i) => {
+                                        {e.Assessment.map((a: Assessment, i) => {
                                             return (
                                                 <TableRow
                                                     key={i}

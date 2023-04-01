@@ -2,13 +2,12 @@ import React from "react";
 import { Add } from "@mui/icons-material";
 import { Button, Card, Typography } from "@mui/material";
 import { Question } from "@prisma/client";
-import { api } from "~/utils/api";
 import QuestionModal from "../Modals/QuestionModal";
 
 interface Props {
     questions: Question[];
     question: number;
-    setQuestion: any;
+    setQuestion: (question: number) => void;
     addOption?: boolean;
 }
 
