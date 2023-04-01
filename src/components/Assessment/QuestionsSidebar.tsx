@@ -1,7 +1,7 @@
 import React from "react";
-import { Add } from "@mui/icons-material";
+import type { Question } from "@prisma/client";
 import { Button, Card, Typography } from "@mui/material";
-import { Question } from "@prisma/client";
+import { Add } from "@mui/icons-material";
 import QuestionModal from "../Modals/QuestionModal";
 
 interface Props {

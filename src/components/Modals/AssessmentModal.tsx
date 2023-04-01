@@ -1,12 +1,12 @@
 import React from "react";
+import type { Assessment } from "@prisma/client";
 import { Button, Card, CardActions, CardContent, CardHeader, FormControl, IconButton, InputLabel, MenuItem, Modal, Paper, Select, Step, StepButton, Stepper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
 import { Add, Close } from "@mui/icons-material";
-import { Assessment } from "@prisma/client";
 import { api } from "~/utils/api";
 
 interface Props {
     open: boolean;
-    setOpen: any;
+    setOpen: (open: boolean) => void;
     data?: Assessment;
 }
 

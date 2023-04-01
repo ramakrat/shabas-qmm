@@ -5,7 +5,7 @@ import { api } from "~/utils/api";
 
 interface Props {
     open: boolean;
-    setOpen: any;
+    setOpen: (open: boolean) => void;
 }
 
 const SiteSpecificModal: React.FC<Props> = (props) => {

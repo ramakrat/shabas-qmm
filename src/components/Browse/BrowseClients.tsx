@@ -1,13 +1,13 @@
 import React from "react";
-import { NextPage } from "next";
-import { Button, Card, Typography, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import type { Client } from "@prisma/client";
+import { Button, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { Add, Edit } from "@mui/icons-material";
-import ClientModal from "../Modals/ClientModal";
 import { api } from "~/utils/api";
+import ClientModal from "../Modals/ClientModal";
 
-const BrowseClients: NextPage = () => {
+const BrowseClients: React.FC = () => {
 
-    const [clientData, setClientData] = React.useState<any>(null);
+    const [clientData, setClientData] = React.useState<Client | undefined>(undefined);
     const [clientModal, setClientModal] = React.useState<boolean>(false);
 
     const clients = api.client.getAll.useQuery().data;
@@ -18,7 +18,7 @@ const BrowseClients: NextPage = () => {
                 <Button
                     variant='contained'
                     endIcon={<Add />}
-                    onClick={() => { setClientData(null); setClientModal(true) }}
+                    onClick={() => { setClientData(undefined); setClientModal(true) }}
                 >
                     New Client
                 </Button>

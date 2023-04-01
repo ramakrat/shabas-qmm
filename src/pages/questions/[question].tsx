@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { type NextPage } from "next";
 import { useRouter } from 'next/router';
-import { Filter } from '@prisma/client';
+import { Filter, InterviewGuide, Rating, Reference } from '@prisma/client';
 
 import {
     Button, Card, Grid, IconButton, MenuItem, Select, Switch,
@@ -24,7 +24,7 @@ const Question: NextPage = () => {
 
 
     const [filterType, setFilterType] = React.useState<string>('standard');
-    const [filterSelection, setFilterSelection] = React.useState<any>({ type: '', id: 0 });
+    const [filterSelection, setFilterSelection] = React.useState<{ type: string, id: number }>({ type: '', id: 0 });
     const [addIndustry, setAddIndustry] = React.useState<boolean>(false);
     const [addApiSegment, setAddApiSegment] = React.useState<boolean>(false);
     const [addSiteSpecific, setAddSiteSpecific] = React.useState<boolean>(false);
@@ -59,12 +59,28 @@ const Question: NextPage = () => {
     const [email, setEmail] = React.useState<string>('');
     const [phone, setPhone] = React.useState<string>('');
 
-    const [existingGuide, setExistingGuide] = React.useState<any[]>([]);
-    const [guide, setGuide] = React.useState<any[]>([{ num: 1, interview_question: '' }]);
-    const [existingReferences, setExistingReferences] = React.useState<any[]>([]);
-    const [references, setReferences] = React.useState<any[]>([{ num: 1, citation: '' }]);
-    const [existingRatings, setExistingRatings] = React.useState<any[]>([]);
-    const [ratings, setRatings] = React.useState<any[]>([]);
+    interface GuideType {
+        id?: number;
+        num: number;
+        interview_question: string;
+    }
+    const [existingGuide, setExistingGuide] = React.useState<GuideType[]>([]);
+    const [guide, setGuide] = React.useState<GuideType[]>([{ num: 1, interview_question: '' }]);
+    interface ReferenceType {
+        id?: number;
+        num: number;
+        citation: string;
+    }
+    const [existingReferences, setExistingReferences] = React.useState<ReferenceType[]>([]);
+    const [references, setReferences] = React.useState<ReferenceType[]>([{ num: 1, citation: '' }]);
+    interface RatingType {
+        id?: number;
+        level_number: number;
+        criteria: string;
+        progression_statement: string;
+    }
+    const [existingRatings, setExistingRatings] = React.useState<RatingType[]>([]);
+    const [ratings, setRatings] = React.useState<RatingType[]>([]);
 
 
 
@@ -113,7 +129,7 @@ const Question: NextPage = () => {
             });
             console.log(existingArray)
             setExistingReferences(existingArray);
-            const array = guide.map(o => {
+            const array = references.map(o => {
                 count++;
                 return {
                     ...o,
@@ -187,7 +203,7 @@ const Question: NextPage = () => {
     const handleRatingChange = (num: number, newVal: string, criteria?: boolean, existing?: boolean) => {
         const ref = existing ? existingRatings : ratings;
         const newArr = ref.map(o => {
-            if (o.num == num) {
+            if (o.level_number == num) {
                 if (criteria)
                     return {
                         ...o,
@@ -358,7 +374,7 @@ const Question: NextPage = () => {
             <Select
                 size='small' displayEmpty
                 value={filterType == filterSelection.type ? filterSelection.id : ''}
-                onChange={(event) => setFilterSelection({ type: filterType, id: event.target.value })}
+                onChange={(event) => setFilterSelection({ type: filterType, id: Number(event.target.value) })}
             >
                 <MenuItem value=''><em>Select a filter...</em></MenuItem>
                 {filterOptions?.map(o => {
@@ -475,7 +491,7 @@ const Question: NextPage = () => {
                                                 <TextField
                                                     placeholder='Criteria...' size='small' multiline
                                                     value={o.criteria}
-                                                    onChange={(event) => handleRatingChange(o.num, event.target.value, true, true)}
+                                                    onChange={(event) => handleRatingChange(o.level_number, event.target.value, true, true)}
                                                 />
                                                 {(i != existingRatings.length - 1 || ratings.length != 0) &&
                                                     <>
@@ -483,7 +499,7 @@ const Question: NextPage = () => {
                                                         <TextField
                                                             placeholder='Progression statement...' size='small' multiline
                                                             value={o.progression_statement}
-                                                            onChange={(event) => handleRatingChange(o.num, event.target.value, false, true)}
+                                                            onChange={(event) => handleRatingChange(o.level_number, event.target.value, false, true)}
                                                         />
                                                     </>
                                                 }
@@ -497,7 +513,7 @@ const Question: NextPage = () => {
                                                 <TextField
                                                     placeholder='Criteria...' size='small' multiline
                                                     value={o.criteria}
-                                                    onChange={(event) => handleRatingChange(o.num, event.target.value, true)}
+                                                    onChange={(event) => handleRatingChange(o.level_number, event.target.value, true)}
                                                 />
                                                 {(i != ratings.length - 1) &&
                                                     <>
@@ -505,7 +521,7 @@ const Question: NextPage = () => {
                                                         <TextField
                                                             placeholder='Progression statement...' size='small' multiline
                                                             value={o.progression_statement}
-                                                            onChange={(event) => handleRatingChange(o.num, event.target.value, false)}
+                                                            onChange={(event) => handleRatingChange(o.level_number, event.target.value, false)}
                                                         />
                                                     </>
                                                 }

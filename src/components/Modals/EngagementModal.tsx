@@ -1,12 +1,12 @@
 import React from "react";
+import type { Engagement } from "@prisma/client";
 import { Button, Card, CardActions, CardContent, CardHeader, FormControl, IconButton, InputLabel, MenuItem, Modal, Select, TextField } from "@mui/material";
 import { Close } from "@mui/icons-material";
-import { Engagement } from "@prisma/client";
 import { api } from "~/utils/api";
 
 interface Props {
     open: boolean;
-    setOpen: any;
+    setOpen: (open: boolean) => void;
     data?: Engagement;
 }
 

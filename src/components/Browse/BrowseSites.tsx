@@ -1,14 +1,13 @@
 import React from "react";
-import { NextPage } from "next";
-import { Button, Card, Typography, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import type { Site } from "@prisma/client";
+import { Button, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { Add, Edit } from "@mui/icons-material";
-import SiteModal from "../Modals/SiteModal";
 import { api } from "~/utils/api";
-import { Site } from "@prisma/client";
+import SiteModal from "../Modals/SiteModal";
 
-const BrowseSites: NextPage = () => {
+const BrowseSites: React.FC = () => {
 
-    const [siteData, setSiteData] = React.useState<any>(null);
+    const [siteData, setSiteData] = React.useState<Site | undefined>(undefined);
     const [siteModal, setSiteModal] = React.useState<boolean>(false);
 
     // const [sites, setSites] = React.useState<Site[]>([]);
@@ -26,7 +25,7 @@ const BrowseSites: NextPage = () => {
                 <Button
                     variant='contained'
                     endIcon={<Add />}
-                    onClick={() => { setSiteData(null); setSiteModal(true) }}
+                    onClick={() => { setSiteData(undefined); setSiteModal(true) }}
                 >
                     New Site
                 </Button>

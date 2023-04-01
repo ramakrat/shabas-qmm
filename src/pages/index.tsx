@@ -1,18 +1,13 @@
 import * as React from 'react';
 import { type NextPage } from "next";
 
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Card, IconButton, Tab, Tabs, Typography } from '@mui/material';
-import { Add, Edit, ExpandMore } from '@mui/icons-material';
+import { Box, Tab, Tabs } from '@mui/material';
 
+import { api } from '~/utils/api';
 import Layout from "~/components/Layout/Layout";
-import ClientModal from '~/components/Modals/ClientModal';
-import SiteModal from '~/components/Modals/SiteModal';
-import EngagementModal from '~/components/Modals/EngagementModal';
-import AssessmentModal from '~/components/Modals/AssessmentModal';
 import BrowseClients from '~/components/Browse/BrowseClients';
 import BrowseSites from '~/components/Browse/BrowseSites';
 import BrowseAssessments from '~/components/Browse/BrowseAssessments';
-import { api } from '~/utils/api';
 
 const AdminDashboard: NextPage = () => {
 

@@ -1,8 +1,8 @@
 import * as React from 'react';
+import Link from 'next/link';
 import { IconButton, Menu, MenuItem, Typography } from '@mui/material';
 import { Settings } from '@mui/icons-material';
-import Link from 'next/link';
-import { Tabs } from './Layout';
+import type { Tabs } from './Layout';
 
 interface Props {
     active: Tabs;

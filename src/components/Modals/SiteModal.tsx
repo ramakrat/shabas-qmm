@@ -1,13 +1,13 @@
 import React from "react";
+import type { Client, Site } from "@prisma/client";
 import { Button, Card, CardActions, CardContent, CardHeader, FormControl, IconButton, InputLabel, MenuItem, Modal, Select, TextField } from "@mui/material";
 import { Close } from "@mui/icons-material";
-import { Client, Site } from "@prisma/client";
 import { api } from "~/utils/api";
 import { Countries } from "~/utils/utils";
 
 interface Props {
     open: boolean;
-    setOpen: any;
+    setOpen: (open: boolean) => void;
     data?: Site;
 }
 
@@ -51,7 +51,7 @@ const SiteModal: React.FC<Props> = (props) => {
     React.useEffect(() => {
         if (create.isSuccess || update.isSuccess == true)
             setOpen(false)
-    }, [create, update])
+    }, [create, update, setOpen])
 
     const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
         event.preventDefault();

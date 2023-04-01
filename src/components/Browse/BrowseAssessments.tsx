@@ -1,19 +1,18 @@
 import React from "react";
-import { NextPage } from "next";
+import type { Assessment, Engagement, POC } from "@prisma/client";
 import {
     Button, IconButton, Accordion, AccordionDetails, AccordionSummary,
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow
 } from "@mui/material";
 import { Add, Edit, ExpandMore } from "@mui/icons-material";
+import { api } from "~/utils/api";
 import AssessmentModal from "../Modals/AssessmentModal";
 import EngagementModal from "../Modals/EngagementModal";
-import { api } from "~/utils/api";
-import { Assessment, Engagement, POC } from "@prisma/client";
 
-const BrowseAssessments: NextPage = () => {
+const BrowseAssessments: React.FC = () => {
 
-    const [engagementData, setEngagementData] = React.useState<Engagement | null>(null);
-    const [assessmentData, setAssessmentData] = React.useState<Assessment | null>(null);
+    const [engagementData, setEngagementData] = React.useState<Engagement | undefined>(undefined);
+    const [assessmentData, setAssessmentData] = React.useState<Assessment | undefined>(undefined);
 
     const [engagementModal, setEngagementModal] = React.useState<boolean>(false);
     const [assessmentModal, setAssessmentModal] = React.useState<boolean>(false);
@@ -26,10 +25,10 @@ const BrowseAssessments: NextPage = () => {
     return (
         <>
             <div className='browse-add'>
-                <Button variant='contained' endIcon={<Add />} onClick={() => { setEngagementData(null); setEngagementModal(true) }}>
+                <Button variant='contained' endIcon={<Add />} onClick={() => { setEngagementData(undefined); setEngagementModal(true) }}>
                     New Engagement
                 </Button>
-                <Button variant='contained' endIcon={<Add />} onClick={() => { setAssessmentData(null); setAssessmentModal(true) }}>
+                <Button variant='contained' endIcon={<Add />} onClick={() => { setAssessmentData(undefined); setAssessmentModal(true) }}>
                     New Assessment
                 </Button>
             </div>

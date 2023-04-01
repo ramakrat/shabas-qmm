@@ -1,13 +1,13 @@
 import React from "react";
+import type { Client } from "@prisma/client";
 import { Button, Card, CardActions, CardContent, CardHeader, FormControl, IconButton, InputLabel, MenuItem, Modal, Select, TextField } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { Countries } from "~/utils/utils";
 import { api } from "~/utils/api";
-import { Client } from "@prisma/client";
 
 interface Props {
     open: boolean;
-    setOpen: any;
+    setOpen: (open: boolean) => void;
     data?: Client;
 }
 

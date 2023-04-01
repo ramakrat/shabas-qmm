@@ -1,5 +1,3 @@
-import { number } from "zod";
-
 export interface Client {
     id: number;
 
