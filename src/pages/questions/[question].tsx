@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { type NextPage } from "next";
 import { useRouter } from 'next/router';
-import { Filter, InterviewGuide, Rating, Reference } from '@prisma/client';
+import type { Filter } from '@prisma/client';
 
 import {
     Button, Card, Grid, IconButton, MenuItem, Select, Switch,
@@ -25,7 +25,7 @@ const Question: NextPage = () => {
 
 
     const [filterType, setFilterType] = React.useState<string>('standard');
-    const [filterSelection, setFilterSelection] = React.useState<{ type: string, id: number }>({ type: '', id: 0 });
+    const [filterSelection, setFilterSelection] = React.useState<Filter | null>(null);
     const [addIndustry, setAddIndustry] = React.useState<boolean>(false);
     const [addApiSegment, setAddApiSegment] = React.useState<boolean>(false);
     const [addSiteSpecific, setAddSiteSpecific] = React.useState<boolean>(false);
@@ -38,7 +38,7 @@ const Question: NextPage = () => {
     const SME = api.sme.getByQuestionId.useQuery({ id: Number(question) }).data;
     const ratingData = api.rating.getByQuestionFilter.useQuery({
         questionId: Number(question),
-        filterId: filterType != 'standard' ? filterSelection.id : undefined,
+        filterId: (filterType != 'standard' && filterSelection) ? filterSelection.id : undefined,
     }).data;
 
 
@@ -82,7 +82,6 @@ const Question: NextPage = () => {
     }
     const [existingRatings, setExistingRatings] = React.useState<RatingType[]>([]);
     const [ratings, setRatings] = React.useState<RatingType[]>([]);
-
 
 
     React.useEffect(() => {
@@ -257,7 +256,10 @@ const Question: NextPage = () => {
     const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
         event.preventDefault();
 
+
         if (data) {
+            let succeeded = true;
+
             update.mutate({
                 id: data.id,
                 active: active,
@@ -268,6 +270,11 @@ const Question: NextPage = () => {
                 topic_area: topicArea,
                 hint: hint,
                 priority: priority,
+            }, {
+                onError(err) {
+                    succeeded = false;
+                    console.log(err);
+                }
             })
 
 
@@ -278,7 +285,12 @@ const Question: NextPage = () => {
                     interview_question: o.interview_question,
                     question_id: data.id,
                     site_id: 1,
-                    filter_id: filterSelection.id ?? 1,
+                    filter_id: filterSelection ? filterSelection.id : 1,
+                }, {
+                    onError(err) {
+                        succeeded = false;
+                        console.log(err);
+                    }
                 })
             })
             guide.slice().reverse().forEach(o => {
@@ -288,7 +300,12 @@ const Question: NextPage = () => {
                         interview_question: o.interview_question,
                         question_id: data.id,
                         site_id: 1,
-                        filter_id: filterSelection.id ?? 1,
+                        filter_id: filterSelection ? filterSelection.id : 1,
+                    }, {
+                        onError(err) {
+                            succeeded = false;
+                            console.log(err);
+                        }
                     })
                 }
             })
@@ -299,6 +316,11 @@ const Question: NextPage = () => {
                     id: o.id,
                     citation: o.citation,
                     question_id: data.id,
+                }, {
+                    onError(err) {
+                        succeeded = false;
+                        console.log(err);
+                    }
                 })
             })
             references.slice().reverse().forEach(o => {
@@ -306,6 +328,11 @@ const Question: NextPage = () => {
                     createReference.mutate({
                         citation: o.citation,
                         question_id: data.id,
+                    }, {
+                        onError(err) {
+                            succeeded = false;
+                            console.log(err);
+                        }
                     })
                 }
             })
@@ -319,7 +346,12 @@ const Question: NextPage = () => {
                     criteria: o.criteria,
                     progression_statement: o.progression_statement,
                     question_id: data.id,
-                    filter_id: filterType != 'standard' ? filterSelection.id : undefined,
+                    filter_id: (filterType != 'standard' && filterSelection) ? filterSelection.id : undefined,
+                }, {
+                    onError(err) {
+                        succeeded = false;
+                        console.log(err);
+                    }
                 })
             })
             ratings.slice().reverse().forEach(o => {
@@ -330,7 +362,12 @@ const Question: NextPage = () => {
                         criteria: o.criteria,
                         progression_statement: o.progression_statement,
                         question_id: data.id,
-                        filter_id: filterType != 'standard' ? filterSelection.id : undefined,
+                        filter_id: (filterType != 'standard' && filterSelection) ? filterSelection.id : undefined,
+                    }, {
+                        onError(err) {
+                            succeeded = false;
+                            console.log(err);
+                        }
                     })
                 }
             })
@@ -344,6 +381,11 @@ const Question: NextPage = () => {
                     mobile_phone: phone,
                     email: email,
                     question_id: data.id,
+                }, {
+                    onError(err) {
+                        succeeded = false;
+                        console.log(err);
+                    }
                 })
             } else {
                 createSME.mutate({
@@ -352,7 +394,16 @@ const Question: NextPage = () => {
                     mobile_phone: phone,
                     email: email,
                     question_id: data.id,
+                }, {
+                    onError(err) {
+                        succeeded = false;
+                        console.log(err);
+                    }
                 })
+            }
+
+            if (succeeded) {
+
             }
         }
     }
@@ -364,11 +415,12 @@ const Question: NextPage = () => {
 
     // =========== Retrieve Form Context ===========
 
-    const questions = api.question.getAll.useQuery().data;
+    const questions = api.question.getAll.useQuery(true).data;
 
-    const industries = api.filter.getAllIndustry.useQuery().data;
-    const apiSegments = api.filter.getAllApiSegment.useQuery().data;
-    const siteSpecifics = api.filter.getAllSiteSpecific.useQuery().data;
+    // TODO: Don't run query unless modal closed
+    const industries = api.filter.getAllIndustry.useQuery(addIndustry).data;
+    const apiSegments = api.filter.getAllApiSegment.useQuery(addApiSegment).data;
+    const siteSpecifics = api.filter.getAllSiteSpecific.useQuery(addSiteSpecific).data;
 
 
     const filterSelect = () => {
@@ -377,16 +429,22 @@ const Question: NextPage = () => {
         let filterOptions: Filter[] | undefined = industries;
         if (filterType == 'api-segment') filterOptions = apiSegments;
         if (filterType == 'site-specific') filterOptions = siteSpecifics;
+
         return (<>
             <Typography style={{ padding: '0px 10px 0px 5px' }}>:</Typography>
             <Select
                 size='small' displayEmpty
-                value={filterType == filterSelection.type ? filterSelection.id : ''}
-                onChange={(event) => setFilterSelection({ type: filterType, id: Number(event.target.value) })}
+                value={filterSelection ? filterSelection.id : ''}
+                onChange={(event) => {
+                    if (filterOptions) {
+                        const selected = filterOptions[Number(event.target.value)];
+                        if (selected) setFilterSelection(selected);
+                    }
+                }}
             >
                 <MenuItem value=''><em>Select a filter...</em></MenuItem>
-                {filterOptions?.map(o => {
-                    return <MenuItem key={o.id} value={o.id}>{o.name}</MenuItem>;
+                {filterOptions?.map((o, i) => {
+                    return <MenuItem key={i} value={i}>{o.name}</MenuItem>;
                 })}
                 <MenuItem>
                     <Button
@@ -477,7 +535,12 @@ const Question: NextPage = () => {
                             </Grid>
                             <Grid item xs={8}>
                                 <Card className='filters'>
-                                    <ToggleButtonGroup exclusive size='small' value={filterType} onChange={(_event, value: string) => setFilterType(value)}>
+                                    <ToggleButtonGroup
+                                        exclusive
+                                        size='small'
+                                        value={filterType}
+                                        onChange={(_event, value: string) => { if (value) setFilterType(value) }}
+                                    >
                                         <ToggleButton value='standard'>Standard</ToggleButton>
                                         <ToggleButton value='industry'>Industry</ToggleButton>
                                         <ToggleButton value='api-segment'>API Segment</ToggleButton>

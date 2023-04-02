@@ -36,18 +36,21 @@ export const filterRouter = createTRPCRouter({
             });
         }),
     getAllIndustry: publicProcedure
+        .input(z.boolean())
         .query(({ ctx }) => {
             return ctx.prisma.filter.findMany({
                 where: { type: 'industry' }
             });
         }),
     getAllApiSegment: publicProcedure
+        .input(z.boolean())
         .query(({ ctx }) => {
             return ctx.prisma.filter.findMany({
                 where: { type: 'api-segment' }
             });
         }),
     getAllSiteSpecific: publicProcedure
+        .input(z.boolean())
         .query(({ ctx }) => {
             return ctx.prisma.filter.findMany({
                 where: { type: 'site-specific' }

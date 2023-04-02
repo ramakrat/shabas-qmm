@@ -60,6 +60,7 @@ export const questionRouter = createTRPCRouter({
             });
         }),
     getAll: publicProcedure
+        .input(z.boolean())
         .query(({ ctx }) => {
             return ctx.prisma.question.findMany();
         }),
