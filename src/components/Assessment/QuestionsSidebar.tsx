@@ -20,7 +20,7 @@ const QuestionsSidebar: React.FC<Props> = (props) => {
     return (
         <>
             <Card className='questions-sidebar'>
-                {questions.find(o => o.id == question) &&
+                {questions.find((o: Question) => o.id == question) &&
                     <div className='question-steppers'>
                         <Button
                             variant='contained'
@@ -31,14 +31,14 @@ const QuestionsSidebar: React.FC<Props> = (props) => {
                         </Button>
                         <Button
                             variant='contained'
-                            disabled={questions[questions.length] ? (question == (questions[questions.length] as Question).id) : false}
+                            disabled={questions[questions.length - 1] ? (question == (questions[questions.length - 1] as Question).id) : false}
                             onClick={() => setQuestion(question + 1)}
                         >
                             Next
                         </Button>
                     </div>
                 }
-                {questions.map(o => {
+                {questions.map((o: Question) => {
                     return (
                         <Typography
                             key={o.id}

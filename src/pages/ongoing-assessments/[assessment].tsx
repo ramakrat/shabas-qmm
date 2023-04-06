@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { type NextPage } from "next";
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import type { Answer, Assessment, AssessmentQuestion, Filter, InterviewGuide, Question, Rating, Reference } from '@prisma/client';
 
 import { Button, Card, Grid, TextField, Typography } from '@mui/material';
@@ -43,17 +43,17 @@ const OngoingAssessment: NextPage = () => {
         return q as Question;
     }
 
-    const allQuestions = data?.AssessmentQuestion.slice();
+    const questions = data?.AssessmentQuestion;
 
-    const questions = allQuestions && allQuestions.map(o => { return convertToQuestion(o.question) });
+    const [question, setQuestion] = React.useState<number>(questions && questions[0] ? questions[0].question.id : -1);
 
-    const [question, setQuestion] = React.useState<number>(questions && questions[0] ? questions[0].id : -1);
-
-    const selectedAssessmentQuestion = allQuestions && allQuestions.find(o => o.id == question);
-    const questionRef = allQuestions && selectedAssessmentQuestion?.question;
+    const selectedAssessmentQuestion = data?.AssessmentQuestion.find(o => o.question.id == question);
+    const questionRef = selectedAssessmentQuestion?.question;
     const ratings = api.rating.getByQuestionFilter.useQuery({ questionId: questionRef?.id, filterId: selectedAssessmentQuestion?.filter_id ?? undefined }).data;
     const guide = api.interviewGuide.getByQuestionId.useQuery({ id: questionRef?.id }).data;
     const references = api.reference.getByQuestionId.useQuery({ id: questionRef?.id }).data
+
+
 
     // =========== Input Field States ===========
 
@@ -83,21 +83,27 @@ const OngoingAssessment: NextPage = () => {
 
     const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
         event.preventDefault();
-        if (selectedAssessmentQuestion && selectedAssessmentQuestion.answer) {
-            update.mutate({
-                id: selectedAssessmentQuestion.answer.id,
-                assessment_question_id: data.id,
-                assessor_rating: rating,
-                assessor_explanation: rationale,
-                assessor_evidence: notes,
-            })
-        } else {
-            create.mutate({
-                assessment_question_id: data.id,
-                assessor_rating: rating,
-                assessor_explanation: rationale,
-                assessor_evidence: notes,
-            })
+        if (selectedAssessmentQuestion) {
+            if (selectedAssessmentQuestion.answer) {
+                update.mutate({
+                    id: selectedAssessmentQuestion.answer.id,
+                    assessment_question_id: selectedAssessmentQuestion.id,
+                    assessor_rating: rating,
+                    assessor_explanation: rationale,
+                    assessor_evidence: notes,
+                }, {
+                    onSuccess() { Router.reload() }
+                })
+            } else {
+                create.mutate({
+                    assessment_question_id: selectedAssessmentQuestion.id,
+                    assessor_rating: rating,
+                    assessor_explanation: rationale,
+                    assessor_evidence: notes,
+                }, {
+                    onSuccess() { Router.reload() }
+                })
+            }
         }
     }
 
@@ -106,85 +112,87 @@ const OngoingAssessment: NextPage = () => {
             <div className='assessment'>
                 <Grid container spacing={2}>
                     <Grid item xs={2}>
-                        {questions && <QuestionsSidebar questions={questions} question={question} setQuestion={setQuestion} />}
+                        {questions && <QuestionsSidebar questions={questions.map(o => convertToQuestion(o.question))} question={question} setQuestion={setQuestion} />}
                     </Grid>
-                    <Grid item xs={10} container spacing={2}>
-                        <Grid item xs={12}>
-                            <QuestionContext question={questionRef && convertToQuestion(questionRef)} />
-                        </Grid>
-                        <Grid item xs={8}>
-                            <form onSubmit={handleSubmit}>
-                                <Card className='pre-questions'>
-                                    <div>
-                                        <div className='rating'>
-                                            <div className='rating-input'>
-                                                <Typography>Rating</Typography>
-                                                <Info fontSize='small' onClick={() => setShowRating(!showRating)} />
-                                                <TextField
-                                                    name='rating' label='' size='small'
-                                                    value={rating}
-                                                    onChange={e => setRating(e.target.value)}
-                                                />
+                    {selectedAssessmentQuestion &&
+                        <Grid item xs={10} container spacing={2}>
+                            <Grid item xs={12}>
+                                <QuestionContext question={questionRef && convertToQuestion(questionRef)} />
+                            </Grid>
+                            <Grid item xs={8}>
+                                <form onSubmit={handleSubmit}>
+                                    <Card className='pre-questions'>
+                                        <div>
+                                            <div className='rating'>
+                                                <div className='rating-input'>
+                                                    <Typography>Rating</Typography>
+                                                    <Info fontSize='small' onClick={() => setShowRating(!showRating)} />
+                                                    <TextField
+                                                        name='rating' label='' size='small'
+                                                        value={rating}
+                                                        onChange={e => setRating(e.target.value)}
+                                                    />
+                                                </div>
+                                                {(showRating && ratings) &&
+                                                    ratings.map((r, i) => {
+                                                        return (
+                                                            <div key={i}>
+                                                                <div>Level {r.level_number}: {r.criteria}</div>
+                                                                {i !== ratings.length - 1 &&
+                                                                    <div>Progression Statement: {r.progression_statement}</div>
+                                                                }
+                                                            </div>
+                                                        )
+                                                    })
+                                                }
                                             </div>
-                                            {(showRating && ratings) &&
-                                                ratings.map((r, i) => {
-                                                    return (
-                                                        <div key={i}>
-                                                            <div>Level {r.level_number}: {r.criteria}</div>
-                                                            {i !== ratings.length - 1 &&
-                                                                <div>Progression Statement: {r.progression_statement}</div>
-                                                            }
-                                                        </div>
-                                                    )
-                                                })
-                                            }
                                         </div>
+                                    </Card>
+                                    <Card className='question-content'>
+                                        <Typography>Rationale</Typography>
+                                        <TextField
+                                            name='rationale' label='' size='small' multiline
+                                            value={rationale}
+                                            onChange={e => setRationale(e.target.value)}
+                                        />
+                                        <Typography>Notes</Typography>
+                                        <TextField
+                                            name='notes' label='' size='small' multiline
+                                            value={notes}
+                                            onChange={e => setNotes(e.target.value)}
+                                        />
+                                    </Card>
+                                    <Card className='actions simple'>
+                                        <Button variant='contained' type='submit'>Save</Button>
+                                    </Card>
+                                </form>
+                            </Grid>
+                            <Grid item xs={4}>
+                                <Card className='reference'>
+                                    <div>
+                                        <Typography>Reference Questions</Typography>
+                                        {guide?.map((r, i) => {
+                                            return (
+                                                <div key={i}>
+                                                    <span>{i + 1}. {r.interview_question}</span>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                    <div>
+                                        <Typography>References</Typography>
+                                        {references?.map((r, i) => {
+                                            return (
+                                                <div key={i}>
+                                                    <span>{i + 1}. {r.citation}</span>
+                                                </div>
+                                            )
+                                        })}
                                     </div>
                                 </Card>
-                                <Card className='question-content'>
-                                    <Typography>Rationale</Typography>
-                                    <TextField
-                                        name='rationale' label='' size='small' multiline
-                                        value={rationale}
-                                        onChange={e => setRationale(e.target.value)}
-                                    />
-                                    <Typography>Notes</Typography>
-                                    <TextField
-                                        name='notes' label='' size='small' multiline
-                                        value={notes}
-                                        onChange={e => setNotes(e.target.value)}
-                                    />
-                                </Card>
-                                <Card className='actions simple'>
-                                    <Button variant='contained' type='submit'>Save</Button>
-                                </Card>
-                            </form>
+                            </Grid>
                         </Grid>
-                        <Grid item xs={4}>
-                            <Card className='reference'>
-                                <div>
-                                    <Typography>Reference Questions</Typography>
-                                    {guide?.map((r, i) => {
-                                        return (
-                                            <div key={i}>
-                                                <span>{i + 1}. {r.interview_question}</span>
-                                            </div>
-                                        )
-                                    })}
-                                </div>
-                                <div>
-                                    <Typography>References</Typography>
-                                    {references?.map((r, i) => {
-                                        return (
-                                            <div key={i}>
-                                                <span>{i + 1}. {r.citation}</span>
-                                            </div>
-                                        )
-                                    })}
-                                </div>
-                            </Card>
-                        </Grid>
-                    </Grid>
+                    }
                 </Grid>
             </div>
         </Layout>

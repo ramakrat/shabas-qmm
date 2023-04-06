@@ -7,12 +7,11 @@ import { api } from "~/utils/api";
 interface Props {
     open: boolean;
     setOpen: (open: boolean) => void;
-    data?: Client;
 }
 
 const QuestionModal: React.FC<Props> = (props) => {
 
-    const { open, setOpen, data } = props;
+    const { open, setOpen } = props;
 
     // =========== Input Field States ===========
 
@@ -29,51 +28,32 @@ const QuestionModal: React.FC<Props> = (props) => {
     // =========== Submission Management ===========
 
     const create = api.question.create.useMutation();
-    const update = api.question.update.useMutation();
 
     React.useEffect(() => {
-        if (data) {
-            // setFirstName(data.first_name);
-            // setLastName(data.last_name);
-            // setStreetAddress(data.street_address);
-            // setCity(data.city);
-            // setState(data.state);
-            // setZipCode(data.zip_code);
-            // setCountry(data.country);
-            // setDescription(data.description);
-        }
-    }, [data])
+        setActive(true);
+        setNumber('');
+        setQuestion('');
+        setPillar('');
+        setPracticeArea('');
+        setTopicArea('');
+        setHint('');
+        setPriority('');
+    }, [open])
 
     const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
         event.preventDefault();
-        if (data) {
-            update.mutate({
-                id: data.id,
-                active: active,
-                number: number,
-                question: question,
-                pillar: pillar,
-                practice_area: practiceArea,
-                topic_area: topicArea,
-                hint: hint,
-                priority: priority,
-            }, {
-                onSuccess() { setOpen(false) }
-            })
-        } else {
-            create.mutate({
-                active: active,
-                number: number,
-                question: question,
-                pillar: pillar,
-                practice_area: practiceArea,
-                topic_area: topicArea,
-                hint: hint,
-                priority: priority,
-            }, {
-                onSuccess() { setOpen(false) }
-            })
-        }
+        create.mutate({
+            active: active,
+            number: number,
+            question: question,
+            pillar: pillar,
+            practice_area: practiceArea,
+            topic_area: topicArea,
+            hint: hint,
+            priority: priority,
+        }, {
+            onSuccess() { setOpen(false) }
+        })
     }
 
 
@@ -82,7 +62,7 @@ const QuestionModal: React.FC<Props> = (props) => {
             <form onSubmit={handleSubmit}>
                 <Card>
                     <CardHeader
-                        title={data ? 'Edit Question' : 'Create New Question'}
+                        title={'Create New Question'}
                         action={
                             <IconButton onClick={() => setOpen(false)}>
                                 <Close />
@@ -139,10 +119,7 @@ const QuestionModal: React.FC<Props> = (props) => {
                     </CardContent>
                     <CardActions>
                         <Button variant='contained' color='error' onClick={() => setOpen(false)}>Cancel</Button>
-                        {data ?
-                            <Button variant='contained' type='submit'>Save</Button> :
-                            <Button variant='contained' type='submit'>Create</Button>
-                        }
+                        <Button variant='contained' type='submit'>Create</Button>
                     </CardActions>
                 </Card>
             </form>

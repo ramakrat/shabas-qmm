@@ -154,6 +154,7 @@ const AssessmentModal: React.FC<Props> = (props) => {
                 setOpen(false)
             }
         } else {
+            let succeeded = true;
             create.mutate({
                 status: status,
                 start_date: startDate,
@@ -163,6 +164,7 @@ const AssessmentModal: React.FC<Props> = (props) => {
                 engagement_id: engagementId,
             }, {
                 onSuccess(data) {
+                    console.log('hit');
                     newQuestions.forEach(o => {
                         assessQuestionCreate.mutate({
                             question_id: o.question.id,
@@ -170,10 +172,20 @@ const AssessmentModal: React.FC<Props> = (props) => {
                             filter_id: o.filterSelection != -1 ? o.filterSelection : undefined,
                         })
                     }, {
-                        onSuccess() { setOpen(false) }
+                        onError(err: any) {
+                            succeeded = false;
+                            console.log(err);
+                        }
                     })
+                },
+                onError(err) {
+                    succeeded = false;
+                    console.log(err);
                 }
             })
+            if (succeeded) {
+                setOpen(false)
+            }
         }
     }
 

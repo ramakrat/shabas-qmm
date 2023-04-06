@@ -38,6 +38,12 @@ const EngagementModal: React.FC<Props> = (props) => {
             setEndDate(data.end_date);
             setDescription(data.description);
             setClientId(data.client_id);
+        } else {
+            setStatus('');
+            setStartDate(new Date());
+            setEndDate(new Date());
+            setDescription('');
+            setClientId(1);
         }
     }, [data])
 

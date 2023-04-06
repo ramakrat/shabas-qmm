@@ -16,8 +16,8 @@ const inputType = z.object({
 export const assessmentRouter = createTRPCRouter({
     create: publicProcedure
         .input(inputType)
-        .mutation(({ input, ctx }) => {
-            return ctx.prisma.assessment.create({
+        .mutation(async ({ input, ctx }) => {
+            return await ctx.prisma.assessment.create({
                 data: {
                     description: input.description,
                     status: input.status,

@@ -45,6 +45,15 @@ const SiteModal: React.FC<Props> = (props) => {
             setCountry(data.country);
             setDescription(data.description);
             setClientId(data.client_id);
+        } else {
+            setName('');
+            setStreetAddress('');
+            setCity('');
+            setState('');
+            setZipCode('');
+            setCountry('US');
+            setDescription('');
+            setClientId(1);
         }
     }, [data])
 

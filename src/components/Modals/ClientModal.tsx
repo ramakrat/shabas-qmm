@@ -42,6 +42,15 @@ const ClientModal: React.FC<Props> = (props) => {
             setZipCode(data.zip_code);
             setCountry(data.country);
             setDescription(data.description);
+        } else {
+            setFirstName('');
+            setLastName('');
+            setStreetAddress('');
+            setCity('');
+            setState('');
+            setZipCode('');
+            setCountry('US');
+            setDescription('');
         }
     }, [data])
 
