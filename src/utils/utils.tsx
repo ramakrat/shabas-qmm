@@ -254,3 +254,12 @@ export const Countries = [
     { "name": "Zambia", "code": "ZM" },
     { "name": "Zimbabwe", "code": "ZW" }
 ]
+
+
+export const titleCase = (text: string) => {
+    const noHyphens = text.replace(/-/g, " ");
+    const capitalized = noHyphens.toLowerCase().split(' ').map(function (word) {
+        return (word.charAt(0).toUpperCase() + word.slice(1));
+    }).join(' ');
+    return capitalized;
+}
