@@ -57,7 +57,7 @@ const AssessmentModal: React.FC<Props> = (props) => {
     const [newQuestions, setNewQuestions] = React.useState<QuestionType[]>([]);
 
     const [addQuestion, setAddQuestion] = React.useState<boolean>(false);
-    const [question, setQuestion] = React.useState<Question | undefined>(questions ? questions[0] : undefined);
+    const [question, setQuestion] = React.useState<Question | undefined>(undefined);
 
     const steps = ['General Information', 'Edit Questions'];
     const [activeStep, setActiveStep] = React.useState(0);
@@ -365,8 +365,6 @@ const AssessmentModal: React.FC<Props> = (props) => {
                                         {questions && questions.map((o, i) => {
                                             const existsA = existingQuestions.find(q => q.question.id == o.id);
                                             const existsB = newQuestions.find(q => q.question.id == o.id);
-                                            console.log(existsA)
-                                            console.log(existsB)
                                             if (existsA || existsB) return undefined;
                                             return (
                                                 <Typography
@@ -383,6 +381,7 @@ const AssessmentModal: React.FC<Props> = (props) => {
                                             onClick={() => {
                                                 const newArr = newQuestions;
                                                 newArr.push({ question: question, filterSelection: -1 } as QuestionType)
+                                                setQuestion(undefined);
                                                 setNewQuestions(newArr);
                                                 setAddQuestion(false);
                                             }}
