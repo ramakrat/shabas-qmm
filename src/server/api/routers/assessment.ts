@@ -54,6 +54,49 @@ export const assessmentRouter = createTRPCRouter({
                 where: { id: input.id }
             });
         }),
+    getByIdInclude: publicProcedure
+        .input(z.object({ id: z.number().optional() }))
+        .query(({ input, ctx }) => {
+            if (input.id)
+                return ctx.prisma.assessment.findUnique({
+                    where: { id: input.id },
+                    include: {
+                        AssessmentQuestion: {
+                            include: {
+                                filter: true,
+                                question: {
+                                    include: {
+                                        Rating: {
+                                            include: {
+                                                filter: true
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            return null;
+        }),
+    getByIdIncludeAssessor: publicProcedure
+        .input(z.object({ id: z.number().optional() }))
+        .query(async ({ input, ctx }) => {
+            if (input.id)
+                return await ctx.prisma.assessment.findUnique({
+                    where: { id: input.id },
+                    include: {
+                        AssessmentQuestion: {
+                            include: {
+                                filter: true,
+                                answer: true,
+                                question: true,
+                            }
+                        }
+                    }
+                });
+            return null;
+        }),
     getAll: publicProcedure
         .input(z.boolean())
         .query(({ ctx }) => {

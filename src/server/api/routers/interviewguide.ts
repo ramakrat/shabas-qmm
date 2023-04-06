@@ -45,7 +45,7 @@ export const interviewGuideRouter = createTRPCRouter({
             })
         }),
     getByQuestionId: publicProcedure
-        .input(z.object({ id: z.number() }))
+        .input(z.object({ id: z.number().optional() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.interviewGuide.findMany({
                 where: { question_id: input.id },
@@ -53,7 +53,7 @@ export const interviewGuideRouter = createTRPCRouter({
             });
         }),
     getById: publicProcedure
-        .input(z.object({ id: z.number() }))
+        .input(z.object({ id: z.number().optional() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.interviewGuide.findUnique({
                 where: { id: input.id }

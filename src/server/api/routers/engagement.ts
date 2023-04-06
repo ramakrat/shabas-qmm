@@ -64,12 +64,7 @@ export const engagementRouter = createTRPCRouter({
     getAll: publicProcedure
         .input(z.boolean())
         .query(({ ctx }) => {
-            return ctx.prisma.engagement.findMany({
-                include: {
-                    Assessment: true,
-                    POC: true,
-                }
-            });
+            return ctx.prisma.engagement.findMany();
         }),
     getTotalCount: publicProcedure
         .query(({ ctx }) => {
