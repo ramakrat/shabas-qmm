@@ -42,12 +42,12 @@ export const Header: React.FC<Props> = (props) => {
                         Questions
                     </Typography>
                 </Link>
-                <Link href={'/assessor-ongoing-assessments'} className={active == 'ongoing-assessments' ? 'active' : ''}>
+                <Link href={'/ongoing-assessments'} className={active == 'ongoing-assessments' ? 'active' : ''}>
                     <Typography>
                         Ongoing Assessments
                     </Typography>
                 </Link>
-                <Link href={'/assessor-review-assessments'} className={active == 'review-assessments' ? 'active' : ''}>
+                <Link href={'/review-assessments'} className={active == 'review-assessments' ? 'active' : ''}>
                     <Typography>
                         Review Assessments
                     </Typography>
