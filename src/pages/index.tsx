@@ -8,6 +8,7 @@ import Layout from "~/components/Layout/Layout";
 import BrowseClients from '~/components/Browse/BrowseClients';
 import BrowseSites from '~/components/Browse/BrowseSites';
 import BrowseAssessments from '~/components/Browse/BrowseAssessments';
+import BrowsePOCs from '~/components/Browse/BrowsePOCs';
 
 const AdminDashboard: NextPage = () => {
 
@@ -44,6 +45,7 @@ const AdminDashboard: NextPage = () => {
     const totalSite = api.site.getTotalCount.useQuery().data;
     const totalEngagement = api.engagement.getTotalCount.useQuery().data;
     const totalAssessment = api.assessment.getTotalCount.useQuery().data;
+    const totalPOC = api.poc.getTotalCount.useQuery().data;
     const totaleEngageAssess = (totalEngagement ?? 0) + (totalAssessment ?? 0);
 
     return (
@@ -73,6 +75,12 @@ const AdminDashboard: NextPage = () => {
                                     <span>{totaleEngageAssess}</span>
                                 </div>
                             } />
+                            <Tab label={
+                                <div className='filter'>
+                                    <span>POC</span>
+                                    <span>{totalPOC}</span>
+                                </div>
+                            } />
                         </Tabs>
                     </Box>
                     <TabPanel value={value} index={0}>
@@ -83,6 +91,9 @@ const AdminDashboard: NextPage = () => {
                     </TabPanel>
                     <TabPanel value={value} index={2}>
                         <BrowseAssessments />
+                    </TabPanel>
+                    <TabPanel value={value} index={3}>
+                        <BrowsePOCs />
                     </TabPanel>
                 </Box>
             </div>

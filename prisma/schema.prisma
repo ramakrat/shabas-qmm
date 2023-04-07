@@ -73,17 +73,17 @@ model POC {
     email        String
     staff        String
 
-    user_id Int
-    user    User @relation(fields: [user_id], references: [id])
+    user_id Int?
+    user    User? @relation(fields: [user_id], references: [id])
 
-    client_id Int
-    Client    Client @relation(fields: [client_id], references: [id])
+    client_id Int?
+    Client    Client? @relation(fields: [client_id], references: [id])
 
-    engagement_id Int
-    engagement    Engagement @relation(fields: [engagement_id], references: [id])
+    engagement_id Int?
+    engagement    Engagement? @relation(fields: [engagement_id], references: [id])
 
-    site_id Int
-    site    Site @relation(fields: [site_id], references: [id])
+    site_id Int?
+    site    Site? @relation(fields: [site_id], references: [id])
 
     created_at DateTime @default(now())
     updated_at DateTime @default(now())
