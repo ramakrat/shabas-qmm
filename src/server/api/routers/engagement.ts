@@ -53,7 +53,10 @@ export const engagementRouter = createTRPCRouter({
         }),
     getAllInclude: publicProcedure
         .input(z.array(z.boolean()))
-        .query(({ ctx }) => {
+        .query(async ({ ctx }) => {
+            // await ctx.prisma.engagement.update({
+            //     where: {}
+            // })
             return ctx.prisma.engagement.findMany({
                 include: {
                     Assessment: true,
@@ -69,14 +72,16 @@ export const engagementRouter = createTRPCRouter({
                 where: {
                     Assessment: {
                         some: {
-                            start_date: { lte: new Date() }
+                            start_date: { lte: new Date() },
+                            status: 'created' || 'in-progress',
                         }
                     }
                 },
                 include: {
                     Assessment: {
                         where: {
-                            start_date: { lte: new Date() }
+                            start_date: { lte: new Date() },
+                            status: 'created' || 'in-progress',
                         }
                     },
                     client: true,
