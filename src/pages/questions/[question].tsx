@@ -8,7 +8,7 @@ import {
     Button, Card, Grid, IconButton, MenuItem, Select,
     TextField, ToggleButton, ToggleButtonGroup, Typography
 } from '@mui/material';
-import { Add } from '@mui/icons-material';
+import { Add, Delete } from '@mui/icons-material';
 
 import { api } from "~/utils/api";
 import Layout from "~/components/Layout/Layout";
@@ -70,21 +70,21 @@ const Question: NextPage = () => {
     const [hint, setHint] = React.useState<string>('');
     const [priority, setPriority] = React.useState<string>('');
 
-
     const [firstName, setFirstName] = React.useState<string>('');
     const [lastName, setLastName] = React.useState<string>('');
     const [email, setEmail] = React.useState<string>('');
     const [phone, setPhone] = React.useState<string>('');
 
-
     const [existingGuide, setExistingGuide] = React.useState<GuideType[]>([]);
-    const [guide, setGuide] = React.useState<GuideType[]>([{ num: 1, interview_question: '' }]);
+    const [newGuide, setNewGuide] = React.useState<GuideType[]>([{ num: 1, interview_question: '' }]);
+    const [deletedGuide, setDeletedGuide] = React.useState<GuideType[]>([]);
 
     const [existingReferences, setExistingReferences] = React.useState<ReferenceType[]>([]);
-    const [references, setReferences] = React.useState<ReferenceType[]>([{ num: 1, citation: '' }]);
+    const [newReferences, setNewReferences] = React.useState<ReferenceType[]>([{ num: 1, citation: '' }]);
+    const [deletedReferences, setDeletedReferences] = React.useState<ReferenceType[]>([]);
 
     const [existingRatings, setExistingRatings] = React.useState<RatingType[]>([]);
-    const [ratings, setRatings] = React.useState<RatingType[]>([]);
+    const [newRatings, setNewRatings] = React.useState<RatingType[]>([]);
 
 
     React.useEffect(() => {
@@ -108,14 +108,14 @@ const Question: NextPage = () => {
                 }
             });
             setExistingGuide(existingArray);
-            const array = guide.map(o => {
+            const array = newGuide.map(o => {
                 count++;
                 return {
                     num: count,
                     interview_question: o.interview_question,
                 }
             });
-            setGuide(array);
+            setNewGuide(array);
         }
     }, [guideData]);
 
@@ -131,14 +131,14 @@ const Question: NextPage = () => {
                 }
             });
             setExistingReferences(existingArray);
-            const array = references.map(o => {
+            const array = newReferences.map(o => {
                 count++;
                 return {
                     ...o,
                     num: count,
                 }
             });
-            setReferences(array);
+            setNewReferences(array);
         }
     }, [referencesData])
 
@@ -155,19 +155,19 @@ const Question: NextPage = () => {
                 }
             });
             setExistingRatings(existingArray);
-            const array = ratings.map(o => {
+            const array = newRatings.map(o => {
                 count++;
                 return {
                     ...o,
                     level_number: count,
                 }
             });
-            setRatings(array);
+            setNewRatings(array);
         }
     }, [ratingData])
 
     const handleGuideChange = (num: number, newVal: string, existing?: boolean) => {
-        const ref = existing ? existingGuide : guide;
+        const ref = existing ? existingGuide : newGuide;
         const newArr = ref.map(o => {
             if (o.num == num) {
                 return {
@@ -180,12 +180,12 @@ const Question: NextPage = () => {
         if (existing) {
             setExistingGuide(newArr);
         } else {
-            setGuide(newArr);
+            setNewGuide(newArr);
         }
     }
 
     const handleReferenceChange = (num: number, newVal: string, existing?: boolean) => {
-        const ref = existing ? existingReferences : references;
+        const ref = existing ? existingReferences : newReferences;
         const newArr = ref.map(o => {
             if (o.num == num) {
                 return {
@@ -198,12 +198,12 @@ const Question: NextPage = () => {
         if (existing) {
             setExistingReferences(newArr);
         } else {
-            setReferences(newArr);
+            setNewReferences(newArr);
         }
     }
 
     const handleRatingChange = (num: number, newVal: string, criteria?: boolean, existing?: boolean) => {
-        const ref = existing ? existingRatings : ratings;
+        const ref = existing ? existingRatings : newRatings;
         const newArr = ref.map(o => {
             if (o.level_number == num) {
                 if (criteria)
@@ -221,7 +221,7 @@ const Question: NextPage = () => {
         if (existing) {
             setExistingRatings(newArr);
         } else {
-            setRatings(newArr);
+            setNewRatings(newArr);
         }
     }
 
@@ -233,9 +233,11 @@ const Question: NextPage = () => {
 
     const createGuide = api.interviewGuide.create.useMutation();
     const updateGuide = api.interviewGuide.update.useMutation();
+    const deleteGuide = api.interviewGuide.delete.useMutation();
 
     const createReference = api.reference.create.useMutation();
     const updateReference = api.reference.update.useMutation();
+    const deleteReference = api.reference.delete.useMutation();
 
     const createSME = api.sme.create.useMutation();
     const updateSME = api.sme.update.useMutation();
@@ -306,7 +308,7 @@ const Question: NextPage = () => {
                     }
                 })
             })
-            guide.slice().reverse().forEach(o => {
+            newGuide.slice().reverse().forEach(o => {
                 if (o.interview_question != '') {
                     createGuide.mutate({
                         active: true,
@@ -315,6 +317,16 @@ const Question: NextPage = () => {
                         site_id: 1,
                         filter_id: filterSelection ? filterSelection.id : 1,
                     }, {
+                        onError(err) {
+                            succeeded = false;
+                            console.log(err);
+                        }
+                    })
+                }
+            })
+            deletedGuide.forEach(o => {
+                if (o.id) {
+                    deleteGuide.mutate(o.id, {
                         onError(err) {
                             succeeded = false;
                             console.log(err);
@@ -336,7 +348,7 @@ const Question: NextPage = () => {
                     }
                 })
             })
-            references.slice().reverse().forEach(o => {
+            newReferences.slice().reverse().forEach(o => {
                 if (o.citation != '') {
                     createReference.mutate({
                         citation: o.citation,
@@ -349,7 +361,16 @@ const Question: NextPage = () => {
                     })
                 }
             })
-
+            deletedReferences.forEach(o => {
+                if (o.id) {
+                    deleteReference.mutate(o.id, {
+                        onError(err) {
+                            succeeded = false;
+                            console.log(err);
+                        }
+                    })
+                }
+            })
 
             existingRatings.forEach(o => {
                 updateRating.mutate({
@@ -367,7 +388,7 @@ const Question: NextPage = () => {
                     }
                 })
             })
-            ratings.slice().reverse().forEach(o => {
+            newRatings.slice().reverse().forEach(o => {
                 if (o.criteria != '' || o.progression_statement != '') {
                     createRating.mutate({
                         active: true,
@@ -434,7 +455,6 @@ const Question: NextPage = () => {
     const industries = api.filter.getAllIndustry.useQuery(addIndustry).data;
     const apiSegments = api.filter.getAllApiSegment.useQuery(addApiSegment).data;
     const siteSpecifics = api.filter.getAllSiteSpecific.useQuery(addSiteSpecific).data;
-
 
     const filterSelect = () => {
         if (filterType == 'standard') return;
@@ -544,7 +564,7 @@ const Question: NextPage = () => {
                                         exclusive
                                         size='small'
                                         value={filterType}
-                                        onChange={(_event, value: string) => { if (value) { setFilterType(value); setFilterSelection(null); setRatings([]) } }}
+                                        onChange={(_event, value: string) => { if (value) { setFilterType(value); setFilterSelection(null); setNewRatings([]) } }}
                                     >
                                         <ToggleButton value='standard'>Standard</ToggleButton>
                                         <ToggleButton value='industry'>Industry</ToggleButton>
@@ -571,7 +591,7 @@ const Question: NextPage = () => {
                                                             value={o.criteria}
                                                             onChange={(event) => handleRatingChange(o.level_number, event.target.value, true, true)}
                                                         />
-                                                        {((i != existingRatings.length - 1 || ratings.length != 0) && i < 4) &&
+                                                        {((i != existingRatings.length - 1 || newRatings.length != 0) && i < 4) &&
                                                             <>
                                                                 <Typography>Progression Statement</Typography>
                                                                 <TextField
@@ -585,7 +605,7 @@ const Question: NextPage = () => {
                                                 )
                                             return undefined;
                                         })}
-                                        {existingRatings.length < 5 && ratings.map((o, i) => {
+                                        {existingRatings.length < 5 && newRatings.map((o, i) => {
                                             return (
                                                 <div key={i}>
                                                     <Typography>Level {o.level_number}</Typography>
@@ -594,7 +614,7 @@ const Question: NextPage = () => {
                                                         value={o.criteria}
                                                         onChange={(event) => handleRatingChange(o.level_number, event.target.value, true)}
                                                     />
-                                                    {(i != ratings.length - 1) &&
+                                                    {(i != newRatings.length - 1) &&
                                                         <>
                                                             <Typography>Progression Statement</Typography>
                                                             <TextField
@@ -607,15 +627,15 @@ const Question: NextPage = () => {
                                                 </div>
                                             )
                                         })}
-                                        {ratings.length >= 5 &&
+                                        {newRatings.length >= 5 &&
                                             <Button
                                                 variant='outlined' startIcon={<Add />}
                                                 onClick={() => {
                                                     let num = existingRatings.length + 1;
-                                                    const last = ratings[ratings.length - 1];
-                                                    if (ratings.length > 0 && last) num = last.level_number + 1;
-                                                    setRatings([
-                                                        ...ratings,
+                                                    const last = newRatings[newRatings.length - 1];
+                                                    if (newRatings.length > 0 && last) num = last.level_number + 1;
+                                                    setNewRatings([
+                                                        ...newRatings,
                                                         {
                                                             level_number: num,
                                                             criteria: '',
@@ -653,11 +673,42 @@ const Question: NextPage = () => {
                                                         value={o.interview_question}
                                                         onChange={(event) => handleGuideChange(o.num, event.target.value, true)}
                                                     />
+                                                    <IconButton
+                                                        color='default'
+                                                        onClick={() => {
+                                                            const newDeleted = deletedGuide;
+                                                            newDeleted.push(o);
+                                                            setDeletedGuide(newDeleted);
+
+                                                            let count = 0;
+                                                            const newExisting: GuideType[] = []
+                                                            existingGuide.map(x => {
+                                                                if (x.id != o.id) {
+                                                                    count++;
+                                                                    newExisting.push({
+                                                                        ...x,
+                                                                        num: count,
+                                                                    })
+                                                                }
+                                                            });
+                                                            setExistingGuide(newExisting);
+
+                                                            const newNew: GuideType[] = []
+                                                            newGuide.map(x => {
+                                                                count++;
+                                                                newNew.push({
+                                                                    ...x,
+                                                                    num: count,
+                                                                })
+                                                            });
+                                                            setNewGuide(newNew);
+                                                        }}
+                                                    ><Delete /></IconButton>
                                                 </div>
                                             )
                                         })}
-                                        {guide.map((o, i) => {
-                                            if (i == guide.length - 1)
+                                        {newGuide.map((o, i) => {
+                                            if (i == newGuide.length - 1)
                                                 return (
                                                     <div key={i} className='input-row'>
                                                         <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
@@ -668,8 +719,8 @@ const Question: NextPage = () => {
                                                         />
                                                         <IconButton
                                                             onClick={() => {
-                                                                const last = guide[guide.length - 1];
-                                                                if (last) setGuide([...guide, { num: last.num + 1, interview_question: '' }])
+                                                                const last = newGuide[newGuide.length - 1];
+                                                                if (last) setNewGuide([...newGuide, { num: last.num + 1, interview_question: '' }])
                                                             }}
                                                         ><Add /></IconButton>
                                                     </div>
@@ -682,6 +733,27 @@ const Question: NextPage = () => {
                                                         value={o.interview_question}
                                                         onChange={(event) => handleGuideChange(o.num, event.target.value)}
                                                     />
+                                                    <IconButton
+                                                        color='default'
+                                                        onClick={() => {
+                                                            if (newGuide[0]) {
+                                                                let newIndex = (newGuide[0]?.num) - 1;
+                                                                const removed: GuideType[] = [];
+                                                                newGuide.forEach(d => {
+                                                                    if (d.num != o.num) {
+                                                                        newIndex++;
+                                                                        removed.push({
+                                                                            ...d,
+                                                                            num: newIndex,
+                                                                        })
+                                                                    }
+                                                                    return;
+
+                                                                });
+                                                                setNewGuide(removed);
+                                                            }
+                                                        }}
+                                                    ><Delete /></IconButton>
                                                 </div>
                                             )
                                         })}
@@ -720,11 +792,42 @@ const Question: NextPage = () => {
                                                         value={o.citation}
                                                         onChange={(event) => handleReferenceChange(o.num, event.target.value, true)}
                                                     />
+                                                    <IconButton
+                                                        color='default'
+                                                        onClick={() => {
+                                                            const newDeleted = deletedReferences;
+                                                            newDeleted.push(o);
+                                                            setDeletedReferences(newDeleted);
+
+                                                            let count = 0;
+                                                            const newExisting: ReferenceType[] = []
+                                                            existingReferences.map(x => {
+                                                                if (x.id != o.id) {
+                                                                    count++;
+                                                                    newExisting.push({
+                                                                        ...x,
+                                                                        num: count,
+                                                                    })
+                                                                }
+                                                            });
+                                                            setExistingReferences(newExisting);
+
+                                                            const newNew: ReferenceType[] = []
+                                                            newReferences.map(x => {
+                                                                count++;
+                                                                newNew.push({
+                                                                    ...x,
+                                                                    num: count,
+                                                                })
+                                                            });
+                                                            setNewReferences(newNew);
+                                                        }}
+                                                    ><Delete /></IconButton>
                                                 </div>
                                             )
                                         })}
-                                        {references.map((o, i) => {
-                                            if (i == references.length - 1)
+                                        {newReferences.map((o, i) => {
+                                            if (i == newReferences.length - 1)
                                                 return (
                                                     <div key={i} className='input-row'>
                                                         <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
@@ -735,8 +838,8 @@ const Question: NextPage = () => {
                                                         />
                                                         <IconButton
                                                             onClick={() => {
-                                                                const last = references[references.length - 1];
-                                                                if (last) setReferences([...references, { num: last.num + 1, citation: '' }])
+                                                                const last = newReferences[newReferences.length - 1];
+                                                                if (last) setNewReferences([...newReferences, { num: last.num + 1, citation: '' }])
                                                             }}
                                                         ><Add /></IconButton>
                                                     </div>
@@ -749,6 +852,27 @@ const Question: NextPage = () => {
                                                         value={o.citation}
                                                         onChange={(event) => handleReferenceChange(o.num, event.target.value)}
                                                     />
+                                                    <IconButton
+                                                        color='default'
+                                                        onClick={() => {
+                                                            if (newGuide[0]) {
+                                                                let newIndex = (newGuide[0]?.num) - 1;
+                                                                const removed: ReferenceType[] = [];
+                                                                newReferences.forEach(d => {
+                                                                    if (d.num != o.num) {
+                                                                        newIndex++;
+                                                                        removed.push({
+                                                                            ...d,
+                                                                            num: newIndex,
+                                                                        })
+                                                                    }
+                                                                    return;
+
+                                                                });
+                                                                setNewReferences(removed);
+                                                            }
+                                                        }}
+                                                    ><Delete /></IconButton>
                                                 </div>
                                             )
                                         })}
