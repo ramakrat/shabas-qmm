@@ -29,7 +29,8 @@ const OngoingAssessments: NextPage = () => {
                                                 <TableCell align="left">Client</TableCell>
                                                 <TableCell align="left">Start Date</TableCell>
                                                 <TableCell align="left">End Date</TableCell>
-                                                <TableCell align="left">POC</TableCell>
+                                                <TableCell align="left">Client POC</TableCell>
+                                                <TableCell align="left">Shabas POC</TableCell>
                                                 <TableCell align="left">Status</TableCell>
                                             </TableRow>
                                         </TableHead>
@@ -42,6 +43,7 @@ const OngoingAssessments: NextPage = () => {
                                                 <TableCell align="left">{e.client_id} - {e.client.first_name} {e.client.last_name}</TableCell>
                                                 <TableCell align="left">{e.start_date.toDateString()}</TableCell>
                                                 <TableCell align="left">{e.end_date.toDateString()}</TableCell>
+                                                <TableCell align="left"></TableCell>
                                                 <TableCell align="left"></TableCell>
                                                 <TableCell align="left">{titleCase(e.status)}</TableCell>
                                             </TableRow>
@@ -77,8 +79,8 @@ const OngoingAssessments: NextPage = () => {
                                                         <TableCell align="left">{a.site_id}</TableCell>
                                                         <TableCell align="left">{a.start_date.toDateString()}</TableCell>
                                                         <TableCell align="left">{a.end_date.toDateString()}</TableCell>
-                                                        <TableCell align="left">a.POC</TableCell>
-                                                        <TableCell align="left">a.assessor</TableCell>
+                                                        <TableCell align="left"></TableCell>
+                                                        <TableCell align="left"></TableCell>
                                                         <TableCell align="left">{titleCase(a.status)}</TableCell>
                                                     </TableRow>
                                                 )

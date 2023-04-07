@@ -8,6 +8,7 @@ import { Add, Edit, ExpandMore } from "@mui/icons-material";
 import { api } from "~/utils/api";
 import AssessmentModal from "../Modals/AssessmentModal";
 import EngagementModal from "../Modals/EngagementModal";
+import { titleCase } from "~/utils/utils";
 
 const BrowseAssessments: React.FC = () => {
 
@@ -67,7 +68,8 @@ const BrowseAssessments: React.FC = () => {
                                             <TableCell align="left">Client</TableCell>
                                             <TableCell align="left">Start Date</TableCell>
                                             <TableCell align="left">End Date</TableCell>
-                                            <TableCell align="left">POC</TableCell>
+                                            <TableCell align="left">Client POC</TableCell>
+                                            <TableCell align="left">Shabas POC</TableCell>
                                             <TableCell align="left">Status</TableCell>
                                             <TableCell align="center">Edit</TableCell>
                                         </TableRow>
@@ -82,7 +84,8 @@ const BrowseAssessments: React.FC = () => {
                                             <TableCell align="left">{e.start_date.toDateString()}</TableCell>
                                             <TableCell align="left">{e.end_date.toDateString()}</TableCell>
                                             <TableCell align="left"></TableCell>
-                                            <TableCell align="left">{e.status}</TableCell>
+                                            <TableCell align="left"></TableCell>
+                                            <TableCell align="left">{titleCase(e.status)}</TableCell>
                                             <TableCell align="center">
                                                 {e.start_date > new Date() &&
                                                     <IconButton onClick={() => { setEngagementData(e); setEngagementModal(true) }}>
@@ -121,9 +124,9 @@ const BrowseAssessments: React.FC = () => {
                                                     <TableCell align="left">{a.site_id}</TableCell>
                                                     <TableCell align="left">{a.start_date.toDateString()}</TableCell>
                                                     <TableCell align="left">{a.end_date.toDateString()}</TableCell>
-                                                    <TableCell align="left">a.POC</TableCell>
-                                                    <TableCell align="left">a.assessor</TableCell>
-                                                    <TableCell align="left">{a.status}</TableCell>
+                                                    <TableCell align="left"></TableCell>
+                                                    <TableCell align="left"></TableCell>
+                                                    <TableCell align="left">{titleCase(a.status)}</TableCell>
                                                     <TableCell align="center">
                                                         {a.start_date > new Date() &&
                                                             <IconButton onClick={() => { setAssessmentData(a); setAssessmentModal(true) }}>
