@@ -5,7 +5,7 @@ import Router, { useRouter } from 'next/router';
 import type { Filter } from '@prisma/client';
 
 import {
-    Button, Card, Grid, IconButton, MenuItem, Select, Switch,
+    Button, Card, Grid, IconButton, MenuItem, Select,
     TextField, ToggleButton, ToggleButtonGroup, Typography
 } from '@mui/material';
 import { Add } from '@mui/icons-material';
@@ -229,6 +229,7 @@ const Question: NextPage = () => {
 
     const create = api.question.create.useMutation();
     const update = api.question.update.useMutation();
+    const changeActive = api.question.active.useMutation();
 
     const createGuide = api.interviewGuide.create.useMutation();
     const updateGuide = api.interviewGuide.update.useMutation();
@@ -255,9 +256,19 @@ const Question: NextPage = () => {
         }
     }, [data])
 
+    const handleActive = () => {
+        if (data) {
+            changeActive.mutate({
+                id: data.id,
+                active: !active,
+            }, {
+                onSuccess() { Router.reload() }
+            })
+        }
+    }
+
     const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
         event.preventDefault();
-
 
         if (data) {
             let succeeded = true;
@@ -525,14 +536,6 @@ const Question: NextPage = () => {
                                             onChange={e => setPriority(e.target.value)}
                                         />
                                     </div>
-
-                                    <div>
-                                        <Typography>Active</Typography>
-                                        <Switch
-                                            checked={active}
-                                            onChange={(_event, checked) => setActive(checked)}
-                                        />
-                                    </div>
                                 </Card>
                             </Grid>
                             <Grid item xs={8}>
@@ -627,10 +630,13 @@ const Question: NextPage = () => {
                                     </Card>
                                 }
                                 <Card className='actions' style={{ marginTop: 16 }}>
-                                    <div>
-                                        <Button variant='contained' color='error'>Deactivate</Button>
-                                        <Button variant='contained' color='success'>Activate</Button>
-                                    </div>
+                                    <Button
+                                        variant='contained'
+                                        color={active ? 'error' : 'success'}
+                                        onClick={() => handleActive()}
+                                    >
+                                        {active ? 'Deactivate' : 'Activate'}
+                                    </Button>
                                     <Button variant='contained' type='submit'>Save</Button>
                                 </Card>
                             </Grid>
