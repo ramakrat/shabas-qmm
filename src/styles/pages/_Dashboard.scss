@@ -97,12 +97,13 @@
 
     .filter {
         padding: 0px 15px;
+        width: 100%;
 
-        span:first-of-type {
+        .label {
             cursor: pointer;
         }
 
-        span:last-of-type {
+        .count {
             border-radius: 3px !important;
             background-color: palette(greyscale, 400) !important;
             font-size: 0.875rem;
@@ -110,13 +111,17 @@
             padding: 2px 7px !important;
             margin-left: 7px !important;
         }
+    }
 
+    .MuiTab-root {
+        max-width: 400px;
     }
 }
 
 
 .clickable-table-row {
     cursor: pointer;
+
     &:hover {
         background-color: rgb(243, 243, 243);
     }

@@ -46,7 +46,6 @@ const AdminDashboard: NextPage = () => {
     const totalEngagement = api.engagement.getTotalCount.useQuery().data;
     const totalAssessment = api.assessment.getTotalCount.useQuery().data;
     const totalPOC = api.poc.getTotalCount.useQuery().data;
-    const totaleEngageAssess = (totalEngagement ?? 0) + (totalAssessment ?? 0);
 
     return (
         <Layout active='dashboard'>
@@ -59,26 +58,28 @@ const AdminDashboard: NextPage = () => {
                         >
                             <Tab label={
                                 <div className='filter'>
-                                    <span>Clients</span>
-                                    <span>{totalClient}</span>
+                                    <span className='label'>Clients</span>
+                                    <span className='count'>{totalClient}</span>
                                 </div>
                             } />
                             <Tab label={
                                 <div className='filter'>
-                                    <span>Sites</span>
-                                    <span>{totalSite}</span>
+                                    <span className='label'>Sites</span>
+                                    <span className='count'>{totalSite}</span>
                                 </div>
                             } />
-                            <Tab label={
+                            <Tab label={<>
                                 <div className='filter'>
-                                    <span>Engagement/Assessments</span>
-                                    <span>{totaleEngageAssess}</span>
+                                    <span className='label'>Engagement</span>
+                                    <span className='count'>{totalEngagement}</span>
+                                    <span className='label'> / Assessments</span>
+                                    <span className='count'>{totalAssessment}</span>
                                 </div>
-                            } />
+                            </>} />
                             <Tab label={
                                 <div className='filter'>
-                                    <span>POC</span>
-                                    <span>{totalPOC}</span>
+                                    <span className='label'>POC</span>
+                                    <span className='count'>{totalPOC}</span>
                                 </div>
                             } />
                         </Tabs>
