@@ -643,7 +643,7 @@ const Question: NextPage = () => {
                             <Grid item xs={4}>
                                 <Card className='reference'>
                                     <div>
-                                        <Typography>Reference Questions</Typography>
+                                        <Typography>Interview Guide</Typography>
                                         {existingGuide.map((o, i) => {
                                             return (
                                                 <div key={i} className='input-row'>

@@ -187,7 +187,7 @@ const OngoingAssessment: NextPage = () => {
                             <Grid item xs={4}>
                                 <Card className='reference'>
                                     <div>
-                                        <Typography>Reference Questions</Typography>
+                                        <Typography>Interview Guide</Typography>
                                         {guide?.map((r, i) => {
                                             return (
                                                 <div key={i}>
