@@ -5,6 +5,7 @@ import { ExpandMore } from "@mui/icons-material";
 import { Accordion, AccordionSummary, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, AccordionDetails } from "@mui/material";
 import { api } from "~/utils/api";
 import Layout from "~/components/Layout/Layout";
+import { titleCase } from "~/utils/utils";
 
 const OngoingAssessments: NextPage = () => {
 
@@ -28,7 +29,8 @@ const OngoingAssessments: NextPage = () => {
                                                 <TableCell align="left">Client</TableCell>
                                                 <TableCell align="left">Start Date</TableCell>
                                                 <TableCell align="left">End Date</TableCell>
-                                                <TableCell align="left">POC</TableCell>
+                                                <TableCell align="left">Client POC</TableCell>
+                                                <TableCell align="left">Shabas POC</TableCell>
                                                 <TableCell align="left">Status</TableCell>
                                             </TableRow>
                                         </TableHead>
@@ -42,7 +44,8 @@ const OngoingAssessments: NextPage = () => {
                                                 <TableCell align="left">{e.start_date.toDateString()}</TableCell>
                                                 <TableCell align="left">{e.end_date.toDateString()}</TableCell>
                                                 <TableCell align="left"></TableCell>
-                                                <TableCell align="left">{e.status}</TableCell>
+                                                <TableCell align="left"></TableCell>
+                                                <TableCell align="left">{titleCase(e.status)}</TableCell>
                                             </TableRow>
                                         </TableBody>
                                     </Table>
@@ -76,9 +79,9 @@ const OngoingAssessments: NextPage = () => {
                                                         <TableCell align="left">{a.site_id}</TableCell>
                                                         <TableCell align="left">{a.start_date.toDateString()}</TableCell>
                                                         <TableCell align="left">{a.end_date.toDateString()}</TableCell>
-                                                        <TableCell align="left">a.POC</TableCell>
-                                                        <TableCell align="left">a.assessor</TableCell>
-                                                        <TableCell align="left">{a.status}</TableCell>
+                                                        <TableCell align="left"></TableCell>
+                                                        <TableCell align="left"></TableCell>
+                                                        <TableCell align="left">{titleCase(a.status)}</TableCell>
                                                     </TableRow>
                                                 )
                                             })}

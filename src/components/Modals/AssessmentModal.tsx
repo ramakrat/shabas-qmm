@@ -43,6 +43,7 @@ const AssessmentModal: React.FC<Props> = (props) => {
     const engagements = api.engagement.getAll.useQuery(open).data;
     const questions = api.question.getAllActiveInclude.useQuery(open).data;
     const assessment = api.assessment.getByIdInclude.useQuery({ id: data ? data.id : undefined }).data;
+    const clientPOC = api.poc.getAllClient.useQuery().data;
 
     // =========== Input Field States ===========
 
@@ -51,6 +52,7 @@ const AssessmentModal: React.FC<Props> = (props) => {
     const [description, setDescription] = React.useState<string>('');
     const [siteId, setSiteId] = React.useState<number>(1);
     const [engagementId, setEngagementId] = React.useState<number>(1);
+    const [pocId, setPocId] = React.useState<number>(1);
 
     const [existingQuestions, setExistingQuestions] = React.useState<AssessmentQuestionReturnType>([]);
     const [newQuestions, setNewQuestions] = React.useState<QuestionType[]>([]);
@@ -113,6 +115,7 @@ const AssessmentModal: React.FC<Props> = (props) => {
                 description: description,
                 site_id: siteId,
                 engagement_id: engagementId,
+                poc_id: pocId,
             }, {
                 onSuccess(data) {
                     existingQuestions.forEach(o => {
@@ -157,9 +160,9 @@ const AssessmentModal: React.FC<Props> = (props) => {
                 description: description,
                 site_id: siteId,
                 engagement_id: engagementId,
+                poc_id: pocId,
             }, {
                 onSuccess(data) {
-                    console.log('hit');
                     newQuestions.forEach(o => {
                         assessQuestionCreate.mutate({
                             question_id: o.question.id,
@@ -256,6 +259,22 @@ const AssessmentModal: React.FC<Props> = (props) => {
                                     value={description}
                                     onChange={e => setDescription(e.target.value)}
                                 />
+                                <FormControl>
+                                    <InputLabel size="small">Client POC</InputLabel>
+                                    <Select
+                                        name='pocId' label='Client POC' size='small'
+                                        value={pocId}
+                                        onChange={e => setPocId(Number(e.target.value))}
+                                    >
+                                        {clientPOC && clientPOC.map(o => {
+                                            return (
+                                                <MenuItem value={o.id} key={o.id}>
+                                                    {o.first_name} {o.last_name} - {o.title}
+                                                </MenuItem>
+                                            )
+                                        })}
+                                    </Select>
+                                </FormControl>
                             </div>
                         }
                         {activeStep == 1 &&

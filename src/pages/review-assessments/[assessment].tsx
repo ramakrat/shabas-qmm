@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { type NextPage } from "next";
 import Router, { useRouter } from 'next/router';
-import type { Answer, Assessment, AssessmentQuestion, Filter, InterviewGuide, Question, Rating, Reference } from '@prisma/client';
+import type { Answer, Assessment, AssessmentQuestion, Engagement, Filter, InterviewGuide, Question, Rating, Reference } from '@prisma/client';
 
 import { Button, Card, Grid, TextField, Typography } from '@mui/material';
 import { Info } from '@mui/icons-material';
@@ -19,6 +19,7 @@ const ReviewAssessment: NextPage = () => {
 
     const data = api.assessment.getByIdIncludeAssessor.useQuery({ id: Number(assessment) }).data as (
         Assessment & {
+            engagement: Engagement;
             AssessmentQuestion: (AssessmentQuestion & {
                 question: Question & {
                     Rating: Rating[];
@@ -48,6 +49,10 @@ const ReviewAssessment: NextPage = () => {
 
     const [question, setQuestion] = React.useState<number>(questions && questions[0] ? questions[0].question.id : -1);
 
+    React.useEffect(() => {
+        setQuestion(questions && questions[0] ? questions[0].question.id : -1)
+    }, [questions])
+    
     const selectedAssessmentQuestion = data?.AssessmentQuestion.find(o => o.question.id == question);
     const questionRef = selectedAssessmentQuestion?.question;
     const ratings = api.rating.getByQuestionFilter.useQuery({ questionId: questionRef?.id, filterId: selectedAssessmentQuestion?.filter_id ?? undefined }).data;
@@ -189,7 +194,7 @@ const ReviewAssessment: NextPage = () => {
                             <Grid item xs={4}>
                                 <Card className='reference'>
                                     <div>
-                                        <Typography>Reference Questions</Typography>
+                                        <Typography>Interview Guide</Typography>
                                         {guide?.map((r, i) => {
                                             return (
                                                 <div key={i}>

@@ -5,10 +5,18 @@ import { Add, Edit } from "@mui/icons-material";
 import { api } from "~/utils/api";
 import ClientModal from "../Modals/ClientModal";
 
-const BrowseClients: React.FC = () => {
+interface Props {
+    clientModal: boolean;
+    setClientModal: (open: boolean) => void;
+}
+
+const BrowseClients: React.FC<Props> = (props) => {
+
+    // const { clientModal, setClientModal } = props;
+    const [clientModal, setClientModal] = React.useState<boolean>(false);
+
 
     const [clientData, setClientData] = React.useState<Client | undefined>(undefined);
-    const [clientModal, setClientModal] = React.useState<boolean>(false);
 
     // TODO: Don't run query unless modal closed
     const clients = api.client.getAll.useQuery(clientModal).data;

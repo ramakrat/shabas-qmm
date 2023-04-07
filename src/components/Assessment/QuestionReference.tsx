@@ -11,7 +11,7 @@ const QuestionReference: React.FC<Props> = (props) => {
     return (
         <Card className='reference'>
             <div>
-                <Typography>Reference Questions</Typography>
+                <Typography>Interview Guide</Typography>
                 1. Example<br />
                 2. Example<br />
                 3. Example<br />

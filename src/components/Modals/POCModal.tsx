@@ -2,7 +2,6 @@ import React from "react";
 import type { POC } from "@prisma/client";
 import { Button, Card, CardActions, CardContent, CardHeader, FormControl, IconButton, InputLabel, MenuItem, Modal, Select, TextField } from "@mui/material";
 import { Close } from "@mui/icons-material";
-import { Countries } from "~/utils/utils";
 import { api } from "~/utils/api";
 
 interface Props {
@@ -15,7 +14,15 @@ const POCModal: React.FC<Props> = (props) => {
 
     const { open, setOpen, data } = props;
 
+    // =========== Retrieve Form Context ===========
+
+    const clients = api.client.getAll.useQuery(true).data;
+    // const clients = api.client.getAll.useQuery(true).data;
+
     // =========== Input Field States ===========
+
+    const [type, setType] = React.useState<string>('shabas');
+    const [typeId, setTypeId] = React.useState<number>(1);
 
     const [firstName, setFirstName] = React.useState<string>('');
     const [lastName, setLastName] = React.useState<string>('');
@@ -63,6 +70,7 @@ const POCModal: React.FC<Props> = (props) => {
                 work_phone: workPhone,
                 email: email,
                 staff: staff,
+                client_id: type == 'client' ? typeId : undefined,
             }, {
                 onSuccess() { setOpen(false) }
             })
@@ -75,6 +83,7 @@ const POCModal: React.FC<Props> = (props) => {
                 work_phone: workPhone,
                 email: email,
                 staff: staff,
+                client_id: type == 'client' ? typeId : undefined,
             }, {
                 onSuccess() { setOpen(false) }
             })
@@ -87,7 +96,7 @@ const POCModal: React.FC<Props> = (props) => {
             <form onSubmit={handleSubmit}>
                 <Card>
                     <CardHeader
-                        title={data ? 'Edit Client' : 'Create New Client'}
+                        title={data ? 'Edit POC' : 'Create New POC'}
                         action={
                             <IconButton onClick={() => setOpen(false)}>
                                 <Close />
@@ -95,6 +104,38 @@ const POCModal: React.FC<Props> = (props) => {
                         }
                     />
                     <CardContent>
+                        <FormControl>
+                            <InputLabel size="small">Type</InputLabel>
+                            <Select
+                                name='clientType' label='Type' size='small'
+                                value={type}
+                                onChange={e => setType(e.target.value)}
+                            >
+                                <MenuItem value='shabas'>
+                                    Shabas
+                                </MenuItem>
+                                <MenuItem value='client'>
+                                    Client
+                                </MenuItem>
+                            </Select>
+                        </FormControl>
+                        {type == 'client' &&
+                            <FormControl>
+                                <InputLabel size="small">Client</InputLabel>
+                                <Select
+                                    name='clientId' label='Client' size='small'
+                                    value={typeId}
+                                    onChange={e => setTypeId(Number(e.target.value))}
+                                >
+                                    {clients && clients.map(o => {
+                                        return (
+                                            <MenuItem value={o.id} key={o.id}>
+                                                {o.id} - {o.first_name} {o.last_name}
+                                            </MenuItem>
+                                        )
+                                    })}
+                                </Select>
+                            </FormControl>}
                         <TextField
                             name='firstName' label='First Name' size='small'
                             value={firstName}

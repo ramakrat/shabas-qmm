@@ -44,6 +44,13 @@ export const interviewGuideRouter = createTRPCRouter({
                 },
             })
         }),
+    delete: publicProcedure
+        .input(z.number())
+        .mutation(({ input, ctx }) => {
+            return ctx.prisma.interviewGuide.delete({
+                where: { id: input },
+            });
+        }),
     getByQuestionId: publicProcedure
         .input(z.object({ id: z.number().optional() }))
         .query(({ input, ctx }) => {

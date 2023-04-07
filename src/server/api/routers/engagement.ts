@@ -44,6 +44,18 @@ export const engagementRouter = createTRPCRouter({
                 }
             })
         }),
+    status: publicProcedure
+        .input(z.object({ id: z.number(), status: z.string() }))
+        .mutation(({ input, ctx }) => {
+            return ctx.prisma.engagement.update({
+                where: { id: input.id },
+                data: {
+                    status: input.status,
+                    updated_at: new Date(),
+                    updated_by: '',
+                },
+            });
+        }),
     getById: publicProcedure
         .input(z.object({ id: z.number() }))
         .query(({ input, ctx }) => {
@@ -59,9 +71,12 @@ export const engagementRouter = createTRPCRouter({
             // })
             return ctx.prisma.engagement.findMany({
                 include: {
-                    Assessment: true,
+                    Assessment: {
+                        include: { poc: true }
+                    },
                     client: true,
                     POC: true,
+                    EngagementPOC: { include: { poc: true } },
                 }
             });
         }),
@@ -73,7 +88,11 @@ export const engagementRouter = createTRPCRouter({
                     Assessment: {
                         some: {
                             start_date: { lte: new Date() },
-                            status: 'created' || 'in-progress',
+                            OR: [
+                                { status: 'created' },
+                                { status: 'in-progress' },
+                                { status: '' },
+                            ]
                         }
                     }
                 },
@@ -81,7 +100,11 @@ export const engagementRouter = createTRPCRouter({
                     Assessment: {
                         where: {
                             start_date: { lte: new Date() },
-                            status: 'created' || 'in-progress',
+                            OR: [
+                                { status: 'created' },
+                                { status: 'in-progress' },
+                                { status: '' },
+                            ]
                         }
                     },
                     client: true,
@@ -113,6 +136,7 @@ export const engagementRouter = createTRPCRouter({
             return ctx.prisma.engagement.findMany();
         }),
     getTotalCount: publicProcedure
+        .input(z.boolean().optional())
         .query(({ ctx }) => {
             return ctx.prisma.engagement.count();
         }),

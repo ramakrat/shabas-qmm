@@ -67,6 +67,7 @@ export const clientRouter = createTRPCRouter({
             return ctx.prisma.client.findMany();
         }),
     getTotalCount: publicProcedure
+        .input(z.boolean().optional())
         .query(({ ctx }) => {
             return ctx.prisma.client.count();
         }),

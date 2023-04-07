@@ -70,6 +70,7 @@ export const siteRouter = createTRPCRouter({
             });
         }),
     getTotalCount: publicProcedure
+        .input(z.boolean().optional())
         .query(({ ctx }) => {
             return ctx.prisma.site.count();
         }),

@@ -69,12 +69,37 @@ export const pocRouter = createTRPCRouter({
                 where: { id: input.id }
             });
         }),
+    getAllInclude: publicProcedure
+        .input(z.boolean())
+        .query(({ ctx }) => {
+            return ctx.prisma.pOC.findMany({
+                include: {
+                    Client: true,
+                    engagement: true,
+                    site: true,
+                }
+            });
+        }),
     getAll: publicProcedure
         .input(z.boolean())
         .query(({ ctx }) => {
             return ctx.prisma.pOC.findMany();
         }),
+    getAllClient: publicProcedure
+        .input(z.boolean().optional())
+        .query(({ ctx }) => {
+            return ctx.prisma.pOC.findMany({
+                where: {
+                    NOT: [
+                        {
+                            client_id: null
+                        }
+                    ]
+                }
+            });
+        }),
     getTotalCount: publicProcedure
+        .input(z.boolean().optional())
         .query(({ ctx }) => {
             return ctx.prisma.pOC.count();
         }),
