@@ -48,6 +48,10 @@ const ReviewAssessment: NextPage = () => {
 
     const [question, setQuestion] = React.useState<number>(questions && questions[0] ? questions[0].question.id : -1);
 
+    React.useEffect(() => {
+        setQuestion(questions && questions[0] ? questions[0].question.id : -1)
+    }, [questions])
+    
     const selectedAssessmentQuestion = data?.AssessmentQuestion.find(o => o.question.id == question);
     const questionRef = selectedAssessmentQuestion?.question;
     const ratings = api.rating.getByQuestionFilter.useQuery({ questionId: questionRef?.id, filterId: selectedAssessmentQuestion?.filter_id ?? undefined }).data;
