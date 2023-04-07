@@ -12,14 +12,13 @@ interface Props {
 
 const BrowsePOCs: React.FC<Props> = (props) => {
 
-    const { pocModal, setPOCModal } = props;
+    // const { pocModal, setPOCModal } = props;
+    const [pocModal, setPOCModal] = React.useState<boolean>(false);
 
     const [pocData, setPOCData] = React.useState<POC | undefined>(undefined);
 
     // TODO: Don't run query unless modal closed
     const pocs = api.poc.getAllInclude.useQuery(pocModal).data;
-
-    console.log(pocs)
 
     return (
         <>

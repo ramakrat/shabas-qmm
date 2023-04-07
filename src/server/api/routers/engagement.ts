@@ -72,9 +72,12 @@ export const engagementRouter = createTRPCRouter({
             // })
             return ctx.prisma.engagement.findMany({
                 include: {
-                    Assessment: true,
+                    Assessment: {
+                        include: { poc: true }
+                    },
                     client: true,
                     POC: true,
+                    EngagementPOC: { include: { poc: true } },
                 }
             });
         }),

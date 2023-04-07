@@ -1,5 +1,5 @@
 import React from "react";
-import type { Assessment, Client, Engagement, POC } from "@prisma/client";
+import type { Assessment, Client, Engagement, EngagementPOC, POC } from "@prisma/client";
 import {
     Button, IconButton, Accordion, AccordionDetails, AccordionSummary,
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow
@@ -19,9 +19,21 @@ interface Props {
 
 const BrowseAssessments: React.FC<Props> = (props) => {
 
-    const { engagementModal, setEngagementModal, assessmentModal, setAssessmentModal } = props;
+    // const { engagementModal, setEngagementModal, assessmentModal, setAssessmentModal } = props;
 
-    const [engagementData, setEngagementData] = React.useState<Engagement | undefined>(undefined);
+    const [engagementModal, setEngagementModal] = React.useState<boolean>(false);
+    const [assessmentModal, setAssessmentModal] = React.useState<boolean>(false);
+
+    const [engagementData, setEngagementData] = React.useState<Engagement & {
+        client: Client;
+        POC: POC[];
+        EngagementPOC: (EngagementPOC & {
+            poc: POC;
+        })[];
+        Assessment: (Assessment & {
+            poc: POC | null;
+        })[];
+    } | undefined>(undefined);
     const [assessmentData, setAssessmentData] = React.useState<Assessment | undefined>(undefined);
 
     type SecondaryFilters = 'ongoing' | 'assessor-review' | 'oversight' | 'client-review' | 'completed';
@@ -62,7 +74,9 @@ const BrowseAssessments: React.FC<Props> = (props) => {
                     <span className='count'>15</span>
                 </div>
             </div>
-            {data && data.map((e: Engagement & { POC: POC[]; Assessment: Assessment[]; client: Client; }, i) => {
+            {data && data.map((e, i) => {
+                const existingClientPoc = e.EngagementPOC.find(o => o.poc.client_id);
+                const existingShabasPoc = e.EngagementPOC.find(o => !o.poc.client_id);
                 return (
                     <Accordion key={i}>
                         <AccordionSummary expandIcon={<ExpandMore />}>
@@ -89,8 +103,8 @@ const BrowseAssessments: React.FC<Props> = (props) => {
                                             <TableCell align="left">{e.client_id} - {e.client.first_name} {e.client.first_name}</TableCell>
                                             <TableCell align="left">{e.start_date.toDateString()}</TableCell>
                                             <TableCell align="left">{e.end_date.toDateString()}</TableCell>
-                                            <TableCell align="left"></TableCell>
-                                            <TableCell align="left"></TableCell>
+                                            <TableCell align="left">{existingClientPoc?.poc.first_name} {existingClientPoc?.poc.last_name}</TableCell>
+                                            <TableCell align="left">{existingShabasPoc?.poc.first_name} {existingShabasPoc?.poc.last_name}</TableCell>
                                             <TableCell align="left">{titleCase(e.status)}</TableCell>
                                             <TableCell align="center">
                                                 {e.start_date > new Date() &&
@@ -120,7 +134,7 @@ const BrowseAssessments: React.FC<Props> = (props) => {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {e.Assessment.map((a: Assessment, i) => {
+                                        {e.Assessment.map((a, i) => {
                                             return (
                                                 <TableRow
                                                     key={i}
@@ -130,7 +144,7 @@ const BrowseAssessments: React.FC<Props> = (props) => {
                                                     <TableCell align="left">{a.site_id}</TableCell>
                                                     <TableCell align="left">{a.start_date.toDateString()}</TableCell>
                                                     <TableCell align="left">{a.end_date.toDateString()}</TableCell>
-                                                    <TableCell align="left"></TableCell>
+                                                    <TableCell align="left">{a.poc && a.poc.first_name + ' ' + a.poc.last_name}</TableCell>
                                                     <TableCell align="left"></TableCell>
                                                     <TableCell align="left">{titleCase(a.status)}</TableCell>
                                                     <TableCell align="center">

@@ -52,7 +52,7 @@ const AdminDashboard: NextPage = () => {
 
 
     // TODO: Make dynamic
-    const totalClient = api.client.getTotalCount.useQuery(clientModal).data;
+    const totalClient = api.client.getTotalCount.useQuery().data;
     const totalSite = api.site.getTotalCount.useQuery(siteModal).data;
     const totalEngagement = api.engagement.getTotalCount.useQuery(engagementModal).data;
     const totalAssessment = api.assessment.getTotalCount.useQuery(assessmentModal).data;

@@ -12,7 +12,8 @@ interface Props {
 
 const BrowseSites: React.FC<Props> = (props) => {
 
-    const { siteModal, setSiteModal } = props;
+    // const { siteModal, setSiteModal } = props;
+    const [siteModal, setSiteModal] = React.useState<boolean>(false);
 
     const [siteData, setSiteData] = React.useState<Site | undefined>(undefined);
 

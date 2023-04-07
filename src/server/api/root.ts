@@ -13,6 +13,7 @@ import { ratingRouter } from "./routers/rating";
 import { assessmentQuestionRouter } from "./routers/assessmentquestion";
 import { answerRouter } from "./routers/answer";
 import { pocRouter } from "./routers/poc";
+import { engagementpocRouter } from "./routers/engagementpoc";
 
 /**
  * This is the primary router for your server.
@@ -34,6 +35,7 @@ export const appRouter = createTRPCRouter({
     assessmentQuestion: assessmentQuestionRouter,
     answer: answerRouter,
     poc: pocRouter,
+    engagementPoc: engagementpocRouter,
 });
 
 // export type definition of API

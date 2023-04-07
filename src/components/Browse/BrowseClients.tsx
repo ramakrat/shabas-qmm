@@ -12,7 +12,9 @@ interface Props {
 
 const BrowseClients: React.FC<Props> = (props) => {
 
-    const { clientModal, setClientModal } = props;
+    // const { clientModal, setClientModal } = props;
+    const [clientModal, setClientModal] = React.useState<boolean>(false);
+
 
     const [clientData, setClientData] = React.useState<Client | undefined>(undefined);
 

@@ -11,6 +11,7 @@ const inputType = z.object({
     end_date: z.date(),
     site_id: z.number(),
     engagement_id: z.number(),
+    poc_id: z.number().optional(),
 })
 
 export const assessmentRouter = createTRPCRouter({
@@ -25,6 +26,7 @@ export const assessmentRouter = createTRPCRouter({
                     end_date: input.end_date,
                     site_id: input.site_id,
                     engagement_id: input.engagement_id,
+                    poc_id: input.poc_id,
                     created_by: '',
                     updated_by: '',
                 }
@@ -42,6 +44,7 @@ export const assessmentRouter = createTRPCRouter({
                     end_date: input.end_date,
                     site_id: input.site_id,
                     engagement_id: input.engagement_id,
+                    poc_id: input.poc_id,
                     updated_at: new Date(),
                     updated_by: '',
                 },

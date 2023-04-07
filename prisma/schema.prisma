@@ -85,10 +85,12 @@ model POC {
     site_id Int?
     site    Site? @relation(fields: [site_id], references: [id])
 
-    created_at DateTime @default(now())
-    updated_at DateTime @default(now())
-    created_by String
-    updated_by String
+    created_at    DateTime        @default(now())
+    updated_at    DateTime        @default(now())
+    created_by    String
+    updated_by    String
+    EngagementPOC EngagementPOC[]
+    Assessment    Assessment[]
 
     @@index([user_id])
     @@index([client_id])
@@ -237,12 +239,26 @@ model Engagement {
     POC        POC[]
     Assessment Assessment[]
 
-    created_at DateTime @default(now())
-    updated_at DateTime @default(now())
-    created_by String
-    updated_by String
+    created_at    DateTime        @default(now())
+    updated_at    DateTime        @default(now())
+    created_by    String
+    updated_by    String
+    EngagementPOC EngagementPOC[]
 
     @@index([client_id])
+}
+
+model EngagementPOC {
+    id Int @id @default(autoincrement())
+
+    engagement_id Int
+    engagement    Engagement @relation(fields: [engagement_id], references: [id])
+
+    poc_id Int
+    poc    POC @relation(fields: [poc_id], references: [id])
+
+    @@index([poc_id])
+    @@index([engagement_id])
 }
 
 model Assessment {
@@ -252,6 +268,9 @@ model Assessment {
     status      String
     start_date  DateTime
     end_date    DateTime
+
+    poc_id Int?
+    poc    POC? @relation(fields: [poc_id], references: [id])
 
     site_id Int
     site    Site @relation(fields: [site_id], references: [id])
@@ -269,6 +288,7 @@ model Assessment {
 
     @@index([site_id])
     @@index([engagement_id])
+    @@index([poc_id])
 }
 
 model AssessmentUser {
