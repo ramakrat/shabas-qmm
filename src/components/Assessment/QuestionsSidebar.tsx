@@ -9,34 +9,37 @@ interface Props {
     question: number;
     setQuestion: (question: number) => void;
     addOption?: boolean;
+    submitAssessment?: () => void;
 }
 
 const QuestionsSidebar: React.FC<Props> = (props) => {
 
-    const { questions, question, setQuestion, addOption } = props;
+    const { questions, question, setQuestion, addOption, submitAssessment } = props;
 
     const [questionModal, setQuestionModal] = React.useState<boolean>(false);
 
     return (
         <>
             <Card className='questions-sidebar'>
-                <div className='question-steppers'>
-                    <Button
-                        variant='contained'
-                        disabled={questions[0] ? (question == questions[0].id) : false}
-                        onClick={() => setQuestion(question - 1)}
-                    >
-                        Previous
-                    </Button>
-                    <Button
-                        variant='contained'
-                        disabled={questions[questions.length] ? (question == (questions[questions.length] as Question).id) : false}
-                        onClick={() => setQuestion(question + 1)}
-                    >
-                        Next
-                    </Button>
-                </div>
-                {questions.map(o => {
+                {questions.find((o: Question) => o.id == question) &&
+                    <div className='question-steppers'>
+                        <Button
+                            variant='contained'
+                            disabled={questions[0] ? (question == questions[0].id) : false}
+                            onClick={() => setQuestion(question - 1)}
+                        >
+                            Previous
+                        </Button>
+                        <Button
+                            variant='contained'
+                            disabled={questions[questions.length - 1] ? (question == (questions[questions.length - 1] as Question).id) : false}
+                            onClick={() => setQuestion(question + 1)}
+                        >
+                            Next
+                        </Button>
+                    </div>
+                }
+                {questions.map((o: Question) => {
                     return (
                         <Typography
                             key={o.id}
@@ -55,6 +58,14 @@ const QuestionsSidebar: React.FC<Props> = (props) => {
                         startIcon={<Add />}
                     >
                         Add Question
+                    </Button>
+                }
+                {submitAssessment &&
+                    <Button
+                        variant='outlined'
+                        onClick={() => submitAssessment()}
+                    >
+                        Submit Assessment
                     </Button>
                 }
             </Card>

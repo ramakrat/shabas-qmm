@@ -5,7 +5,7 @@ import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/
 
 const inputType = z.object({
     id: z.number().optional(),
-    status: z.string(),
+    status: z.string().optional(),
     description: z.string(),
     start_date: z.date(),
     end_date: z.date(),
@@ -18,7 +18,7 @@ export const engagementRouter = createTRPCRouter({
         .mutation(({ input, ctx }) => {
             return ctx.prisma.engagement.create({
                 data: {
-                    status: input.status,
+                    status: 'created',
                     description: input.description,
                     start_date: input.start_date,
                     end_date: input.end_date,
@@ -53,10 +53,56 @@ export const engagementRouter = createTRPCRouter({
         }),
     getAllInclude: publicProcedure
         .input(z.array(z.boolean()))
-        .query(({ ctx }) => {
+        .query(async ({ ctx }) => {
+            // await ctx.prisma.engagement.update({
+            //     where: {}
+            // })
             return ctx.prisma.engagement.findMany({
                 include: {
                     Assessment: true,
+                    client: true,
+                    POC: true,
+                }
+            });
+        }),
+    getAllOngoingInclude: publicProcedure
+        .input(z.array(z.boolean()))
+        .query(({ ctx }) => {
+            return ctx.prisma.engagement.findMany({
+                where: {
+                    Assessment: {
+                        some: {
+                            start_date: { lte: new Date() },
+                            status: 'created' || 'in-progress',
+                        }
+                    }
+                },
+                include: {
+                    Assessment: {
+                        where: {
+                            start_date: { lte: new Date() },
+                            status: 'created' || 'in-progress',
+                        }
+                    },
+                    client: true,
+                    POC: true,
+                }
+            });
+        }),
+    getAllReviewInclude: publicProcedure
+        .input(z.array(z.boolean()))
+        .query(({ ctx }) => {
+            return ctx.prisma.engagement.findMany({
+                where: {
+                    Assessment: {
+                        some: { status: 'in-review' }
+                    }
+                },
+                include: {
+                    Assessment: {
+                        where: { status: 'in-review' }
+                    },
+                    client: true,
                     POC: true,
                 }
             });
@@ -64,12 +110,7 @@ export const engagementRouter = createTRPCRouter({
     getAll: publicProcedure
         .input(z.boolean())
         .query(({ ctx }) => {
-            return ctx.prisma.engagement.findMany({
-                include: {
-                    Assessment: true,
-                    POC: true,
-                }
-            });
+            return ctx.prisma.engagement.findMany();
         }),
     getTotalCount: publicProcedure
         .query(({ ctx }) => {

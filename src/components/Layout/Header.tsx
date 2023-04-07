@@ -32,22 +32,17 @@ export const Header: React.FC<Props> = (props) => {
                         Dashboard
                     </Typography>
                 </Link>
-                <Link href={'/admin-questions'} className={active == 'assessments' ? 'active' : ''}>
-                    <Typography>
-                        Assessments
-                    </Typography>
-                </Link>
                 <Link href={'/questions/1'} className={active == 'questions' ? 'active' : ''}>
                     <Typography>
                         Questions
                     </Typography>
                 </Link>
-                <Link href={'/assessor-ongoing-assessments'} className={active == 'ongoing-assessments' ? 'active' : ''}>
+                <Link href={'/ongoing-assessments'} className={active == 'ongoing-assessments' ? 'active' : ''}>
                     <Typography>
                         Ongoing Assessments
                     </Typography>
                 </Link>
-                <Link href={'/assessor-review-assessments'} className={active == 'review-assessments' ? 'active' : ''}>
+                <Link href={'/review-assessments'} className={active == 'review-assessments' ? 'active' : ''}>
                     <Typography>
                         Review Assessments
                     </Typography>

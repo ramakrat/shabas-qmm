@@ -1,5 +1,5 @@
 import React from "react";
-import type { Assessment, Engagement, POC } from "@prisma/client";
+import type { Assessment, Client, Engagement, POC } from "@prisma/client";
 import {
     Button, IconButton, Accordion, AccordionDetails, AccordionSummary,
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow
@@ -35,27 +35,27 @@ const BrowseAssessments: React.FC = () => {
             </div>
             <div className='filters'>
                 <div className='filter' onClick={() => setSecondaryFilter('ongoing')}>
-                    <span className={secondaryFilter == 'ongoing' ? 'active' : ''}>Ongoing</span>
-                    <span>4</span>
+                    <span className={secondaryFilter == 'ongoing' ? 'label active' : 'label'}>Ongoing</span>
+                    <span className='count'>4</span>
                 </div>
                 <div className='filter' onClick={() => setSecondaryFilter('assessor-review')}>
-                    <span className={secondaryFilter == 'assessor-review' ? 'active' : ''}>Assessor Review</span>
-                    <span>1</span>
+                    <span className={secondaryFilter == 'assessor-review' ? 'label active' : 'label'}>Assessor Review</span>
+                    <span className='count'>1</span>
                 </div>
                 <div className='filter' onClick={() => setSecondaryFilter('oversight')}>
-                    <span className={secondaryFilter == 'oversight' ? 'active' : ''}>Oversight</span>
-                    <span>15</span>
+                    <span className={secondaryFilter == 'oversight' ? 'label active' : 'label'}>Oversight</span>
+                    <span className='count'>15</span>
                 </div>
                 <div className='filter' onClick={() => setSecondaryFilter('client-review')}>
-                    <span className={secondaryFilter == 'client-review' ? 'active' : ''}>Client Review</span>
-                    <span>4</span>
+                    <span className={secondaryFilter == 'client-review' ? 'label active' : 'label'}>Client Review</span>
+                    <span className='count'>4</span>
                 </div>
                 <div className='filter' onClick={() => setSecondaryFilter('completed')}>
-                    <span className={secondaryFilter == 'completed' ? 'active' : ''}>Completed</span>
-                    <span>15</span>
+                    <span className={secondaryFilter == 'completed' ? 'label active' : 'label'}>Completed</span>
+                    <span className='count'>15</span>
                 </div>
             </div>
-            {data && data.map((e: Engagement & { POC: POC[]; Assessment: Assessment[]; }, i) => {
+            {data && data.map((e: Engagement & { POC: POC[]; Assessment: Assessment[]; client: Client; }, i) => {
                 return (
                     <Accordion key={i}>
                         <AccordionSummary expandIcon={<ExpandMore />}>
@@ -68,6 +68,7 @@ const BrowseAssessments: React.FC = () => {
                                             <TableCell align="left">Start Date</TableCell>
                                             <TableCell align="left">End Date</TableCell>
                                             <TableCell align="left">POC</TableCell>
+                                            <TableCell align="left">Status</TableCell>
                                             <TableCell align="center">Edit</TableCell>
                                         </TableRow>
                                     </TableHead>
@@ -77,14 +78,17 @@ const BrowseAssessments: React.FC = () => {
                                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                         >
                                             <TableCell align="center">{e.id}</TableCell>
-                                            <TableCell align="left">{e.client_id}</TableCell>
+                                            <TableCell align="left">{e.client_id} - {e.client.first_name} {e.client.first_name}</TableCell>
                                             <TableCell align="left">{e.start_date.toDateString()}</TableCell>
                                             <TableCell align="left">{e.end_date.toDateString()}</TableCell>
-                                            <TableCell align="left">e.POC</TableCell>
+                                            <TableCell align="left"></TableCell>
+                                            <TableCell align="left">{e.status}</TableCell>
                                             <TableCell align="center">
-                                                <IconButton onClick={() => { setEngagementData(e); setEngagementModal(true) }}>
-                                                    <Edit fontSize='small' />
-                                                </IconButton>
+                                                {e.start_date > new Date() &&
+                                                    <IconButton onClick={() => { setEngagementData(e); setEngagementModal(true) }}>
+                                                        <Edit fontSize='small' />
+                                                    </IconButton>
+                                                }
                                             </TableCell>
                                         </TableRow>
                                     </TableBody>
@@ -121,9 +125,11 @@ const BrowseAssessments: React.FC = () => {
                                                     <TableCell align="left">a.assessor</TableCell>
                                                     <TableCell align="left">{a.status}</TableCell>
                                                     <TableCell align="center">
-                                                        <IconButton onClick={() => { setAssessmentData(a); setAssessmentModal(true) }}>
-                                                            <Edit fontSize='small' />
-                                                        </IconButton>
+                                                        {a.start_date > new Date() &&
+                                                            <IconButton onClick={() => { setAssessmentData(a); setAssessmentModal(true) }}>
+                                                                <Edit fontSize='small' />
+                                                            </IconButton>
+                                                        }
                                                     </TableCell>
                                                 </TableRow>
                                             )

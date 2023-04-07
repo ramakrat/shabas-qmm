@@ -73,17 +73,17 @@ model POC {
     email        String
     staff        String
 
-    user_id Int
-    user    User @relation(fields: [user_id], references: [id])
+    user_id Int?
+    user    User? @relation(fields: [user_id], references: [id])
 
-    client_id Int
-    Client    Client @relation(fields: [client_id], references: [id])
+    client_id Int?
+    Client    Client? @relation(fields: [client_id], references: [id])
 
-    engagement_id Int
-    engagement    Engagement @relation(fields: [engagement_id], references: [id])
+    engagement_id Int?
+    engagement    Engagement? @relation(fields: [engagement_id], references: [id])
 
-    site_id Int
-    site    Site @relation(fields: [site_id], references: [id])
+    site_id Int?
+    site    Site? @relation(fields: [site_id], references: [id])
 
     created_at DateTime @default(now())
     updated_at DateTime @default(now())
@@ -112,7 +112,6 @@ model Question {
     SME                SME[]
     InterviewGuide     InterviewGuide[]
     AssessmentQuestion AssessmentQuestion[]
-    Answer             Answer[]
     Rating             Rating[]
 
     created_at DateTime @default(now())
@@ -214,8 +213,9 @@ model Filter {
     type String
     name String
 
-    Rating          Rating[]
-    Interview_Guide InterviewGuide[]
+    Rating             Rating[]
+    Interview_Guide    InterviewGuide[]
+    AssessmentQuestion AssessmentQuestion[]
 
     created_at DateTime @default(now())
     updated_at DateTime @default(now())
@@ -298,6 +298,11 @@ model AssessmentQuestion {
     assessment_id Int
     assessment    Assessment @relation(fields: [assessment_id], references: [id])
 
+    filter_id Int?
+    filter    Filter? @relation(fields: [filter_id], references: [id])
+
+    answer Answer?
+
     created_at DateTime @default(now())
     updated_at DateTime @default(now())
     created_by String
@@ -305,29 +310,30 @@ model AssessmentQuestion {
 
     @@index([question_id])
     @@index([assessment_id])
+    @@index([filter_id])
 }
 
 model Answer {
     id Int @id @default(autoincrement())
 
-    assessor_rating       String
-    assessor_explanation  String
-    assessor_evidence     String
-    consensus_rating      String
-    consensus_explanation String
-    consensus_evidence    String
-    oversight_concurrence String
-    oversight_explanation String
-    oversight_evidence    String
-    client_concurrence    String
-    client_explanation    String
-    client_evidence       String
+    assessor_rating       String?
+    assessor_explanation  String?
+    assessor_evidence     String?
+    consensus_rating      String?
+    consensus_explanation String?
+    consensus_evidence    String?
+    oversight_concurrence String?
+    oversight_explanation String?
+    oversight_evidence    String?
+    client_concurrence    String?
+    client_explanation    String?
+    client_evidence       String?
 
-    user_id Int
-    user    User @relation(fields: [user_id], references: [id])
+    user_id Int?
+    user    User? @relation(fields: [user_id], references: [id])
 
-    question_id Int
-    question    Question @relation(fields: [question_id], references: [id])
+    assessment_question_id Int                @unique
+    assessment_question    AssessmentQuestion @relation(fields: [assessment_question_id], references: [id])
 
     StartTime StartTime[]
 
@@ -337,7 +343,7 @@ model Answer {
     updated_by String
 
     @@index([user_id])
-    @@index([question_id])
+    @@index([assessment_question_id])
 }
 
 model StartTime {

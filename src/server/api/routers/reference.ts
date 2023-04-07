@@ -36,7 +36,7 @@ export const referenceRouter = createTRPCRouter({
             })
         }),
     getByQuestionId: publicProcedure
-        .input(z.object({ id: z.number() }))
+        .input(z.object({ id: z.number().optional() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.reference.findMany({
                 where: { question_id: input.id },
@@ -44,7 +44,7 @@ export const referenceRouter = createTRPCRouter({
             });
         }),
     getById: publicProcedure
-        .input(z.object({ id: z.number() }))
+        .input(z.object({ id: z.number().optional() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.reference.findUnique({
                 where: { id: input.id }

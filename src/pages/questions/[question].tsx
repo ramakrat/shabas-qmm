@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/restrict-plus-operands */
 import * as React from 'react';
 import { type NextPage } from "next";
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import type { Filter } from '@prisma/client';
 
 import {
-    Button, Card, Grid, IconButton, MenuItem, Select, Switch,
+    Button, Card, Grid, IconButton, MenuItem, Select,
     TextField, ToggleButton, ToggleButtonGroup, Typography
 } from '@mui/material';
 import { Add } from '@mui/icons-material';
@@ -17,12 +17,30 @@ import ApiSegmentModal from '~/components/Modals/QuestionFilters/ApiSegmentModal
 import SiteSpecificModal from '~/components/Modals/QuestionFilters/SiteSpecificModal';
 import QuestionsSidebar from '~/components/Assessment/QuestionsSidebar';
 
+interface GuideType {
+    id?: number;
+    num: number;
+    interview_question: string;
+}
+
+interface ReferenceType {
+    id?: number;
+    num: number;
+    citation: string;
+}
+
+interface RatingType {
+    id?: number;
+    level_number: number;
+    criteria: string;
+    progression_statement: string;
+}
+
 const Question: NextPage = () => {
 
     const { push } = useRouter();
 
     const { question } = useRouter().query;
-
 
     const [filterType, setFilterType] = React.useState<string>('standard');
     const [filterSelection, setFilterSelection] = React.useState<Filter | null>(null);
@@ -41,8 +59,6 @@ const Question: NextPage = () => {
         filterId: (filterType != 'standard' && filterSelection) ? filterSelection.id : undefined,
     }).data;
 
-
-
     // =========== Input Field States ===========
 
     const [active, setActive] = React.useState<boolean>(true);
@@ -60,26 +76,13 @@ const Question: NextPage = () => {
     const [email, setEmail] = React.useState<string>('');
     const [phone, setPhone] = React.useState<string>('');
 
-    interface GuideType {
-        id?: number;
-        num: number;
-        interview_question: string;
-    }
+
     const [existingGuide, setExistingGuide] = React.useState<GuideType[]>([]);
     const [guide, setGuide] = React.useState<GuideType[]>([{ num: 1, interview_question: '' }]);
-    interface ReferenceType {
-        id?: number;
-        num: number;
-        citation: string;
-    }
+
     const [existingReferences, setExistingReferences] = React.useState<ReferenceType[]>([]);
     const [references, setReferences] = React.useState<ReferenceType[]>([{ num: 1, citation: '' }]);
-    interface RatingType {
-        id?: number;
-        level_number: number;
-        criteria: string;
-        progression_statement: string;
-    }
+
     const [existingRatings, setExistingRatings] = React.useState<RatingType[]>([]);
     const [ratings, setRatings] = React.useState<RatingType[]>([]);
 
@@ -127,7 +130,6 @@ const Question: NextPage = () => {
                     citation: o.citation,
                 }
             });
-            console.log(existingArray)
             setExistingReferences(existingArray);
             const array = references.map(o => {
                 count++;
@@ -227,6 +229,7 @@ const Question: NextPage = () => {
 
     const create = api.question.create.useMutation();
     const update = api.question.update.useMutation();
+    const changeActive = api.question.active.useMutation();
 
     const createGuide = api.interviewGuide.create.useMutation();
     const updateGuide = api.interviewGuide.update.useMutation();
@@ -253,9 +256,19 @@ const Question: NextPage = () => {
         }
     }, [data])
 
+    const handleActive = () => {
+        if (data) {
+            changeActive.mutate({
+                id: data.id,
+                active: !active,
+            }, {
+                onSuccess() { Router.reload() }
+            })
+        }
+    }
+
     const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
         event.preventDefault();
-
 
         if (data) {
             let succeeded = true;
@@ -403,7 +416,7 @@ const Question: NextPage = () => {
             }
 
             if (succeeded) {
-
+                Router.reload();
             }
         }
     }
@@ -437,14 +450,14 @@ const Question: NextPage = () => {
                 value={filterSelection ? filterSelection.id : ''}
                 onChange={(event) => {
                     if (filterOptions) {
-                        const selected = filterOptions[Number(event.target.value)];
+                        const selected = filterOptions.find(o => o.id == event.target.value);
                         if (selected) setFilterSelection(selected);
                     }
                 }}
             >
                 <MenuItem value=''><em>Select a filter...</em></MenuItem>
                 {filterOptions?.map((o, i) => {
-                    return <MenuItem key={i} value={i}>{o.name}</MenuItem>;
+                    return <MenuItem key={i} value={o.id}>{o.name}</MenuItem>;
                 })}
                 <MenuItem>
                     <Button
@@ -492,7 +505,7 @@ const Question: NextPage = () => {
                                         />
                                     </div>
                                     <div>
-                                        <Typography>Pillar (Not Needed)</Typography>
+                                        <Typography>Pillar</Typography>
                                         <TextField
                                             name='pillar' size='small'
                                             value={pillar}
@@ -523,14 +536,6 @@ const Question: NextPage = () => {
                                             onChange={e => setPriority(e.target.value)}
                                         />
                                     </div>
-
-                                    <div>
-                                        <Typography>Active</Typography>
-                                        <Switch
-                                            checked={active}
-                                            onChange={(_event, checked) => setActive(checked)}
-                                        />
-                                    </div>
                                 </Card>
                             </Grid>
                             <Grid item xs={8}>
@@ -539,7 +544,7 @@ const Question: NextPage = () => {
                                         exclusive
                                         size='small'
                                         value={filterType}
-                                        onChange={(_event, value: string) => { if (value) setFilterType(value) }}
+                                        onChange={(_event, value: string) => { if (value) { setFilterType(value); setFilterSelection(null); setRatings([]) } }}
                                     >
                                         <ToggleButton value='standard'>Standard</ToggleButton>
                                         <ToggleButton value='industry'>Industry</ToggleButton>
@@ -548,81 +553,90 @@ const Question: NextPage = () => {
                                     </ToggleButtonGroup>
                                     {filterSelect()}
                                 </Card>
-                                <Card className='question-content'>
-                                    <Typography>Question Content</Typography>
-                                    <TextField
-                                        name='question' size='small' multiline
-                                        value={questionContent}
-                                        onChange={e => setQuestionContent(e.target.value)}
-                                    />
-                                    {existingRatings.map((o, i) => {
-                                        return (
-                                            <div key={i}>
-                                                <Typography>Level {o.level_number}</Typography>
-                                                <TextField
-                                                    placeholder='Criteria...' size='small' multiline
-                                                    value={o.criteria}
-                                                    onChange={(event) => handleRatingChange(o.level_number, event.target.value, true, true)}
-                                                />
-                                                {(i != existingRatings.length - 1 || ratings.length != 0) &&
-                                                    <>
-                                                        <Typography>Progression Statement</Typography>
+                                {!(filterType != 'standard' && filterSelection == null) &&
+                                    <Card className='question-content'>
+                                        <Typography>Question Content</Typography>
+                                        <TextField
+                                            name='question' size='small' multiline
+                                            value={questionContent}
+                                            onChange={e => setQuestionContent(e.target.value)}
+                                        />
+                                        {existingRatings.map((o, i) => {
+                                            if (i <= 4)
+                                                return (
+                                                    <div key={i}>
+                                                        <Typography>Level {o.level_number}</Typography>
                                                         <TextField
-                                                            placeholder='Progression statement...' size='small' multiline
-                                                            value={o.progression_statement}
-                                                            onChange={(event) => handleRatingChange(o.level_number, event.target.value, false, true)}
+                                                            placeholder='Criteria...' size='small' multiline
+                                                            value={o.criteria}
+                                                            onChange={(event) => handleRatingChange(o.level_number, event.target.value, true, true)}
                                                         />
-                                                    </>
-                                                }
-                                            </div>
-                                        )
-                                    })}
-                                    {ratings.map((o, i) => {
-                                        return (
-                                            <div key={i}>
-                                                <Typography>Level {o.level_number}</Typography>
-                                                <TextField
-                                                    placeholder='Criteria...' size='small' multiline
-                                                    value={o.criteria}
-                                                    onChange={(event) => handleRatingChange(o.level_number, event.target.value, true)}
-                                                />
-                                                {(i != ratings.length - 1) &&
-                                                    <>
-                                                        <Typography>Progression Statement</Typography>
-                                                        <TextField
-                                                            placeholder='Progression statement...' size='small' multiline
-                                                            value={o.progression_statement}
-                                                            onChange={(event) => handleRatingChange(o.level_number, event.target.value, false)}
-                                                        />
-                                                    </>
-                                                }
-                                            </div>
-                                        )
-                                    })}
-                                    <Button
-                                        variant='outlined' startIcon={<Add />}
-                                        onClick={() => {
-                                            let num = existingRatings.length + 1;
-                                            const last = ratings[ratings.length - 1];
-                                            if (ratings.length > 0 && last) num = last.level_number + 1;
-                                            setRatings([
-                                                ...ratings,
-                                                {
-                                                    level_number: num,
-                                                    criteria: '',
-                                                    progression_statement: ''
-                                                }
-                                            ])
-                                        }}
-                                    >
-                                        Add Rating
-                                    </Button>
-                                </Card>
+                                                        {((i != existingRatings.length - 1 || ratings.length != 0) && i < 4) &&
+                                                            <>
+                                                                <Typography>Progression Statement</Typography>
+                                                                <TextField
+                                                                    placeholder='Progression statement...' size='small' multiline
+                                                                    value={o.progression_statement}
+                                                                    onChange={(event) => handleRatingChange(o.level_number, event.target.value, false, true)}
+                                                                />
+                                                            </>
+                                                        }
+                                                    </div>
+                                                )
+                                            return undefined;
+                                        })}
+                                        {existingRatings.length < 5 && ratings.map((o, i) => {
+                                            return (
+                                                <div key={i}>
+                                                    <Typography>Level {o.level_number}</Typography>
+                                                    <TextField
+                                                        placeholder='Criteria...' size='small' multiline
+                                                        value={o.criteria}
+                                                        onChange={(event) => handleRatingChange(o.level_number, event.target.value, true)}
+                                                    />
+                                                    {(i != ratings.length - 1) &&
+                                                        <>
+                                                            <Typography>Progression Statement</Typography>
+                                                            <TextField
+                                                                placeholder='Progression statement...' size='small' multiline
+                                                                value={o.progression_statement}
+                                                                onChange={(event) => handleRatingChange(o.level_number, event.target.value, false)}
+                                                            />
+                                                        </>
+                                                    }
+                                                </div>
+                                            )
+                                        })}
+                                        {ratings.length >= 5 &&
+                                            <Button
+                                                variant='outlined' startIcon={<Add />}
+                                                onClick={() => {
+                                                    let num = existingRatings.length + 1;
+                                                    const last = ratings[ratings.length - 1];
+                                                    if (ratings.length > 0 && last) num = last.level_number + 1;
+                                                    setRatings([
+                                                        ...ratings,
+                                                        {
+                                                            level_number: num,
+                                                            criteria: '',
+                                                            progression_statement: ''
+                                                        }
+                                                    ])
+                                                }}
+                                            >
+                                                Add Rating
+                                            </Button>
+                                        }
+                                    </Card>
+                                }
                                 <Card className='actions' style={{ marginTop: 16 }}>
-                                    <div>
-                                        <Button variant='contained' color='error'>Deactivate</Button>
-                                        <Button variant='contained' color='success'>Activate</Button>
-                                    </div>
+                                    <Button
+                                        variant='contained'
+                                        color={active ? 'error' : 'success'}
+                                        onClick={() => handleActive()}
+                                    >
+                                        {active ? 'Deactivate' : 'Activate'}
+                                    </Button>
                                     <Button variant='contained' type='submit'>Save</Button>
                                 </Card>
                             </Grid>

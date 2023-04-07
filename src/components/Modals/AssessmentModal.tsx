@@ -1,8 +1,9 @@
 import React from "react";
-import type { Assessment } from "@prisma/client";
+import type { Assessment, AssessmentQuestion, Filter, Question, Rating } from "@prisma/client";
 import { Button, Card, CardActions, CardContent, CardHeader, FormControl, IconButton, InputLabel, MenuItem, Modal, Paper, Select, Step, StepButton, Stepper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
 import { Add, Close } from "@mui/icons-material";
 import { api } from "~/utils/api";
+import { dateInputFormat, titleCase } from "~/utils/utils";
 
 interface Props {
     open: boolean;
@@ -10,98 +11,179 @@ interface Props {
     data?: Assessment;
 }
 
+interface QuestionType {
+    id?: number;
+    question: (Question & {
+        Rating: (Rating & {
+            filter: Filter | null;
+        })[];
+    });
+    filterSelection: number;
+}
+
+type AssessmentQuestionReturnType = (
+    AssessmentQuestion &
+    {
+        question: (Question & {
+            Rating: (Rating & {
+                filter: Filter | null;
+            })[];
+        });
+        filter: Filter | null
+    }
+)[]
+
 const AssessmentModal: React.FC<Props> = (props) => {
 
     const { open, setOpen, data } = props;
 
     // =========== Retrieve Form Context ===========
 
-    const sites = api.site.getAll.useQuery(true).data;
-    const engagements = api.engagement.getAll.useQuery(true).data;
+    const sites = api.site.getAll.useQuery(open).data;
+    const engagements = api.engagement.getAll.useQuery(open).data;
+    const questions = api.question.getAllActiveInclude.useQuery(open).data;
+    const assessment = api.assessment.getByIdInclude.useQuery({ id: data ? data.id : undefined }).data;
 
     // =========== Input Field States ===========
 
-    const [status, setStatus] = React.useState<string>('');
     const [startDate, setStartDate] = React.useState<Date>(new Date());
     const [endDate, setEndDate] = React.useState<Date>(new Date());
     const [description, setDescription] = React.useState<string>('');
     const [siteId, setSiteId] = React.useState<number>(1);
     const [engagementId, setEngagementId] = React.useState<number>(1);
 
-    // =========== Submission Management ===========
+    const [existingQuestions, setExistingQuestions] = React.useState<AssessmentQuestionReturnType>([]);
+    const [newQuestions, setNewQuestions] = React.useState<QuestionType[]>([]);
 
-    const create = api.assessment.create.useMutation();
-    const update = api.assessment.update.useMutation();
+    const [addQuestion, setAddQuestion] = React.useState<boolean>(false);
+    const [question, setQuestion] = React.useState<Question | undefined>(undefined);
+
+    const steps = ['General Information', 'Edit Questions'];
+    const [activeStep, setActiveStep] = React.useState(0);
+    const handleStep = (step: number) => () => {
+        setActiveStep(step);
+    };
+
 
     React.useEffect(() => {
+        setActiveStep(0);
         if (data) {
-            setStatus(data.status);
             setStartDate(data.start_date);
             setEndDate(data.end_date);
             setDescription(data.description);
             setSiteId(data.site_id);
             setEngagementId(data.engagement_id);
+        } else {
+            setStartDate(new Date());
+            setEndDate(new Date());
+            setDescription('');
+            setSiteId(1);
+            setEngagementId(1);
+
+            setExistingQuestions([]);
+            setNewQuestions([]);
         }
     }, [data])
+
+
+    React.useEffect(() => {
+        if (assessment && assessment.AssessmentQuestion) {
+            setExistingQuestions(assessment.AssessmentQuestion as AssessmentQuestionReturnType);
+        } else {
+            setExistingQuestions([]);
+        }
+    }, [assessment])
+
+    // =========== Submission Management ===========
+
+    const create = api.assessment.create.useMutation();
+    const update = api.assessment.update.useMutation();
+
+    const assessQuestionCreate = api.assessmentQuestion.create.useMutation();
+    const assessQuestionUpdate = api.assessmentQuestion.update.useMutation();
 
     const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (data) {
+            let succeeded = true;
             update.mutate({
                 id: data.id,
-                status: status,
                 start_date: startDate,
                 end_date: endDate,
                 description: description,
                 site_id: siteId,
                 engagement_id: engagementId,
             }, {
-                onSuccess() { setOpen(false) }
+                onSuccess(data) {
+                    existingQuestions.forEach(o => {
+                        assessQuestionUpdate.mutate({
+                            id: o.id,
+                            question_id: o.question.id,
+                            assessment_id: data.id,
+                            filter_id: o.filter ? o.filter.id : undefined,
+                        })
+                    }, {
+                        onError(err: any) {
+                            succeeded = false;
+                            console.log(err);
+                        }
+                    })
+                    newQuestions.forEach(o => {
+                        assessQuestionCreate.mutate({
+                            question_id: o.question.id,
+                            assessment_id: data.id,
+                            filter_id: o.filterSelection != -1 ? o.filterSelection : undefined,
+                        })
+                    }, {
+                        onError(err: any) {
+                            succeeded = false;
+                            console.log(err);
+                        }
+                    })
+                },
+                onError(err) {
+                    succeeded = false;
+                    console.log(err);
+                }
             })
+            if (succeeded) {
+                setOpen(false)
+            }
         } else {
+            let succeeded = true;
             create.mutate({
-                status: status,
                 start_date: startDate,
                 end_date: endDate,
                 description: description,
                 site_id: siteId,
                 engagement_id: engagementId,
             }, {
-                onSuccess() { setOpen(false) }
+                onSuccess(data) {
+                    console.log('hit');
+                    newQuestions.forEach(o => {
+                        assessQuestionCreate.mutate({
+                            question_id: o.question.id,
+                            assessment_id: data.id,
+                            filter_id: o.filterSelection != -1 ? o.filterSelection : undefined,
+                        })
+                    }, {
+                        onError(err: any) {
+                            succeeded = false;
+                            console.log(err);
+                        }
+                    })
+                },
+                onError(err) {
+                    succeeded = false;
+                    console.log(err);
+                }
             })
+            if (succeeded) {
+                setOpen(false)
+            }
         }
     }
 
-
-    const [question, setQuestion] = React.useState<number>(1);
-
-    const steps = ['General Information', 'Edit Questions'];
-
-    const [addQuestion, setAddQuestion] = React.useState<boolean>(false);
-
-    const [activeStep, setActiveStep] = React.useState(0);
-    const [completed, setCompleted] = React.useState<{
-        [k: number]: boolean;
-    }>({});
-
-
-    const handleStep = (step: number) => () => {
-        setActiveStep(step);
-    };
-
-    const rows = [{
-        name: 'S1',
-        industry: 'N/A',
-        api: 'N/A',
-        site: 'N/A',
-        content: 'Question Content',
-    }, {
-        name: 'S2',
-        industry: 'N/A',
-        api: 'N/A',
-        site: 'N/A',
-        content: 'Question Content',
-    }];
 
     return (
         <Modal open={open} onClose={() => setOpen(false)} className='create-modal lg'>
@@ -118,7 +200,7 @@ const AssessmentModal: React.FC<Props> = (props) => {
                     <CardContent>
                         <Stepper nonLinear activeStep={activeStep}>
                             {steps.map((label, index) => (
-                                <Step key={label} completed={completed[index]}>
+                                <Step key={label}>
                                     <StepButton color="inherit" onClick={handleStep(index)}>
                                         {label}
                                     </StepButton>
@@ -160,18 +242,13 @@ const AssessmentModal: React.FC<Props> = (props) => {
                                     </Select>
                                 </FormControl>
                                 <TextField
-                                    name='status' label='Status' size='small'
-                                    value={status}
-                                    onChange={e => setStatus(e.target.value)}
-                                />
-                                <TextField
-                                    name='startDate' label='Start Date' size='small'
-                                    value={startDate}
+                                    name='startDate' label='Start Date' size='small' type='date'
+                                    value={dateInputFormat(startDate)}
                                     onChange={e => setStartDate(new Date(e.target.value))}
                                 />
                                 <TextField
-                                    name='endDate' label='End Date' size='small'
-                                    value={endDate}
+                                    name='endDate' label='End Date' size='small' type='date'
+                                    value={dateInputFormat(endDate)}
                                     onChange={e => setEndDate(new Date(e.target.value))}
                                 />
                                 <TextField
@@ -188,31 +265,98 @@ const AssessmentModal: React.FC<Props> = (props) => {
                                         <TableHead>
                                             <TableRow>
                                                 <TableCell align="center">Question #</TableCell>
-                                                <TableCell align="center">Industry</TableCell>
-                                                <TableCell align="center">API Segment</TableCell>
-                                                <TableCell align="center">Site Specific</TableCell>
+                                                <TableCell align="center">Filter</TableCell>
                                                 <TableCell align="left">Content</TableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
-                                            {rows.map((row) => (
+                                            {existingQuestions && existingQuestions.map((q) => (
                                                 <TableRow
-                                                    key={row.name}
+                                                    key={q.question.number}
                                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                                 >
-                                                    <TableCell align="center" component="th" scope="row">
-                                                        {row.name}
+                                                    <TableCell align="center">
+                                                        {q.question.number}
                                                     </TableCell>
                                                     <TableCell align="center">
-                                                        {row.industry}
+                                                        <Select
+                                                            size='small'
+                                                            value={q.filter ? q.filter.id : -1}
+                                                            onChange={(event) => {
+                                                                const newArr = existingQuestions.map(o => {
+                                                                    if (o.question.id == q.question.id) {
+                                                                        if (event.target.value == -1) {
+                                                                            return {
+                                                                                ...o,
+                                                                                filter: null,
+                                                                            }
+                                                                        }
+                                                                        const newFilter = o.question.Rating.find(o => o.filter_id == event.target.value);
+                                                                        if (newFilter) {
+                                                                            return {
+                                                                                ...o,
+                                                                                filter: newFilter.filter,
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                    return o;
+                                                                })
+                                                                setExistingQuestions(newArr);
+                                                            }}
+                                                        >
+                                                            <MenuItem value={-1}><em>Standard</em></MenuItem>
+                                                            {q.question.Rating.map((o, i) => {
+                                                                if (o.filter)
+                                                                    return (
+                                                                        <MenuItem key={i} value={o.filter.id}>
+                                                                            {titleCase(o.filter.type)}: {o.filter.name}
+                                                                        </MenuItem>
+                                                                    );
+                                                                return;
+                                                            })}
+                                                        </Select>
+                                                    </TableCell>
+                                                    <TableCell align="left">{q.question.question}</TableCell>
+                                                </TableRow>
+                                            ))}
+                                            {newQuestions && newQuestions.map((q) => (
+                                                <TableRow
+                                                    key={q.question.number}
+                                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                >
+                                                    <TableCell align="center">
+                                                        {q.question.number}
                                                     </TableCell>
                                                     <TableCell align="center">
-                                                        {row.api}
+                                                        <Select
+                                                            size='small'
+                                                            value={q.filterSelection}
+                                                            onChange={(event) => {
+                                                                const newArr = newQuestions.map(o => {
+                                                                    if (o.question.id == q.question.id) {
+                                                                        return {
+                                                                            ...o,
+                                                                            filterSelection: Number(event.target.value),
+                                                                        }
+                                                                    }
+                                                                    return o;
+                                                                })
+                                                                setNewQuestions(newArr);
+                                                            }}
+                                                        >
+                                                            <MenuItem value={-1}><em>Standard</em></MenuItem>
+                                                            {q.question.Rating.map((o, i) => {
+                                                                if (o.filter)
+                                                                    return (
+                                                                        <MenuItem key={i} value={o.filter.id}>
+                                                                            {titleCase(o.filter.type)}: {o.filter.name}
+                                                                        </MenuItem>
+                                                                    );
+                                                                return;
+                                                            })}
+                                                        </Select>
                                                     </TableCell>
-                                                    <TableCell align="center">
-                                                        {row.site}
-                                                    </TableCell>
-                                                    <TableCell align="left">{row.content}</TableCell>
+                                                    <TableCell align="left">{q.question.question}</TableCell>
                                                 </TableRow>
                                             ))}
                                         </TableBody>
@@ -220,16 +364,36 @@ const AssessmentModal: React.FC<Props> = (props) => {
                                 </TableContainer>
                                 {addQuestion ?
                                     <div className='questions-bank'>
-                                        <Typography className={question == 1 ? 'active' : ''} onClick={() => setQuestion(1)}>S1</Typography>
-                                        <Typography className={question == 2 ? 'active' : ''} onClick={() => setQuestion(2)}>S2</Typography>
-                                        <Typography className={question == 3 ? 'active' : ''} onClick={() => setQuestion(3)}>S3</Typography>
-                                        <Typography className={question == 4 ? 'active' : ''} onClick={() => setQuestion(4)}>S4</Typography>
-                                        <Typography className={question == 5 ? 'active' : ''} onClick={() => setQuestion(5)}>S5</Typography>
-                                        <Typography className={question == 6 ? 'active' : ''} onClick={() => setQuestion(6)}>S6</Typography>
-                                        <Typography className={question == 7 ? 'active' : ''} onClick={() => setQuestion(7)}>S7</Typography>
-                                        <Button variant='contained' onClick={() => { setAddQuestion(false) }}><Add />Add Question to Assessment</Button>
+                                        {questions && questions.map((o, i) => {
+                                            const existsA = existingQuestions.find(q => q.question.id == o.id);
+                                            const existsB = newQuestions.find(q => q.question.id == o.id);
+                                            if (existsA || existsB) return undefined;
+                                            return (
+                                                <Typography
+                                                    key={i}
+                                                    className={question && question.id == o.id ? 'active' : ''}
+                                                    onClick={() => setQuestion(o)}
+                                                >
+                                                    {o.number}
+                                                </Typography>
+                                            )
+                                        })}
+                                        <Button
+                                            variant='contained'
+                                            onClick={() => {
+                                                const newArr = newQuestions;
+                                                newArr.push({ question: question, filterSelection: -1 } as QuestionType)
+                                                setQuestion(undefined);
+                                                setNewQuestions(newArr);
+                                                setAddQuestion(false);
+                                            }}
+                                        >
+                                            <Add />Add Question to Assessment
+                                        </Button>
                                     </div> :
-                                    <Button variant='contained' onClick={() => { setAddQuestion(true) }}><Add />Add Question</Button>
+                                    <Button variant='contained' onClick={() => { setAddQuestion(true) }}>
+                                        <Add />Add Question
+                                    </Button>
                                 }
                             </div>
                         }
@@ -243,7 +407,7 @@ const AssessmentModal: React.FC<Props> = (props) => {
                     </CardActions>
                 </Card>
             </form>
-        </Modal>
+        </Modal >
     )
 }
 

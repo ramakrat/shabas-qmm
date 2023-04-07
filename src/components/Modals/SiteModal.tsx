@@ -45,6 +45,15 @@ const SiteModal: React.FC<Props> = (props) => {
             setCountry(data.country);
             setDescription(data.description);
             setClientId(data.client_id);
+        } else {
+            setName('');
+            setStreetAddress('');
+            setCity('');
+            setState('');
+            setZipCode('');
+            setCountry('US');
+            setDescription('');
+            setClientId(1);
         }
     }, [data])
 
@@ -103,7 +112,7 @@ const SiteModal: React.FC<Props> = (props) => {
                                 {clients ? clients.map((client: Client) => {
                                     return (
                                         <MenuItem value={client.id} key={client.id}>
-                                            {client.id} {client.first_name} {client.last_name}
+                                            {client.id} - {client.first_name} {client.last_name}
                                         </MenuItem>
                                     )
                                 }) : 'No Clients'}

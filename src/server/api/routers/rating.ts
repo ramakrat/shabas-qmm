@@ -50,7 +50,7 @@ export const ratingRouter = createTRPCRouter({
             })
         }),
     getByQuestionFilter: publicProcedure
-        .input(z.object({ questionId: z.number(), filterId: z.number().optional() }))
+        .input(z.object({ questionId: z.number().optional(), filterId: z.number().optional() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.rating.findMany({
                 where: {

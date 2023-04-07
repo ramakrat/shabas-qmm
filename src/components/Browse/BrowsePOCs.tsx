@@ -1,17 +1,17 @@
 import React from "react";
-import type { Site } from "@prisma/client";
+import type { POC } from "@prisma/client";
 import { Button, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { Add, Edit } from "@mui/icons-material";
 import { api } from "~/utils/api";
-import SiteModal from "../Modals/SiteModal";
+import POCModal from "../Modals/POCModal";
 
-const BrowseSites: React.FC = () => {
+const BrowsePOCs: React.FC = () => {
 
-    const [siteData, setSiteData] = React.useState<Site | undefined>(undefined);
-    const [siteModal, setSiteModal] = React.useState<boolean>(false);
+    const [pocData, setPOCData] = React.useState<POC | undefined>(undefined);
+    const [pocModal, setPOCModal] = React.useState<boolean>(false);
 
     // TODO: Don't run query unless modal closed
-    const sites = api.site.getAll.useQuery(siteModal).data;
+    const clients = api.poc.getAll.useQuery(pocModal).data;
 
     return (
         <>
@@ -19,25 +19,27 @@ const BrowseSites: React.FC = () => {
                 <Button
                     variant='contained'
                     endIcon={<Add />}
-                    onClick={() => { setSiteData(undefined); setSiteModal(true) }}
+                    onClick={() => { setPOCData(undefined); setPOCModal(true) }}
                 >
-                    New Site
+                    New POC
                 </Button>
             </div>
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} size="small">
                     <TableHead>
                         <TableRow>
-                            <TableCell align="center">Site ID</TableCell>
-                            <TableCell align="left">Client</TableCell>
+                            <TableCell align="center">POC ID</TableCell>
                             <TableCell align="left">Name</TableCell>
-                            <TableCell align="left">Address</TableCell>
-                            <TableCell align="left">Description</TableCell>
+                            <TableCell align="left">Title</TableCell>
+                            <TableCell align="left">Work Phone</TableCell>
+                            <TableCell align="left">Mobile Phone</TableCell>
+                            <TableCell align="left">Email</TableCell>
+                            <TableCell align="left">Staff</TableCell>
                             <TableCell align="center">Edit</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {sites && sites.map((data, i) => {
+                        {clients && clients.map((data, i) => {
                             return (
                                 <TableRow
                                     key={i}
@@ -47,20 +49,25 @@ const BrowseSites: React.FC = () => {
                                         {data.id}
                                     </TableCell>
                                     <TableCell align="left">
-                                        {data.client_id} -  {data.client.first_name} {data.client.last_name}
+                                        {data.first_name} {data.last_name}
                                     </TableCell>
                                     <TableCell align="left">
-                                        {data.name}
+                                        {data.title}
                                     </TableCell>
                                     <TableCell align="left">
-                                        {data.street_address}<br />
-                                        {data.city} {data.state}, {data.zip_code}
+                                        {data.work_phone}
                                     </TableCell>
                                     <TableCell align="left">
-                                        {data.description}
+                                        {data.mobile_phone}
+                                    </TableCell>
+                                    <TableCell align="left">
+                                        {data.email}
+                                    </TableCell>
+                                    <TableCell align="left">
+                                        {data.staff}
                                     </TableCell>
                                     <TableCell align="center">
-                                        <IconButton onClick={() => { setSiteData(data); setSiteModal(true) }}>
+                                        <IconButton onClick={() => { setPOCData(data); setPOCModal(true) }}>
                                             <Edit fontSize='small' />
                                         </IconButton>
                                     </TableCell>
@@ -70,9 +77,9 @@ const BrowseSites: React.FC = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-            <SiteModal open={siteModal} setOpen={setSiteModal} data={siteData} />
+            <POCModal open={pocModal} setOpen={setPOCModal} data={pocData} />
         </>
     );
 };
 
-export default BrowseSites;
+export default BrowsePOCs;
