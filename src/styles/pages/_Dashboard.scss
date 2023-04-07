@@ -97,10 +97,15 @@
 
     .filter {
         padding: 0px 15px;
-        width: 100%;
 
         .label {
             cursor: pointer;
+
+            &.active {
+                text-decoration: underline;
+                color: palette(primary, main);
+                font-weight: 600;
+            }
         }
 
         .count {

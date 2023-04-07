@@ -35,24 +35,24 @@ const BrowseAssessments: React.FC = () => {
             </div>
             <div className='filters'>
                 <div className='filter' onClick={() => setSecondaryFilter('ongoing')}>
-                    <span className={secondaryFilter == 'ongoing' ? 'active' : ''}>Ongoing</span>
-                    <span>4</span>
+                    <span className={secondaryFilter == 'ongoing' ? 'label active' : 'label'}>Ongoing</span>
+                    <span className='count'>4</span>
                 </div>
                 <div className='filter' onClick={() => setSecondaryFilter('assessor-review')}>
-                    <span className={secondaryFilter == 'assessor-review' ? 'active' : ''}>Assessor Review</span>
-                    <span>1</span>
+                    <span className={secondaryFilter == 'assessor-review' ? 'label active' : 'label'}>Assessor Review</span>
+                    <span className='count'>1</span>
                 </div>
                 <div className='filter' onClick={() => setSecondaryFilter('oversight')}>
-                    <span className={secondaryFilter == 'oversight' ? 'active' : ''}>Oversight</span>
-                    <span>15</span>
+                    <span className={secondaryFilter == 'oversight' ? 'label active' : 'label'}>Oversight</span>
+                    <span className='count'>15</span>
                 </div>
                 <div className='filter' onClick={() => setSecondaryFilter('client-review')}>
-                    <span className={secondaryFilter == 'client-review' ? 'active' : ''}>Client Review</span>
-                    <span>4</span>
+                    <span className={secondaryFilter == 'client-review' ? 'label active' : 'label'}>Client Review</span>
+                    <span className='count'>4</span>
                 </div>
                 <div className='filter' onClick={() => setSecondaryFilter('completed')}>
-                    <span className={secondaryFilter == 'completed' ? 'active' : ''}>Completed</span>
-                    <span>15</span>
+                    <span className={secondaryFilter == 'completed' ? 'label active' : 'label'}>Completed</span>
+                    <span className='count'>15</span>
                 </div>
             </div>
             {data && data.map((e: Engagement & { POC: POC[]; Assessment: Assessment[]; client: Client; }, i) => {
