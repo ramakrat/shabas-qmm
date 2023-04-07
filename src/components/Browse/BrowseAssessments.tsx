@@ -10,13 +10,19 @@ import AssessmentModal from "../Modals/AssessmentModal";
 import EngagementModal from "../Modals/EngagementModal";
 import { titleCase } from "~/utils/utils";
 
-const BrowseAssessments: React.FC = () => {
+interface Props {
+    engagementModal: boolean;
+    setEngagementModal: (open: boolean) => void;
+    assessmentModal: boolean;
+    setAssessmentModal: (open: boolean) => void;
+}
+
+const BrowseAssessments: React.FC<Props> = (props) => {
+
+    const { engagementModal, setEngagementModal, assessmentModal, setAssessmentModal } = props;
 
     const [engagementData, setEngagementData] = React.useState<Engagement | undefined>(undefined);
     const [assessmentData, setAssessmentData] = React.useState<Assessment | undefined>(undefined);
-
-    const [engagementModal, setEngagementModal] = React.useState<boolean>(false);
-    const [assessmentModal, setAssessmentModal] = React.useState<boolean>(false);
 
     type SecondaryFilters = 'ongoing' | 'assessor-review' | 'oversight' | 'client-review' | 'completed';
     const [secondaryFilter, setSecondaryFilter] = React.useState<SecondaryFilters>('ongoing');

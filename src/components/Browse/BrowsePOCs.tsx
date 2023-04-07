@@ -5,10 +5,16 @@ import { Add, Edit } from "@mui/icons-material";
 import { api } from "~/utils/api";
 import POCModal from "../Modals/POCModal";
 
-const BrowsePOCs: React.FC = () => {
+interface Props {
+    pocModal: boolean;
+    setPOCModal: (open: boolean) => void;
+}
+
+const BrowsePOCs: React.FC<Props> = (props) => {
+
+    const { pocModal, setPOCModal } = props;
 
     const [pocData, setPOCData] = React.useState<POC | undefined>(undefined);
-    const [pocModal, setPOCModal] = React.useState<boolean>(false);
 
     // TODO: Don't run query unless modal closed
     const pocs = api.poc.getAllInclude.useQuery(pocModal).data;

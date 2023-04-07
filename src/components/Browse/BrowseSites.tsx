@@ -5,10 +5,16 @@ import { Add, Edit } from "@mui/icons-material";
 import { api } from "~/utils/api";
 import SiteModal from "../Modals/SiteModal";
 
-const BrowseSites: React.FC = () => {
+interface Props {
+    siteModal: boolean;
+    setSiteModal: (open: boolean) => void;
+}
+
+const BrowseSites: React.FC<Props> = (props) => {
+
+    const { siteModal, setSiteModal } = props;
 
     const [siteData, setSiteData] = React.useState<Site | undefined>(undefined);
-    const [siteModal, setSiteModal] = React.useState<boolean>(false);
 
     // TODO: Don't run query unless modal closed
     const sites = api.site.getAll.useQuery(siteModal).data;

@@ -40,12 +40,23 @@ const AdminDashboard: NextPage = () => {
         );
     }
 
+    // =========== Add Object Modal State Management ===========
+    // Keep modal boolean states here to trigger count query update
+
+    const [clientModal, setClientModal] = React.useState<boolean>(false);
+    const [siteModal, setSiteModal] = React.useState<boolean>(false);
+    const [engagementModal, setEngagementModal] = React.useState<boolean>(false);
+    const [assessmentModal, setAssessmentModal] = React.useState<boolean>(false);
+    const [pocModal, setPOCModal] = React.useState<boolean>(false);
+
+
+
     // TODO: Make dynamic
-    const totalClient = api.client.getTotalCount.useQuery().data;
-    const totalSite = api.site.getTotalCount.useQuery().data;
-    const totalEngagement = api.engagement.getTotalCount.useQuery().data;
-    const totalAssessment = api.assessment.getTotalCount.useQuery().data;
-    const totalPOC = api.poc.getTotalCount.useQuery().data;
+    const totalClient = api.client.getTotalCount.useQuery(clientModal).data;
+    const totalSite = api.site.getTotalCount.useQuery(siteModal).data;
+    const totalEngagement = api.engagement.getTotalCount.useQuery(engagementModal).data;
+    const totalAssessment = api.assessment.getTotalCount.useQuery(assessmentModal).data;
+    const totalPOC = api.poc.getTotalCount.useQuery(pocModal).data;
 
     return (
         <Layout active='dashboard'>
@@ -85,16 +96,16 @@ const AdminDashboard: NextPage = () => {
                         </Tabs>
                     </Box>
                     <TabPanel value={value} index={0}>
-                        <BrowseClients />
+                        <BrowseClients clientModal={clientModal} setClientModal={setClientModal} />
                     </TabPanel>
                     <TabPanel value={value} index={1}>
-                        <BrowseSites />
+                        <BrowseSites siteModal={siteModal} setSiteModal={setSiteModal} />
                     </TabPanel>
                     <TabPanel value={value} index={2}>
-                        <BrowseAssessments />
+                        <BrowseAssessments engagementModal={engagementModal} setEngagementModal={setEngagementModal} assessmentModal={assessmentModal} setAssessmentModal={setAssessmentModal} />
                     </TabPanel>
                     <TabPanel value={value} index={3}>
-                        <BrowsePOCs />
+                        <BrowsePOCs pocModal={pocModal} setPOCModal={setPOCModal} />
                     </TabPanel>
                 </Box>
             </div>
