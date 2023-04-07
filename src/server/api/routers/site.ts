@@ -63,7 +63,11 @@ export const siteRouter = createTRPCRouter({
     getAll: publicProcedure
         .input(z.boolean())
         .query(async ({ ctx }) => {
-            return await ctx.prisma.site.findMany();
+            return await ctx.prisma.site.findMany({
+                include: {
+                    client: true
+                }
+            });
         }),
     getTotalCount: publicProcedure
         .query(({ ctx }) => {

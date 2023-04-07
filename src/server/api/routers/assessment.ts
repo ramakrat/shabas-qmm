@@ -6,7 +6,7 @@ import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/
 const inputType = z.object({
     id: z.number().optional(),
     description: z.string(),
-    status: z.string(),
+    status: z.string().optional(),
     start_date: z.date(),
     end_date: z.date(),
     site_id: z.number(),
@@ -20,7 +20,7 @@ export const assessmentRouter = createTRPCRouter({
             return await ctx.prisma.assessment.create({
                 data: {
                     description: input.description,
-                    status: input.status,
+                    status: 'created',
                     start_date: input.start_date,
                     end_date: input.end_date,
                     site_id: input.site_id,
@@ -42,6 +42,18 @@ export const assessmentRouter = createTRPCRouter({
                     end_date: input.end_date,
                     site_id: input.site_id,
                     engagement_id: input.engagement_id,
+                    updated_at: new Date(),
+                    updated_by: '',
+                },
+            });
+        }),
+    status: publicProcedure
+        .input(z.object({ id: z.number(), status: z.string() }))
+        .mutation(({ input, ctx }) => {
+            return ctx.prisma.assessment.update({
+                where: { id: input.id },
+                data: {
+                    status: input.status,
                     updated_at: new Date(),
                     updated_by: '',
                 },
