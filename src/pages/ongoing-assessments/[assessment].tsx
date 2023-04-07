@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { type NextPage } from "next";
 import Router, { useRouter } from 'next/router';
-import type { Answer, Assessment, AssessmentQuestion, Filter, InterviewGuide, Question, Rating, Reference } from '@prisma/client';
+import type { Answer, Assessment, AssessmentQuestion, Engagement, Filter, InterviewGuide, Question, Rating, Reference } from '@prisma/client';
 
 import { Button, Card, Grid, TextField, Typography } from '@mui/material';
 import { Info } from '@mui/icons-material';
@@ -19,6 +19,7 @@ const OngoingAssessment: NextPage = () => {
 
     const data = api.assessment.getByIdIncludeAssessor.useQuery({ id: Number(assessment) }).data as (
         Assessment & {
+            engagement: Engagement;
             AssessmentQuestion: (AssessmentQuestion & {
                 question: Question & {
                     Rating: Rating[];
@@ -30,6 +31,28 @@ const OngoingAssessment: NextPage = () => {
             })[];
         }
     );
+
+    const assessmentStatus = api.assessment.status.useMutation();
+    const engagementStatus = api.engagement.status.useMutation();
+
+
+    // Update the statuses of Assessment and Engagement if needed
+    React.useEffect(() => {
+        if (data) {
+            if (data.status == 'created' || data.status == '') {
+                assessmentStatus.mutate({
+                    id: data.id,
+                    status: 'in-progress',
+                })
+                if (data.engagement.status == 'created' || data.status == '') {
+                    engagementStatus.mutate({
+                        id: data.id,
+                        status: 'in-progress',
+                    })
+                }
+            }
+        }
+    }, [data])
 
     const convertToQuestion = (object: (Question & {
         Rating?: Rating[];
