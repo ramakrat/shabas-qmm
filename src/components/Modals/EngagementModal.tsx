@@ -88,9 +88,9 @@ const EngagementModal: React.FC<Props> = (props) => {
                     />
                     <CardContent>
                         <FormControl>
-                            <InputLabel size="small">Engagement</InputLabel>
+                            <InputLabel size="small">Client</InputLabel>
                             <Select
-                                name='engagementId' label='Engagement' size='small'
+                                name='clientId' label='Client' size='small'
                                 value={clientId}
                                 onChange={e => setClientId(Number(e.target.value))}
                             >
