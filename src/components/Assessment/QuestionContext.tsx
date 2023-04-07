@@ -15,7 +15,7 @@ const QuestionContext: React.FC<Props> = (props) => {
                 <Typography>{question ? question.number : undefined}</Typography>
             </div>
             <div>
-                <Typography>Pillar (Not Needed)</Typography>
+                <Typography>Pillar</Typography>
                 <Typography>{question ? question.pillar : undefined}</Typography>
             </div>
             <div>

@@ -494,7 +494,7 @@ const Question: NextPage = () => {
                                         />
                                     </div>
                                     <div>
-                                        <Typography>Pillar (Not Needed)</Typography>
+                                        <Typography>Pillar</Typography>
                                         <TextField
                                             name='pillar' size='small'
                                             value={pillar}
