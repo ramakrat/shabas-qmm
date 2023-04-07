@@ -1,5 +1,4 @@
 import React from "react";
-import type { Client } from "@prisma/client";
 import { Button, Card, CardActions, CardContent, CardHeader, FormControlLabel, IconButton, Modal, Switch, TextField } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { api } from "~/utils/api";
