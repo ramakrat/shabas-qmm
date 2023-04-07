@@ -59,10 +59,11 @@ export const questionRouter = createTRPCRouter({
                 where: { id: input.id }
             });
         }),
-    getAllInclude: publicProcedure
+    getAllActiveInclude: publicProcedure
         .input(z.boolean())
         .query(({ ctx }) => {
             return ctx.prisma.question.findMany({
+                where: { active: true },
                 include: {
                     Rating: {
                         include: {

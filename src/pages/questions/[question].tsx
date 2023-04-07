@@ -559,28 +559,30 @@ const Question: NextPage = () => {
                                             onChange={e => setQuestionContent(e.target.value)}
                                         />
                                         {existingRatings.map((o, i) => {
-                                            return (
-                                                <div key={i}>
-                                                    <Typography>Level {o.level_number}</Typography>
-                                                    <TextField
-                                                        placeholder='Criteria...' size='small' multiline
-                                                        value={o.criteria}
-                                                        onChange={(event) => handleRatingChange(o.level_number, event.target.value, true, true)}
-                                                    />
-                                                    {(i != existingRatings.length - 1 || ratings.length != 0) &&
-                                                        <>
-                                                            <Typography>Progression Statement</Typography>
-                                                            <TextField
-                                                                placeholder='Progression statement...' size='small' multiline
-                                                                value={o.progression_statement}
-                                                                onChange={(event) => handleRatingChange(o.level_number, event.target.value, false, true)}
-                                                            />
-                                                        </>
-                                                    }
-                                                </div>
-                                            )
+                                            if (i <= 4)
+                                                return (
+                                                    <div key={i}>
+                                                        <Typography>Level {o.level_number}</Typography>
+                                                        <TextField
+                                                            placeholder='Criteria...' size='small' multiline
+                                                            value={o.criteria}
+                                                            onChange={(event) => handleRatingChange(o.level_number, event.target.value, true, true)}
+                                                        />
+                                                        {((i != existingRatings.length - 1 || ratings.length != 0) && i < 4) &&
+                                                            <>
+                                                                <Typography>Progression Statement</Typography>
+                                                                <TextField
+                                                                    placeholder='Progression statement...' size='small' multiline
+                                                                    value={o.progression_statement}
+                                                                    onChange={(event) => handleRatingChange(o.level_number, event.target.value, false, true)}
+                                                                />
+                                                            </>
+                                                        }
+                                                    </div>
+                                                )
+                                            return undefined;
                                         })}
-                                        {ratings.map((o, i) => {
+                                        {existingRatings.length < 5 && ratings.map((o, i) => {
                                             return (
                                                 <div key={i}>
                                                     <Typography>Level {o.level_number}</Typography>
@@ -602,24 +604,26 @@ const Question: NextPage = () => {
                                                 </div>
                                             )
                                         })}
-                                        <Button
-                                            variant='outlined' startIcon={<Add />}
-                                            onClick={() => {
-                                                let num = existingRatings.length + 1;
-                                                const last = ratings[ratings.length - 1];
-                                                if (ratings.length > 0 && last) num = last.level_number + 1;
-                                                setRatings([
-                                                    ...ratings,
-                                                    {
-                                                        level_number: num,
-                                                        criteria: '',
-                                                        progression_statement: ''
-                                                    }
-                                                ])
-                                            }}
-                                        >
-                                            Add Rating
-                                        </Button>
+                                        {ratings.length >= 5 &&
+                                            <Button
+                                                variant='outlined' startIcon={<Add />}
+                                                onClick={() => {
+                                                    let num = existingRatings.length + 1;
+                                                    const last = ratings[ratings.length - 1];
+                                                    if (ratings.length > 0 && last) num = last.level_number + 1;
+                                                    setRatings([
+                                                        ...ratings,
+                                                        {
+                                                            level_number: num,
+                                                            criteria: '',
+                                                            progression_statement: ''
+                                                        }
+                                                    ])
+                                                }}
+                                            >
+                                                Add Rating
+                                            </Button>
+                                        }
                                     </Card>
                                 }
                                 <Card className='actions' style={{ marginTop: 16 }}>

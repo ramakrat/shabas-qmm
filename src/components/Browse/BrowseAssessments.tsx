@@ -82,9 +82,11 @@ const BrowseAssessments: React.FC = () => {
                                             <TableCell align="left">{e.end_date.toDateString()}</TableCell>
                                             <TableCell align="left">e.POC</TableCell>
                                             <TableCell align="center">
-                                                <IconButton onClick={() => { setEngagementData(e); setEngagementModal(true) }}>
-                                                    <Edit fontSize='small' />
-                                                </IconButton>
+                                                {e.start_date > new Date() &&
+                                                    <IconButton onClick={() => { setEngagementData(e); setEngagementModal(true) }}>
+                                                        <Edit fontSize='small' />
+                                                    </IconButton>
+                                                }
                                             </TableCell>
                                         </TableRow>
                                     </TableBody>
@@ -121,9 +123,11 @@ const BrowseAssessments: React.FC = () => {
                                                     <TableCell align="left">a.assessor</TableCell>
                                                     <TableCell align="left">{a.status}</TableCell>
                                                     <TableCell align="center">
-                                                        <IconButton onClick={() => { setAssessmentData(a); setAssessmentModal(true) }}>
-                                                            <Edit fontSize='small' />
-                                                        </IconButton>
+                                                        {e.start_date > new Date() &&
+                                                            <IconButton onClick={() => { setAssessmentData(a); setAssessmentModal(true) }}>
+                                                                <Edit fontSize='small' />
+                                                            </IconButton>
+                                                        }
                                                     </TableCell>
                                                 </TableRow>
                                             )

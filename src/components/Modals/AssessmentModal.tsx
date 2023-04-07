@@ -41,7 +41,7 @@ const AssessmentModal: React.FC<Props> = (props) => {
 
     const sites = api.site.getAll.useQuery(open).data;
     const engagements = api.engagement.getAll.useQuery(open).data;
-    const questions = api.question.getAllInclude.useQuery(open).data;
+    const questions = api.question.getAllActiveInclude.useQuery(open).data;
     const assessment = api.assessment.getByIdInclude.useQuery({ id: data ? data.id : undefined }).data;
 
     // =========== Input Field States ===========
