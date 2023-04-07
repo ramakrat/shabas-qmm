@@ -52,6 +52,21 @@ export const questionRouter = createTRPCRouter({
                 }
             })
         }),
+    active: publicProcedure
+        .input(z.object({
+            id: z.number(),
+            active: z.boolean(),
+        }))
+        .mutation(({ input, ctx }) => {
+            return ctx.prisma.question.update({
+                where: { id: input.id },
+                data: {
+                    active: input.active,
+                    updated_at: new Date(),
+                    updated_by: '',
+                }
+            })
+        }),
     getById: publicProcedure
         .input(z.object({ id: z.number() }))
         .query(({ input, ctx }) => {
