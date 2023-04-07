@@ -263,3 +263,7 @@ export const titleCase = (text: string) => {
     }).join(' ');
     return capitalized;
 }
+
+export const dateInputFormat = (date: Date) => {
+    return date.toISOString().substring(0, 10);
+}

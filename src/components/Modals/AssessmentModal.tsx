@@ -3,7 +3,7 @@ import type { Assessment, AssessmentQuestion, Filter, Question, Rating } from "@
 import { Button, Card, CardActions, CardContent, CardHeader, FormControl, IconButton, InputLabel, MenuItem, Modal, Paper, Select, Step, StepButton, Stepper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
 import { Add, Close } from "@mui/icons-material";
 import { api } from "~/utils/api";
-import { titleCase } from "~/utils/utils";
+import { dateInputFormat, titleCase } from "~/utils/utils";
 
 interface Props {
     open: boolean;
@@ -252,13 +252,13 @@ const AssessmentModal: React.FC<Props> = (props) => {
                                     onChange={e => setStatus(e.target.value)}
                                 />
                                 <TextField
-                                    name='startDate' label='Start Date' size='small'
-                                    value={startDate}
+                                    name='startDate' label='Start Date' size='small' type='date'
+                                    value={dateInputFormat(startDate)}
                                     onChange={e => setStartDate(new Date(e.target.value))}
                                 />
                                 <TextField
-                                    name='endDate' label='End Date' size='small'
-                                    value={endDate}
+                                    name='endDate' label='End Date' size='small' type='date'
+                                    value={dateInputFormat(endDate)}
                                     onChange={e => setEndDate(new Date(e.target.value))}
                                 />
                                 <TextField
