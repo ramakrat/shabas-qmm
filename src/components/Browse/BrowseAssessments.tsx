@@ -1,5 +1,5 @@
 import React from "react";
-import type { Assessment, Engagement, POC } from "@prisma/client";
+import type { Assessment, Client, Engagement, POC } from "@prisma/client";
 import {
     Button, IconButton, Accordion, AccordionDetails, AccordionSummary,
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow
@@ -55,7 +55,7 @@ const BrowseAssessments: React.FC = () => {
                     <span>15</span>
                 </div>
             </div>
-            {data && data.map((e: Engagement & { POC: POC[]; Assessment: Assessment[]; }, i) => {
+            {data && data.map((e: Engagement & { POC: POC[]; Assessment: Assessment[]; client: Client; }, i) => {
                 return (
                     <Accordion key={i}>
                         <AccordionSummary expandIcon={<ExpandMore />}>
@@ -68,6 +68,7 @@ const BrowseAssessments: React.FC = () => {
                                             <TableCell align="left">Start Date</TableCell>
                                             <TableCell align="left">End Date</TableCell>
                                             <TableCell align="left">POC</TableCell>
+                                            <TableCell align="left">Status</TableCell>
                                             <TableCell align="center">Edit</TableCell>
                                         </TableRow>
                                     </TableHead>
@@ -77,10 +78,11 @@ const BrowseAssessments: React.FC = () => {
                                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                         >
                                             <TableCell align="center">{e.id}</TableCell>
-                                            <TableCell align="left">{e.client_id}</TableCell>
+                                            <TableCell align="left">{e.client_id} - {e.client.first_name} {e.client.first_name}</TableCell>
                                             <TableCell align="left">{e.start_date.toDateString()}</TableCell>
                                             <TableCell align="left">{e.end_date.toDateString()}</TableCell>
-                                            <TableCell align="left">e.POC</TableCell>
+                                            <TableCell align="left"></TableCell>
+                                            <TableCell align="left">{e.status}</TableCell>
                                             <TableCell align="center">
                                                 {e.start_date > new Date() &&
                                                     <IconButton onClick={() => { setEngagementData(e); setEngagementModal(true) }}>

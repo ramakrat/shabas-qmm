@@ -1,6 +1,6 @@
 import { type NextPage } from "next";
 import { useRouter } from "next/router";
-import type { Engagement, POC, Assessment } from "@prisma/client";
+import type { Engagement, POC, Assessment, Client } from "@prisma/client";
 import { ExpandMore } from "@mui/icons-material";
 import { Accordion, AccordionSummary, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, AccordionDetails } from "@mui/material";
 import { api } from "~/utils/api";
@@ -11,12 +11,12 @@ const ReviewAssessments: NextPage = () => {
     const { push } = useRouter();
 
     // TODO: Don't run query unless modal closed
-    const { data } = api.engagement.getAllInclude.useQuery([true, true]);
+    const { data } = api.engagement.getAllReviewInclude.useQuery([true, true]);
 
     return (
         <Layout active='review-assessments'>
             <div className='dashboard'>
-                {data && data.map((e: Engagement & { POC: POC[]; Assessment: Assessment[]; }, i) => {
+                {data && data.map((e: Engagement & { POC: POC[]; Assessment: Assessment[]; client: Client }, i) => {
                     return (
                         <Accordion key={i}>
                             <AccordionSummary expandIcon={<ExpandMore />}>
@@ -29,6 +29,7 @@ const ReviewAssessments: NextPage = () => {
                                                 <TableCell align="left">Start Date</TableCell>
                                                 <TableCell align="left">End Date</TableCell>
                                                 <TableCell align="left">POC</TableCell>
+                                                <TableCell align="left">Status</TableCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
@@ -37,10 +38,11 @@ const ReviewAssessments: NextPage = () => {
                                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                             >
                                                 <TableCell align="center">{e.id}</TableCell>
-                                                <TableCell align="left">{e.client_id}</TableCell>
+                                                <TableCell align="left">{e.client_id} - {e.client.first_name} {e.client.last_name}</TableCell>
                                                 <TableCell align="left">{e.start_date.toDateString()}</TableCell>
                                                 <TableCell align="left">{e.end_date.toDateString()}</TableCell>
-                                                <TableCell align="left">e.POC</TableCell>
+                                                <TableCell align="left"></TableCell>
+                                                <TableCell align="left">{e.status}</TableCell>
                                             </TableRow>
                                         </TableBody>
                                     </Table>

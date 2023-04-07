@@ -29,6 +29,7 @@ const BrowseSites: React.FC = () => {
                     <TableHead>
                         <TableRow>
                             <TableCell align="center">Site ID</TableCell>
+                            <TableCell align="left">Client</TableCell>
                             <TableCell align="left">Name</TableCell>
                             <TableCell align="left">Address</TableCell>
                             <TableCell align="left">Description</TableCell>
@@ -44,6 +45,9 @@ const BrowseSites: React.FC = () => {
                                 >
                                     <TableCell align="center">
                                         {data.id}
+                                    </TableCell>
+                                    <TableCell align="left">
+                                        {data.client_id} -  {data.client.first_name} {data.client.last_name}
                                     </TableCell>
                                     <TableCell align="left">
                                         {data.name}
