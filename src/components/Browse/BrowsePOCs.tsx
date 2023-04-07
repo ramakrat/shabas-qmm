@@ -11,7 +11,9 @@ const BrowsePOCs: React.FC = () => {
     const [pocModal, setPOCModal] = React.useState<boolean>(false);
 
     // TODO: Don't run query unless modal closed
-    const clients = api.poc.getAll.useQuery(pocModal).data;
+    const pocs = api.poc.getAllInclude.useQuery(pocModal).data;
+
+    console.log(pocs)
 
     return (
         <>
@@ -29,6 +31,7 @@ const BrowsePOCs: React.FC = () => {
                     <TableHead>
                         <TableRow>
                             <TableCell align="center">POC ID</TableCell>
+                            <TableCell align="left">Type</TableCell>
                             <TableCell align="left">Name</TableCell>
                             <TableCell align="left">Title</TableCell>
                             <TableCell align="left">Work Phone</TableCell>
@@ -39,7 +42,7 @@ const BrowsePOCs: React.FC = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {clients && clients.map((data, i) => {
+                        {pocs && pocs.map((data, i) => {
                             return (
                                 <TableRow
                                     key={i}
@@ -47,6 +50,9 @@ const BrowsePOCs: React.FC = () => {
                                 >
                                     <TableCell align="center">
                                         {data.id}
+                                    </TableCell>
+                                    <TableCell align="left">
+                                        {data.Client ? 'Client' : 'Shabas'}
                                     </TableCell>
                                     <TableCell align="left">
                                         {data.first_name} {data.last_name}

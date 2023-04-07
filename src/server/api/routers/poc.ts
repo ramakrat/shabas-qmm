@@ -69,6 +69,17 @@ export const pocRouter = createTRPCRouter({
                 where: { id: input.id }
             });
         }),
+    getAllInclude: publicProcedure
+        .input(z.boolean())
+        .query(({ ctx }) => {
+            return ctx.prisma.pOC.findMany({
+                include: {
+                    Client: true,
+                    engagement: true,
+                    site: true,
+                }
+            });
+        }),
     getAll: publicProcedure
         .input(z.boolean())
         .query(({ ctx }) => {
