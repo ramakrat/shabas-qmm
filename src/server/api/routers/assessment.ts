@@ -104,7 +104,8 @@ export const assessmentRouter = createTRPCRouter({
                                 answer: true,
                                 question: true,
                             }
-                        }
+                        },
+                        engagement: true
                     }
                 });
             return null;
@@ -115,6 +116,7 @@ export const assessmentRouter = createTRPCRouter({
             return ctx.prisma.assessment.findMany();
         }),
     getTotalCount: publicProcedure
+        .input(z.boolean().optional())
         .query(({ ctx }) => {
             return ctx.prisma.assessment.count();
         }),

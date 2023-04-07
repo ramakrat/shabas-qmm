@@ -86,6 +86,7 @@ export const pocRouter = createTRPCRouter({
             return ctx.prisma.pOC.findMany();
         }),
     getTotalCount: publicProcedure
+        .input(z.boolean().optional())
         .query(({ ctx }) => {
             return ctx.prisma.pOC.count();
         }),
