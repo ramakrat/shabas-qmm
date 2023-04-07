@@ -112,7 +112,7 @@ const SiteModal: React.FC<Props> = (props) => {
                                 {clients ? clients.map((client: Client) => {
                                     return (
                                         <MenuItem value={client.id} key={client.id}>
-                                            {client.id} {client.first_name} {client.last_name}
+                                            {client.id} - {client.first_name} {client.last_name}
                                         </MenuItem>
                                     )
                                 }) : 'No Clients'}
