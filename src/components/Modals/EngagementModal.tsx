@@ -22,7 +22,6 @@ const EngagementModal: React.FC<Props> = (props) => {
     // =========== Input Field States ===========
 
     const [description, setDescription] = React.useState<string>('');
-    const [status, setStatus] = React.useState<string>('');
     const [startDate, setStartDate] = React.useState<Date>(new Date());
     const [endDate, setEndDate] = React.useState<Date>(new Date());
     const [clientId, setClientId] = React.useState<number>(1);
@@ -34,13 +33,11 @@ const EngagementModal: React.FC<Props> = (props) => {
 
     React.useEffect(() => {
         if (data) {
-            setStatus(data.status);
             setStartDate(data.start_date);
             setEndDate(data.end_date);
             setDescription(data.description);
             setClientId(data.client_id);
         } else {
-            setStatus('');
             setStartDate(new Date());
             setEndDate(new Date());
             setDescription('');
@@ -53,7 +50,6 @@ const EngagementModal: React.FC<Props> = (props) => {
         if (data) {
             update.mutate({
                 id: data.id,
-                status: status,
                 start_date: startDate,
                 end_date: endDate,
                 description: description,
@@ -63,7 +59,6 @@ const EngagementModal: React.FC<Props> = (props) => {
             })
         } else {
             create.mutate({
-                status: status,
                 start_date: startDate,
                 end_date: endDate,
                 description: description,
@@ -97,17 +92,12 @@ const EngagementModal: React.FC<Props> = (props) => {
                                 {clients && clients.map(o => {
                                     return (
                                         <MenuItem value={o.id} key={o.id}>
-                                            {o.id} {o.first_name} {o.last_name}
+                                            {o.id} - {o.first_name} {o.last_name}
                                         </MenuItem>
                                     )
                                 })}
                             </Select>
                         </FormControl>
-                        <TextField
-                            name='status' label='Status' size='small'
-                            value={status}
-                            onChange={e => setStatus(e.target.value)}
-                        />
                         <TextField
                             name='startDate' label='Start Date' size='small' type='date'
                             value={dateInputFormat(startDate)}

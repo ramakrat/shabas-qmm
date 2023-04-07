@@ -46,7 +46,6 @@ const AssessmentModal: React.FC<Props> = (props) => {
 
     // =========== Input Field States ===========
 
-    const [status, setStatus] = React.useState<string>('');
     const [startDate, setStartDate] = React.useState<Date>(new Date());
     const [endDate, setEndDate] = React.useState<Date>(new Date());
     const [description, setDescription] = React.useState<string>('');
@@ -69,14 +68,12 @@ const AssessmentModal: React.FC<Props> = (props) => {
     React.useEffect(() => {
         setActiveStep(0);
         if (data) {
-            setStatus(data.status);
             setStartDate(data.start_date);
             setEndDate(data.end_date);
             setDescription(data.description);
             setSiteId(data.site_id);
             setEngagementId(data.engagement_id);
         } else {
-            setStatus('');
             setStartDate(new Date());
             setEndDate(new Date());
             setDescription('');
@@ -111,7 +108,6 @@ const AssessmentModal: React.FC<Props> = (props) => {
             let succeeded = true;
             update.mutate({
                 id: data.id,
-                status: status,
                 start_date: startDate,
                 end_date: endDate,
                 description: description,
@@ -156,7 +152,6 @@ const AssessmentModal: React.FC<Props> = (props) => {
         } else {
             let succeeded = true;
             create.mutate({
-                status: status,
                 start_date: startDate,
                 end_date: endDate,
                 description: description,
@@ -246,11 +241,6 @@ const AssessmentModal: React.FC<Props> = (props) => {
                                         })}
                                     </Select>
                                 </FormControl>
-                                <TextField
-                                    name='status' label='Status' size='small'
-                                    value={status}
-                                    onChange={e => setStatus(e.target.value)}
-                                />
                                 <TextField
                                     name='startDate' label='Start Date' size='small' type='date'
                                     value={dateInputFormat(startDate)}
