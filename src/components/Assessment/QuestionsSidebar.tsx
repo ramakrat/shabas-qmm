@@ -9,11 +9,12 @@ interface Props {
     question: number;
     setQuestion: (question: number) => void;
     addOption?: boolean;
+    submitAssessment?: () => void;
 }
 
 const QuestionsSidebar: React.FC<Props> = (props) => {
 
-    const { questions, question, setQuestion, addOption } = props;
+    const { questions, question, setQuestion, addOption, submitAssessment } = props;
 
     const [questionModal, setQuestionModal] = React.useState<boolean>(false);
 
@@ -57,6 +58,14 @@ const QuestionsSidebar: React.FC<Props> = (props) => {
                         startIcon={<Add />}
                     >
                         Add Question
+                    </Button>
+                }
+                {submitAssessment &&
+                    <Button
+                        variant='outlined'
+                        onClick={() => submitAssessment()}
+                    >
+                        Submit Assessment
                     </Button>
                 }
             </Card>

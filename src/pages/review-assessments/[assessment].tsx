@@ -80,6 +80,7 @@ const ReviewAssessment: NextPage = () => {
 
     const create = api.answer.create.useMutation();
     const update = api.answer.update.useMutation();
+    const statusChange = api.assessment.status.useMutation();
 
     const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -107,12 +108,28 @@ const ReviewAssessment: NextPage = () => {
         }
     }
 
+    const handleSubmitAssesment = () => {
+        if (data) {
+            statusChange.mutate({
+                id: data.id,
+                status: 'completed',
+            })
+        }
+    }
+
     return (
         <Layout active='review-assessments'>
             <div className='assessment'>
                 <Grid container spacing={2}>
                     <Grid item xs={2}>
-                        {questions && <QuestionsSidebar questions={questions.map(o => convertToQuestion(o.question))} question={question} setQuestion={setQuestion} />}
+                        {questions &&
+                            <QuestionsSidebar
+                                questions={questions.map(o => convertToQuestion(o.question))}
+                                question={question}
+                                setQuestion={setQuestion}
+                                submitAssessment={handleSubmitAssesment}
+                            />
+                        }
                     </Grid>
                     {selectedAssessmentQuestion &&
                         <Grid item xs={10} container spacing={2}>
