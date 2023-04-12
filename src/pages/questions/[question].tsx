@@ -559,96 +559,98 @@ const Question: NextPage = () => {
                                 </Card>
                             </Grid>
                             <Grid item xs={8}>
-                                <Card className='filters'>
-                                    <ToggleButtonGroup
-                                        exclusive
-                                        size='small'
-                                        value={filterType}
-                                        onChange={(_event, value: string) => { if (value) { setFilterType(value); setFilterSelection(null); setNewRatings([]) } }}
-                                    >
-                                        <ToggleButton value='standard'>Standard</ToggleButton>
-                                        <ToggleButton value='industry'>Industry</ToggleButton>
-                                        <ToggleButton value='api-segment'>API Segment</ToggleButton>
-                                        <ToggleButton value='site-specific'>Site Specific</ToggleButton>
-                                    </ToggleButtonGroup>
-                                    {filterSelect()}
-                                </Card>
-                                {!(filterType != 'standard' && filterSelection == null) &&
-                                    <Card className='question-content'>
-                                        <Typography>Question Content</Typography>
-                                        <TextField
-                                            name='question' size='small' multiline
-                                            value={questionContent}
-                                            onChange={e => setQuestionContent(e.target.value)}
-                                        />
-                                        {existingRatings.map((o, i) => {
-                                            if (i <= 4)
+                                <Card className='question-content'>
+                                    <Typography>Question Content</Typography>
+                                    <TextField
+                                        name='question' size='small' multiline
+                                        value={questionContent}
+                                        onChange={e => setQuestionContent(e.target.value)}
+                                    />
+                                    <div className='filters'>
+                                        <ToggleButtonGroup
+                                            exclusive
+                                            size='small'
+                                            value={filterType}
+                                            onChange={(_event, value: string) => { if (value) { setFilterType(value); setFilterSelection(null); setNewRatings([]) } }}
+                                        >
+                                            <ToggleButton value='standard'>Standard</ToggleButton>
+                                            <ToggleButton value='industry'>Industry</ToggleButton>
+                                            <ToggleButton value='api-segment'>API Segment</ToggleButton>
+                                            <ToggleButton value='site-specific'>Site Specific</ToggleButton>
+                                        </ToggleButtonGroup>
+                                        {filterSelect()}
+                                    </div>
+                                    {!(filterType != 'standard' && filterSelection == null) &&
+                                        <>
+                                            {existingRatings.map((o, i) => {
+                                                if (i <= 4)
+                                                    return (
+                                                        <div key={i}>
+                                                            <Typography>Level {o.level_number}</Typography>
+                                                            <TextField
+                                                                placeholder='Criteria...' size='small' multiline
+                                                                value={o.criteria}
+                                                                onChange={(event) => handleRatingChange(o.level_number, event.target.value, true, true)}
+                                                            />
+                                                            {((i != existingRatings.length - 1 || newRatings.length != 0) && i < 4) &&
+                                                                <>
+                                                                    <Typography>Progression Statement</Typography>
+                                                                    <TextField
+                                                                        placeholder='Progression statement...' size='small' multiline
+                                                                        value={o.progression_statement}
+                                                                        onChange={(event) => handleRatingChange(o.level_number, event.target.value, false, true)}
+                                                                    />
+                                                                </>
+                                                            }
+                                                        </div>
+                                                    )
+                                                return undefined;
+                                            })}
+                                            {existingRatings.length < 5 && newRatings.map((o, i) => {
                                                 return (
                                                     <div key={i}>
                                                         <Typography>Level {o.level_number}</Typography>
                                                         <TextField
                                                             placeholder='Criteria...' size='small' multiline
                                                             value={o.criteria}
-                                                            onChange={(event) => handleRatingChange(o.level_number, event.target.value, true, true)}
+                                                            onChange={(event) => handleRatingChange(o.level_number, event.target.value, true)}
                                                         />
-                                                        {((i != existingRatings.length - 1 || newRatings.length != 0) && i < 4) &&
+                                                        {(i != newRatings.length - 1) &&
                                                             <>
                                                                 <Typography>Progression Statement</Typography>
                                                                 <TextField
                                                                     placeholder='Progression statement...' size='small' multiline
                                                                     value={o.progression_statement}
-                                                                    onChange={(event) => handleRatingChange(o.level_number, event.target.value, false, true)}
+                                                                    onChange={(event) => handleRatingChange(o.level_number, event.target.value, false)}
                                                                 />
                                                             </>
                                                         }
                                                     </div>
                                                 )
-                                            return undefined;
-                                        })}
-                                        {existingRatings.length < 5 && newRatings.map((o, i) => {
-                                            return (
-                                                <div key={i}>
-                                                    <Typography>Level {o.level_number}</Typography>
-                                                    <TextField
-                                                        placeholder='Criteria...' size='small' multiline
-                                                        value={o.criteria}
-                                                        onChange={(event) => handleRatingChange(o.level_number, event.target.value, true)}
-                                                    />
-                                                    {(i != newRatings.length - 1) &&
-                                                        <>
-                                                            <Typography>Progression Statement</Typography>
-                                                            <TextField
-                                                                placeholder='Progression statement...' size='small' multiline
-                                                                value={o.progression_statement}
-                                                                onChange={(event) => handleRatingChange(o.level_number, event.target.value, false)}
-                                                            />
-                                                        </>
-                                                    }
-                                                </div>
-                                            )
-                                        })}
-                                        {newRatings.length >= 5 &&
-                                            <Button
-                                                variant='outlined' startIcon={<Add />}
-                                                onClick={() => {
-                                                    let num = existingRatings.length + 1;
-                                                    const last = newRatings[newRatings.length - 1];
-                                                    if (newRatings.length > 0 && last) num = last.level_number + 1;
-                                                    setNewRatings([
-                                                        ...newRatings,
-                                                        {
-                                                            level_number: num,
-                                                            criteria: '',
-                                                            progression_statement: ''
-                                                        }
-                                                    ])
-                                                }}
-                                            >
-                                                Add Rating
-                                            </Button>
-                                        }
-                                    </Card>
-                                }
+                                            })}
+                                            {newRatings.length <= 5 &&
+                                                <Button
+                                                    variant='outlined' startIcon={<Add />}
+                                                    onClick={() => {
+                                                        let num = existingRatings.length + 1;
+                                                        const last = newRatings[newRatings.length - 1];
+                                                        if (newRatings.length > 0 && last) num = last.level_number + 1;
+                                                        setNewRatings([
+                                                            ...newRatings,
+                                                            {
+                                                                level_number: num,
+                                                                criteria: '',
+                                                                progression_statement: ''
+                                                            }
+                                                        ])
+                                                    }}
+                                                >
+                                                    Add Rating
+                                                </Button>
+                                            }
+                                        </>
+                                    }
+                                </Card>
                                 <Card className='actions' style={{ marginTop: 16 }}>
                                     <Button
                                         variant='contained'
