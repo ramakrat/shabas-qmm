@@ -628,7 +628,7 @@ const Question: NextPage = () => {
                                                     </div>
                                                 )
                                             })}
-                                            {newRatings.length <= 5 &&
+                                            {newRatings.length < 5 &&
                                                 <Button
                                                     variant='outlined' startIcon={<Add />}
                                                     onClick={() => {
