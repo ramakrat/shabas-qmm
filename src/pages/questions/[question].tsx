@@ -759,29 +759,6 @@ const Question: NextPage = () => {
                                         })}
                                     </div>
                                     <div>
-                                        <Typography>SME Info</Typography>
-                                        <TextField
-                                            name='firstName' label='First Name' size='small'
-                                            value={firstName}
-                                            onChange={e => setFirstName(e.target.value)}
-                                        />
-                                        <TextField
-                                            name='lastName' label='Last Name' size='small'
-                                            value={lastName}
-                                            onChange={e => setLastName(e.target.value)}
-                                        />
-                                        <TextField
-                                            name='phone' label='Phone Number' size='small'
-                                            value={phone}
-                                            onChange={e => setPhone(e.target.value)}
-                                        />
-                                        <TextField
-                                            name='email' label='Email' size='small'
-                                            value={email}
-                                            onChange={e => setEmail(e.target.value)}
-                                        />
-                                    </div>
-                                    <div>
                                         <Typography>References</Typography>
                                         {existingReferences.map((o, i) => {
                                             return (
@@ -876,6 +853,29 @@ const Question: NextPage = () => {
                                                 </div>
                                             )
                                         })}
+                                    </div>
+                                    <div>
+                                        <Typography>SME Info</Typography>
+                                        <TextField
+                                            name='firstName' label='First Name' size='small'
+                                            value={firstName}
+                                            onChange={e => setFirstName(e.target.value)}
+                                        />
+                                        <TextField
+                                            name='lastName' label='Last Name' size='small'
+                                            value={lastName}
+                                            onChange={e => setLastName(e.target.value)}
+                                        />
+                                        <TextField
+                                            name='phone' label='Phone Number' size='small'
+                                            value={phone}
+                                            onChange={e => setPhone(e.target.value)}
+                                        />
+                                        <TextField
+                                            name='email' label='Email' size='small'
+                                            value={email}
+                                            onChange={e => setEmail(e.target.value)}
+                                        />
                                     </div>
                                     <div>
                                         <Typography>Owned By:</Typography>
