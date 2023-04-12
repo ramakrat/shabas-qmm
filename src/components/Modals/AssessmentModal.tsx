@@ -232,7 +232,7 @@ const AssessmentModal: React.FC<Props> = (props) => {
                                     <InputLabel size="small">Engagement</InputLabel>
                                     <Select
                                         name='engagementId' label='Engagement' size='small'
-                                        value={siteId}
+                                        value={engagementId}
                                         onChange={e => setEngagementId(Number(e.target.value))}
                                     >
                                         {engagements && engagements.map(o => {
