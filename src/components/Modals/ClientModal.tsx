@@ -17,8 +17,7 @@ const ClientModal: React.FC<Props> = (props) => {
 
     // =========== Input Field States ===========
 
-    const [firstName, setFirstName] = React.useState<string>('');
-    const [lastName, setLastName] = React.useState<string>('');
+    const [name, setName] = React.useState<string>('');
     const [streetAddress, setStreetAddress] = React.useState<string>('');
     const [city, setCity] = React.useState<string>('');
     const [state, setState] = React.useState<string>('');
@@ -34,8 +33,7 @@ const ClientModal: React.FC<Props> = (props) => {
 
     React.useEffect(() => {
         if (data) {
-            setFirstName(data.first_name);
-            setLastName(data.last_name);
+            setName(data.name);
             setStreetAddress(data.street_address);
             setCity(data.city);
             setState(data.state);
@@ -43,8 +41,7 @@ const ClientModal: React.FC<Props> = (props) => {
             setCountry(data.country);
             setDescription(data.description);
         } else {
-            setFirstName('');
-            setLastName('');
+            setName('');
             setStreetAddress('');
             setCity('');
             setState('');
@@ -59,8 +56,7 @@ const ClientModal: React.FC<Props> = (props) => {
         if (data) {
             update.mutate({
                 id: data.id,
-                first_name: firstName,
-                last_name: lastName,
+                name: name,
                 street_address: streetAddress,
                 city: city,
                 state: state,
@@ -72,8 +68,7 @@ const ClientModal: React.FC<Props> = (props) => {
             })
         } else {
             create.mutate({
-                first_name: firstName,
-                last_name: lastName,
+                name: name,
                 street_address: streetAddress,
                 city: city,
                 state: state,
@@ -101,14 +96,9 @@ const ClientModal: React.FC<Props> = (props) => {
                     />
                     <CardContent>
                         <TextField
-                            name='firstName' label='First Name' size='small'
-                            value={firstName}
-                            onChange={e => setFirstName(e.target.value)}
-                        />
-                        <TextField
-                            name='lastName' label='Last Name' size='small'
-                            value={lastName}
-                            onChange={e => setLastName(e.target.value)}
+                            name='name' label='Name' size='small'
+                            value={name}
+                            onChange={e => setName(e.target.value)}
                         />
                         <TextField
                             name='streetAddress' label='Street Address' size='small'

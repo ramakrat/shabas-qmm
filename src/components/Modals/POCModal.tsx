@@ -130,7 +130,7 @@ const POCModal: React.FC<Props> = (props) => {
                                     {clients && clients.map(o => {
                                         return (
                                             <MenuItem value={o.id} key={o.id}>
-                                                {o.id} - {o.first_name} {o.last_name}
+                                                {o.id} - {o.name}
                                             </MenuItem>
                                         )
                                     })}

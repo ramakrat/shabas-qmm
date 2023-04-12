@@ -54,7 +54,7 @@ const BrowseClients: React.FC<Props> = (props) => {
                                         {data.id}
                                     </TableCell>
                                     <TableCell align="left">
-                                        {data.first_name} {data.last_name}
+                                        {data.name}
                                     </TableCell>
                                     <TableCell align="left">
                                         {data.street_address}<br />

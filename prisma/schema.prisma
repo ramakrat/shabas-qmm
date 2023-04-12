@@ -16,8 +16,7 @@ datasource db {
 model Client {
     id Int @id @default(autoincrement())
 
-    first_name     String
-    last_name      String
+    name     String
     street_address String
     city           String
     state          String

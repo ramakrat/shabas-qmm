@@ -54,7 +54,7 @@ const BrowseSites: React.FC<Props> = (props) => {
                                         {data.id}
                                     </TableCell>
                                     <TableCell align="left">
-                                        {data.client_id} -  {data.client.first_name} {data.client.last_name}
+                                        {data.client_id} -  {data.client.name}
                                     </TableCell>
                                     <TableCell align="left">
                                         {data.name}

@@ -5,8 +5,7 @@ import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/
 
 const inputType = z.object({
     id: z.number().optional(),
-    first_name: z.string(),
-    last_name: z.string(),
+    name: z.string(),
     street_address: z.string(),
     city: z.string(),
     state: z.string(),
@@ -21,8 +20,7 @@ export const clientRouter = createTRPCRouter({
         .mutation(({ input, ctx }) => {
             return ctx.prisma.client.create({
                 data: {
-                    first_name: input.first_name,
-                    last_name: input.last_name,
+                    name: input.name,
                     street_address: input.street_address,
                     city: input.city,
                     state: input.state,
@@ -40,8 +38,7 @@ export const clientRouter = createTRPCRouter({
             return ctx.prisma.client.update({
                 where: { id: input.id },
                 data: {
-                    first_name: input.first_name,
-                    last_name: input.last_name,
+                    name: input.name,
                     street_address: input.street_address,
                     city: input.city,
                     state: input.state,

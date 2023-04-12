@@ -100,7 +100,7 @@ const BrowseAssessments: React.FC<Props> = (props) => {
                                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                         >
                                             <TableCell align="center">{e.id}</TableCell>
-                                            <TableCell align="left">{e.client_id} - {e.client.first_name} {e.client.first_name}</TableCell>
+                                            <TableCell align="left">{e.client_id} - {e.client.name}</TableCell>
                                             <TableCell align="left">{e.start_date.toDateString()}</TableCell>
                                             <TableCell align="left">{e.end_date.toDateString()}</TableCell>
                                             <TableCell align="left">{existingClientPoc?.poc.first_name} {existingClientPoc?.poc.last_name}</TableCell>
