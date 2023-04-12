@@ -79,6 +79,12 @@ const AdminDashboard: NextPage = () => {
                                     <span className='count'>{totalSite}</span>
                                 </div>
                             } />
+                            <Tab label={
+                                <div className='filter'>
+                                    <span className='label'>POC</span>
+                                    <span className='count'>{totalPOC}</span>
+                                </div>
+                            } />
                             <Tab label={<>
                                 <div className='filter'>
                                     <span className='label'>Engagement</span>
@@ -87,12 +93,6 @@ const AdminDashboard: NextPage = () => {
                                     <span className='count'>{totalAssessment}</span>
                                 </div>
                             </>} />
-                            <Tab label={
-                                <div className='filter'>
-                                    <span className='label'>POC</span>
-                                    <span className='count'>{totalPOC}</span>
-                                </div>
-                            } />
                         </Tabs>
                     </Box>
                     <TabPanel value={value} index={0}>
@@ -102,10 +102,10 @@ const AdminDashboard: NextPage = () => {
                         <BrowseSites siteModal={siteModal} setSiteModal={setSiteModal} />
                     </TabPanel>
                     <TabPanel value={value} index={2}>
-                        <BrowseAssessments engagementModal={engagementModal} setEngagementModal={setEngagementModal} assessmentModal={assessmentModal} setAssessmentModal={setAssessmentModal} />
+                        <BrowsePOCs pocModal={pocModal} setPOCModal={setPOCModal} />
                     </TabPanel>
                     <TabPanel value={value} index={3}>
-                        <BrowsePOCs pocModal={pocModal} setPOCModal={setPOCModal} />
+                        <BrowseAssessments engagementModal={engagementModal} setEngagementModal={setEngagementModal} assessmentModal={assessmentModal} setAssessmentModal={setAssessmentModal} />
                     </TabPanel>
                 </Box>
             </div>
