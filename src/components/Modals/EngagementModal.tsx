@@ -1,6 +1,12 @@
 import React from "react";
 import type { Assessment, Client, Engagement, EngagementPOC, POC } from "@prisma/client";
-import { Button, Card, CardActions, CardContent, CardHeader, FormControl, IconButton, InputLabel, MenuItem, Modal, Select, TextField } from "@mui/material";
+
+import * as yup from "yup";
+import { Field, Form, Formik, type FormikProps, type FormikHelpers } from "formik";
+import TextField from "../Form/TextField";
+import Select from "../Form/Select";
+
+import { Button, Card, CardActions, CardContent, CardHeader, IconButton, MenuItem, Modal } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { api } from "~/utils/api";
 import { dateInputFormat } from "~/utils/utils";
@@ -20,6 +26,27 @@ interface Props {
     };
 }
 
+interface FormValues {
+    description: string;
+    startDate: string;
+    endDate: string;
+    clientId: string;
+    clientPocId: string;
+    shabasPocId: string;
+}
+
+const validationSchema = yup.object().shape({
+    description: yup.string().required("Required"),
+    startDate: yup.date()
+        .required("Required"),
+    endDate: yup.date()
+        .min(yup.ref('startDate'), 'End Date must be later than Start Date')
+        .required("Required"),
+    clientId: yup.string().required("Required"),
+    clientPocId: yup.string().required("Required"),
+    shabasPocId: yup.string().required("Required"),
+});
+
 const EngagementModal: React.FC<Props> = (props) => {
 
     const { open, setOpen, data } = props;
@@ -31,12 +58,14 @@ const EngagementModal: React.FC<Props> = (props) => {
 
     // =========== Input Field States ===========
 
-    const [description, setDescription] = React.useState<string>('');
-    const [startDate, setStartDate] = React.useState<Date>(new Date());
-    const [endDate, setEndDate] = React.useState<Date>(new Date());
-    const [clientId, setClientId] = React.useState<number>(1);
-    const [clientPOCId, setClientPOCId] = React.useState<number>(-1);
-    const [shabasPOCId, setShabasPOCId] = React.useState<number>(-1);
+    const [engagement, setEngagement] = React.useState<FormValues>({
+        description: '',
+        startDate: dateInputFormat(new Date()),
+        endDate: dateInputFormat(new Date()),
+        clientId: '',
+        clientPocId: '',
+        shabasPocId: '',
+    });
 
     // =========== Submission Management ===========
 
@@ -48,34 +77,39 @@ const EngagementModal: React.FC<Props> = (props) => {
 
     React.useEffect(() => {
         if (data) {
-            setStartDate(data.start_date);
-            setEndDate(data.end_date);
-            setDescription(data.description);
-            setClientId(data.client_id);
-
             const existingClientPoc = data.EngagementPOC.find(o => o.poc.client_id);
-            if (existingClientPoc) setClientPOCId(existingClientPoc.id);
             const existingShabasPoc = data.EngagementPOC.find(o => !o.poc.client_id);
-            if (existingShabasPoc) setShabasPOCId(existingShabasPoc.id);
+            setEngagement({
+                description: data.description,
+                startDate: dateInputFormat(data.start_date),
+                endDate: dateInputFormat(data.end_date),
+                clientId: data.client_id.toString(),
+                clientPocId: existingClientPoc ? existingClientPoc.poc_id.toString() : '',
+                shabasPocId: existingShabasPoc ? existingShabasPoc.poc_id.toString() : '',
+            })
         } else {
-            setStartDate(new Date());
-            setEndDate(new Date());
-            setDescription('');
-            setClientId(1);
-            setClientPOCId(-1);
-            setShabasPOCId(-1);
+            setEngagement({
+                description: '',
+                startDate: dateInputFormat(new Date()),
+                endDate: dateInputFormat(new Date()),
+                clientId: '',
+                clientPocId: '',
+                shabasPocId: '',
+            })
         }
     }, [data])
 
-    const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
-        event.preventDefault();
+    const handleSubmit = (
+        values: FormValues,
+        formikHelpers: FormikHelpers<FormValues>
+    ) => {
         if (data) {
             update.mutate({
                 id: data.id,
-                start_date: startDate,
-                end_date: endDate,
-                description: description,
-                client_id: clientId,
+                start_date: new Date(values.startDate),
+                end_date: new Date(values.endDate),
+                description: values.description,
+                client_id: Number(values.clientId),
             }, {
                 onSuccess(created) {
                     const existingClientPoc = data.EngagementPOC.find(o => o.poc.client_id);
@@ -83,12 +117,12 @@ const EngagementModal: React.FC<Props> = (props) => {
                         updatePoc.mutate({
                             id: existingClientPoc.id,
                             engagement_id: created.id,
-                            poc_id: clientPOCId
+                            poc_id: Number(values.clientPocId),
                         })
                     } else {
                         createPoc.mutate({
                             engagement_id: created.id,
-                            poc_id: clientPOCId
+                            poc_id: Number(values.clientPocId),
                         })
                     }
 
@@ -97,12 +131,12 @@ const EngagementModal: React.FC<Props> = (props) => {
                         existingShabasPoc && updatePoc.mutate({
                             id: existingShabasPoc.id,
                             engagement_id: created.id,
-                            poc_id: shabasPOCId
+                            poc_id: Number(values.shabasPocId),
                         })
                     } else {
                         createPoc.mutate({
                             engagement_id: created.id,
-                            poc_id: shabasPOCId
+                            poc_id: Number(values.shabasPocId),
                         })
                     }
 
@@ -111,19 +145,19 @@ const EngagementModal: React.FC<Props> = (props) => {
             })
         } else {
             create.mutate({
-                start_date: startDate,
-                end_date: endDate,
-                description: description,
-                client_id: clientId,
+                start_date: new Date(values.startDate),
+                end_date: new Date(values.endDate),
+                description: values.description,
+                client_id: Number(values.clientId),
             }, {
                 onSuccess(created) {
                     createPoc.mutate({
                         engagement_id: created.id,
-                        poc_id: clientPOCId
+                        poc_id: Number(values.clientPocId),
                     })
                     createPoc.mutate({
                         engagement_id: created.id,
-                        poc_id: shabasPOCId
+                        poc_id: Number(values.shabasPocId),
                     })
                     setOpen(false)
                 }
@@ -131,96 +165,98 @@ const EngagementModal: React.FC<Props> = (props) => {
         }
     }
 
+
     return (
         <Modal open={open} onClose={() => setOpen(false)} className='create-modal'>
-            <form onSubmit={handleSubmit}>
-                <Card>
-                    <CardHeader
-                        title={data ? 'Edit Engagement' : 'Create New Engagement'}
-                        action={
-                            <IconButton onClick={() => setOpen(false)}>
-                                <Close />
-                            </IconButton>
-                        }
-                    />
-                    <CardContent>
-                        <FormControl>
-                            <InputLabel size="small">Client</InputLabel>
-                            <Select
-                                name='clientId' label='Client' size='small'
-                                value={clientId}
-                                onChange={e => setClientId(Number(e.target.value))}
-                            >
-                                {clients && clients.map(o => {
-                                    return (
-                                        <MenuItem value={o.id} key={o.id}>
-                                            {o.id} - {o.name}
-                                        </MenuItem>
-                                    )
-                                })}
-                            </Select>
-                        </FormControl>
-                        <TextField
-                            name='startDate' label='Start Date' size='small' type='date'
-                            value={dateInputFormat(startDate)}
-                            onChange={e => setStartDate(new Date(e.target.value))}
-                        />
-                        <TextField
-                            name='endDate' label='End Date' size='small' type='date'
-                            value={dateInputFormat(endDate)}
-                            onChange={e => setEndDate(new Date(e.target.value))}
-                        />
-                        <TextField
-                            name='description' label='Description' size='small'
-                            value={description}
-                            onChange={e => setDescription(e.target.value)}
-                        />
-                        <FormControl>
-                            <InputLabel size="small">Client POC</InputLabel>
-                            <Select
-                                name='clientPOC' label='Client POC' size='small'
-                                value={clientPOCId}
-                                onChange={e => setClientPOCId(Number(e.target.value))}
-                            >
-                                {pocs && pocs.map(o => {
-                                    if (o.client_id)
-                                        return (
-                                            <MenuItem value={o.id} key={o.id}>
-                                                {o.first_name} {o.last_name} - {o.title}
-                                            </MenuItem>
-                                        )
-                                    return undefined;
-                                })}
-                            </Select>
-                        </FormControl>
-                        <FormControl>
-                            <InputLabel size="small">Shabas POC</InputLabel>
-                            <Select
-                                name='shabasPOC' label='Shabas POC' size='small'
-                                value={shabasPOCId}
-                                onChange={e => setShabasPOCId(Number(e.target.value))}
-                            >
-                                {pocs && pocs.map(o => {
-                                    if (!o.client_id)
-                                        return (
-                                            <MenuItem value={o.id} key={o.id}>
-                                                {o.first_name} {o.last_name} - {o.title}
-                                            </MenuItem>
-                                        )
-                                    return undefined;
-                                })}
-                            </Select>
-                        </FormControl>
-                    </CardContent>
-                    <CardActions>
-                        <Button variant='contained' color='error' onClick={() => setOpen(false)}>Cancel</Button>
-                        {data ?
-                            <Button variant='contained' type='submit'>Save</Button> :
-                            <Button variant='contained' type='submit'>Create</Button>
-                        }
-                    </CardActions>
-                </Card>
-            </form>
+            <div>
+                <Formik
+                    enableReinitialize
+                    initialValues={engagement}
+                    validationSchema={validationSchema}
+                    validateOnBlur={false}
+                    validateOnChange={false}
+                    onSubmit={handleSubmit}
+                >
+                    {(formikProps: FormikProps<FormValues>) => (
+                        <Form>
+                            <Card>
+                                <CardHeader
+                                    title={data ? 'Edit Engagement' : 'Create New Engagement'}
+                                    action={
+                                        <IconButton onClick={() => setOpen(false)}>
+                                            <Close />
+                                        </IconButton>
+                                    }
+                                />
+                                <CardContent>
+                                    <Field
+                                        name='clientId' label='Client' size='small'
+                                        component={Select}
+                                    >
+                                        <MenuItem value=''><em>Select a client...</em></MenuItem>
+                                        {clients ? clients.map((client: Client) => {
+                                            return (
+                                                <MenuItem value={client.id} key={client.id}>
+                                                    {client.id} - {client.name}
+                                                </MenuItem>
+                                            )
+                                        }) : 'No Clients'}
+                                    </Field>
+                                    <Field
+                                        name='startDate' label='Start Date' size='small' type='date'
+                                        component={TextField}
+                                    />
+                                    <Field
+                                        name='endDate' label='End Date' size='small' type='date'
+                                        component={TextField}
+                                    />
+                                    <Field
+                                        name='description' label='Description' size='small'
+                                        component={TextField}
+                                    />
+                                    <Field
+                                        name='clientPocId' label='Client POC' size='small'
+                                        component={Select}
+                                    >
+                                        <MenuItem value=''><em>Select a client POC...</em></MenuItem>
+                                        {pocs && pocs.map(o => {
+                                            if (o.client_id)
+                                                return (
+                                                    <MenuItem value={o.id} key={o.id}>
+                                                        {o.first_name} {o.last_name} - {o.title}
+                                                    </MenuItem>
+                                                )
+                                            return undefined;
+                                        })}
+                                    </Field>
+                                    <Field
+                                        name='shabasPocId' label='Shabas POC' size='small'
+                                        component={Select}
+                                    >
+                                        <MenuItem value=''><em>Select a Shabas POC...</em></MenuItem>
+                                        {pocs && pocs.map(o => {
+                                            if (!o.client_id)
+                                                return (
+                                                    <MenuItem value={o.id} key={o.id}>
+                                                        {o.first_name} {o.last_name} - {o.title}
+                                                    </MenuItem>
+                                                )
+                                            return undefined;
+                                        })}
+                                    </Field>
+                                </CardContent>
+                                <CardActions>
+                                    <Button variant='contained' color='error' onClick={() => setOpen(false)}>Cancel</Button>
+                                    {data ?
+                                        <Button variant='contained' type='submit'>Save</Button> :
+                                        <Button variant='contained' type='submit'>Create</Button>
+                                    }
+                                </CardActions>
+                            </Card>
+                        </Form>
+                    )}
+                </Formik>
+            </div>
         </Modal>
     )
 }
