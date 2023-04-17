@@ -47,6 +47,11 @@ export const Header: React.FC<Props> = (props) => {
                         Review Assessments
                     </Typography>
                 </Link>
+                <Link href={'/oversight-assessments'} className={active == 'oversight-assessments' ? 'active' : ''}>
+                    <Typography>
+                        Oversight Assessments
+                    </Typography>
+                </Link>
                 <IconButton onClick={handleClick}>
                     <Settings />
                 </IconButton>

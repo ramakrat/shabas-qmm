@@ -3,7 +3,7 @@ import Head from 'next/head';
 
 import Header from './Header';
 
-export type Tabs = 'dashboard' | 'assessments' | 'questions' | 'ongoing-assessments' | 'review-assessments';
+export type Tabs = 'dashboard' | 'assessments' | 'questions' | 'ongoing-assessments' | 'review-assessments' | 'oversight-assessments';
 
 interface Props {
     active: Tabs;
