@@ -1,8 +1,10 @@
 import * as React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { IconButton, Menu, MenuItem, Typography } from '@mui/material';
 import { Settings } from '@mui/icons-material';
 import type { Tabs } from './Layout';
+import logo from './logo.png';
 
 interface Props {
     active: Tabs;
@@ -23,10 +25,10 @@ export const Header: React.FC<Props> = (props) => {
 
     return (
         <div className='header'>
-            <div className='logo'>
-                Shabas Logo
-            </div>
             <div className='nav-items'>
+                <Link href={'/'} className='logo'>
+                    <Image src={logo} alt={'Shabas Logo'} height={50} />
+                </Link>
                 <Link href={'/'} className={active == 'dashboard' ? 'active' : ''}>
                     <Typography>
                         Dashboard
@@ -52,10 +54,10 @@ export const Header: React.FC<Props> = (props) => {
                         Oversight Assessments
                     </Typography>
                 </Link>
-                <IconButton onClick={handleClick}>
-                    <Settings />
-                </IconButton>
             </div>
+            <IconButton onClick={handleClick}>
+                <Settings />
+            </IconButton>
             <Menu
                 anchorEl={anchorEl}
                 open={open}
