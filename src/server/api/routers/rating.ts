@@ -55,7 +55,7 @@ export const ratingRouter = createTRPCRouter({
             return ctx.prisma.rating.findMany({
                 where: {
                     question_id: input.questionId,
-                    filter_id: input.filterId,
+                    filter_id: input.filterId ?? null,
                 },
                 orderBy: { level_number: 'asc' }
             });
