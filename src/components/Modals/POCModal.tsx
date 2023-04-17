@@ -1,5 +1,5 @@
 import React from "react";
-import type { Client, POC } from "@prisma/client";
+import type { Client, Engagement, POC, Site } from "@prisma/client";
 
 import * as yup from "yup";
 import { Field, Form, Formik, FormikProps, type FormikHelpers } from "formik";
@@ -24,7 +24,7 @@ interface FormValues {
     workPhone: string;
     email: string;
     staff: string;
-    type?: string;
+    type: string;
     typeId?: string;
 }
 
@@ -47,6 +47,10 @@ const POCModal: React.FC<Props> = (props) => {
     // =========== Retrieve Form Context ===========
 
     const clients = api.client.getAll.useQuery(true).data;
+    const engagements = api.engagement.getAll.useQuery(true).data;
+    const sites = api.site.getAll.useQuery(true).data;
+    // const users = api.user.getAll.useQuery(true).data;
+
 
     // =========== Input Field States ===========
 
@@ -69,6 +73,12 @@ const POCModal: React.FC<Props> = (props) => {
 
     React.useEffect(() => {
         if (data) {
+            const typeRef = () => {
+                if (data.client_id) return 'client';
+                if (data.engagement_id) return 'engagement';
+                if (data.site_id) return 'site';
+                return 'shabas';
+            }
             setPoc({
                 firstName: data.first_name,
                 lastName: data.last_name,
@@ -77,7 +87,7 @@ const POCModal: React.FC<Props> = (props) => {
                 workPhone: data.work_phone,
                 email: data.email,
                 staff: data.staff,
-                type: data.client_id ? 'client' : 'shabas',
+                type: typeRef(),
                 typeId: data.client_id ? data.client_id.toString() : '',
             })
         } else {
@@ -129,6 +139,59 @@ const POCModal: React.FC<Props> = (props) => {
         }
     }
 
+    const renderTypeOptions = (type: string) => {
+        if (type == 'client') {
+            return (
+                <Field
+                    name='typeId' label='Client' size='small'
+                    component={Select}
+                >
+                    <MenuItem value=''><em>Select a client...</em></MenuItem>
+                    {clients ? clients.map((client: Client) => {
+                        return (
+                            <MenuItem value={client.id} key={client.id}>
+                                {client.id} - {client.name}
+                            </MenuItem>
+                        )
+                    }) : 'No Clients'}
+                </Field>
+            )
+        } else if (type == 'engagement') {
+            return (
+                <Field
+                    name='typeId' label='Engagement' size='small'
+                    component={Select}
+                >
+                    <MenuItem value=''><em>Select an engagement...</em></MenuItem>
+                    {engagements ? engagements.map((engagement: Engagement) => {
+                        return (
+                            <MenuItem value={engagement.id} key={engagement.id}>
+                                {engagement.id}
+                            </MenuItem>
+                        )
+                    }) : 'No Engagements'}
+                </Field>
+            )
+        } else if (type == 'site') {
+            return (
+                <Field
+                    name='typeId' label='Site' size='small'
+                    component={Select}
+                >
+                    <MenuItem value=''><em>Select a site...</em></MenuItem>
+                    {sites ? sites.map((site: Site) => {
+                        return (
+                            <MenuItem value={site.id} key={site.id}>
+                                {site.id} - {site.name}
+                            </MenuItem>
+                        )
+                    }) : 'No Sites'}
+                </Field>
+            )
+        }
+        // TODO: Add in optional user selection for shabas type
+        return undefined;
+    }
 
     return (
         <Modal open={open} onClose={() => setOpen(false)} className='create-modal'>
@@ -163,22 +226,14 @@ const POCModal: React.FC<Props> = (props) => {
                                         <MenuItem value='client'>
                                             Client
                                         </MenuItem>
+                                        <MenuItem value='engagement'>
+                                            Engagement
+                                        </MenuItem>
+                                        <MenuItem value='site'>
+                                            Site
+                                        </MenuItem>
                                     </Field>
-                                    {formikProps.values.type == 'client' &&
-                                        <Field
-                                            name='typeId' label='Client' size='small'
-                                            component={Select}
-                                        >
-                                            <MenuItem value=''><em>Select a client...</em></MenuItem>
-                                            {clients ? clients.map((client: Client) => {
-                                                return (
-                                                    <MenuItem value={client.id} key={client.id}>
-                                                        {client.id} - {client.name}
-                                                    </MenuItem>
-                                                )
-                                            }) : 'No Clients'}
-                                        </Field>
-                                    }
+                                    {renderTypeOptions(formikProps.values.type)}
                                     <Field
                                         name='firstName' label='First Name' size='small'
                                         component={TextField}
