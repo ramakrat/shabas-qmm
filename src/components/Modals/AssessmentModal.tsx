@@ -134,8 +134,8 @@ const AssessmentModal: React.FC<Props> = (props) => {
     const create = api.assessment.create.useMutation();
     const update = api.assessment.update.useMutation();
 
-    const assessQuestionCreate = api.assessmentQuestion.create.useMutation();
-    const assessQuestionUpdate = api.assessmentQuestion.update.useMutation();
+    const createQuestions = api.assessmentQuestion.createArray.useMutation();
+    const updateQuestion = api.assessmentQuestion.update.useMutation();
 
     const handleSubmit = (
         values: FormValues,
@@ -154,7 +154,7 @@ const AssessmentModal: React.FC<Props> = (props) => {
             }, {
                 onSuccess(data) {
                     existingQuestions.forEach(o => {
-                        assessQuestionUpdate.mutate({
+                        updateQuestion.mutate({
                             id: o.id,
                             question_id: o.question.id,
                             assessment_id: data.id,
@@ -166,13 +166,13 @@ const AssessmentModal: React.FC<Props> = (props) => {
                             console.log(err);
                         }
                     })
-                    newQuestions.forEach(o => {
-                        assessQuestionCreate.mutate({
+                    createQuestions.mutate(newQuestions.map(o => {
+                        return {
                             question_id: o.question.id,
                             assessment_id: data.id,
                             filter_id: o.filterSelection != -1 ? o.filterSelection : undefined,
-                        })
-                    }, {
+                        }
+                    }), {
                         onError(err: any) {
                             succeeded = false;
                             console.log(err);
@@ -198,13 +198,13 @@ const AssessmentModal: React.FC<Props> = (props) => {
                 poc_id: Number(values.pocId),
             }, {
                 onSuccess(data) {
-                    newQuestions.forEach(o => {
-                        assessQuestionCreate.mutate({
+                    createQuestions.mutate(newQuestions.map(o => {
+                        return {
                             question_id: o.question.id,
                             assessment_id: data.id,
                             filter_id: o.filterSelection != -1 ? o.filterSelection : undefined,
-                        })
-                    }, {
+                        }
+                    }), {
                         onError(err: any) {
                             succeeded = false;
                             console.log(err);
