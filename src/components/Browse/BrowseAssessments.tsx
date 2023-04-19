@@ -107,7 +107,7 @@ const BrowseAssessments: React.FC<Props> = (props) => {
                                             <TableCell align="left">{existingShabasPoc?.poc.first_name} {existingShabasPoc?.poc.last_name}</TableCell>
                                             <TableCell align="left">{titleCase(e.status)}</TableCell>
                                             <TableCell align="center">
-                                                {e.start_date > new Date() &&
+                                                {(e.start_date > new Date() && e.status == 'created') &&
                                                     <IconButton onClick={() => { setEngagementData(e); setEngagementModal(true) }}>
                                                         <Edit fontSize='small' />
                                                     </IconButton>
@@ -148,7 +148,7 @@ const BrowseAssessments: React.FC<Props> = (props) => {
                                                     <TableCell align="left"></TableCell>
                                                     <TableCell align="left">{titleCase(a.status)}</TableCell>
                                                     <TableCell align="center">
-                                                        {a.start_date > new Date() &&
+                                                        {(a.start_date > new Date() && a.status == 'created') &&
                                                             <IconButton onClick={() => { setAssessmentData(a); setAssessmentModal(true) }}>
                                                                 <Edit fontSize='small' />
                                                             </IconButton>
