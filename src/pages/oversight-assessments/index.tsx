@@ -15,7 +15,7 @@ const OversightAssessments: NextPage = () => {
     const { data } = api.engagement.getAllOversightInclude.useQuery([true, true]);
 
     return (
-        <Layout active='ongoing-assessments'>
+        <Layout active='oversight-assessments'>
             <div className='dashboard'>
                 {data && data.map((e: Engagement & { POC: POC[]; Assessment: Assessment[]; client: Client }, i) => {
                     return (
