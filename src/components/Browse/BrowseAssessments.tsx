@@ -36,11 +36,12 @@ const BrowseAssessments: React.FC<Props> = (props) => {
     } | undefined>(undefined);
     const [assessmentData, setAssessmentData] = React.useState<Assessment | undefined>(undefined);
 
-    type SecondaryFilters = 'ongoing' | 'assessor-review' | 'oversight' | 'client-review' | 'completed';
+    type SecondaryFilters = 'created' | 'ongoing' | 'assessor-review' | 'oversight' | 'client-review' | 'completed';
     const [secondaryFilter, setSecondaryFilter] = React.useState<SecondaryFilters>('ongoing');
 
     // TODO: Don't run query unless modal closed
-    const { data } = api.engagement.getAllInclude.useQuery([engagementModal, assessmentModal]);
+    const { data } = api.engagement.getAllInclude.useQuery([engagementModal, engagementModal]);
+    const assessmentStatusCounts = api.assessment.getStatusCounts.useQuery(engagementModal).data;
 
     return (
         <>
@@ -52,28 +53,32 @@ const BrowseAssessments: React.FC<Props> = (props) => {
                     New Assessment
                 </Button>
             </div>
-            <div className='filters'>
+            {assessmentStatusCounts && <div className='filters'>
+                <div className='filter' onClick={() => setSecondaryFilter('created')}>
+                    <span className={secondaryFilter == 'created' ? 'label active' : 'label'}>Created</span>
+                    <span className='count'>{assessmentStatusCounts.created}</span>
+                </div>
                 <div className='filter' onClick={() => setSecondaryFilter('ongoing')}>
                     <span className={secondaryFilter == 'ongoing' ? 'label active' : 'label'}>Ongoing</span>
-                    <span className='count'>4</span>
+                    <span className='count'>{assessmentStatusCounts.ongoing}</span>
                 </div>
                 <div className='filter' onClick={() => setSecondaryFilter('assessor-review')}>
                     <span className={secondaryFilter == 'assessor-review' ? 'label active' : 'label'}>Assessor Review</span>
-                    <span className='count'>1</span>
+                    <span className='count'>{assessmentStatusCounts.assessorReview}</span>
                 </div>
                 <div className='filter' onClick={() => setSecondaryFilter('oversight')}>
                     <span className={secondaryFilter == 'oversight' ? 'label active' : 'label'}>Oversight</span>
-                    <span className='count'>15</span>
+                    <span className='count'>{assessmentStatusCounts.oversight}</span>
                 </div>
                 <div className='filter' onClick={() => setSecondaryFilter('client-review')}>
                     <span className={secondaryFilter == 'client-review' ? 'label active' : 'label'}>Client Review</span>
-                    <span className='count'>4</span>
+                    <span className='count'>{assessmentStatusCounts.clientReview}</span>
                 </div>
                 <div className='filter' onClick={() => setSecondaryFilter('completed')}>
                     <span className={secondaryFilter == 'completed' ? 'label active' : 'label'}>Completed</span>
-                    <span className='count'>15</span>
+                    <span className='count'>{assessmentStatusCounts.completed}</span>
                 </div>
-            </div>
+            </div>}
             {data && data.map((e, i) => {
                 const existingClientPoc = e.EngagementPOC.find(o => o.poc.client_id);
                 const existingShabasPoc = e.EngagementPOC.find(o => !o.poc.client_id);

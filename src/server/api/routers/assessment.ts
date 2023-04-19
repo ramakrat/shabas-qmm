@@ -123,4 +123,47 @@ export const assessmentRouter = createTRPCRouter({
         .query(({ ctx }) => {
             return ctx.prisma.assessment.count();
         }),
+    getStatusCounts: publicProcedure
+        .input(z.boolean().optional())
+        .query(async ({ ctx }) => {
+            const getCounts = async () => {
+                const created = await ctx.prisma.assessment.count({
+                    where: { status: 'created' }
+                });
+                const ongoing = await ctx.prisma.assessment.count({
+                    where: { status: 'ongoing' }
+                });
+                const assessorReview = await ctx.prisma.assessment.count({
+                    where: { status: 'assessor-review' }
+                });
+                const oversight = await ctx.prisma.assessment.count({
+                    where: { status: 'oversight' }
+                });
+                const clientReview = await ctx.prisma.assessment.count({
+                    where: { status: 'client-review' }
+                });
+                const completed = await ctx.prisma.assessment.count({
+                    where: { status: 'completed' }
+                });
+
+                return {
+                    created: created,
+                    ongoing: ongoing,
+                    assessorReview: assessorReview,
+                    oversight: oversight,
+                    clientReview: clientReview,
+                    completed: completed,
+                };
+            }
+
+            // Extract `UsersWithPosts` type with
+            type ThenArg<T> = T extends PromiseLike<infer U> ? U : T
+            type AssessmentStatusCounts = ThenArg<ReturnType<typeof getCounts>>
+
+
+            // run inside `async` function
+            const counts: AssessmentStatusCounts = await getCounts()
+
+            return counts;
+        }),
 });
