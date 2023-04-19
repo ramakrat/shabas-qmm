@@ -49,8 +49,8 @@ const Question: NextPage = () => {
     const [addApiSegment, setAddApiSegment] = React.useState<boolean>(false);
     const [addSiteSpecific, setAddSiteSpecific] = React.useState<boolean>(false);
 
-
     const { data } = api.question.getById.useQuery({ id: Number(question) });
+    const inUse = api.assessmentQuestion.getByQuestionUsage.useQuery(Number(question)).data ? true : false;
 
     const guideData = api.interviewGuide.getByQuestionId.useQuery({ id: Number(question) }).data;
     const referencesData = api.reference.getByQuestionId.useQuery({ id: Number(question) }).data;

@@ -74,6 +74,14 @@ export const assessmentQuestionRouter = createTRPCRouter({
                 where: { id: input.id }
             });
         }),
+
+    getByQuestionUsage: publicProcedure
+        .input(z.number())
+        .query(({ input, ctx }) => {
+            return ctx.prisma.assessmentQuestion.findFirst({
+                where: { question_id: input }
+            });
+        }),
     getAll: publicProcedure
         .query(({ ctx }) => {
             return ctx.prisma.assessmentQuestion.findMany();
