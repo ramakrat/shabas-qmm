@@ -16,16 +16,16 @@ const OversightAssessments: NextPage = () => {
 
     // TODO: Don't run query unless modal closed
     const { data } = api.engagement.getAllCompletedInclude.useQuery([true, true]);
-    const exportData = api.assessment.getAllCompleted.useQuery(true).data;
+    // const exportData = api.assessment.getAllCompleted.useQuery(true).data;
 
     const exportCompleted = () => {
-        if (exportData) {
-            const sheet = XLSX.utils.json_to_sheet(exportData);
-            const book = XLSX.utils.book_new();
-            const filename = 'Shabas Completed Assessments ' + new Date().toLocaleDateString('fr-CA') + '.csv';
-            XLSX.utils.book_append_sheet(book, sheet, 'Sheet1');
-            XLSX.writeFile(book, filename, { bookType: 'csv' });
-        }
+        // if (exportData) {
+        //     const sheet = XLSX.utils.json_to_sheet(exportData);
+        //     const book = XLSX.utils.book_new();
+        //     const filename = 'Shabas Completed Assessments ' + new Date().toLocaleDateString('fr-CA') + '.csv';
+        //     XLSX.utils.book_append_sheet(book, sheet, 'Sheet1');
+        //     XLSX.writeFile(book, filename, { bookType: 'csv' });
+        // }
     }
 
     return (
