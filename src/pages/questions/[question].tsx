@@ -16,7 +16,6 @@ import IndustryModal from '~/components/Modals/QuestionFilters/IndustryModal';
 import ApiSegmentModal from '~/components/Modals/QuestionFilters/ApiSegmentModal';
 import SiteSpecificModal from '~/components/Modals/QuestionFilters/SiteSpecificModal';
 import QuestionsSidebar from '~/components/Assessment/QuestionsSidebar';
-import { prisma } from '~/server/db';
 
 interface GuideType {
     id?: number;
