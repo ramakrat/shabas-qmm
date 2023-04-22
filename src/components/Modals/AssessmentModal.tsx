@@ -86,7 +86,7 @@ const AssessmentModal: React.FC<Props> = (props) => {
     const [newQuestions, setNewQuestions] = React.useState<QuestionType[]>([]);
 
     const [addQuestion, setAddQuestion] = React.useState<boolean>(false);
-    const [question, setQuestion] = React.useState<Question | undefined>(undefined);
+    const [selectedQuestion, setSelectedQuestion] = React.useState<Question | undefined>(undefined);
 
     const [error, setError] = React.useState<string | undefined>(undefined);
 
@@ -432,8 +432,8 @@ const AssessmentModal: React.FC<Props> = (props) => {
                                                     return (
                                                         <Typography
                                                             key={i}
-                                                            className={question && question.id == o.id ? 'active' : ''}
-                                                            onClick={() => setQuestion(o)}
+                                                            className={selectedQuestion && selectedQuestion.id == o.id ? 'active' : ''}
+                                                            onClick={() => setSelectedQuestion(o)}
                                                         >
                                                             {o.number}
                                                         </Typography>
@@ -443,8 +443,8 @@ const AssessmentModal: React.FC<Props> = (props) => {
                                                     variant='contained'
                                                     onClick={() => {
                                                         const newArr = newQuestions;
-                                                        newArr.push({ question: question, filterSelection: -1 } as QuestionType)
-                                                        setQuestion(undefined);
+                                                        newArr.push({ question: selectedQuestion, filterSelection: -1 } as QuestionType)
+                                                        setSelectedQuestion(undefined);
                                                         setNewQuestions(newArr);
                                                         setAddQuestion(false);
                                                     }}
