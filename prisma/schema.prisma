@@ -70,7 +70,6 @@ model POC {
     mobile_phone String
     work_phone   String
     email        String
-    staff        String
 
     user_id Int?
     user    User? @relation(fields: [user_id], references: [id])
