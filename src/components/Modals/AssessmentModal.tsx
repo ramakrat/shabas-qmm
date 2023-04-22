@@ -442,7 +442,7 @@ const AssessmentModal: React.FC<Props> = (props) => {
                                                             className={selectedQuestion && selectedQuestion.id == o.id ? 'active' : ''}
                                                             onClick={() => setSelectedQuestion(o)}
                                                         >
-                                                            {o.number}
+                                                            {o.number} - {o.question}
                                                         </Typography>
                                                     )
                                                 })}
