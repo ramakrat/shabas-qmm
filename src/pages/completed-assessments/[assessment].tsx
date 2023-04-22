@@ -7,13 +7,14 @@ import * as yup from "yup";
 import { Field, Form, Formik } from "formik";
 import TextField from '~/components/Form/TextField';
 
-import { Button, Card, Grid, Typography } from '@mui/material';
+import { Button, Card, Grid, MenuItem, Typography } from '@mui/material';
 import { Info } from '@mui/icons-material';
 
 import { api } from "~/utils/api";
 import Layout from "~/components/Layout/Layout";
 import QuestionsSidebar from '~/components/Assessment/QuestionsSidebar';
 import QuestionContext from '~/components/Assessment/QuestionContext';
+import Select from '~/components/Form/Select';
 
 interface FormValues {
     rating: string;
@@ -175,8 +176,15 @@ const CompletedAssessment: NextPage = () => {
                                                         <Info fontSize='small' onClick={() => setShowRating(!showRating)} />
                                                         <Field
                                                             name='rating' label='' size='small'
-                                                            component={TextField}
-                                                        />
+                                                            component={Select}
+                                                        >
+                                                            <MenuItem value=''><em>Select rating...</em></MenuItem>
+                                                            <MenuItem value={1}>1</MenuItem>
+                                                            <MenuItem value={2}>2</MenuItem>
+                                                            <MenuItem value={3}>3</MenuItem>
+                                                            <MenuItem value={4}>4</MenuItem>
+                                                            <MenuItem value={5}>5</MenuItem>
+                                                        </Field>
                                                     </div>
                                                     {(showRating && ratings) &&
                                                         <div>

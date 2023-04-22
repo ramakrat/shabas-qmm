@@ -105,14 +105,13 @@
             padding-right: 5px;
         }
 
-        .MuiSvgIcon-root {
-            margin-right: 10px;
+        .MuiSvgIcon-root>*:first-of-type {
             color: palette(greyscale, 500);
             cursor: pointer;
         }
 
-        .MuiTextField-root {
-            width: 48px;
+        .MuiFormControl-root {
+            margin-left: 10px;
         }
     }
 
