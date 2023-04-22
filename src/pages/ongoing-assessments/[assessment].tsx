@@ -58,12 +58,12 @@ const OngoingAssessment: NextPage = () => {
             if (data.status == 'created' || data.status == '') {
                 assessmentStatus.mutate({
                     id: data.id,
-                    status: 'in-progress',
+                    status: 'ongoing',
                 })
                 if (data.engagement.status == 'created' || data.status == '') {
                     engagementStatus.mutate({
                         id: data.id,
-                        status: 'in-progress',
+                        status: 'ongoing',
                     })
                 }
             }

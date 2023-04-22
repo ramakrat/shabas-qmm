@@ -90,7 +90,7 @@ export const engagementRouter = createTRPCRouter({
                             start_date: { lte: new Date() },
                             OR: [
                                 { status: 'created' },
-                                { status: 'in-progress' },
+                                { status: 'ongoing' },
                                 { status: '' },
                             ]
                         }
@@ -102,7 +102,7 @@ export const engagementRouter = createTRPCRouter({
                             start_date: { lte: new Date() },
                             OR: [
                                 { status: 'created' },
-                                { status: 'in-progress' },
+                                { status: 'ongoing' },
                                 { status: '' },
                             ]
                         }
@@ -142,6 +142,24 @@ export const engagementRouter = createTRPCRouter({
                 include: {
                     Assessment: {
                         where: { status: 'oversight' }
+                    },
+                    client: true,
+                    POC: true,
+                }
+            });
+        }),
+    getAllCompletedInclude: publicProcedure
+        .input(z.array(z.boolean()))
+        .query(({ ctx }) => {
+            return ctx.prisma.engagement.findMany({
+                where: {
+                    Assessment: {
+                        some: { status: 'completed' }
+                    }
+                },
+                include: {
+                    Assessment: {
+                        where: { status: 'completed' }
                     },
                     client: true,
                     POC: true,
