@@ -113,6 +113,13 @@ export const assessmentRouter = createTRPCRouter({
                 });
             return null;
         }),
+    getAllCompleted: publicProcedure
+        .input(z.boolean())
+        .query(({ ctx }) => {
+            return ctx.prisma.assessment.findMany({
+                where: { status: 'completed' }
+            });
+        }),
     getAll: publicProcedure
         .input(z.boolean())
         .query(({ ctx }) => {
