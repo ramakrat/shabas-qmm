@@ -60,7 +60,7 @@ const QuestionsSidebar: React.FC<Props> = (props) => {
                         Add Question
                     </Button>
                 }
-                {submitAssessment &&
+                {submitAssessment != undefined &&
                     <Button
                         variant='outlined'
                         onClick={() => submitAssessment()}
