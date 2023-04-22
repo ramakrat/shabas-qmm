@@ -27,8 +27,8 @@ export const Select: React.FC<FieldProps & SelectProps & TextFieldProps> = props
             >
                 {props.children}
             </MuiSelect>
-            <FormHelperText error={errorMessage}>
-                {helperText ?? ((isTouched && errorMessage) ? errorMessage : undefined)}
+            <FormHelperText error={Boolean(errorMessage)}>
+                {(helperText ?? (Boolean(isTouched && errorMessage)) ? errorMessage : undefined)}
             </FormHelperText>
         </FormControl>
     )
