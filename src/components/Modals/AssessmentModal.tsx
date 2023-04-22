@@ -281,7 +281,7 @@ const AssessmentModal: React.FC<Props> = (props) => {
                                             {sites ? sites.map(o => {
                                                 return (
                                                     <MenuItem value={o.id} key={o.id}>
-                                                        {o.id} {o.name}
+                                                        {o.id} - {o.name}
                                                     </MenuItem>
                                                 )
                                             }) : 'No Sites. Please create a Site first.'}
@@ -294,7 +294,7 @@ const AssessmentModal: React.FC<Props> = (props) => {
                                             {engagements ? engagements.map(o => {
                                                 return (
                                                     <MenuItem value={o.id} key={o.id}>
-                                                        {o.id} {o.description}
+                                                        {o.id} - {o.description}
                                                     </MenuItem>
                                                 )
                                             }) : 'No Engagements. Please create an Engagement first.'}
