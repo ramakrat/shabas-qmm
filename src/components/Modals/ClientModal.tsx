@@ -2,7 +2,7 @@ import React from "react";
 import type { Client } from "@prisma/client";
 
 import * as yup from "yup";
-import { Field, Form, Formik, type FormikHelpers, type FormikProps } from "formik";
+import { Field, Form, Formik } from "formik";
 import TextField from "../Form/TextField";
 import Select from "../Form/Select";
 
@@ -84,7 +84,6 @@ const ClientModal: React.FC<Props> = (props) => {
 
     const handleSubmit = (
         values: FormValues,
-        formikHelpers: FormikHelpers<FormValues>
     ) => {
         if (data) {
             update.mutate({
@@ -126,67 +125,65 @@ const ClientModal: React.FC<Props> = (props) => {
                     validateOnChange={false}
                     onSubmit={handleSubmit}
                 >
-                    {(formikProps: FormikProps<FormValues>) => (
-                        <Form>
-                            <Card>
-                                <CardHeader
-                                    title={data ? 'Edit Client' : 'Create New Client'}
-                                    action={
-                                        <IconButton onClick={() => setOpen(false)}>
-                                            <Close />
-                                        </IconButton>
-                                    }
+                    <Form>
+                        <Card>
+                            <CardHeader
+                                title={data ? 'Edit Client' : 'Create New Client'}
+                                action={
+                                    <IconButton onClick={() => setOpen(false)}>
+                                        <Close />
+                                    </IconButton>
+                                }
+                            />
+                            <CardContent>
+                                <Field
+                                    name='name' label='Name' size='small'
+                                    component={TextField}
                                 />
-                                <CardContent>
-                                    <Field
-                                        name='name' label='Name' size='small'
-                                        component={TextField}
-                                    />
-                                    <Field
-                                        name='streetAddress' label='Street Address' size='small'
-                                        component={TextField}
-                                    />
-                                    <Field
-                                        name='city' label='City' size='small'
-                                        component={TextField}
-                                    />
-                                    <Field
-                                        name='state' label='State' size='small'
-                                        component={TextField}
-                                    />
-                                    <Field
-                                        name='zipCode' label='Zip Code' size='small'
-                                        component={TextField}
-                                    />
-                                    <Field
-                                        name='country' label='Country' size='small'
-                                        component={Select}
-                                    >
-                                        <MenuItem value=''><em>Select a country...</em></MenuItem>
-                                        {Countries.map((country) => {
-                                            return (
-                                                <MenuItem value={country.code} key={country.code}>
-                                                    {country.name}
-                                                </MenuItem>
-                                            )
-                                        })}
-                                    </Field>
-                                    <Field
-                                        name='description' label='Description' size='small'
-                                        multiline minRows={2}
-                                        component={TextField}
-                                    />
-                                </CardContent>
-                                <CardActions>
-                                    <Button variant='contained' color='error' onClick={() => setOpen(false)}>Cancel</Button>
-                                    {data ?
-                                        <Button variant='contained' type='submit'>Save</Button> :
-                                        <Button variant='contained' type='submit'>Create</Button>
-                                    }
-                                </CardActions>
-                            </Card>
-                        </Form>
-                    )}
+                                <Field
+                                    name='streetAddress' label='Street Address' size='small'
+                                    component={TextField}
+                                />
+                                <Field
+                                    name='city' label='City' size='small'
+                                    component={TextField}
+                                />
+                                <Field
+                                    name='state' label='State' size='small'
+                                    component={TextField}
+                                />
+                                <Field
+                                    name='zipCode' label='Zip Code' size='small'
+                                    component={TextField}
+                                />
+                                <Field
+                                    name='country' label='Country' size='small'
+                                    component={Select}
+                                >
+                                    <MenuItem value=''><em>Select a country...</em></MenuItem>
+                                    {Countries.map((country) => {
+                                        return (
+                                            <MenuItem value={country.code} key={country.code}>
+                                                {country.name}
+                                            </MenuItem>
+                                        )
+                                    })}
+                                </Field>
+                                <Field
+                                    name='description' label='Description' size='small'
+                                    multiline minRows={2}
+                                    component={TextField}
+                                />
+                            </CardContent>
+                            <CardActions>
+                                <Button variant='contained' color='error' onClick={() => setOpen(false)}>Cancel</Button>
+                                {data ?
+                                    <Button variant='contained' type='submit'>Save</Button> :
+                                    <Button variant='contained' type='submit'>Create</Button>
+                                }
+                            </CardActions>
+                        </Card>
+                    </Form>
                 </Formik>
             </div>
         </Modal>

@@ -2,7 +2,7 @@ import React from "react";
 import type { Assessment, Client, Engagement, EngagementPOC, POC } from "@prisma/client";
 
 import * as yup from "yup";
-import { Field, Form, Formik, type FormikProps, type FormikHelpers } from "formik";
+import { Field, Form, Formik } from "formik";
 import TextField from "../Form/TextField";
 import Select from "../Form/Select";
 
@@ -109,7 +109,6 @@ const EngagementModal: React.FC<Props> = (props) => {
 
     const handleSubmit = (
         values: FormValues,
-        formikHelpers: FormikHelpers<FormValues>
     ) => {
         if (data) {
             update.mutate({
@@ -185,84 +184,82 @@ const EngagementModal: React.FC<Props> = (props) => {
                     validateOnChange={false}
                     onSubmit={handleSubmit}
                 >
-                    {(formikProps: FormikProps<FormValues>) => (
-                        <Form>
-                            <Card>
-                                <CardHeader
-                                    title={data ? 'Edit Engagement' : 'Create New Engagement'}
-                                    action={
-                                        <IconButton onClick={() => setOpen(false)}>
-                                            <Close />
-                                        </IconButton>
-                                    }
+                    <Form>
+                        <Card>
+                            <CardHeader
+                                title={data ? 'Edit Engagement' : 'Create New Engagement'}
+                                action={
+                                    <IconButton onClick={() => setOpen(false)}>
+                                        <Close />
+                                    </IconButton>
+                                }
+                            />
+                            <CardContent>
+                                <Field
+                                    name='clientId' label='Client' size='small'
+                                    component={Select}
+                                >
+                                    <MenuItem value=''><em>Select a client...</em></MenuItem>
+                                    {clients ? clients.map((client: Client) => {
+                                        return (
+                                            <MenuItem value={client.id} key={client.id}>
+                                                {client.id} - {client.name}
+                                            </MenuItem>
+                                        )
+                                    }) : 'No Clients'}
+                                </Field>
+                                <Field
+                                    name='startDate' label='Start Date' size='small' type='date'
+                                    component={TextField}
                                 />
-                                <CardContent>
-                                    <Field
-                                        name='clientId' label='Client' size='small'
-                                        component={Select}
-                                    >
-                                        <MenuItem value=''><em>Select a client...</em></MenuItem>
-                                        {clients ? clients.map((client: Client) => {
+                                <Field
+                                    name='endDate' label='End Date' size='small' type='date'
+                                    component={TextField}
+                                />
+                                <Field
+                                    name='description' label='Description' size='small'
+                                    component={TextField}
+                                />
+                                <Field
+                                    name='clientPocId' label='Client POC' size='small'
+                                    component={Select}
+                                >
+                                    <MenuItem value=''><em>Select a client POC...</em></MenuItem>
+                                    {pocs && pocs.map(o => {
+                                        if (o.client_id)
                                             return (
-                                                <MenuItem value={client.id} key={client.id}>
-                                                    {client.id} - {client.name}
+                                                <MenuItem value={o.id} key={o.id}>
+                                                    {o.first_name} {o.last_name} - {o.title}
                                                 </MenuItem>
                                             )
-                                        }) : 'No Clients'}
-                                    </Field>
-                                    <Field
-                                        name='startDate' label='Start Date' size='small' type='date'
-                                        component={TextField}
-                                    />
-                                    <Field
-                                        name='endDate' label='End Date' size='small' type='date'
-                                        component={TextField}
-                                    />
-                                    <Field
-                                        name='description' label='Description' size='small'
-                                        component={TextField}
-                                    />
-                                    <Field
-                                        name='clientPocId' label='Client POC' size='small'
-                                        component={Select}
-                                    >
-                                        <MenuItem value=''><em>Select a client POC...</em></MenuItem>
-                                        {pocs && pocs.map(o => {
-                                            if (o.client_id)
-                                                return (
-                                                    <MenuItem value={o.id} key={o.id}>
-                                                        {o.first_name} {o.last_name} - {o.title}
-                                                    </MenuItem>
-                                                )
-                                            return undefined;
-                                        })}
-                                    </Field>
-                                    <Field
-                                        name='shabasPocId' label='Shabas POC' size='small'
-                                        component={Select}
-                                    >
-                                        <MenuItem value=''><em>Select a Shabas POC...</em></MenuItem>
-                                        {pocs && pocs.map(o => {
-                                            if (!o.client_id)
-                                                return (
-                                                    <MenuItem value={o.id} key={o.id}>
-                                                        {o.first_name} {o.last_name} - {o.title}
-                                                    </MenuItem>
-                                                )
-                                            return undefined;
-                                        })}
-                                    </Field>
-                                </CardContent>
-                                <CardActions>
-                                    <Button variant='contained' color='error' onClick={() => setOpen(false)}>Cancel</Button>
-                                    {data ?
-                                        <Button variant='contained' type='submit'>Save</Button> :
-                                        <Button variant='contained' type='submit'>Create</Button>
-                                    }
-                                </CardActions>
-                            </Card>
-                        </Form>
-                    )}
+                                        return undefined;
+                                    })}
+                                </Field>
+                                <Field
+                                    name='shabasPocId' label='Shabas POC' size='small'
+                                    component={Select}
+                                >
+                                    <MenuItem value=''><em>Select a Shabas POC...</em></MenuItem>
+                                    {pocs && pocs.map(o => {
+                                        if (!o.client_id)
+                                            return (
+                                                <MenuItem value={o.id} key={o.id}>
+                                                    {o.first_name} {o.last_name} - {o.title}
+                                                </MenuItem>
+                                            )
+                                        return undefined;
+                                    })}
+                                </Field>
+                            </CardContent>
+                            <CardActions>
+                                <Button variant='contained' color='error' onClick={() => setOpen(false)}>Cancel</Button>
+                                {data ?
+                                    <Button variant='contained' type='submit'>Save</Button> :
+                                    <Button variant='contained' type='submit'>Create</Button>
+                                }
+                            </CardActions>
+                        </Card>
+                    </Form>
                 </Formik>
             </div>
         </Modal>

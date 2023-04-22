@@ -2,7 +2,7 @@ import React from "react";
 import type { Assessment, AssessmentQuestion, Filter, Question, Rating } from "@prisma/client";
 
 import * as yup from "yup";
-import { Field, Form, Formik, type FormikHelpers } from "formik";
+import { Field, Form, Formik } from "formik";
 import TextField from "../Form/TextField";
 import Select from "../Form/Select";
 
@@ -149,7 +149,6 @@ const AssessmentModal: React.FC<Props> = (props) => {
 
     const handleSubmit = (
         values: FormValues,
-        formikHelpers: FormikHelpers<FormValues>
     ) => {
         if (existingQuestions.length < 1 && newQuestions.length < 1) {
             return;

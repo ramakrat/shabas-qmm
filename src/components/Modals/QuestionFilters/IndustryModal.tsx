@@ -1,6 +1,6 @@
 import React from "react";
 import * as yup from "yup";
-import { type FormikHelpers, Formik, Form, Field } from "formik";
+import { Formik, Form, Field } from "formik";
 import { Button, Card, CardActions, CardContent, CardHeader, IconButton, Modal } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { api } from "~/utils/api";
@@ -20,14 +20,8 @@ const validationSchema = yup.object().shape({
 });
 
 const IndustryModal: React.FC<Props> = (props) => {
-    
+
     const { open, setOpen } = props;
-
-    // =========== Input Field States ===========
-
-    const [filter, setFilter] = React.useState<FormValues>({
-        name: '',
-    });
 
     // =========== Submission Management ===========
 
@@ -35,7 +29,6 @@ const IndustryModal: React.FC<Props> = (props) => {
 
     const handleSubmit = (
         values: FormValues,
-        formikHelpers: FormikHelpers<FormValues>
     ) => {
         create.mutate({
             type: 'industry',
@@ -50,7 +43,7 @@ const IndustryModal: React.FC<Props> = (props) => {
             <div>
                 <Formik
                     enableReinitialize
-                    initialValues={filter}
+                    initialValues={{ name: '' }}
                     validationSchema={validationSchema}
                     validateOnBlur={false}
                     validateOnChange={false}

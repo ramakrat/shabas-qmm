@@ -1,7 +1,7 @@
 import React from "react";
 
 import * as yup from "yup";
-import { Field, Form, Formik, type FormikHelpers } from "formik";
+import { Field, Form, Formik } from "formik";
 import TextField from "../Form/TextField";
 
 import { Button, Card, CardActions, CardContent, CardHeader, IconButton, Modal } from "@mui/material";
@@ -67,7 +67,6 @@ const QuestionModal: React.FC<Props> = (props) => {
 
     const handleSubmit = (
         values: FormValues,
-        formikHelpers: FormikHelpers<FormValues>
     ) => {
         create.mutate({
             active: true,

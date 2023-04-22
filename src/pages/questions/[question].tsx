@@ -117,7 +117,7 @@ const Question: NextPage = () => {
             });
             setNewGuide(array);
         }
-    }, [guideData]);
+    }, [guideData, newGuide]);
 
     React.useEffect(() => {
         if (referencesData) {
@@ -140,7 +140,7 @@ const Question: NextPage = () => {
             });
             setNewReferences(array);
         }
-    }, [referencesData])
+    }, [newReferences, referencesData])
 
     React.useEffect(() => {
         if (ratingData) {
@@ -164,7 +164,7 @@ const Question: NextPage = () => {
             });
             setNewRatings(array);
         }
-    }, [ratingData])
+    }, [newRatings, ratingData])
 
     const handleGuideChange = (num: number, newVal: string, existing?: boolean) => {
         const ref = existing ? existingGuide : newGuide;

@@ -17,7 +17,7 @@ interface Props {
     setAssessmentModal: (open: boolean) => void;
 }
 
-const BrowseAssessments: React.FC<Props> = (props) => {
+const BrowseAssessments: React.FC<Props> = () => {
 
     // const { engagementModal, setEngagementModal, assessmentModal, setAssessmentModal } = props;
 

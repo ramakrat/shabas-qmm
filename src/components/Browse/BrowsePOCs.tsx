@@ -19,7 +19,7 @@ type PocType = (
     }
 )
 
-const BrowsePOCs: React.FC<Props> = (props) => {
+const BrowsePOCs: React.FC<Props> = () => {
 
     // const { pocModal, setPOCModal } = props;
     const [pocModal, setPOCModal] = React.useState<boolean>(false);

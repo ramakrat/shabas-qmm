@@ -4,7 +4,7 @@ import Router, { useRouter } from 'next/router';
 import type { Answer, Assessment, AssessmentQuestion, Engagement, Filter, InterviewGuide, Question, Rating, Reference } from '@prisma/client';
 
 import * as yup from "yup";
-import { Field, Form, Formik, type FormikHelpers } from "formik";
+import { Field, Form, Formik } from "formik";
 import TextField from '~/components/Form/TextField';
 
 import { Button, Card, Grid, Typography } from '@mui/material';
@@ -68,7 +68,7 @@ const OngoingAssessment: NextPage = () => {
                 }
             }
         }
-    }, [data])
+    }, [assessmentStatus, data, engagementStatus])
 
     const convertToQuestion = (object: (Question & {
         Rating?: Rating[];
@@ -132,7 +132,6 @@ const OngoingAssessment: NextPage = () => {
 
     const handleSubmit = (
         values: FormValues,
-        formikHelpers: FormikHelpers<FormValues>
     ) => {
         if (selectedAssessmentQuestion) {
             if (selectedAssessmentQuestion.answer) {

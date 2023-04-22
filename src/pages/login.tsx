@@ -2,7 +2,7 @@ import type { NextPage } from "next";
 import Image from 'next/image';
 
 import * as yup from "yup";
-import { Field, Form, Formik, type FormikHelpers, type FormikProps } from "formik";
+import { Field, Form, Formik, type FormikHelpers } from "formik";
 
 import { Button, Card, Typography } from "@mui/material";
 import TextField from "~/components/Form/TextField";
