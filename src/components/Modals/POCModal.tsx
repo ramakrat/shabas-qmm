@@ -37,7 +37,14 @@ const validationSchema = yup.object().shape({
     email: yup.string().required("Required"),
     staff: yup.string().required("Required"),
     type: yup.string().required("Required"),
-    typeId: yup.string(),
+    typeId: yup.string()
+        .when('type',
+            (type, schema) => {
+                if (type) {
+                    if (type[0] != 'shabas') return schema.required('Required');
+                }
+                return schema;
+            }),
 });
 
 const POCModal: React.FC<Props> = (props) => {
