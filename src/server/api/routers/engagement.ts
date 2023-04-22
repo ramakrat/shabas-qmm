@@ -130,6 +130,24 @@ export const engagementRouter = createTRPCRouter({
                 }
             });
         }),
+    getAllOversightInclude: publicProcedure
+        .input(z.array(z.boolean()))
+        .query(({ ctx }) => {
+            return ctx.prisma.engagement.findMany({
+                where: {
+                    Assessment: {
+                        some: { status: 'oversight' }
+                    }
+                },
+                include: {
+                    Assessment: {
+                        where: { status: 'oversight' }
+                    },
+                    client: true,
+                    POC: true,
+                }
+            });
+        }),
     getAll: publicProcedure
         .input(z.boolean())
         .query(({ ctx }) => {

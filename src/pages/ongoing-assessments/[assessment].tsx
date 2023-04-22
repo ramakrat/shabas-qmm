@@ -3,13 +3,29 @@ import { type NextPage } from "next";
 import Router, { useRouter } from 'next/router';
 import type { Answer, Assessment, AssessmentQuestion, Engagement, Filter, InterviewGuide, Question, Rating, Reference } from '@prisma/client';
 
-import { Button, Card, Grid, TextField, Typography } from '@mui/material';
+import * as yup from "yup";
+import { Field, Form, Formik } from "formik";
+import TextField from '~/components/Form/TextField';
+
+import { Button, Card, Grid, Typography } from '@mui/material';
 import { Info } from '@mui/icons-material';
 
 import { api } from "~/utils/api";
 import Layout from "~/components/Layout/Layout";
 import QuestionsSidebar from '~/components/Assessment/QuestionsSidebar';
 import QuestionContext from '~/components/Assessment/QuestionContext';
+
+interface FormValues {
+    rating: string;
+    rationale: string;
+    notes: string;
+}
+
+const validationSchema = yup.object().shape({
+    rating: yup.string().required("Required"),
+    rationale: yup.string().required("Required"),
+    notes: yup.string().required("Required"),
+});
 
 const OngoingAssessment: NextPage = () => {
 
@@ -52,7 +68,7 @@ const OngoingAssessment: NextPage = () => {
                 }
             }
         }
-    }, [data])
+    }, [assessmentStatus, data, engagementStatus])
 
     const convertToQuestion = (object: (Question & {
         Rating?: Rating[];
@@ -81,24 +97,29 @@ const OngoingAssessment: NextPage = () => {
     const references = api.reference.getByQuestionId.useQuery({ id: questionRef?.id }).data
 
 
-
     // =========== Input Field States ===========
 
     const [showRating, setShowRating] = React.useState<boolean>(false);
 
-    const [rating, setRating] = React.useState<string>('');
-    const [rationale, setRationale] = React.useState<string>('');
-    const [notes, setNotes] = React.useState<string>('');
+    const [answer, setAnswer] = React.useState<FormValues>({
+        rating: '',
+        rationale: '',
+        notes: '',
+    });
 
     React.useEffect(() => {
         if (selectedAssessmentQuestion) {
-            setRating(selectedAssessmentQuestion.answer?.assessor_rating ?? '');
-            setRationale(selectedAssessmentQuestion.answer?.assessor_explanation ?? '');
-            setNotes(selectedAssessmentQuestion.answer?.assessor_evidence ?? '');
+            setAnswer({
+                rating: selectedAssessmentQuestion.answer?.assessor_rating ?? '',
+                rationale: selectedAssessmentQuestion.answer?.assessor_explanation ?? '',
+                notes: selectedAssessmentQuestion.answer?.assessor_evidence ?? '',
+            });
         } else {
-            setRating('');
-            setRationale('');
-            setNotes('');
+            setAnswer({
+                rating: '',
+                rationale: '',
+                notes: '',
+            });
         }
     }, [selectedAssessmentQuestion])
 
@@ -109,25 +130,26 @@ const OngoingAssessment: NextPage = () => {
     const update = api.answer.update.useMutation();
     const statusChange = api.assessment.status.useMutation();
 
-    const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
-        event.preventDefault();
+    const handleSubmit = (
+        values: FormValues,
+    ) => {
         if (selectedAssessmentQuestion) {
             if (selectedAssessmentQuestion.answer) {
                 update.mutate({
                     id: selectedAssessmentQuestion.answer.id,
                     assessment_question_id: selectedAssessmentQuestion.id,
-                    assessor_rating: rating,
-                    assessor_explanation: rationale,
-                    assessor_evidence: notes,
+                    assessor_rating: values.rating,
+                    assessor_explanation: values.rationale,
+                    assessor_evidence: values.notes,
                 }, {
                     onSuccess() { Router.reload() }
                 })
             } else {
                 create.mutate({
                     assessment_question_id: selectedAssessmentQuestion.id,
-                    assessor_rating: rating,
-                    assessor_explanation: rationale,
-                    assessor_evidence: notes,
+                    assessor_rating: values.rating,
+                    assessor_explanation: values.rationale,
+                    assessor_evidence: values.notes,
                 }, {
                     onSuccess() { Router.reload() }
                 })
@@ -164,52 +186,63 @@ const OngoingAssessment: NextPage = () => {
                                 <QuestionContext question={questionRef && convertToQuestion(questionRef)} />
                             </Grid>
                             <Grid item xs={8}>
-                                <form onSubmit={handleSubmit}>
-                                    <Card className='pre-questions'>
-                                        <div>
-                                            <div className='rating'>
-                                                <div className='rating-input'>
-                                                    <Typography>Rating</Typography>
-                                                    <Info fontSize='small' onClick={() => setShowRating(!showRating)} />
-                                                    <TextField
-                                                        name='rating' label='' size='small'
-                                                        value={rating}
-                                                        onChange={e => setRating(e.target.value)}
-                                                    />
+                                <Formik
+                                    enableReinitialize
+                                    initialValues={answer}
+                                    validationSchema={validationSchema}
+                                    validateOnBlur={false}
+                                    validateOnChange={false}
+                                    onSubmit={handleSubmit}
+                                >
+                                    <Form>
+                                        <Card className='pre-questions'>
+                                            <div>
+                                                <Typography>Hint: {questionRef?.hint}</Typography>
+                                                <Typography>Start Time: XYZ</Typography>
+                                                <div className='rating'>
+                                                    <div className='rating-input'>
+                                                        <Typography>Rating</Typography>
+                                                        <Info fontSize='small' onClick={() => setShowRating(!showRating)} />
+                                                        <Field
+                                                            name='rating' label='' size='small'
+                                                            component={TextField}
+                                                        />
+                                                    </div>
+                                                    {(showRating && ratings) &&
+                                                        <div>
+                                                            <div>Question Content: {selectedAssessmentQuestion.question.question}</div>
+                                                            {ratings.map((r, i) => {
+                                                                return (
+                                                                    <div key={i}>
+                                                                        <div>Level {r.level_number}: {r.criteria}</div>
+                                                                        {i !== ratings.length - 1 &&
+                                                                            <div>Progression Statement: {r.progression_statement}</div>
+                                                                        }
+                                                                    </div>
+                                                                )
+                                                            })}
+                                                        </div>
+                                                    }
                                                 </div>
-                                                {(showRating && ratings) &&
-                                                    ratings.map((r, i) => {
-                                                        return (
-                                                            <div key={i}>
-                                                                <div>Level {r.level_number}: {r.criteria}</div>
-                                                                {i !== ratings.length - 1 &&
-                                                                    <div>Progression Statement: {r.progression_statement}</div>
-                                                                }
-                                                            </div>
-                                                        )
-                                                    })
-                                                }
                                             </div>
-                                        </div>
-                                    </Card>
-                                    <Card className='question-content'>
-                                        <Typography>Rationale</Typography>
-                                        <TextField
-                                            name='rationale' label='' size='small' multiline
-                                            value={rationale}
-                                            onChange={e => setRationale(e.target.value)}
-                                        />
-                                        <Typography>Notes</Typography>
-                                        <TextField
-                                            name='notes' label='' size='small' multiline
-                                            value={notes}
-                                            onChange={e => setNotes(e.target.value)}
-                                        />
-                                    </Card>
-                                    <Card className='actions simple'>
-                                        <Button variant='contained' type='submit'>Save</Button>
-                                    </Card>
-                                </form>
+                                        </Card>
+                                        <Card className='question-content'>
+                                            <Typography>Rationale</Typography>
+                                            <Field
+                                                name='rationale' label='' size='small' multiline
+                                                component={TextField}
+                                            />
+                                            <Typography>Notes</Typography>
+                                            <Field
+                                                name='notes' label='' size='small' multiline
+                                                component={TextField}
+                                            />
+                                        </Card>
+                                        <Card className='actions simple'>
+                                            <Button variant='contained' type='submit'>Save</Button>
+                                        </Card>
+                                    </Form>
+                                </Formik>
                             </Grid>
                             <Grid item xs={4}>
                                 <Card className='reference'>

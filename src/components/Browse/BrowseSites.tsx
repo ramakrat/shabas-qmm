@@ -10,7 +10,7 @@ interface Props {
     setSiteModal: (open: boolean) => void;
 }
 
-const BrowseSites: React.FC<Props> = (props) => {
+const BrowseSites: React.FC<Props> = () => {
 
     // const { siteModal, setSiteModal } = props;
     const [siteModal, setSiteModal] = React.useState<boolean>(false);

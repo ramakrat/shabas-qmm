@@ -11,7 +11,7 @@
     background-color: white;
 
     .logo {
-        flex-grow: 1;
+        padding-right: 30px;
     }
 
     .nav-items {
@@ -23,25 +23,18 @@
             font-size: 1rem;
             font-weight: 500;
             margin-right: 20px;
-            padding: 5px 10px;
-            text-transform: uppercase;
+            padding: 10px 0px;
+            // text-transform: uppercase;
         }
 
         .active {
             .MuiTypography-root {
                 font-weight: 600 !important;
                 border-radius: shape(borderRadius);
-                background-color: lighten(palette(secondary, main), 45%);
+                background-color: palette(primary, main);
+                padding: 10px 15px;
+                color: white;
                 position: relative;
-
-                &:before {
-                    content: '';
-                    position: absolute;
-                    padding: 16px;
-                    left: 0;
-                    right: 0;
-                    border-bottom: 4px solid palette(secondary, main);
-                }
             }
         }
     }

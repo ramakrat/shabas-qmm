@@ -48,8 +48,8 @@ const Question: NextPage = () => {
     const [addApiSegment, setAddApiSegment] = React.useState<boolean>(false);
     const [addSiteSpecific, setAddSiteSpecific] = React.useState<boolean>(false);
 
-
     const { data } = api.question.getById.useQuery({ id: Number(question) });
+    const inUse = api.assessmentQuestion.getByQuestionUsage.useQuery(Number(question)).data ? true : false;
 
     const guideData = api.interviewGuide.getByQuestionId.useQuery({ id: Number(question) }).data;
     const referencesData = api.reference.getByQuestionId.useQuery({ id: Number(question) }).data;
@@ -117,7 +117,7 @@ const Question: NextPage = () => {
             });
             setNewGuide(array);
         }
-    }, [guideData]);
+    }, [guideData, newGuide]);
 
     React.useEffect(() => {
         if (referencesData) {
@@ -140,7 +140,7 @@ const Question: NextPage = () => {
             });
             setNewReferences(array);
         }
-    }, [referencesData])
+    }, [newReferences, referencesData])
 
     React.useEffect(() => {
         if (ratingData) {
@@ -164,7 +164,7 @@ const Question: NextPage = () => {
             });
             setNewRatings(array);
         }
-    }, [ratingData])
+    }, [newRatings, ratingData])
 
     const handleGuideChange = (num: number, newVal: string, existing?: boolean) => {
         const ref = existing ? existingGuide : newGuide;
@@ -227,22 +227,21 @@ const Question: NextPage = () => {
 
     // =========== Submission Management ===========
 
-    const create = api.question.create.useMutation();
     const update = api.question.update.useMutation();
     const changeActive = api.question.active.useMutation();
 
-    const createGuide = api.interviewGuide.create.useMutation();
+    const createGuides = api.interviewGuide.createArray.useMutation();
     const updateGuide = api.interviewGuide.update.useMutation();
     const deleteGuide = api.interviewGuide.delete.useMutation();
 
-    const createReference = api.reference.create.useMutation();
+    const createReferences = api.reference.createArray.useMutation();
     const updateReference = api.reference.update.useMutation();
     const deleteReference = api.reference.delete.useMutation();
 
     const createSME = api.sme.create.useMutation();
     const updateSME = api.sme.update.useMutation();
 
-    const createRating = api.rating.create.useMutation();
+    const createRatings = api.rating.createArray.useMutation();
     const updateRating = api.rating.update.useMutation();
 
     React.useEffect(() => {
@@ -292,10 +291,8 @@ const Question: NextPage = () => {
                 }
             })
 
-
             existingGuide.forEach(o => {
                 updateGuide.mutate({
-                    id: o.id,
                     active: true,
                     interview_question: o.interview_question,
                     question_id: data.id,
@@ -308,22 +305,20 @@ const Question: NextPage = () => {
                     }
                 })
             })
-            newGuide.slice().reverse().forEach(o => {
-                if (o.interview_question != '') {
-                    createGuide.mutate({
-                        active: true,
-                        interview_question: o.interview_question,
-                        question_id: data.id,
-                        site_id: 1,
-                        filter_id: filterSelection ? filterSelection.id : 1,
-                    }, {
-                        onError(err) {
-                            succeeded = false;
-                            console.log(err);
-                        }
-                    })
+            createGuides.mutate(newGuide.map(o => {
+                return {
+                    active: true,
+                    interview_question: o.interview_question,
+                    question_id: data.id,
+                    site_id: 1,
+                    filter_id: filterSelection ? filterSelection.id : 1,
                 }
-            })
+            }), {
+                onError(err) {
+                    succeeded = false;
+                    console.log(err);
+                }
+            });
             deletedGuide.forEach(o => {
                 if (o.id) {
                     deleteGuide.mutate(o.id, {
@@ -348,19 +343,17 @@ const Question: NextPage = () => {
                     }
                 })
             })
-            newReferences.slice().reverse().forEach(o => {
-                if (o.citation != '') {
-                    createReference.mutate({
-                        citation: o.citation,
-                        question_id: data.id,
-                    }, {
-                        onError(err) {
-                            succeeded = false;
-                            console.log(err);
-                        }
-                    })
+            createReferences.mutate(newReferences.map(o => {
+                return {
+                    citation: o.citation,
+                    question_id: data.id,
                 }
-            })
+            }), {
+                onError(err) {
+                    succeeded = false;
+                    console.log(err);
+                }
+            });
             deletedReferences.forEach(o => {
                 if (o.id) {
                     deleteReference.mutate(o.id, {
@@ -388,23 +381,21 @@ const Question: NextPage = () => {
                     }
                 })
             })
-            newRatings.slice().reverse().forEach(o => {
-                if (o.criteria != '' || o.progression_statement != '') {
-                    createRating.mutate({
-                        active: true,
-                        level_number: o.level_number.toString(),
-                        criteria: o.criteria,
-                        progression_statement: o.progression_statement,
-                        question_id: data.id,
-                        filter_id: (filterType != 'standard' && filterSelection) ? filterSelection.id : undefined,
-                    }, {
-                        onError(err) {
-                            succeeded = false;
-                            console.log(err);
-                        }
-                    })
+            createRatings.mutate(newRatings.map(o => {
+                return {
+                    active: true,
+                    level_number: o.level_number.toString(),
+                    criteria: o.criteria,
+                    progression_statement: o.progression_statement,
+                    question_id: data.id,
+                    filter_id: (filterType != 'standard' && filterSelection) ? filterSelection.id : undefined,
                 }
-            })
+            }), {
+                onError(err) {
+                    succeeded = false;
+                    console.log(err);
+                }
+            });
 
 
             if (SME) {

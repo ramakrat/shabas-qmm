@@ -10,7 +10,7 @@ interface Props {
     setClientModal: (open: boolean) => void;
 }
 
-const BrowseClients: React.FC<Props> = (props) => {
+const BrowseClients: React.FC<Props> = () => {
 
     // const { clientModal, setClientModal } = props;
     const [clientModal, setClientModal] = React.useState<boolean>(false);

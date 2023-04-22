@@ -77,6 +77,7 @@ export const pocRouter = createTRPCRouter({
                     Client: true,
                     engagement: true,
                     site: true,
+                    user: true,
                 }
             });
         }),

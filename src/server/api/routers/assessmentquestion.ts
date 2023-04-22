@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/api/trpc";
@@ -24,6 +25,34 @@ export const assessmentQuestionRouter = createTRPCRouter({
                 }
             })
         }),
+    createArray: publicProcedure
+        .input(z.array(inputType))
+        .mutation(async ({ input, ctx }) => {
+            for (const o of input) {
+                try {
+                    await ctx.prisma.assessmentQuestion.create({
+                        data: {
+                            question_id: o.question_id,
+                            assessment_id: o.assessment_id,
+                            filter_id: o.filter_id,
+                            created_by: '',
+                            updated_by: '',
+                        }
+                    })
+                } catch (e) {
+                    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                        // The .code property can be accessed in a type-safe manner
+                        if (e.code === 'P2002') {
+                            console.log(
+                                'There is a unique constraint violation.'
+                            )
+                        }
+                    }
+                    throw e;
+                }
+            }
+            return undefined;
+        }),
     update: publicProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
@@ -43,6 +72,13 @@ export const assessmentQuestionRouter = createTRPCRouter({
         .query(({ input, ctx }) => {
             return ctx.prisma.assessmentQuestion.findUnique({
                 where: { id: input.id }
+            });
+        }),
+    getByQuestionUsage: publicProcedure
+        .input(z.number())
+        .query(({ input, ctx }) => {
+            return ctx.prisma.assessmentQuestion.findFirst({
+                where: { question_id: input }
             });
         }),
     getAll: publicProcedure

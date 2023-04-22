@@ -1,6 +1,12 @@
 import React from "react";
 import type { Client } from "@prisma/client";
-import { Button, Card, CardActions, CardContent, CardHeader, FormControl, IconButton, InputLabel, MenuItem, Modal, Select, TextField } from "@mui/material";
+
+import * as yup from "yup";
+import { Field, Form, Formik } from "formik";
+import TextField from "../Form/TextField";
+import Select from "../Form/Select";
+
+import { Button, Card, CardActions, CardContent, CardHeader, IconButton, MenuItem, Modal } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { Countries } from "~/utils/utils";
 import { api } from "~/utils/api";
@@ -11,20 +17,41 @@ interface Props {
     data?: Client;
 }
 
+interface FormValues {
+    name: string;
+    streetAddress: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country: string;
+    description: string;
+}
+
+const validationSchema = yup.object().shape({
+    name: yup.string().required("Required"),
+    streetAddress: yup.string().required("Required"),
+    city: yup.string().required("Required"),
+    state: yup.string().required("Required"),
+    zipCode: yup.string().required("Required"),
+    country: yup.string().required("Required"),
+    description: yup.string(),
+});
+
 const ClientModal: React.FC<Props> = (props) => {
 
     const { open, setOpen, data } = props;
 
     // =========== Input Field States ===========
 
-    const [name, setName] = React.useState<string>('');
-    const [streetAddress, setStreetAddress] = React.useState<string>('');
-    const [city, setCity] = React.useState<string>('');
-    const [state, setState] = React.useState<string>('');
-    const [zipCode, setZipCode] = React.useState<string>('');
-    const [country, setCountry] = React.useState<string>('US');
-    const [description, setDescription] = React.useState<string>('');
-
+    const [client, setClient] = React.useState<FormValues>({
+        name: '',
+        streetAddress: '',
+        city: '',
+        state: '',
+        zipCode: '',
+        country: 'US',
+        description: '',
+    });
 
     // =========== Submission Management ===========
 
@@ -33,48 +60,53 @@ const ClientModal: React.FC<Props> = (props) => {
 
     React.useEffect(() => {
         if (data) {
-            setName(data.name);
-            setStreetAddress(data.street_address);
-            setCity(data.city);
-            setState(data.state);
-            setZipCode(data.zip_code);
-            setCountry(data.country);
-            setDescription(data.description);
+            setClient({
+                name: data.name,
+                streetAddress: data.street_address,
+                city: data.city,
+                state: data.state,
+                zipCode: data.zip_code,
+                country: data.country,
+                description: data.description,
+            })
         } else {
-            setName('');
-            setStreetAddress('');
-            setCity('');
-            setState('');
-            setZipCode('');
-            setCountry('US');
-            setDescription('');
+            setClient({
+                name: '',
+                streetAddress: '',
+                city: '',
+                state: '',
+                zipCode: '',
+                country: 'US',
+                description: '',
+            })
         }
     }, [data])
 
-    const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
-        event.preventDefault();
+    const handleSubmit = (
+        values: FormValues,
+    ) => {
         if (data) {
             update.mutate({
                 id: data.id,
-                name: name,
-                street_address: streetAddress,
-                city: city,
-                state: state,
-                country: country,
-                zip_code: zipCode,
-                description: description,
+                name: values.name,
+                street_address: values.streetAddress,
+                city: values.city,
+                state: values.state,
+                country: values.country,
+                zip_code: values.zipCode,
+                description: values.description,
             }, {
                 onSuccess() { setOpen(false) }
             })
         } else {
             create.mutate({
-                name: name,
-                street_address: streetAddress,
-                city: city,
-                state: state,
-                country: country,
-                zip_code: zipCode,
-                description: description,
+                name: values.name,
+                street_address: values.streetAddress,
+                city: values.city,
+                state: values.state,
+                country: values.country,
+                zip_code: values.zipCode,
+                description: values.description,
             }, {
                 onSuccess() { setOpen(false) }
             })
@@ -84,74 +116,76 @@ const ClientModal: React.FC<Props> = (props) => {
 
     return (
         <Modal open={open} onClose={() => setOpen(false)} className='create-modal'>
-            <form onSubmit={handleSubmit}>
-                <Card>
-                    <CardHeader
-                        title={data ? 'Edit Client' : 'Create New Client'}
-                        action={
-                            <IconButton onClick={() => setOpen(false)}>
-                                <Close />
-                            </IconButton>
-                        }
-                    />
-                    <CardContent>
-                        <TextField
-                            name='name' label='Name' size='small'
-                            value={name}
-                            onChange={e => setName(e.target.value)}
-                        />
-                        <TextField
-                            name='streetAddress' label='Street Address' size='small'
-                            value={streetAddress}
-                            onChange={e => setStreetAddress(e.target.value)}
-                        />
-                        <TextField
-                            name='city' label='City' size='small'
-                            value={city}
-                            onChange={e => setCity(e.target.value)}
-                        />
-                        <TextField
-                            name='state' label='State' size='small'
-                            value={state}
-                            onChange={e => setState(e.target.value)}
-                        />
-                        <TextField
-                            name='zipCode' label='Zip Code' size='small'
-                            value={zipCode}
-                            onChange={e => setZipCode(e.target.value)}
-                        />
-                        <FormControl>
-                            <InputLabel size="small">Country</InputLabel>
-                            <Select
-                                name='country' size='small' label='Country'
-                                value={country}
-                                onChange={e => setCountry(e.target.value)}
-                            >
-                                {Countries.map((country) => {
-                                    return (
-                                        <MenuItem value={country.code} key={country.code}>
-                                            {country.name}
-                                        </MenuItem>
-                                    )
-                                })}
-                            </Select>
-                        </FormControl>
-                        <TextField
-                            name='description' label='Description' size='small'
-                            multiline minRows={3}
-                            value={description}
-                            onChange={e => setDescription(e.target.value)}
-                        />
-                    </CardContent>
-                    <CardActions>
-                        <Button variant='contained' color='error' onClick={() => setOpen(false)}>Cancel</Button>
-                        {data ?
-                            <Button variant='contained' type='submit'>Save</Button> :
-                            <Button variant='contained' type='submit'>Create</Button>
-                        }
-                    </CardActions>
-                </Card>
-            </form>
+            <div>
+                <Formik
+                    enableReinitialize
+                    initialValues={client}
+                    validationSchema={validationSchema}
+                    validateOnBlur={false}
+                    validateOnChange={false}
+                    onSubmit={handleSubmit}
+                >
+                    <Form>
+                        <Card>
+                            <CardHeader
+                                title={data ? 'Edit Client' : 'Create New Client'}
+                                action={
+                                    <IconButton onClick={() => setOpen(false)}>
+                                        <Close />
+                                    </IconButton>
+                                }
+                            />
+                            <CardContent>
+                                <Field
+                                    name='name' label='Name' size='small'
+                                    component={TextField}
+                                />
+                                <Field
+                                    name='streetAddress' label='Street Address' size='small'
+                                    component={TextField}
+                                />
+                                <Field
+                                    name='city' label='City' size='small'
+                                    component={TextField}
+                                />
+                                <Field
+                                    name='state' label='State' size='small'
+                                    component={TextField}
+                                />
+                                <Field
+                                    name='zipCode' label='Zip Code' size='small'
+                                    component={TextField}
+                                />
+                                <Field
+                                    name='country' label='Country' size='small'
+                                    component={Select}
+                                >
+                                    <MenuItem value=''><em>Select a country...</em></MenuItem>
+                                    {Countries.map((country) => {
+                                        return (
+                                            <MenuItem value={country.code} key={country.code}>
+                                                {country.name}
+                                            </MenuItem>
+                                        )
+                                    })}
+                                </Field>
+                                <Field
+                                    name='description' label='Description' size='small'
+                                    multiline minRows={2}
+                                    component={TextField}
+                                />
+                            </CardContent>
+                            <CardActions>
+                                <Button variant='contained' color='error' onClick={() => setOpen(false)}>Cancel</Button>
+                                {data ?
+                                    <Button variant='contained' type='submit'>Save</Button> :
+                                    <Button variant='contained' type='submit'>Create</Button>
+                                }
+                            </CardActions>
+                        </Card>
+                    </Form>
+                </Formik>
+            </div>
         </Modal>
     )
 }
