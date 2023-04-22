@@ -29,6 +29,7 @@ const AdminDashboard: NextPage = () => {
                 hidden={value !== index}
                 id={`simple-tabpanel-${index}`}
                 aria-labelledby={`simple-tab-${index}`}
+                className='tab-panel'
                 {...other}
             >
                 {value === index && (

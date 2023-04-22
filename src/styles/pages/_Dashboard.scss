@@ -70,7 +70,7 @@
     .browse-add {
         display: flex;
         justify-content: flex-end;
-        padding: 0px 0px 20px;
+        padding: 25px 0px 20px;
 
         .MuiButton-root:last-child {
             margin-left: 10px;
@@ -120,6 +120,12 @@
 
     .MuiTab-root {
         max-width: 400px;
+    }
+
+    .tab-panel {
+        .MuiBox-root {
+            padding: 0px;
+        }
     }
 }
 
