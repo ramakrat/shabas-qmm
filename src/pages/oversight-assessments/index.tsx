@@ -72,7 +72,7 @@ const OversightAssessments: NextPage = () => {
                                                         key={i}
                                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                                         // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                                                        onClick={() => push(`/ongoing-assessments/${a.id}`)}
+                                                        onClick={() => push(`/oversight-assessments/${a.id}`)}
                                                         className='clickable-table-row'
                                                     >
                                                         <TableCell align="center">{a.id}</TableCell>

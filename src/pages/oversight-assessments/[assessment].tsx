@@ -136,17 +136,22 @@ const OversightAssessment: NextPage = () => {
         }
     }
 
+    const { push } = useRouter();
     const handleSubmitAssesment = () => {
         if (data) {
             statusChange.mutate({
                 id: data.id,
                 status: 'completed',
+            }, {
+                async onSuccess() {
+                    await push(`/completed-assessments/${data.id}`)
+                }
             })
         }
     }
 
     return (
-        <Layout active='review-assessments'>
+        <Layout active='oversight-assessments'>
             <div className='assessment'>
                 <Grid container spacing={2}>
                     <Grid item xs={2}>

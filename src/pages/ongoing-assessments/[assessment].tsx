@@ -157,11 +157,16 @@ const OngoingAssessment: NextPage = () => {
         }
     }
 
+    const { push } = useRouter();
     const handleSubmitAssesment = () => {
         if (data) {
             statusChange.mutate({
                 id: data.id,
                 status: 'in-review',
+            }, {
+                async onSuccess() {
+                    await push(`/review-assessments/${data.id}`)
+                }
             })
         }
     }

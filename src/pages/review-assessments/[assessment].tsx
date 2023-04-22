@@ -136,11 +136,16 @@ const ReviewAssessment: NextPage = () => {
         }
     }
 
+    const { push } = useRouter();
     const handleSubmitAssesment = () => {
         if (data) {
             statusChange.mutate({
                 id: data.id,
                 status: 'oversight',
+            }, {
+                async onSuccess() {
+                    await push(`/oversight-assessments/${data.id}`)
+                }
             })
         }
     }

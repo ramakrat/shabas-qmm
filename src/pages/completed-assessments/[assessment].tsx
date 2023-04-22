@@ -137,7 +137,7 @@ const CompletedAssessment: NextPage = () => {
     }
 
     return (
-        <Layout active='review-assessments'>
+        <Layout active='completed-assessments'>
             <div className='assessment'>
                 <Grid container spacing={2}>
                     <Grid item xs={2}>
