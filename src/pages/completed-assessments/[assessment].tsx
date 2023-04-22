@@ -154,7 +154,7 @@ const CompletedAssessment: NextPage = () => {
                             <Grid item xs={12}>
                                 <QuestionContext question={questionRef && convertToQuestion(questionRef)} />
                             </Grid>
-                            <Grid item xs={8}>
+                            <Grid item xs={6}>
                                 <Formik
                                     enableReinitialize
                                     initialValues={answer}
@@ -213,7 +213,7 @@ const CompletedAssessment: NextPage = () => {
                                     </Form>
                                 </Formik>
                             </Grid>
-                            <Grid item xs={4}>
+                            <Grid item xs={6}>
                                 <Card className='reference'>
                                     <div>
                                         <Typography>Interview Guide</Typography>
