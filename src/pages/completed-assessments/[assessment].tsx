@@ -166,6 +166,7 @@ const CompletedAssessment: NextPage = () => {
                                     <Form>
                                         <Card className='pre-questions'>
                                             <div>
+                                                <Typography>Question Content: {selectedAssessmentQuestion.question.question}</Typography>
                                                 <Typography>Hint: {questionRef?.hint}</Typography>
                                                 <Typography>Start Time: XYZ</Typography>
                                                 <div className='rating'>
@@ -179,7 +180,6 @@ const CompletedAssessment: NextPage = () => {
                                                     </div>
                                                     {(showRating && ratings) &&
                                                         <div>
-                                                            <div>Question Content: {selectedAssessmentQuestion.question.question}</div>
                                                             {ratings.map((r, i) => {
                                                                 return (
                                                                     <div key={i}>
