@@ -3,11 +3,10 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { IconButton, Menu, MenuItem, Typography } from '@mui/material';
 import { Settings } from '@mui/icons-material';
-import type { Tabs } from './Layout';
 import logo from './logo.png';
 
 interface Props {
-    active: Tabs;
+    active: string;
 }
 
 export const Header: React.FC<Props> = (props) => {
@@ -52,6 +51,11 @@ export const Header: React.FC<Props> = (props) => {
                 <Link href={'/oversight-assessments'} className={active == 'oversight-assessments' ? 'active' : ''}>
                     <Typography>
                         Oversight Assessments
+                    </Typography>
+                </Link>
+                <Link href={'/completed-assessments'} className={active == 'completed-assessments' ? 'active' : ''}>
+                    <Typography>
+                        Completed Assessments
                     </Typography>
                 </Link>
             </div>
