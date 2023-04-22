@@ -12,8 +12,8 @@ import { Add, Delete } from '@mui/icons-material';
 
 import { api } from "~/utils/api";
 import Layout from "~/components/Layout/Layout";
-import IndustryModal from '~/components/Modals/QuestionFilters/IndustryModal';
-import ApiSegmentModal from '~/components/Modals/QuestionFilters/ApiSegmentModal';
+import BusinessTypeModal from '~/components/Modals/QuestionFilters/BusinessTypeModal';
+import ManufacturingTypeModal from '~/components/Modals/QuestionFilters/ManufacturingTypeModal';
 import SiteSpecificModal from '~/components/Modals/QuestionFilters/SiteSpecificModal';
 import QuestionsSidebar from '~/components/Assessment/QuestionsSidebar';
 
@@ -42,10 +42,10 @@ const Question: NextPage = () => {
 
     const { question } = useRouter().query;
 
-    const [filterType, setFilterType] = React.useState<string>('standard');
+    const [filterType, setFilterType] = React.useState<string>('default');
     const [filterSelection, setFilterSelection] = React.useState<Filter | null>(null);
-    const [addIndustry, setAddIndustry] = React.useState<boolean>(false);
-    const [addApiSegment, setAddApiSegment] = React.useState<boolean>(false);
+    const [addBusinessType, setAddBusinessType] = React.useState<boolean>(false);
+    const [addManufacturingType, setAddManufacturingType] = React.useState<boolean>(false);
     const [addSiteSpecific, setAddSiteSpecific] = React.useState<boolean>(false);
 
     const { data } = api.question.getById.useQuery({ id: Number(question) });
@@ -56,7 +56,7 @@ const Question: NextPage = () => {
     const SME = api.sme.getByQuestionId.useQuery({ id: Number(question) }).data;
     const ratingData = api.rating.getByQuestionFilter.useQuery({
         questionId: Number(question),
-        filterId: (filterType != 'standard' && filterSelection) ? filterSelection.id : undefined,
+        filterId: (filterType != 'default' && filterSelection) ? filterSelection.id : undefined,
     }).data;
 
     // =========== Input Field States ===========
@@ -373,7 +373,7 @@ const Question: NextPage = () => {
                     criteria: o.criteria,
                     progression_statement: o.progression_statement,
                     question_id: data.id,
-                    filter_id: (filterType != 'standard' && filterSelection) ? filterSelection.id : undefined,
+                    filter_id: (filterType != 'default' && filterSelection) ? filterSelection.id : undefined,
                 }, {
                     onError(err) {
                         succeeded = false;
@@ -388,7 +388,7 @@ const Question: NextPage = () => {
                     criteria: o.criteria,
                     progression_statement: o.progression_statement,
                     question_id: data.id,
-                    filter_id: (filterType != 'standard' && filterSelection) ? filterSelection.id : undefined,
+                    filter_id: (filterType != 'default' && filterSelection) ? filterSelection.id : undefined,
                 }
             }), {
                 onError(err) {
@@ -443,15 +443,15 @@ const Question: NextPage = () => {
     const questions = api.question.getAll.useQuery(true).data;
 
     // TODO: Don't run query unless modal closed
-    const industries = api.filter.getAllIndustry.useQuery(addIndustry).data;
-    const apiSegments = api.filter.getAllApiSegment.useQuery(addApiSegment).data;
+    const businessTypes = api.filter.getAllBusinessTypes.useQuery(addBusinessType).data;
+    const manufacturingTypes = api.filter.getAllManufacturingTypes.useQuery(addManufacturingType).data;
     const siteSpecifics = api.filter.getAllSiteSpecific.useQuery(addSiteSpecific).data;
 
     const filterSelect = () => {
-        if (filterType == 'standard') return;
+        if (filterType == 'default') return;
 
-        let filterOptions: Filter[] | undefined = industries;
-        if (filterType == 'api-segment') filterOptions = apiSegments;
+        let filterOptions: Filter[] | undefined = businessTypes;
+        if (filterType == 'manufacturing-type') filterOptions = manufacturingTypes;
         if (filterType == 'site-specific') filterOptions = siteSpecifics;
 
         return (<>
@@ -474,14 +474,14 @@ const Question: NextPage = () => {
                     <Button
                         variant='contained'
                         onClick={() => {
-                            if (filterType == 'industry') setAddIndustry(true)
-                            if (filterType == 'api-segment') setAddApiSegment(true)
+                            if (filterType == 'business-type') setAddBusinessType(true)
+                            if (filterType == 'manufacturing-type') setAddManufacturingType(true)
                             if (filterType == 'site-specific') setAddSiteSpecific(true)
                         }}
                     >
                         <Add />
-                        {filterType == 'industry' && 'Add Industry'}
-                        {filterType == 'api-segment' && 'Add API Segment'}
+                        {filterType == 'business-type' && 'Add Business Type'}
+                        {filterType == 'manufacturing-type' && 'Add Manufacturing Type'}
                         {filterType == 'site-specific' && 'Add Site Specific'}
                     </Button>
                 </MenuItem>
@@ -564,14 +564,14 @@ const Question: NextPage = () => {
                                             value={filterType}
                                             onChange={(_event, value: string) => { if (value) { setFilterType(value); setFilterSelection(null); setNewRatings([]) } }}
                                         >
-                                            <ToggleButton value='standard'>Standard</ToggleButton>
-                                            <ToggleButton value='industry'>Industry</ToggleButton>
-                                            <ToggleButton value='api-segment'>API Segment</ToggleButton>
+                                            <ToggleButton value='default'>Default</ToggleButton>
+                                            <ToggleButton value='business-type'>Business Type</ToggleButton>
+                                            <ToggleButton value='manufacturing-type'>Manufacturing Type</ToggleButton>
                                             <ToggleButton value='site-specific'>Site Specific</ToggleButton>
                                         </ToggleButtonGroup>
                                         {filterSelect()}
                                     </div>
-                                    {!(filterType != 'standard' && filterSelection == null) &&
+                                    {!(filterType != 'default' && filterSelection == null) &&
                                         <>
                                             {existingRatings.map((o, i) => {
                                                 if (i <= 4)
@@ -882,8 +882,8 @@ const Question: NextPage = () => {
                         </Grid>
                     </Grid>
                 </div>
-                <IndustryModal open={addIndustry} setOpen={setAddIndustry} />
-                <ApiSegmentModal open={addApiSegment} setOpen={setAddApiSegment} />
+                <BusinessTypeModal open={addBusinessType} setOpen={setAddBusinessType} />
+                <ManufacturingTypeModal open={addManufacturingType} setOpen={setAddManufacturingType} />
                 <SiteSpecificModal open={addSiteSpecific} setOpen={setAddSiteSpecific} />
             </form>
         </Layout>

@@ -35,18 +35,18 @@ export const filterRouter = createTRPCRouter({
                 }
             });
         }),
-    getAllIndustry: publicProcedure
+    getAllBusinessTypes: publicProcedure
         .input(z.boolean())
         .query(({ ctx }) => {
             return ctx.prisma.filter.findMany({
-                where: { type: 'industry' }
+                where: { type: 'business-type' }
             });
         }),
-    getAllApiSegment: publicProcedure
+    getAllManufacturingTypes: publicProcedure
         .input(z.boolean())
         .query(({ ctx }) => {
             return ctx.prisma.filter.findMany({
-                where: { type: 'api-segment' }
+                where: { type: 'manufacturing-type' }
             });
         }),
     getAllSiteSpecific: publicProcedure

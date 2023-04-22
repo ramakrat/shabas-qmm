@@ -123,7 +123,14 @@ export const engagementRouter = createTRPCRouter({
                 },
                 include: {
                     Assessment: {
-                        where: { status: 'in-review' }
+                        where: { status: 'in-review' },
+                        include: {
+                            AssessmentQuestion: {
+                                include: {
+                                    
+                                }
+                            }
+                        }
                     },
                     client: true,
                     POC: true,
