@@ -40,7 +40,15 @@ const validationSchema = yup.object().shape({
     startDate: yup.date()
         .required("Required"),
     endDate: yup.date()
-        .min(yup.ref('startDate'), 'End Date must be later than Start Date')
+        .when('startDate',
+            (startDate, schema) => {
+                if (startDate) {
+                    const start = startDate[0] as unknown as Date;
+                    const dayAfter = new Date(start.getTime() + 86400000);
+                    return schema.min(dayAfter, 'End Date has to be later than Start Date');
+                }
+                return schema;
+            })
         .required("Required"),
     clientId: yup.string().required("Required"),
     clientPocId: yup.string().required("Required"),
