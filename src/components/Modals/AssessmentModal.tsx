@@ -28,8 +28,7 @@ interface QuestionType {
 }
 
 type AssessmentQuestionReturnType = (
-    AssessmentQuestion &
-    {
+    AssessmentQuestion & {
         question: (Question & {
             Rating: (Rating & {
                 filter: Filter | null;
@@ -89,15 +88,18 @@ const AssessmentModal: React.FC<Props> = (props) => {
     const [addQuestion, setAddQuestion] = React.useState<boolean>(false);
     const [question, setQuestion] = React.useState<Question | undefined>(undefined);
 
+    const [error, setError] = React.useState<string | undefined>(undefined);
+
     const steps = ['General Information', 'Edit Questions'];
     const [activeStep, setActiveStep] = React.useState(0);
     const handleStep = (step: number) => () => {
         setActiveStep(step);
     };
 
-
     React.useEffect(() => {
+        setError(undefined);
         setActiveStep(0);
+        setAddQuestion(false);
         if (data) {
             setAssessment({
                 description: data.description,
@@ -118,7 +120,7 @@ const AssessmentModal: React.FC<Props> = (props) => {
             setExistingQuestions([]);
             setNewQuestions([]);
         }
-    }, [data])
+    }, [open, data])
 
 
     React.useEffect(() => {
@@ -141,6 +143,9 @@ const AssessmentModal: React.FC<Props> = (props) => {
         values: FormValues,
         formikHelpers: FormikHelpers<FormValues>
     ) => {
+        if (existingQuestions.length < 1 && newQuestions.length < 1) {
+            return;
+        }
         if (data) {
             let succeeded = true;
             update.mutate({
@@ -254,6 +259,11 @@ const AssessmentModal: React.FC<Props> = (props) => {
                                         </Step>
                                     ))}
                                 </Stepper>
+                                {error &&
+                                    <div className='error-text'>
+                                        <span>{error}</span>
+                                    </div>
+                                }
                                 {activeStep == 0 &&
                                     <div className='form-info'>
                                         <Field
@@ -453,7 +463,14 @@ const AssessmentModal: React.FC<Props> = (props) => {
                                 <Button variant='contained' color='error' onClick={() => setOpen(false)}>Cancel</Button>
                                 {data ?
                                     <Button variant='contained' type='submit'>Save</Button> :
-                                    <Button variant='contained' type='submit'>Create</Button>
+                                    <Button variant='contained' type='submit' onClick={() => {
+                                        if (existingQuestions.length < 1 && newQuestions.length < 1) {
+                                            setError('Assessments must contain at least 1 question.');
+                                            return;
+                                        } else {
+                                            setError(undefined);
+                                        }
+                                    }}>Create</Button>
                                 }
                             </CardActions>
                         </Card>

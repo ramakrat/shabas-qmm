@@ -74,7 +74,6 @@ export const assessmentQuestionRouter = createTRPCRouter({
                 where: { id: input.id }
             });
         }),
-
     getByQuestionUsage: publicProcedure
         .input(z.number())
         .query(({ input, ctx }) => {

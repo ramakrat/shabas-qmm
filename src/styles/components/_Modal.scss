@@ -97,4 +97,14 @@
         justify-content: space-between;
         padding-top: 15px;
     }
+
+    .error-text {
+        font-family: 'Roboto' !important;
+        font-size: 0.8rem;
+        font-style: italic;
+        text-align: center;
+        color: palette(error, main);
+        width: 100%;
+        padding: 10px 0px 20px;
+    }
 }
