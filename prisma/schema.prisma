@@ -16,7 +16,7 @@ datasource db {
 model Client {
     id Int @id @default(autoincrement())
 
-    name     String
+    name           String
     street_address String
     city           String
     state          String
@@ -115,10 +115,11 @@ model Question {
     AssessmentQuestion AssessmentQuestion[]
     Rating             Rating[]
 
-    created_at DateTime @default(now())
-    updated_at DateTime @default(now())
+    created_at DateTime    @default(now())
+    updated_at DateTime    @default(now())
     created_by String
     updated_by String
+    Changelog  Changelog[]
 }
 
 model Rating {
@@ -379,6 +380,22 @@ model StartTime {
     updated_by String
 
     @@index([answer_id])
+}
+
+model Changelog {
+    id Int @id @default(autoincrement())
+
+    updated_at DateTime @default(now())
+    updated_by String?
+
+    field        String
+    former_value String?
+    new_value    String?
+
+    question_id Int?
+    question    Question? @relation(fields: [question_id], references: [id])
+
+    @@index([question_id])
 }
 
 // ================ AUTHENTICATION ================
