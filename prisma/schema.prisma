@@ -384,12 +384,12 @@ model StartTime {
 model Changelog {
     id Int @id @default(autoincrement())
 
-    updated_at DateTime @default(now())
-    updated_by String?
-
     field        String
     former_value String?
     new_value    String?
+    
+    updated_at DateTime @default(now())
+    updated_by String?
 
     question_id Int?
     question    Question? @relation(fields: [question_id], references: [id])
