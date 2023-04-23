@@ -2,13 +2,14 @@ import * as React from 'react';
 import { type NextPage } from "next";
 import Router, { useRouter } from 'next/router';
 import type { Answer, Assessment, AssessmentQuestion, Engagement, Filter, InterviewGuide, Question, Rating, Reference } from '@prisma/client';
+import * as XLSX from 'xlsx';
 
 import * as yup from "yup";
 import { Field, Form, Formik } from "formik";
 import TextField from '~/components/Form/TextField';
 
 import { Button, Card, Grid, MenuItem, Typography } from '@mui/material';
-import { Info } from '@mui/icons-material';
+import { FileDownload, Info } from '@mui/icons-material';
 
 import { api } from "~/utils/api";
 import Layout from "~/components/Layout/Layout";
@@ -137,6 +138,21 @@ const CompletedAssessment: NextPage = () => {
         }
     }
 
+
+    // =========== Export Management ===========
+
+    // const exportData = api.assessment.getAllCompleted.useQuery(true).data;
+
+    const exportCompleted = () => {
+        // if (exportData) {
+        //     const sheet = XLSX.utils.json_to_sheet(exportData);
+        //     const book = XLSX.utils.book_new();
+        //     const filename = 'Shabas Completed Assessments ' + new Date().toLocaleDateString('fr-CA') + '.csv';
+        //     XLSX.utils.book_append_sheet(book, sheet, 'Sheet1');
+        //     XLSX.writeFile(book, filename, { bookType: 'csv' });
+        // }
+    }
+
     return (
         <Layout active='completed-assessments'>
             <div className='assessment'>
@@ -218,7 +234,13 @@ const CompletedAssessment: NextPage = () => {
                                                 />
                                             </Card>
                                             <Card className='actions simple'>
-                                                <Button variant='contained' type='submit'>Save</Button>
+                                                <Button
+                                                    variant='contained'
+                                                    startIcon={<FileDownload />}
+                                                    onClick={exportCompleted}
+                                                >
+                                                    Export
+                                                </Button>
                                             </Card>
                                         </Grid>
                                         <Grid item xs={6}>

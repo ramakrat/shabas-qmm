@@ -1,9 +1,8 @@
 import { type NextPage } from "next";
 import { useRouter } from "next/router";
 import type { Engagement, POC, Assessment, Client } from "@prisma/client";
-import * as XLSX from 'xlsx';
 
-import { ExpandMore, FileDownload } from "@mui/icons-material";
+import { ExpandMore } from "@mui/icons-material";
 import { Accordion, AccordionSummary, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, AccordionDetails, Button } from "@mui/material";
 
 import { api } from "~/utils/api";
@@ -16,30 +15,10 @@ const OversightAssessments: NextPage = () => {
 
     // TODO: Don't run query unless modal closed
     const { data } = api.engagement.getAllCompletedInclude.useQuery([true, true]);
-    // const exportData = api.assessment.getAllCompleted.useQuery(true).data;
-
-    const exportCompleted = () => {
-        // if (exportData) {
-        //     const sheet = XLSX.utils.json_to_sheet(exportData);
-        //     const book = XLSX.utils.book_new();
-        //     const filename = 'Shabas Completed Assessments ' + new Date().toLocaleDateString('fr-CA') + '.csv';
-        //     XLSX.utils.book_append_sheet(book, sheet, 'Sheet1');
-        //     XLSX.writeFile(book, filename, { bookType: 'csv' });
-        // }
-    }
 
     return (
         <Layout active='completed-assessments'>
             <div className='dashboard'>
-                <div className='browse-add'>
-                    <Button
-                        variant='contained'
-                        startIcon={<FileDownload />}
-                        onClick={exportCompleted}
-                    >
-                        Export
-                    </Button>
-                </div>
                 {data && data.map((e: Engagement & { POC: POC[]; Assessment: Assessment[]; client: Client }, i) => {
                     return (
                         <Accordion key={i}>
