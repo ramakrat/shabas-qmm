@@ -42,8 +42,6 @@ const BrowseAssessments: React.FC<Props> = () => {
 
     // ================== Filter Management ==================
 
-
-    // type Filters = 'created' | 'ongoing' | 'assessor-review' | 'oversight' | 'client-review' | 'completed';
     const [createdFilter, setCreatedFilter] = React.useState<boolean>(true);
     const [ongoingFilter, setOngoingFilter] = React.useState<boolean>(true);
     const [assessorReviewFilter, setAssessorReviewFilter] = React.useState<boolean>(true);
@@ -61,6 +59,7 @@ const BrowseAssessments: React.FC<Props> = () => {
         if (completedFilter) filters.push({ status: 'completed' })
         return filters;
     }
+
 
 
     // TODO: Don't run query unless modal closed
