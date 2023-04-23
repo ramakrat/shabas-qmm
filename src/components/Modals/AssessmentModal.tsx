@@ -387,46 +387,51 @@ const AssessmentModal: React.FC<Props> = (props) => {
                                                             <TableCell align="left">{q.question.question}</TableCell>
                                                         </TableRow>
                                                     ))}
-                                                    {newQuestions && newQuestions.map((q) => (
-                                                        <TableRow
-                                                            key={q.question.number}
-                                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                        >
-                                                            <TableCell align="center">
-                                                                {q.question.number}
-                                                            </TableCell>
-                                                            <TableCell align="center">
-                                                                <MuiSelect
-                                                                    size='small'
-                                                                    value={q.filterSelection}
-                                                                    onChange={(event) => {
-                                                                        const newArr = newQuestions.map(o => {
-                                                                            if (o.question.id == q.question.id) {
-                                                                                return {
-                                                                                    ...o,
-                                                                                    filterSelection: Number(event.target.value),
+                                                    {newQuestions && newQuestions.map((q) => {
+                                                        const uniqueFilters = [...new Map(q.question.Rating.map(r => {
+                                                            return [r.filter?.type, r.filter]
+                                                        })).values()];
+                                                        return (
+                                                            <TableRow
+                                                                key={q.question.number}
+                                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                            >
+                                                                <TableCell align="center">
+                                                                    {q.question.number}
+                                                                </TableCell>
+                                                                <TableCell align="center">
+                                                                    <MuiSelect
+                                                                        size='small'
+                                                                        value={q.filterSelection}
+                                                                        onChange={(event) => {
+                                                                            const newArr = newQuestions.map(o => {
+                                                                                if (o.question.id == q.question.id) {
+                                                                                    return {
+                                                                                        ...o,
+                                                                                        filterSelection: Number(event.target.value),
+                                                                                    }
                                                                                 }
-                                                                            }
-                                                                            return o;
-                                                                        })
-                                                                        setNewQuestions(newArr);
-                                                                    }}
-                                                                >
-                                                                    <MenuItem value={-1}><em>Standard</em></MenuItem>
-                                                                    {q.question.Rating.map((o, i) => {
-                                                                        if (o.filter)
-                                                                            return (
-                                                                                <MenuItem key={i} value={o.filter.id}>
-                                                                                    {titleCase(o.filter.type)}: {o.filter.name}
-                                                                                </MenuItem>
-                                                                            );
-                                                                        return;
-                                                                    })}
-                                                                </MuiSelect>
-                                                            </TableCell>
-                                                            <TableCell align="left">{q.question.question}</TableCell>
-                                                        </TableRow>
-                                                    ))}
+                                                                                return o;
+                                                                            })
+                                                                            setNewQuestions(newArr);
+                                                                        }}
+                                                                    >
+                                                                        <MenuItem value={-1}><em>Standard</em></MenuItem>
+                                                                        {uniqueFilters.map((o, i) => {
+                                                                            if (o)
+                                                                                return (
+                                                                                    <MenuItem key={i} value={o.id}>
+                                                                                        {titleCase(o.type)}: {o.name}
+                                                                                    </MenuItem>
+                                                                                );
+                                                                            return;
+                                                                        })}
+                                                                    </MuiSelect>
+                                                                </TableCell>
+                                                                <TableCell align="left">{q.question.question}</TableCell>
+                                                            </TableRow>
+                                                        )
+                                                    })}
                                                 </TableBody>
                                             </Table>
                                         </TableContainer>
