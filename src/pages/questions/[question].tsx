@@ -59,6 +59,16 @@ const Question: NextPage = () => {
         filterId: (filterType != 'default' && filterSelection) ? filterSelection.id : undefined,
     }).data;
 
+    const initialValues = () => {
+        return {
+            question: data,
+            guides: guideData,
+            references: referencesData,
+            ratings: ratingData,
+            sme: SME,
+        }
+    }
+
     // =========== Input Field States ===========
 
     const [active, setActive] = React.useState<boolean>(true);
@@ -247,6 +257,8 @@ const Question: NextPage = () => {
     const createRatings = api.rating.createArray.useMutation();
     const updateRating = api.rating.update.useMutation();
 
+    const createChangelog = api.changelog.create.useMutation();
+
     React.useEffect(() => {
         if (data) {
             setActive(data.active);
@@ -288,6 +300,11 @@ const Question: NextPage = () => {
                 hint: hint,
                 priority: priority,
             }, {
+                onSuccess(data) {
+                    // createChangelog.mutate({
+                    //     field: 
+                    // })
+                },
                 onError(err) {
                     succeeded = false;
                     console.log(err);
