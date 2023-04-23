@@ -90,9 +90,9 @@ const OversightAssessment: NextPage = () => {
     React.useEffect(() => {
         if (selectedAssessmentQuestion && selectedAssessmentQuestion.answer) {
             setAnswer({
-                rating: selectedAssessmentQuestion.answer.consensus_rating ?? '',
-                rationale: selectedAssessmentQuestion.answer.consensus_explanation ?? '',
-                notes: selectedAssessmentQuestion.answer.consensus_evidence ?? '',
+                rating: selectedAssessmentQuestion.answer.oversight_concurrence ?? '',
+                rationale: selectedAssessmentQuestion.answer.oversight_explanation ?? '',
+                notes: selectedAssessmentQuestion.answer.oversight_evidence ?? '',
             });
         } else {
             setAnswer({
@@ -118,18 +118,18 @@ const OversightAssessment: NextPage = () => {
                 update.mutate({
                     id: selectedAssessmentQuestion.answer.id,
                     assessment_question_id: selectedAssessmentQuestion.id,
-                    consensus_rating: values.rating.toString(),
-                    consensus_explanation: values.rationale,
-                    consensus_evidence: values.notes,
+                    oversight_concurrence: values.rating.toString(),
+                    oversight_explanation: values.rationale,
+                    oversight_evidence: values.notes,
                 }, {
                     onSuccess() { Router.reload() }
                 })
             } else {
                 create.mutate({
                     assessment_question_id: selectedAssessmentQuestion.id,
-                    consensus_rating: values.rating.toString(),
-                    consensus_explanation: values.rationale,
-                    consensus_evidence: values.notes,
+                    oversight_concurrence: values.rating.toString(),
+                    oversight_explanation: values.rationale,
+                    oversight_evidence: values.notes,
                 }, {
                     onSuccess() { Router.reload() }
                 })

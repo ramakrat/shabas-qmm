@@ -338,12 +338,15 @@ model Answer {
     assessor_rating       String?
     assessor_explanation  String?
     assessor_evidence     String?
+
     consensus_rating      String?
     consensus_explanation String?
     consensus_evidence    String?
+
     oversight_concurrence String?
     oversight_explanation String?
     oversight_evidence    String?
+    
     client_concurrence    String?
     client_explanation    String?
     client_evidence       String?
