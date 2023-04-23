@@ -117,7 +117,8 @@ const Question: NextPage = () => {
             });
             setNewGuide(array);
         }
-    }, [guideData, newGuide]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [guideData]);
 
     React.useEffect(() => {
         if (referencesData) {
@@ -140,7 +141,8 @@ const Question: NextPage = () => {
             });
             setNewReferences(array);
         }
-    }, [newReferences, referencesData])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [referencesData])
 
     React.useEffect(() => {
         if (ratingData) {
@@ -164,7 +166,8 @@ const Question: NextPage = () => {
             });
             setNewRatings(array);
         }
-    }, [newRatings, ratingData])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [ratingData])
 
     const handleGuideChange = (num: number, newVal: string, existing?: boolean) => {
         const ref = existing ? existingGuide : newGuide;
@@ -293,6 +296,7 @@ const Question: NextPage = () => {
 
             existingGuide.forEach(o => {
                 updateGuide.mutate({
+                    id: o.id,
                     active: true,
                     interview_question: o.interview_question,
                     question_id: data.id,
