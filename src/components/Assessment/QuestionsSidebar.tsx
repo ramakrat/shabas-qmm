@@ -10,11 +10,12 @@ interface Props {
     setQuestion: (question: number) => void;
     addOption?: boolean;
     submitAssessment?: () => void;
+    resetForm?: () => void;
 }
 
 const QuestionsSidebar: React.FC<Props> = (props) => {
 
-    const { questions, question, setQuestion, addOption, submitAssessment } = props;
+    const { questions, question, setQuestion, addOption, submitAssessment, resetForm } = props;
 
     const [questionModal, setQuestionModal] = React.useState<boolean>(false);
 
@@ -26,14 +27,20 @@ const QuestionsSidebar: React.FC<Props> = (props) => {
                         <Button
                             variant='contained'
                             disabled={questions[0] ? (question == questions[0].id) : false}
-                            onClick={() => setQuestion(question - 1)}
+                            onClick={() => {
+                                if (resetForm) resetForm();
+                                setQuestion(question - 1);
+                            }}
                         >
                             Previous
                         </Button>
                         <Button
                             variant='contained'
                             disabled={questions[questions.length - 1] ? (question == (questions[questions.length - 1] as Question).id) : false}
-                            onClick={() => setQuestion(question + 1)}
+                            onClick={() => {
+                                if (resetForm) resetForm();
+                                setQuestion(question + 1);
+                            }}
                         >
                             Next
                         </Button>
@@ -44,7 +51,10 @@ const QuestionsSidebar: React.FC<Props> = (props) => {
                         <Typography
                             key={o.id}
                             className={o.id == question ? 'active' : ''}
-                            onClick={() => setQuestion(o.id)}
+                            onClick={() => {
+                                if (resetForm) resetForm();
+                                setQuestion(o.id)
+                            }}
                         >
                             {o.number}
                         </Typography>

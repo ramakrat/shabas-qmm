@@ -4,7 +4,7 @@ import Router, { useRouter } from 'next/router';
 import type { Answer, Assessment, AssessmentQuestion, Engagement, Filter, InterviewGuide, Question, Rating, Reference } from '@prisma/client';
 
 import * as yup from "yup";
-import { Field, Form, Formik } from "formik";
+import { Field, Form, Formikz } from "formik";
 import TextField from '~/components/Form/TextField';
 
 import { Button, Card, Grid, MenuItem, Typography } from '@mui/material';
@@ -108,12 +108,13 @@ const OngoingAssessment: NextPage = () => {
         notes: '',
     });
 
+
     React.useEffect(() => {
-        if (selectedAssessmentQuestion) {
+        if (selectedAssessmentQuestion && selectedAssessmentQuestion.answer) {
             setAnswer({
-                rating: selectedAssessmentQuestion.answer?.assessor_rating ?? '',
-                rationale: selectedAssessmentQuestion.answer?.assessor_explanation ?? '',
-                notes: selectedAssessmentQuestion.answer?.assessor_evidence ?? '',
+                rating: selectedAssessmentQuestion.answer.assessor_rating ?? '',
+                rationale: selectedAssessmentQuestion.answer.assessor_explanation ?? '',
+                notes: selectedAssessmentQuestion.answer.assessor_evidence ?? '',
             });
         } else {
             setAnswer({
@@ -139,7 +140,7 @@ const OngoingAssessment: NextPage = () => {
                 update.mutate({
                     id: selectedAssessmentQuestion.answer.id,
                     assessment_question_id: selectedAssessmentQuestion.id,
-                    assessor_rating: values.rating,
+                    assessor_rating: values.rating.toString(),
                     assessor_explanation: values.rationale,
                     assessor_evidence: values.notes,
                 }, {
@@ -148,7 +149,7 @@ const OngoingAssessment: NextPage = () => {
             } else {
                 create.mutate({
                     assessment_question_id: selectedAssessmentQuestion.id,
-                    assessor_rating: values.rating,
+                    assessor_rating: values.rating.toString(),
                     assessor_explanation: values.rationale,
                     assessor_evidence: values.notes,
                 }, {
@@ -175,115 +176,118 @@ const OngoingAssessment: NextPage = () => {
     return (
         <Layout active='ongoing-assessments'>
             <div className='assessment'>
-                <Grid container spacing={2}>
-                    <Grid item xs={2}>
-                        {questions &&
-                            <QuestionsSidebar
-                                questions={questions.map(o => convertToQuestion(o.question))}
-                                question={question}
-                                setQuestion={setQuestion}
-                                submitAssessment={handleSubmitAssesment}
-                            />
-                        }
-                    </Grid>
-                    {selectedAssessmentQuestion &&
-                        <Grid item xs={10} container spacing={2}>
-                            <Grid item xs={12}>
-                                <QuestionContext question={questionRef && convertToQuestion(questionRef)} />
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Formik
-                                    enableReinitialize
-                                    initialValues={answer}
-                                    validationSchema={validationSchema}
-                                    validateOnBlur={false}
-                                    validateOnChange={false}
-                                    onSubmit={handleSubmit}
-                                >
-                                    <Form>
-                                        <Card className='pre-questions'>
-                                            <div>
-                                                <Typography>Question Content: {selectedAssessmentQuestion.question.question}</Typography>
-                                                <Typography>Hint: {questionRef?.hint}</Typography>
-                                                <Typography>Start Time: XYZ</Typography>
-                                                <div className='rating'>
-                                                    <div className='rating-input'>
-                                                        <Typography>Rating</Typography>
-                                                        <Info fontSize='small' onClick={() => setShowRating(!showRating)} />
-                                                        <Field
-                                                            name='rating' label='' size='small'
-                                                            component={Select}
-                                                        >
-                                                            <MenuItem value=''><em>Select rating...</em></MenuItem>
-                                                            <MenuItem value={1}>1</MenuItem>
-                                                            <MenuItem value={2}>2</MenuItem>
-                                                            <MenuItem value={3}>3</MenuItem>
-                                                            <MenuItem value={4}>4</MenuItem>
-                                                            <MenuItem value={5}>5</MenuItem>
-                                                        </Field>
-                                                    </div>
-                                                    {(showRating && ratings) &&
-                                                        <div>
-                                                            {ratings.map((r, i) => {
-                                                                return (
-                                                                    <div key={i}>
-                                                                        <div>Level {r.level_number}: {r.criteria}</div>
-                                                                        {i !== ratings.length - 1 &&
-                                                                            <div>Progression Statement: {r.progression_statement}</div>
-                                                                        }
-                                                                    </div>
-                                                                )
-                                                            })}
+                <Formik
+                    enableReinitialize
+                    initialValues={answer}
+                    validationSchema={validationSchema}
+                    validateOnBlur={false}
+                    validateOnChange={false}
+                    onSubmit={handleSubmit}
+                >
+                    {({ resetForm }) => (
+                        <Form>
+                            <Grid container spacing={2}>
+                                <Grid item xs={2}>
+                                    {questions &&
+                                        <QuestionsSidebar
+                                            questions={questions.map(o => convertToQuestion(o.question))}
+                                            question={question}
+                                            setQuestion={setQuestion}
+                                            submitAssessment={handleSubmitAssesment}
+                                            resetForm={resetForm}
+                                        />
+                                    }
+                                </Grid>
+                                {selectedAssessmentQuestion &&
+                                    <Grid item xs={10} container spacing={2}>
+                                        <Grid item xs={12}>
+                                            <QuestionContext question={questionRef && convertToQuestion(questionRef)} />
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <Card className='pre-questions'>
+                                                <div>
+                                                    <Typography>Question Content: {selectedAssessmentQuestion.question.question}</Typography>
+                                                    <Typography>Hint: {questionRef?.hint}</Typography>
+                                                    <Typography>Start Time: XYZ</Typography>
+                                                    <div className='rating'>
+                                                        <div className='rating-input'>
+                                                            <Typography>Rating</Typography>
+                                                            <Info fontSize='small' onClick={() => setShowRating(!showRating)} />
+                                                            <Field
+                                                                name='rating' label='' size='small'
+                                                                component={Select}
+                                                            >
+                                                                <MenuItem value=''><em>Select rating...</em></MenuItem>
+                                                                <MenuItem value={1}>1</MenuItem>
+                                                                <MenuItem value={2}>2</MenuItem>
+                                                                <MenuItem value={3}>3</MenuItem>
+                                                                <MenuItem value={4}>4</MenuItem>
+                                                                <MenuItem value={5}>5</MenuItem>
+                                                            </Field>
                                                         </div>
-                                                    }
+                                                        {(showRating && ratings) &&
+                                                            <div>
+                                                                {ratings.map((r, i) => {
+                                                                    return (
+                                                                        <div key={i}>
+                                                                            <div>Level {r.level_number}: {r.criteria}</div>
+                                                                            {i !== ratings.length - 1 &&
+                                                                                <div>Progression Statement: {r.progression_statement}</div>
+                                                                            }
+                                                                        </div>
+                                                                    )
+                                                                })}
+                                                            </div>
+                                                        }
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </Card>
-                                        <Card className='question-content'>
-                                            <Typography>Rationale</Typography>
-                                            <Field
-                                                name='rationale' label='' size='small' multiline
-                                                component={TextField}
-                                            />
-                                            <Typography>Notes</Typography>
-                                            <Field
-                                                name='notes' label='' size='small' multiline
-                                                component={TextField}
-                                            />
-                                        </Card>
-                                        <Card className='actions simple'>
-                                            <Button variant='contained' type='submit'>Save</Button>
-                                        </Card>
-                                    </Form>
-                                </Formik>
+                                            </Card>
+                                            <Card className='question-content'>
+                                                <Typography>Rationale</Typography>
+                                                <Field
+                                                    name='rationale' label='' size='small' multiline
+                                                    component={TextField}
+                                                />
+                                                <Typography>Notes</Typography>
+                                                <Field
+                                                    name='notes' label='' size='small' multiline
+                                                    component={TextField}
+                                                />
+                                            </Card>
+                                            <Card className='actions simple'>
+                                                <Button variant='contained' type='submit'>Save</Button>
+                                            </Card>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <Card className='reference'>
+                                                <div>
+                                                    <Typography>Interview Guide</Typography>
+                                                    {guide?.map((r, i) => {
+                                                        return (
+                                                            <div key={i}>
+                                                                <span>{i + 1}. {r.interview_question}</span>
+                                                            </div>
+                                                        )
+                                                    })}
+                                                </div>
+                                                <div>
+                                                    <Typography>References</Typography>
+                                                    {references?.map((r, i) => {
+                                                        return (
+                                                            <div key={i}>
+                                                                <span>{i + 1}. {r.citation}</span>
+                                                            </div>
+                                                        )
+                                                    })}
+                                                </div>
+                                            </Card>
+                                        </Grid>
+                                    </Grid>
+                                }
                             </Grid>
-                            <Grid item xs={6}>
-                                <Card className='reference'>
-                                    <div>
-                                        <Typography>Interview Guide</Typography>
-                                        {guide?.map((r, i) => {
-                                            return (
-                                                <div key={i}>
-                                                    <span>{i + 1}. {r.interview_question}</span>
-                                                </div>
-                                            )
-                                        })}
-                                    </div>
-                                    <div>
-                                        <Typography>References</Typography>
-                                        {references?.map((r, i) => {
-                                            return (
-                                                <div key={i}>
-                                                    <span>{i + 1}. {r.citation}</span>
-                                                </div>
-                                            )
-                                        })}
-                                    </div>
-                                </Card>
-                            </Grid>
-                        </Grid>
-                    }
-                </Grid>
+                        </Form>
+                    )}
+                </Formik>
             </div>
         </Layout>
     );
