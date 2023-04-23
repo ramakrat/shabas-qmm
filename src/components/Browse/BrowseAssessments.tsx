@@ -21,6 +21,9 @@ const BrowseAssessments: React.FC<Props> = () => {
 
     // const { engagementModal, setEngagementModal, assessmentModal, setAssessmentModal } = props;
 
+
+    // ================== Create Management ==================
+
     const [engagementModal, setEngagementModal] = React.useState<boolean>(false);
     const [assessmentModal, setAssessmentModal] = React.useState<boolean>(false);
 
@@ -36,12 +39,37 @@ const BrowseAssessments: React.FC<Props> = () => {
     } | undefined>(undefined);
     const [assessmentData, setAssessmentData] = React.useState<Assessment | undefined>(undefined);
 
-    type SecondaryFilters = 'created' | 'ongoing' | 'assessor-review' | 'oversight' | 'client-review' | 'completed';
-    const [secondaryFilter, setSecondaryFilter] = React.useState<SecondaryFilters>('ongoing');
+
+    // ================== Filter Management ==================
+
+
+    // type Filters = 'created' | 'ongoing' | 'assessor-review' | 'oversight' | 'client-review' | 'completed';
+    const [createdFilter, setCreatedFilter] = React.useState<boolean>(true);
+    const [ongoingFilter, setOngoingFilter] = React.useState<boolean>(true);
+    const [assessorReviewFilter, setAssessorReviewFilter] = React.useState<boolean>(true);
+    const [oversightFilter, setOversightFilter] = React.useState<boolean>(true);
+    const [clientReviewFilter, setClientReviewFilter] = React.useState<boolean>(true);
+    const [completedFilter, setCompletedFilter] = React.useState<boolean>(true);
+
+    const filterObject = () => {
+        const filters = [];
+        if (createdFilter) filters.push({ status: 'created' })
+        if (ongoingFilter) filters.push({ status: 'ongoing' })
+        if (assessorReviewFilter) filters.push({ status: 'assessor-review' })
+        if (oversightFilter) filters.push({ status: 'oversight' })
+        if (clientReviewFilter) filters.push({ status: 'client-review' })
+        if (completedFilter) filters.push({ status: 'completed' })
+        return filters;
+    }
+
 
     // TODO: Don't run query unless modal closed
-    const { data } = api.engagement.getAllInclude.useQuery([engagementModal, engagementModal]);
+    const { data } = api.engagement.getAllInclude.useQuery({
+        filters: filterObject(),
+        states: [engagementModal, engagementModal]
+    });
     const assessmentStatusCounts = api.assessment.getStatusCounts.useQuery(engagementModal).data;
+
 
     return (
         <>
@@ -54,28 +82,28 @@ const BrowseAssessments: React.FC<Props> = () => {
                 </Button>
             </div>
             {assessmentStatusCounts && <div className='filters'>
-                <div className='filter' onClick={() => setSecondaryFilter('created')}>
-                    <span className={secondaryFilter == 'created' ? 'label active' : 'label'}>Created</span>
+                <div className='filter' onClick={() => setCreatedFilter(!createdFilter)}>
+                    <span className={createdFilter ? 'label active' : 'label'}>Created</span>
                     <span className='count'>{assessmentStatusCounts.created}</span>
                 </div>
-                <div className='filter' onClick={() => setSecondaryFilter('ongoing')}>
-                    <span className={secondaryFilter == 'ongoing' ? 'label active' : 'label'}>Ongoing</span>
+                <div className='filter' onClick={() => setOngoingFilter(!ongoingFilter)}>
+                    <span className={ongoingFilter ? 'label active' : 'label'}>Ongoing</span>
                     <span className='count'>{assessmentStatusCounts.ongoing}</span>
                 </div>
-                <div className='filter' onClick={() => setSecondaryFilter('assessor-review')}>
-                    <span className={secondaryFilter == 'assessor-review' ? 'label active' : 'label'}>Assessor Review</span>
+                <div className='filter' onClick={() => setAssessorReviewFilter(!assessorReviewFilter)}>
+                    <span className={assessorReviewFilter ? 'label active' : 'label'}>Assessor Review</span>
                     <span className='count'>{assessmentStatusCounts.assessorReview}</span>
                 </div>
-                <div className='filter' onClick={() => setSecondaryFilter('oversight')}>
-                    <span className={secondaryFilter == 'oversight' ? 'label active' : 'label'}>Oversight</span>
+                <div className='filter' onClick={() => setOversightFilter(!oversightFilter)}>
+                    <span className={oversightFilter ? 'label active' : 'label'}>Oversight</span>
                     <span className='count'>{assessmentStatusCounts.oversight}</span>
                 </div>
-                <div className='filter' onClick={() => setSecondaryFilter('client-review')}>
-                    <span className={secondaryFilter == 'client-review' ? 'label active' : 'label'}>Client Review</span>
+                <div className='filter' onClick={() => setClientReviewFilter(!clientReviewFilter)}>
+                    <span className={clientReviewFilter ? 'label active' : 'label'}>Client Review</span>
                     <span className='count'>{assessmentStatusCounts.clientReview}</span>
                 </div>
-                <div className='filter' onClick={() => setSecondaryFilter('completed')}>
-                    <span className={secondaryFilter == 'completed' ? 'label active' : 'label'}>Completed</span>
+                <div className='filter' onClick={() => setCompletedFilter(!completedFilter)}>
+                    <span className={completedFilter ? 'label active' : 'label'}>Completed</span>
                     <span className='count'>{assessmentStatusCounts.completed}</span>
                 </div>
             </div>}

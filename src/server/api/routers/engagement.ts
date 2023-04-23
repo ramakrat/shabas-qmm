@@ -64,19 +64,29 @@ export const engagementRouter = createTRPCRouter({
             });
         }),
     getAllInclude: publicProcedure
-        .input(z.array(z.boolean()))
-        .query(async ({ ctx }) => {
-            // await ctx.prisma.engagement.update({
-            //     where: {}
-            // })
+        .input(z.object({
+            filters: z.array(z.any()),
+            states: z.array(z.boolean())
+        }))
+        .query(({ input, ctx }) => {
             return ctx.prisma.engagement.findMany({
                 include: {
                     Assessment: {
-                        include: { poc: true }
+                        include: { poc: true },
+                        where: {
+                            OR: input.filters
+                        }
                     },
                     client: true,
                     POC: true,
                     EngagementPOC: { include: { poc: true } },
+                },
+                where: {
+                    Assessment: {
+                        some: {
+                            OR: input.filters
+                        }
+                    }
                 }
             });
         }),
@@ -127,7 +137,7 @@ export const engagementRouter = createTRPCRouter({
                         include: {
                             AssessmentQuestion: {
                                 include: {
-                                    
+
                                 }
                             }
                         }
