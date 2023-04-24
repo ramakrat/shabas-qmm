@@ -1,8 +1,12 @@
 .assessment {
     display: flex;
     flex-direction: row;
+    justify-content: center;
     margin: 20px 30px 40px;
 
+    form {
+        width: 100%;
+    }
 
     .questions-sidebar {
         display: flex;
