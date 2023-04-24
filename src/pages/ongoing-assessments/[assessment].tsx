@@ -101,9 +101,7 @@ const OngoingAssessment: NextPage = () => {
     const changelog = api.changelog.getAllByAssessmentQuestion.useQuery(selectedAssessmentQuestion?.id).data;
     const fullChangelog = api.changelog.getAllByAssessment.useQuery(data?.id).data;
 
-    console.log(changelog)
-    console.log(data?.id)
-    console.log(fullChangelog)
+    
     // =========== Input Field States ===========
 
     const [showRating, setShowRating] = React.useState<boolean>(false);
