@@ -7,6 +7,7 @@ const inputType = z.object({
     id: z.number().optional(),
     type: z.string(),
     name: z.string(),
+    site_id: z.number().optional(),
 })
 
 export const filterRouter = createTRPCRouter({
@@ -17,6 +18,7 @@ export const filterRouter = createTRPCRouter({
                 data: {
                     type: input.type,
                     name: input.name,
+                    site_id: input.site_id,
                     created_by: '',
                     updated_by: '',
                 }
@@ -30,6 +32,7 @@ export const filterRouter = createTRPCRouter({
                 data: {
                     type: input.type,
                     name: input.name,
+                    site_id: input.site_id,
                     created_by: '',
                     updated_by: '',
                 }

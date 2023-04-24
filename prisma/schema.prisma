@@ -57,6 +57,7 @@ model Site {
     updated_at DateTime @default(now())
     created_by String
     updated_by String
+    Filter     Filter[]
 
     @@index([client_id])
 }
@@ -214,6 +215,9 @@ model Filter {
     type String
     name String
 
+    site_id Int?
+    site    Site? @relation(fields: [site_id], references: [id])
+
     Rating             Rating[]
     Interview_Guide    InterviewGuide[]
     AssessmentQuestion AssessmentQuestion[]
@@ -222,6 +226,8 @@ model Filter {
     updated_at DateTime @default(now())
     created_by String
     updated_by String
+
+    @@index([site_id])
 }
 
 model Engagement {

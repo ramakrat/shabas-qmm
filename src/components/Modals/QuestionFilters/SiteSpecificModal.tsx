@@ -1,9 +1,11 @@
 import React from "react";
 import * as yup from "yup";
 import { Formik, Form, Field } from "formik";
-import { Button, Card, CardActions, CardContent, CardHeader, IconButton, Modal, TextField } from "@mui/material";
+import { Button, Card, CardActions, CardContent, CardHeader, IconButton, MenuItem, Modal } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { api } from "~/utils/api";
+import Select from "~/components/Form/Select";
+import { type Site } from "@prisma/client";
 
 interface Props {
     open: boolean;
@@ -11,7 +13,7 @@ interface Props {
 }
 
 interface FormValues {
-    name: string;
+    siteId: string;
 }
 
 const validationSchema = yup.object().shape({
@@ -22,6 +24,10 @@ const SiteSpecificModal: React.FC<Props> = (props) => {
 
     const { open, setOpen } = props;
 
+    // =========== Form Context ===========
+
+    const sites = api.site.getAll.useQuery(true).data;
+
     // =========== Submission Management ===========
 
     const create = api.filter.create.useMutation();
@@ -31,7 +37,8 @@ const SiteSpecificModal: React.FC<Props> = (props) => {
     ) => {
         create.mutate({
             type: 'site-specific',
-            name: values.name,
+            site_id: Number(values.siteId),
+            name: sites?.find(s => s.id == Number(values.siteId))?.name ?? '',
         }, {
             onSuccess() { setOpen(false) }
         })
@@ -42,7 +49,7 @@ const SiteSpecificModal: React.FC<Props> = (props) => {
             <div>
                 <Formik
                     enableReinitialize
-                    initialValues={{ name: '' }}
+                    initialValues={{ siteId: '' }}
                     validationSchema={validationSchema}
                     validateOnBlur={false}
                     validateOnChange={false}
@@ -60,9 +67,18 @@ const SiteSpecificModal: React.FC<Props> = (props) => {
                             />
                             <CardContent>
                                 <Field
-                                    id='name' name='name' label='Name' size='small'
-                                    component={TextField}
-                                />
+                                    name='siteId' label='Site' size='small'
+                                    component={Select}
+                                >
+                                    <MenuItem value=''><em>Select a site...</em></MenuItem>
+                                    {sites ? sites.map((site: Site) => {
+                                        return (
+                                            <MenuItem value={site.id} key={site.id}>
+                                                {site.id} - {site.name}
+                                            </MenuItem>
+                                        )
+                                    }) : 'No Sites'}
+                                </Field>
                             </CardContent>
                             <CardActions>
                                 <Button variant='contained' color='error' onClick={() => setOpen(false)}>Cancel</Button>
