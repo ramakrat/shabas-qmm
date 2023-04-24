@@ -23,7 +23,6 @@ interface FormValues {
     mobilePhone: string;
     workPhone: string;
     email: string;
-    staff: string;
     type: string;
     typeId?: string;
 }
@@ -68,7 +67,6 @@ const POCModal: React.FC<Props> = (props) => {
         mobilePhone: '',
         workPhone: '',
         email: '',
-        staff: '',
         type: 'shabas',
         typeId: '',
     });
@@ -93,7 +91,6 @@ const POCModal: React.FC<Props> = (props) => {
                 mobilePhone: data.mobile_phone,
                 workPhone: data.work_phone,
                 email: data.email,
-                staff: data.staff,
                 type: typeRef(),
                 typeId: data.client_id ? data.client_id.toString() : '',
             })
@@ -105,7 +102,6 @@ const POCModal: React.FC<Props> = (props) => {
                 mobilePhone: '',
                 workPhone: '',
                 email: '',
-                staff: '',
                 type: 'shabas',
                 typeId: '',
             })
@@ -124,7 +120,6 @@ const POCModal: React.FC<Props> = (props) => {
                 mobile_phone: values.mobilePhone,
                 work_phone: values.workPhone,
                 email: values.email,
-                staff: values.staff,
                 client_id: values.type == 'client' ? Number(values.typeId) : undefined,
             }, {
                 onSuccess() { setOpen(false) }
@@ -137,7 +132,6 @@ const POCModal: React.FC<Props> = (props) => {
                 mobile_phone: values.mobilePhone,
                 work_phone: values.workPhone,
                 email: values.email,
-                staff: values.staff,
                 client_id: values.type == 'client' ? Number(values.typeId) : undefined,
             }, {
                 onSuccess() { setOpen(false) }
