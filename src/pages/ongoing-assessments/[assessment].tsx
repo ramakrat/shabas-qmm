@@ -15,6 +15,7 @@ import Layout from "~/components/Layout/Layout";
 import QuestionsSidebar from '~/components/Assessment/QuestionsSidebar';
 import QuestionContext from '~/components/Assessment/QuestionContext';
 import Select from '~/components/Form/Select';
+import ChangelogTable from '~/components/Browse/ChangelogTable';
 
 interface FormValues {
     rating: string;
@@ -69,7 +70,8 @@ const OngoingAssessment: NextPage = () => {
                 }
             }
         }
-    }, [assessmentStatus, data, engagementStatus])
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [data])
 
     const convertToQuestion = (object: (Question & {
         Rating?: Rating[];
@@ -96,8 +98,12 @@ const OngoingAssessment: NextPage = () => {
     const ratings = api.rating.getByQuestionFilter.useQuery({ questionId: questionRef?.id, filterId: selectedAssessmentQuestion?.filter_id ?? undefined }).data;
     const guide = api.interviewGuide.getByQuestionId.useQuery({ id: questionRef?.id }).data;
     const references = api.reference.getByQuestionId.useQuery({ id: questionRef?.id }).data
+    const changelog = api.changelog.getAllByAssessmentQuestion.useQuery(selectedAssessmentQuestion?.id).data;
+    const fullChangelog = api.changelog.getAllByAssessment.useQuery(data?.id).data;
 
-
+    console.log(changelog)
+    console.log(data?.id)
+    console.log(fullChangelog)
     // =========== Input Field States ===========
 
     const [showRating, setShowRating] = React.useState<boolean>(false);
@@ -128,6 +134,33 @@ const OngoingAssessment: NextPage = () => {
 
     // =========== Submission Management ===========
 
+    const initialValues = {
+        assessor_rating: selectedAssessmentQuestion?.answer?.assessor_rating ?? '',
+        assessor_explanation: selectedAssessmentQuestion?.answer?.assessor_explanation ?? '',
+        assessor_evidence: selectedAssessmentQuestion?.answer?.assessor_evidence ?? '',
+    }
+    const createChangelog = api.changelog.create.useMutation();
+    const compareChanges = (changed: any, former: any) => {
+        for (const prop in changed) {
+            if (prop == 'created_at' || prop == 'updated_at') return;
+            if (Object.prototype.hasOwnProperty.call(changed, prop)) {
+                if (Object.prototype.hasOwnProperty.call(former, prop)) {
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                    if (changed[prop] != former[prop]) {
+                        createChangelog.mutate({
+                            field: prop,
+                            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+                            former_value: former[prop].toString(),
+                            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+                            new_value: changed[prop].toString(),
+                            assessment_question_id: Number(selectedAssessmentQuestion?.id),
+                        })
+                    }
+                }
+            }
+        }
+    }
+
     const create = api.answer.create.useMutation();
     const update = api.answer.update.useMutation();
     const statusChange = api.assessment.status.useMutation();
@@ -144,7 +177,10 @@ const OngoingAssessment: NextPage = () => {
                     assessor_explanation: values.rationale,
                     assessor_evidence: values.notes,
                 }, {
-                    onSuccess() { Router.reload() }
+                    onSuccess(data) {
+                        compareChanges(data, initialValues);
+                        Router.reload();
+                    }
                 })
             } else {
                 create.mutate({
@@ -195,6 +231,7 @@ const OngoingAssessment: NextPage = () => {
                                             setQuestion={setQuestion}
                                             submitAssessment={handleSubmitAssesment}
                                             resetForm={resetForm}
+                                            assessmentChangelogs={() => { setQuestion(-1) }}
                                         />
                                     }
                                 </Grid>
@@ -282,6 +319,18 @@ const OngoingAssessment: NextPage = () => {
                                                 </div>
                                             </Card>
                                         </Grid>
+                                        <Grid item xs={12}>
+                                            <Card>
+                                                <ChangelogTable changelogs={changelog} />
+                                            </Card>
+                                        </Grid>
+                                    </Grid>
+                                }
+                                {question == -1 &&
+                                    <Grid item xs={10}>
+                                        <Card>
+                                            <ChangelogTable changelogs={fullChangelog} />
+                                        </Card>
                                     </Grid>
                                 }
                             </Grid>

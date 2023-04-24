@@ -15,6 +15,7 @@ import Layout from "~/components/Layout/Layout";
 import BusinessTypeModal from '~/components/Modals/QuestionFilters/BusinessTypeModal';
 import ManufacturingTypeModal from '~/components/Modals/QuestionFilters/ManufacturingTypeModal';
 import SiteSpecificModal from '~/components/Modals/QuestionFilters/SiteSpecificModal';
+import ChangelogTable from '~/components/Browse/ChangelogTable';
 
 interface GuideType {
     id?: number;
@@ -56,6 +57,7 @@ const Question: NextPage = () => {
         questionId: Number(question),
         filterId: (filterType != 'default' && filterSelection) ? filterSelection.id : undefined,
     }).data;
+    const fullChangelog = api.changelog.getAllByQuestion.useQuery(data?.id).data;
 
     interface AllValues {
         question: any;
@@ -310,9 +312,24 @@ const Question: NextPage = () => {
     }
 
     const compareChanges = (changed: any, former: any) => {
-        console.log(changed)
-        console.log(former)
-        return;
+        for (const prop in changed) {
+            if (prop == 'created_at' || prop == 'updated_at') return;
+            if (Object.prototype.hasOwnProperty.call(changed, prop)) {
+                if (Object.prototype.hasOwnProperty.call(former, prop)) {
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                    if (changed[prop] != former[prop]) {
+                        createChangelog.mutate({
+                            field: prop,
+                            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+                            former_value: former[prop].toString(),
+                            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+                            new_value: changed[prop].toString(),
+                            question_id: Number(data?.id),
+                        })
+                    }
+                }
+            }
+        }
     }
 
     const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
@@ -336,9 +353,6 @@ const Question: NextPage = () => {
                 priority: priority,
             }, {
                 onSuccess(data) {
-                    // createChangelog.mutate({
-                    //     field: 
-                    // })
                     compareChanges(data, initialValues().question)
                 },
                 onError(err) {
@@ -531,7 +545,7 @@ const Question: NextPage = () => {
             }
 
             if (succeeded) {
-                // Router.reload();
+                Router.reload();
             }
         }
     }
@@ -919,6 +933,11 @@ const Question: NextPage = () => {
                                     <Typography>{'Created At: ' + data?.created_at.toLocaleString()}</Typography>
                                     <Typography>{'Created By: ' + data?.created_by}</Typography>
                                 </div>
+                            </Card>
+                        </Grid>
+                        <Grid item xs={12}>
+                            <Card>
+                                <ChangelogTable changelogs={fullChangelog} />
                             </Card>
                         </Grid>
                     </Grid>

@@ -322,10 +322,11 @@ model AssessmentQuestion {
 
     answer Answer?
 
-    created_at DateTime @default(now())
-    updated_at DateTime @default(now())
+    created_at DateTime    @default(now())
+    updated_at DateTime    @default(now())
     created_by String
     updated_by String
+    Changelog  Changelog[]
 
     @@index([question_id])
     @@index([assessment_id])
@@ -335,9 +336,9 @@ model AssessmentQuestion {
 model Answer {
     id Int @id @default(autoincrement())
 
-    assessor_rating       String?
-    assessor_explanation  String?
-    assessor_evidence     String?
+    assessor_rating      String?
+    assessor_explanation String?
+    assessor_evidence    String?
 
     consensus_rating      String?
     consensus_explanation String?
@@ -346,10 +347,10 @@ model Answer {
     oversight_concurrence String?
     oversight_explanation String?
     oversight_evidence    String?
-    
-    client_concurrence    String?
-    client_explanation    String?
-    client_evidence       String?
+
+    client_concurrence String?
+    client_explanation String?
+    client_evidence    String?
 
     user_id Int?
     user    User? @relation(fields: [user_id], references: [id])
@@ -390,14 +391,18 @@ model Changelog {
     field        String
     former_value String?
     new_value    String?
-    
+
     updated_at DateTime @default(now())
     updated_by String?
 
     question_id Int?
     question    Question? @relation(fields: [question_id], references: [id])
 
+    assessment_question_id Int?
+    assessment_question    AssessmentQuestion? @relation(fields: [assessment_question_id], references: [id])
+
     @@index([question_id])
+    @@index([assessment_question_id])
 }
 
 // ================ AUTHENTICATION ================

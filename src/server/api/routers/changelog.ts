@@ -9,6 +9,8 @@ const inputType = z.object({
     field: z.string(),
     former_value: z.string(),
     new_value: z.string(),
+    question_id: z.number().optional(),
+    assessment_question_id: z.number().optional(),
 })
 
 export const changelogRouter = createTRPCRouter({
@@ -20,6 +22,8 @@ export const changelogRouter = createTRPCRouter({
                     field: input.field,
                     former_value: input.former_value,
                     new_value: input.new_value,
+                    question_id: input.question_id,
+                    assessment_question_id: input.assessment_question_id,
                     updated_by: '',
                 }
             })
@@ -33,6 +37,8 @@ export const changelogRouter = createTRPCRouter({
                     field: input.field,
                     former_value: input.former_value,
                     new_value: input.new_value,
+                    question_id: input.question_id,
+                    assessment_question_id: input.assessment_question_id,
                     updated_at: new Date(),
                     updated_by: '',
                 }
@@ -43,6 +49,34 @@ export const changelogRouter = createTRPCRouter({
         .query(({ input, ctx }) => {
             return ctx.prisma.changelog.findUnique({
                 where: { id: input.id }
+            });
+        }),
+    getAllByQuestion: publicProcedure
+        .input(z.number().optional())
+        .query(({ input, ctx }) => {
+            return ctx.prisma.changelog.findMany({
+                orderBy: { updated_at: 'asc' },
+                where: { question_id: input }
+            });
+        }),
+    getAllByAssessment: publicProcedure
+        .input(z.number().optional())
+        .query(({ input, ctx }) => {
+            return ctx.prisma.changelog.findMany({
+                orderBy: { updated_at: 'asc' },
+                where: {
+                    assessment_question: {
+                        assessment_id: input
+                    }
+                }
+            });
+        }),
+    getAllByAssessmentQuestion: publicProcedure
+        .input(z.number().optional())
+        .query(({ input, ctx }) => {
+            return ctx.prisma.changelog.findMany({
+                orderBy: { updated_at: 'asc' },
+                where: { assessment_question_id: input }
             });
         }),
     getAll: publicProcedure

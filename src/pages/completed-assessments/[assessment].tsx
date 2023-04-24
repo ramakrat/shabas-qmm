@@ -16,6 +16,7 @@ import Layout from "~/components/Layout/Layout";
 import QuestionsSidebar from '~/components/Assessment/QuestionsSidebar';
 import QuestionContext from '~/components/Assessment/QuestionContext';
 import Select from '~/components/Form/Select';
+import ChangelogTable from '~/components/Browse/ChangelogTable';
 
 interface FormValues {
     rating: string;
@@ -76,6 +77,8 @@ const CompletedAssessment: NextPage = () => {
     const ratings = api.rating.getByQuestionFilter.useQuery({ questionId: questionRef?.id, filterId: selectedAssessmentQuestion?.filter_id ?? undefined }).data;
     const guide = api.interviewGuide.getByQuestionId.useQuery({ id: questionRef?.id }).data;
     const references = api.reference.getByQuestionId.useQuery({ id: questionRef?.id }).data
+    const changelog = api.changelog.getAllByAssessmentQuestion.useQuery(selectedAssessmentQuestion?.id).data;
+    const fullChangelog = api.changelog.getAllByAssessment.useQuery(data?.id).data;
 
 
     // =========== Input Field States ===========
@@ -174,6 +177,7 @@ const CompletedAssessment: NextPage = () => {
                                             question={question}
                                             setQuestion={setQuestion}
                                             resetForm={resetForm}
+                                            assessmentChangelogs={() => { return; }}
                                         />
                                     }
                                 </Grid>
@@ -267,14 +271,26 @@ const CompletedAssessment: NextPage = () => {
                                                 </div>
                                             </Card>
                                         </Grid>
+                                        <Grid item xs={12}>
+                                            <Card>
+                                                <ChangelogTable changelogs={changelog} />
+                                            </Card>
+                                        </Grid>
+                                    </Grid>
+                                }
+                                {question == -1 &&
+                                    <Grid item xs={10}>
+                                        <Card>
+                                            <ChangelogTable changelogs={fullChangelog} />
+                                        </Card>
                                     </Grid>
                                 }
                             </Grid>
                         </Form>
                     )}
                 </Formik>
-            </div >
-        </Layout >
+            </div>
+        </Layout>
     );
 };
 

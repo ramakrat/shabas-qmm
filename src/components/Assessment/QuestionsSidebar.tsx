@@ -11,11 +11,20 @@ interface Props {
     addOption?: boolean;
     submitAssessment?: () => void;
     resetForm?: () => void;
+    assessmentChangelogs?: () => void;
 }
 
 const QuestionsSidebar: React.FC<Props> = (props) => {
 
-    const { questions, question, setQuestion, addOption, submitAssessment, resetForm } = props;
+    const {
+        questions,
+        question,
+        setQuestion,
+        addOption,
+        submitAssessment,
+        resetForm,
+        assessmentChangelogs
+    } = props;
 
     const [questionModal, setQuestionModal] = React.useState<boolean>(false);
 
@@ -70,9 +79,17 @@ const QuestionsSidebar: React.FC<Props> = (props) => {
                         Add Question
                     </Button>
                 }
+                {assessmentChangelogs != undefined &&
+                    <Typography
+                        className={question == -1 ? 'active' : ''}
+                        onClick={assessmentChangelogs}
+                    >
+                        Changelog
+                    </Typography>
+                }
                 {submitAssessment != undefined &&
                     <Button
-                        variant='outlined'
+                        variant='contained'
                         onClick={() => submitAssessment()}
                     >
                         Submit Assessment
