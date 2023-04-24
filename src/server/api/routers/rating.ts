@@ -36,32 +36,30 @@ export const ratingRouter = createTRPCRouter({
         .input(z.array(inputType))
         .mutation(async ({ input, ctx }) => {
             for (const o of input) {
-                if (o.criteria != '' || o.progression_statement != '') {
-                    try {
-                        await ctx.prisma.rating.create({
-                            data: {
-                                active: o.active,
-                                level_number: o.level_number,
-                                criteria: o.criteria,
-                                progression_statement: o.progression_statement,
-                                question_id: o.question_id,
-                                site_id: o.site_id,
-                                filter_id: o.filter_id,
-                                created_by: '',
-                                updated_by: '',
-                            }
-                        })
-                    } catch (e) {
-                        if (e instanceof Prisma.PrismaClientKnownRequestError) {
-                            // The .code property can be accessed in a type-safe manner
-                            if (e.code === 'P2002') {
-                                console.log(
-                                    'There is a unique constraint violation.'
-                                )
-                            }
+                try {
+                    await ctx.prisma.rating.create({
+                        data: {
+                            active: o.active,
+                            level_number: o.level_number,
+                            criteria: o.criteria,
+                            progression_statement: o.progression_statement,
+                            question_id: o.question_id,
+                            site_id: o.site_id,
+                            filter_id: o.filter_id,
+                            created_by: '',
+                            updated_by: '',
                         }
-                        throw e;
+                    })
+                } catch (e) {
+                    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                        // The .code property can be accessed in a type-safe manner
+                        if (e.code === 'P2002') {
+                            console.log(
+                                'There is a unique constraint violation.'
+                            )
+                        }
                     }
+                    throw e;
                 }
             }
             return undefined;

@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { type NextPage } from "next";
 import Router, { useRouter } from 'next/router';
-import type { Filter } from '@prisma/client';
+import type { Filter, Rating } from '@prisma/client';
 
 import {
     Button, Card, Grid, IconButton, MenuItem, Select,
@@ -29,7 +29,6 @@ interface ReferenceType {
 }
 
 interface RatingType {
-    id?: number;
     level_number: number;
     criteria: string;
     progression_statement: string;
@@ -100,8 +99,27 @@ const Question: NextPage = () => {
     const [newReferences, setNewReferences] = React.useState<ReferenceType[]>([{ num: 1, citation: '' }]);
     const [deletedReferences, setDeletedReferences] = React.useState<ReferenceType[]>([]);
 
-    const [existingRatings, setExistingRatings] = React.useState<RatingType[]>([]);
-    const [newRatings, setNewRatings] = React.useState<RatingType[]>([]);
+    const [ratings, setRatings] = React.useState<Rating[] | RatingType[]>([{
+        level_number: 1,
+        criteria: '',
+        progression_statement: '',
+    }, {
+        level_number: 2,
+        criteria: '',
+        progression_statement: '',
+    }, {
+        level_number: 3,
+        criteria: '',
+        progression_statement: '',
+    }, {
+        level_number: 4,
+        criteria: '',
+        progression_statement: '',
+    }, {
+        level_number: 5,
+        criteria: '',
+        progression_statement: '',
+    }]);
 
 
     React.useEffect(() => {
@@ -162,26 +180,31 @@ const Question: NextPage = () => {
     }, [referencesData])
 
     React.useEffect(() => {
-        if (ratingData) {
-            let count = 0;
-            const existingArray = ratingData.map(o => {
-                count++;
-                return {
-                    id: o.id,
-                    level_number: count,
-                    criteria: o.criteria,
-                    progression_statement: o.progression_statement,
-                }
-            });
-            setExistingRatings(existingArray);
-            const array = newRatings.map(o => {
-                count++;
-                return {
-                    ...o,
-                    level_number: count,
-                }
-            });
-            setNewRatings(array);
+        console.log(ratingData)
+        if (ratingData && ratingData.length > 1) {
+            setRatings(ratingData)
+        } else {
+            setRatings([{
+                level_number: 1,
+                criteria: '',
+                progression_statement: '',
+            }, {
+                level_number: 2,
+                criteria: '',
+                progression_statement: '',
+            }, {
+                level_number: 3,
+                criteria: '',
+                progression_statement: '',
+            }, {
+                level_number: 4,
+                criteria: '',
+                progression_statement: '',
+            }, {
+                level_number: 5,
+                criteria: '',
+                progression_statement: '',
+            }])
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ratingData])
@@ -222,9 +245,8 @@ const Question: NextPage = () => {
         }
     }
 
-    const handleRatingChange = (num: number, newVal: string, criteria?: boolean, existing?: boolean) => {
-        const ref = existing ? existingRatings : newRatings;
-        const newArr = ref.map(o => {
+    const handleRatingChange = (num: number, newVal: string, criteria?: boolean) => {
+        const newArr = ratings.map(o => {
             if (o.level_number == num) {
                 if (criteria)
                     return {
@@ -237,12 +259,9 @@ const Question: NextPage = () => {
                 }
             }
             return o;
-        });
-        if (existing) {
-            setExistingRatings(newArr);
-        } else {
-            setNewRatings(newArr);
-        }
+        }) as (Rating[] | RatingType[]);
+        console.log(newArr)
+        setRatings(newArr);
     }
 
     // =========== Submission Management ===========
@@ -432,43 +451,47 @@ const Question: NextPage = () => {
 
             // ----------- Rating -----------
 
-            existingRatings.forEach(o => {
-                updateRating.mutate({
-                    id: o.id,
-                    active: true,
-                    level_number: o.level_number.toString(),
-                    criteria: o.criteria,
-                    progression_statement: o.progression_statement,
-                    question_id: data.id,
-                    filter_id: (filterType != 'default' && filterSelection) ? filterSelection.id : undefined,
-                }, {
-                    onSuccess(data) {
-                        // createChangelog.mutate({
-                        //     field: 
-                        // })
-                        compareChanges(data, initialValues().ratings)
-                    },
+            if (ratingData && ratingData.length > 1) {
+                (ratings as Rating[]).forEach(o => {
+                    updateRating.mutate({
+                        id: o.id,
+                        active: true,
+                        level_number: o.level_number.toString(),
+                        criteria: o.criteria,
+                        progression_statement: o.progression_statement,
+                        question_id: data.id,
+                        filter_id: (filterType != 'default' && filterSelection) ? filterSelection.id : undefined,
+                    }, {
+                        onSuccess(data) {
+                            // createChangelog.mutate({
+                            //     field: 
+                            // })
+                            compareChanges(data, initialValues().sme)
+                        },
+                        onError(err) {
+                            succeeded = false;
+                            console.log(err);
+                        }
+                    })
+                })
+            } else {
+                createRatings.mutate(ratings.map(o => {
+                    console.log(o)
+                    return {
+                        active: true,
+                        level_number: o.level_number.toString(),
+                        criteria: o.criteria,
+                        progression_statement: o.progression_statement,
+                        question_id: data.id,
+                        filter_id: (filterType != 'default' && filterSelection) ? filterSelection.id : undefined,
+                    }
+                }), {
                     onError(err) {
                         succeeded = false;
                         console.log(err);
                     }
-                })
-            })
-            createRatings.mutate(newRatings.map(o => {
-                return {
-                    active: true,
-                    level_number: o.level_number.toString(),
-                    criteria: o.criteria,
-                    progression_statement: o.progression_statement,
-                    question_id: data.id,
-                    filter_id: (filterType != 'default' && filterSelection) ? filterSelection.id : undefined,
-                }
-            }), {
-                onError(err) {
-                    succeeded = false;
-                    console.log(err);
-                }
-            });
+                });
+            }
 
             // ----------- SME -----------
 
@@ -625,7 +648,7 @@ const Question: NextPage = () => {
                                         exclusive
                                         size='small'
                                         value={filterType}
-                                        onChange={(_event, value: string) => { if (value) { setFilterType(value); setFilterSelection(null); setNewRatings([]) } }}
+                                        onChange={(_event, value: string) => { if (value) { setFilterType(value); setFilterSelection(null); } }}
                                     >
                                         <ToggleButton value='default'>Default</ToggleButton>
                                         <ToggleButton value='business-type'>Business Type</ToggleButton>
@@ -636,72 +659,28 @@ const Question: NextPage = () => {
                                 </div>
                                 {!(filterType != 'default' && filterSelection == null) &&
                                     <>
-                                        {existingRatings.map((o, i) => {
-                                            if (i <= 4)
-                                                return (
-                                                    <div key={i}>
-                                                        <Typography>Level {o.level_number}</Typography>
-                                                        <TextField
-                                                            placeholder='Criteria...' size='small' multiline
-                                                            value={o.criteria}
-                                                            onChange={(event) => handleRatingChange(o.level_number, event.target.value, true, true)}
-                                                        />
-                                                        {((i != existingRatings.length - 1 || newRatings.length != 0) && i < 4) &&
-                                                            <>
-                                                                <Typography>Progression Statement</Typography>
-                                                                <TextField
-                                                                    placeholder='Progression statement...' size='small' multiline
-                                                                    value={o.progression_statement}
-                                                                    onChange={(event) => handleRatingChange(o.level_number, event.target.value, false, true)}
-                                                                />
-                                                            </>
-                                                        }
-                                                    </div>
-                                                )
-                                            return undefined;
-                                        })}
-                                        {existingRatings.length < 5 && newRatings.map((o, i) => {
+                                        {ratings.map((o) => {
                                             return (
-                                                <div key={i}>
+                                                <>
                                                     <Typography>Level {o.level_number}</Typography>
                                                     <TextField
                                                         placeholder='Criteria...' size='small' multiline
                                                         value={o.criteria}
-                                                        onChange={(event) => handleRatingChange(o.level_number, event.target.value, true)}
+                                                        onChange={(event) => handleRatingChange(Number(o.level_number), event.target.value, true)}
                                                     />
-                                                    {(i != newRatings.length - 1) &&
+                                                    {(Number(o.level_number) < 5) &&
                                                         <>
                                                             <Typography>Progression Statement</Typography>
                                                             <TextField
                                                                 placeholder='Progression statement...' size='small' multiline
                                                                 value={o.progression_statement}
-                                                                onChange={(event) => handleRatingChange(o.level_number, event.target.value, false)}
+                                                                onChange={(event) => handleRatingChange(Number(o.level_number), event.target.value, false)}
                                                             />
                                                         </>
                                                     }
-                                                </div>
+                                                </>
                                             )
                                         })}
-                                        {newRatings.length < 5 &&
-                                            <Button
-                                                variant='outlined' startIcon={<Add />}
-                                                onClick={() => {
-                                                    let num = existingRatings.length + 1;
-                                                    const last = newRatings[newRatings.length - 1];
-                                                    if (newRatings.length > 0 && last) num = last.level_number + 1;
-                                                    setNewRatings([
-                                                        ...newRatings,
-                                                        {
-                                                            level_number: num,
-                                                            criteria: '',
-                                                            progression_statement: ''
-                                                        }
-                                                    ])
-                                                }}
-                                            >
-                                                Add Rating
-                                            </Button>
-                                        }
                                     </>
                                 }
                             </Card>
