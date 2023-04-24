@@ -15,7 +15,6 @@ import Layout from "~/components/Layout/Layout";
 import BusinessTypeModal from '~/components/Modals/QuestionFilters/BusinessTypeModal';
 import ManufacturingTypeModal from '~/components/Modals/QuestionFilters/ManufacturingTypeModal';
 import SiteSpecificModal from '~/components/Modals/QuestionFilters/SiteSpecificModal';
-import QuestionsSidebar from '~/components/Assessment/QuestionsSidebar';
 
 interface GuideType {
     id?: number;
@@ -59,14 +58,22 @@ const Question: NextPage = () => {
         filterId: (filterType != 'default' && filterSelection) ? filterSelection.id : undefined,
     }).data;
 
-    const initialValues = () => {
+    interface AllValues {
+        question: any;
+        guides: any[];
+        references: any[];
+        ratings: any[];
+        sme: any;
+    }
+
+    const initialValues = (): AllValues => {
         return {
             question: data,
             guides: guideData,
             references: referencesData,
             ratings: ratingData,
             sme: SME,
-        }
+        } as AllValues;
     }
 
     // =========== Input Field States ===========
@@ -283,11 +290,20 @@ const Question: NextPage = () => {
         }
     }
 
+    const compareChanges = (changed: any, former: any) => {
+        console.log(changed)
+        console.log(former)
+        return;
+    }
+
     const handleSubmit = (event: React.SyntheticEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         if (data) {
             let succeeded = true;
+
+
+            // ----------- Question -----------
 
             update.mutate({
                 id: data.id,
@@ -304,6 +320,7 @@ const Question: NextPage = () => {
                     // createChangelog.mutate({
                     //     field: 
                     // })
+                    compareChanges(data, initialValues().question)
                 },
                 onError(err) {
                     succeeded = false;
@@ -311,7 +328,9 @@ const Question: NextPage = () => {
                 }
             })
 
-            existingGuide.forEach(o => {
+            // ----------- Interview Guide -----------
+
+            existingGuide.forEach((o, i) => {
                 updateGuide.mutate({
                     id: o.id,
                     active: true,
@@ -320,6 +339,12 @@ const Question: NextPage = () => {
                     site_id: 1,
                     filter_id: filterSelection ? filterSelection.id : 1,
                 }, {
+                    onSuccess(data) {
+                        // createChangelog.mutate({
+                        //     field: 
+                        // })
+                        compareChanges(data, initialValues().guides)
+                    },
                     onError(err) {
                         succeeded = false;
                         console.log(err);
@@ -343,6 +368,12 @@ const Question: NextPage = () => {
             deletedGuide.forEach(o => {
                 if (o.id) {
                     deleteGuide.mutate(o.id, {
+                        onSuccess(data) {
+                            // createChangelog.mutate({
+                            //     field: 
+                            // })
+                            compareChanges(data, initialValues().guides)
+                        },
                         onError(err) {
                             succeeded = false;
                             console.log(err);
@@ -351,6 +382,7 @@ const Question: NextPage = () => {
                 }
             })
 
+            // ----------- Reference -----------
 
             existingReferences.forEach(o => {
                 updateReference.mutate({
@@ -358,6 +390,12 @@ const Question: NextPage = () => {
                     citation: o.citation,
                     question_id: data.id,
                 }, {
+                    onSuccess(data) {
+                        // createChangelog.mutate({
+                        //     field: 
+                        // })
+                        compareChanges(data, initialValues().references)
+                    },
                     onError(err) {
                         succeeded = false;
                         console.log(err);
@@ -378,6 +416,12 @@ const Question: NextPage = () => {
             deletedReferences.forEach(o => {
                 if (o.id) {
                     deleteReference.mutate(o.id, {
+                        onSuccess(data) {
+                            // createChangelog.mutate({
+                            //     field: 
+                            // })
+                            compareChanges(data, initialValues().references)
+                        },
                         onError(err) {
                             succeeded = false;
                             console.log(err);
@@ -385,6 +429,8 @@ const Question: NextPage = () => {
                     })
                 }
             })
+
+            // ----------- Rating -----------
 
             existingRatings.forEach(o => {
                 updateRating.mutate({
@@ -396,6 +442,12 @@ const Question: NextPage = () => {
                     question_id: data.id,
                     filter_id: (filterType != 'default' && filterSelection) ? filterSelection.id : undefined,
                 }, {
+                    onSuccess(data) {
+                        // createChangelog.mutate({
+                        //     field: 
+                        // })
+                        compareChanges(data, initialValues().ratings)
+                    },
                     onError(err) {
                         succeeded = false;
                         console.log(err);
@@ -418,6 +470,7 @@ const Question: NextPage = () => {
                 }
             });
 
+            // ----------- SME -----------
 
             if (SME) {
                 updateSME.mutate({
@@ -428,6 +481,12 @@ const Question: NextPage = () => {
                     email: email,
                     question_id: data.id,
                 }, {
+                    onSuccess(data) {
+                        // createChangelog.mutate({
+                        //     field: 
+                        // })
+                        compareChanges(data, initialValues().sme)
+                    },
                     onError(err) {
                         succeeded = false;
                         console.log(err);
@@ -449,19 +508,13 @@ const Question: NextPage = () => {
             }
 
             if (succeeded) {
-                Router.reload();
+                // Router.reload();
             }
         }
     }
 
-    const setQuestionSelection = (question: number) => {
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        push(`/questions/${question}`);
-    }
 
     // =========== Retrieve Form Context ===========
-
-    const questions = api.question.getAll.useQuery(true).data;
 
     // TODO: Don't run query unless modal closed
     const businessTypes = api.filter.getAllBusinessTypes.useQuery(addBusinessType).data;
