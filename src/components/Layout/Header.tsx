@@ -33,7 +33,7 @@ export const Header: React.FC<Props> = (props) => {
                         Dashboard
                     </Typography>
                 </Link>
-                <Link href={'/questions/1'} className={active == 'questions' ? 'active' : ''}>
+                <Link href={'/questions'} className={active == 'questions' ? 'active' : ''}>
                     <Typography>
                         Questions
                     </Typography>
