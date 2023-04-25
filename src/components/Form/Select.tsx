@@ -9,11 +9,11 @@ import { FormControl, FormHelperText, InputLabel, Select as MuiSelect, type Sele
  * Material-UI specific props are passed through.
  */
 export const Select: React.FC<FieldProps & SelectProps & TextFieldProps> = props => {
-    const isTouched = getIn(props.form.touched, props.field.name)
-    const errorMessage = getIn(props.form.errors, props.field.name)
 
-    const { error, helperText, field, label, ...rest } = props
+    const { children, error, helperText, field, form, label, value, ...rest } = props;
 
+    const isTouched = getIn(form.touched, field.name);
+    const errorMessage = getIn(form.errors, field.name);
     const hasErrors = error ?? Boolean(isTouched && errorMessage);
 
     return (
@@ -25,7 +25,7 @@ export const Select: React.FC<FieldProps & SelectProps & TextFieldProps> = props
                 {...rest}
                 {...field}
             >
-                {props.children}
+                {children}
             </MuiSelect>
             <FormHelperText error={Boolean(errorMessage)}>
                 {(helperText ?? (Boolean(isTouched && errorMessage)) ? errorMessage : undefined)}
