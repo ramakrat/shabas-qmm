@@ -1,7 +1,7 @@
 import React from "react";
 import type { Question } from "@prisma/client";
 import { Button, Card, Typography } from "@mui/material";
-import { Add } from "@mui/icons-material";
+import { Add, FileDownload } from "@mui/icons-material";
 import QuestionModal from "../Modals/QuestionModal";
 
 interface Props {
@@ -12,6 +12,7 @@ interface Props {
     submitAssessment?: () => void;
     resetForm?: () => void;
     assessmentChangelogs?: () => void;
+    exportAssessment?: () => void;
 }
 
 const QuestionsSidebar: React.FC<Props> = (props) => {
@@ -23,7 +24,8 @@ const QuestionsSidebar: React.FC<Props> = (props) => {
         addOption,
         submitAssessment,
         resetForm,
-        assessmentChangelogs
+        assessmentChangelogs,
+        exportAssessment,
     } = props;
 
     const [questionModal, setQuestionModal] = React.useState<boolean>(false);
@@ -93,6 +95,15 @@ const QuestionsSidebar: React.FC<Props> = (props) => {
                         onClick={() => submitAssessment()}
                     >
                         Submit Assessment
+                    </Button>
+                }
+                {exportAssessment != undefined &&
+                    <Button
+                        variant='contained'
+                        startIcon={<FileDownload />}
+                        onClick={() => exportAssessment()}
+                    >
+                        Export Assessment
                     </Button>
                 }
             </Card>

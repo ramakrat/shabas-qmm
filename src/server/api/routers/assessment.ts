@@ -116,19 +116,16 @@ export const assessmentRouter = createTRPCRouter({
     getByIdExport: publicProcedure
         .input(z.number())
         .query(({ input, ctx }) => {
-            return ctx.prisma.assessment.findUnique({
+            return ctx.prisma.assessment.findMany({
                 where: { id: input },
                 include: {
                     AssessmentQuestion: {
                         include: {
-                            filter: true,
                             answer: true,
                             question: true,
                         }
                     },
-                    engagement: true,
                     site: true,
-                    
                 }
             });
         }),

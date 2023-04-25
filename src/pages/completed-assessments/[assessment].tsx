@@ -81,214 +81,162 @@ const CompletedAssessment: NextPage = () => {
     const fullChangelog = api.changelog.getAllByAssessment.useQuery(data?.id).data;
 
 
-    // =========== Input Field States ===========
-
-    const [showRating, setShowRating] = React.useState<boolean>(false);
-
-    const [answer, setAnswer] = React.useState<FormValues>({
-        rating: '',
-        rationale: '',
-        notes: '',
-    });
-
-    React.useEffect(() => {
-        if (selectedAssessmentQuestion && selectedAssessmentQuestion.answer) {
-            setAnswer({
-                rating: selectedAssessmentQuestion.answer.consensus_rating ?? '',
-                rationale: selectedAssessmentQuestion.answer.consensus_explanation ?? '',
-                notes: selectedAssessmentQuestion.answer.consensus_evidence ?? '',
-            });
-        } else {
-            setAnswer({
-                rating: '',
-                rationale: '',
-                notes: '',
-            });
-        }
-    }, [selectedAssessmentQuestion])
-
-
-    // =========== Submission Management ===========
-
-    const create = api.answer.create.useMutation();
-    const update = api.answer.update.useMutation();
-    const statusChange = api.assessment.status.useMutation();
-
-    const handleSubmit = (
-        values: FormValues,
-    ) => {
-        if (selectedAssessmentQuestion) {
-            if (selectedAssessmentQuestion.answer) {
-                update.mutate({
-                    id: selectedAssessmentQuestion.answer.id,
-                    assessment_question_id: selectedAssessmentQuestion.id,
-                    consensus_rating: values.rating.toString(),
-                    consensus_explanation: values.rationale,
-                    consensus_evidence: values.notes,
-                }, {
-                    onSuccess() { Router.reload() }
-                })
-            } else {
-                create.mutate({
-                    assessment_question_id: selectedAssessmentQuestion.id,
-                    consensus_rating: values.rating.toString(),
-                    consensus_explanation: values.rationale,
-                    consensus_evidence: values.notes,
-                }, {
-                    onSuccess() { Router.reload() }
-                })
-            }
-        }
-    }
-
-
     // =========== Export Management ===========
 
-    // const exportData = api.assessment.getAllCompleted.useQuery(true).data;
+    const exportData = api.assessment.getByIdExport.useQuery(data?.id).data;
 
     const exportCompleted = () => {
-        // if (exportData) {
-        //     const sheet = XLSX.utils.json_to_sheet(exportData);
-        //     const book = XLSX.utils.book_new();
-        //     const filename = 'Shabas Completed Assessments ' + new Date().toLocaleDateString('fr-CA') + '.csv';
-        //     XLSX.utils.book_append_sheet(book, sheet, 'Sheet1');
-        //     XLSX.writeFile(book, filename, { bookType: 'csv' });
-        // }
+        console.log(exportData)
+        if (exportData) {
+
+            const masterObjects: any[] = [];
+            const dashboardObjects: { topic: string, rating?: string | null }[] = [];
+            const dashboardAveraged: any[] = [];
+
+            exportData.forEach(o => {
+                o.AssessmentQuestion.forEach(q => {
+                    masterObjects.push({
+                        'Firm': o.site.name,
+                        'Assessor': '',
+                        'Question Number': q.question.number,
+                        'Pillar': q.question.pillar,
+                        'Practice Area': q.question.practice_area,
+                        'Topic': q.question.topic_area,
+                        'Question': q.question.question,
+                        'Rating': q.answer?.assessor_rating,
+                        'Rationale': q.answer?.assessor_explanation,
+                        'Improvement Suggestion': q.answer?.assessor_evidence,
+                    })
+                    dashboardObjects.push({
+                        topic: q.question.topic_area,
+                        rating: q.answer?.assessor_rating,
+                    })
+                })
+            })
+
+            let averageSum = 0;
+            const topics = [...new Set(dashboardObjects.map(o => o.topic))];
+            topics.forEach(t => {
+                let ratingSum = 0;
+                let ratingCount = 0;
+                dashboardObjects.forEach(o => {
+                    if (o.topic == t) {
+                        ratingSum = ratingSum + Number(o.rating);
+                        ratingCount++;
+                    }
+                });
+                const ratingAverage = ratingSum / ratingCount;
+                dashboardAveraged.push({
+                    'Topic': t,
+                    'Rating (Average)': ratingAverage,
+                })
+                averageSum = averageSum + ratingAverage;
+            })
+
+            dashboardAveraged.push({
+                'Topic': 'Grand Total',
+                'Rating (Average)': averageSum / topics.length,
+            })
+
+
+            const filename = 'Shabas Completed Assessments ' + new Date().toLocaleDateString('fr-CA') + '.xlsx';
+
+            const sheet1 = XLSX.utils.aoa_to_sheet([['Confidentiality Notice: The information contained in this document may be legally privileged and confidential. This document may contain company confidential and/or sensitive data pertaining to the FDA QMM Pilot initiative and is for discussion purposes only.  If you are not an intended recipient, you are hereby notified that any dissemination, distribution or copying of this report in whole or in part is strictly prohibited. You should not retain, copy, or use this document for any purpose, nor disclose all or any part of the contents to any other person. Thank you. ']]);
+            const sheet2 = XLSX.utils.json_to_sheet(masterObjects);
+            const sheet3 = XLSX.utils.json_to_sheet(dashboardAveraged);
+
+            const book = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(book, sheet1, "Confidentiality Notice");
+            XLSX.utils.book_append_sheet(book, sheet2, 'Master');
+            XLSX.utils.book_append_sheet(book, sheet3, 'Dashboard');
+
+            XLSX.writeFile(book, filename, { bookType: 'xlsx' });
+        }
     }
 
     return (
         <Layout active='completed-assessments'>
             <div className='assessment'>
-                <Formik
-                    enableReinitialize
-                    initialValues={answer}
-                    validationSchema={validationSchema}
-                    validateOnBlur={false}
-                    validateOnChange={false}
-                    onSubmit={handleSubmit}
-                >
-                    {({ resetForm }) => (
-                        <Form>
-                            <Grid container spacing={2}>
-                                <Grid item xs={2}>
-                                    {questions &&
-                                        <QuestionsSidebar
-                                            questions={questions.map(o => convertToQuestion(o.question))}
-                                            question={question}
-                                            setQuestion={setQuestion}
-                                            resetForm={resetForm}
-                                            assessmentChangelogs={() => { return; }}
-                                        />
-                                    }
-                                </Grid>
-                                {selectedAssessmentQuestion &&
-                                    <Grid item xs={10} container spacing={2}>
-                                        <Grid item xs={12}>
-                                            <QuestionContext question={questionRef && convertToQuestion(questionRef)} />
-                                        </Grid>
-                                        <Grid item xs={6}>
-                                            <Card className='pre-questions'>
-                                                <div>
-                                                    <Typography>Question Content: {selectedAssessmentQuestion.question.question}</Typography>
-                                                    <Typography>Hint: {questionRef?.hint}</Typography>
-                                                    <Typography>Start Time: XYZ</Typography>
-                                                    <div className='rating'>
-                                                        <div className='rating-input'>
-                                                            <Typography>Rating</Typography>
-                                                            <Info fontSize='small' onClick={() => setShowRating(!showRating)} />
-                                                            <Field
-                                                                name='rating' label='' size='small'
-                                                                component={Select}
-                                                            >
-                                                                <MenuItem value=''><em>Select rating...</em></MenuItem>
-                                                                <MenuItem value={1}>1</MenuItem>
-                                                                <MenuItem value={2}>2</MenuItem>
-                                                                <MenuItem value={3}>3</MenuItem>
-                                                                <MenuItem value={4}>4</MenuItem>
-                                                                <MenuItem value={5}>5</MenuItem>
-                                                            </Field>
-                                                        </div>
-                                                        {(showRating && ratings) &&
-                                                            <div>
-                                                                {ratings.map((r, i) => {
-                                                                    return (
-                                                                        <div key={i}>
-                                                                            <div>Level {r.level_number}: {r.criteria}</div>
-                                                                            {i !== ratings.length - 1 &&
-                                                                                <div>Progression Statement: {r.progression_statement}</div>
-                                                                            }
-                                                                        </div>
-                                                                    )
-                                                                })}
-                                                            </div>
-                                                        }
-                                                    </div>
-                                                </div>
-                                            </Card>
-                                            <Card className='question-content'>
-                                                <Typography>Rationale</Typography>
-                                                <Field
-                                                    name='rationale' label='' size='small' multiline
-                                                    component={TextField}
-                                                />
-                                                <Typography>Notes</Typography>
-                                                <Field
-                                                    name='notes' label='' size='small' multiline
-                                                    component={TextField}
-                                                />
-                                            </Card>
-                                            <Card className='actions simple'>
-                                                <Button
-                                                    variant='contained'
-                                                    startIcon={<FileDownload />}
-                                                    onClick={exportCompleted}
-                                                >
-                                                    Export
-                                                </Button>
-                                            </Card>
-                                        </Grid>
-                                        <Grid item xs={6}>
-                                            <Card className='reference'>
-                                                <div>
-                                                    <Typography>Interview Guide</Typography>
-                                                    {guide?.map((r, i) => {
-                                                        return (
-                                                            <div key={i}>
-                                                                <span>{i + 1}. {r.interview_question}</span>
-                                                            </div>
-                                                        )
-                                                    })}
-                                                </div>
-                                                <div>
-                                                    <Typography>References</Typography>
-                                                    {references?.map((r, i) => {
-                                                        return (
-                                                            <div key={i}>
-                                                                <span>{i + 1}. {r.citation}</span>
-                                                            </div>
-                                                        )
-                                                    })}
-                                                </div>
-                                            </Card>
-                                        </Grid>
-                                        <Grid item xs={12}>
-                                            <Card>
-                                                <ChangelogTable changelogs={changelog} fileName={`Assessment${data.id} Question${selectedAssessmentQuestion.id}`} />
-                                            </Card>
-                                        </Grid>
-                                    </Grid>
-                                }
-                                {question == -1 &&
-                                    <Grid item xs={10}>
-                                        <Card>
-                                            <ChangelogTable changelogs={fullChangelog} fileName={`Assessment${data.id}`} />
-                                        </Card>
-                                    </Grid>
-                                }
+                <Grid container spacing={2}>
+                    <Grid item xs={2}>
+                        {questions &&
+                            <QuestionsSidebar
+                                questions={questions.map(o => convertToQuestion(o.question))}
+                                question={question}
+                                setQuestion={setQuestion}
+                                exportAssessment={exportCompleted}
+                            />
+                        }
+                    </Grid>
+                    {selectedAssessmentQuestion &&
+                        <Grid item xs={10} container spacing={2}>
+                            <Grid item xs={12}>
+                                <QuestionContext question={questionRef && convertToQuestion(questionRef)} />
                             </Grid>
-                        </Form>
-                    )}
-                </Formik>
+                            <Grid item xs={6}>
+                                <Card className='pre-questions'>
+                                    <div>
+                                        <Typography>Question Content: {selectedAssessmentQuestion.question.question}</Typography>
+                                        <Typography>Hint: {questionRef?.hint}</Typography>
+                                        <Typography>Start Time: XYZ</Typography>
+                                        <div className='rating'>
+                                            {(ratings) &&
+                                                <div>
+                                                    {ratings.map((r, i) => {
+                                                        return (
+                                                            <div key={i}>
+                                                                <div>Level {r.level_number}: {r.criteria}</div>
+                                                                {i !== ratings.length - 1 &&
+                                                                    <div>Progression Statement: {r.progression_statement}</div>
+                                                                }
+                                                            </div>
+                                                        )
+                                                    })}
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </Card>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <Card className='reference'>
+                                    <div>
+                                        <Typography>Interview Guide</Typography>
+                                        {guide?.map((r, i) => {
+                                            return (
+                                                <div key={i}>
+                                                    <span>{i + 1}. {r.interview_question}</span>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                    <div>
+                                        <Typography>References</Typography>
+                                        {references?.map((r, i) => {
+                                            return (
+                                                <div key={i}>
+                                                    <span>{i + 1}. {r.citation}</span>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                </Card>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Card>
+                                    <ChangelogTable changelogs={changelog} fileName={`Assessment${data?.id} Question${selectedAssessmentQuestion.id}`} />
+                                </Card>
+                            </Grid>
+                        </Grid>
+                    }
+                    {question == -1 &&
+                        <Grid item xs={10}>
+                            <Card>
+                                <ChangelogTable changelogs={fullChangelog} fileName={`Assessment${data?.id}`} />
+                            </Card>
+                        </Grid>
+                    }
+                </Grid>
             </div>
         </Layout>
     );
