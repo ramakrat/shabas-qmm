@@ -70,7 +70,7 @@ const ChangelogTable: React.FC<Props> = (props) => {
                 startIcon={<FileDownload />}
                 onClick={exportCompleted}
             >
-                Export
+                Export Changelog
             </Button>
         </div>
     )
