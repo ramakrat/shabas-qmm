@@ -198,7 +198,7 @@ const OngoingAssessment: NextPage = () => {
         if (data) {
             statusChange.mutate({
                 id: data.id,
-                status: 'in-review',
+                status: 'assessor-review',
             }, {
                 async onSuccess() {
                     await push(`/review-assessments/${data.id}`)

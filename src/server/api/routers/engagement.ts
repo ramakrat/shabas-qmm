@@ -128,19 +128,19 @@ export const engagementRouter = createTRPCRouter({
             return ctx.prisma.engagement.findMany({
                 where: {
                     Assessment: {
-                        some: { status: 'in-review' }
+                        some: { status: 'assessor-review' }
                     }
                 },
                 include: {
                     Assessment: {
-                        where: { status: 'in-review' },
-                        include: {
-                            AssessmentQuestion: {
-                                include: {
+                        where: { status: 'assessor-review' },
+                        // include: {
+                        //     AssessmentQuestion: {
+                        //         include: {
 
-                                }
-                            }
-                        }
+                        //         }
+                        //     }
+                        // }
                     },
                     client: true,
                     POC: true,
