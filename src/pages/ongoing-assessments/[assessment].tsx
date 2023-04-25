@@ -101,7 +101,7 @@ const OngoingAssessment: NextPage = () => {
     const changelog = api.changelog.getAllByAssessmentQuestion.useQuery(selectedAssessmentQuestion?.id).data;
     const fullChangelog = api.changelog.getAllByAssessment.useQuery(data?.id).data;
 
-    
+
     // =========== Input Field States ===========
 
     const [showRating, setShowRating] = React.useState<boolean>(false);
@@ -319,7 +319,7 @@ const OngoingAssessment: NextPage = () => {
                                         </Grid>
                                         <Grid item xs={12}>
                                             <Card>
-                                                <ChangelogTable changelogs={changelog} />
+                                                <ChangelogTable changelogs={changelog} fileName={`Assessment${data.id} Question${selectedAssessmentQuestion.id}`} />
                                             </Card>
                                         </Grid>
                                     </Grid>
@@ -327,7 +327,7 @@ const OngoingAssessment: NextPage = () => {
                                 {question == -1 &&
                                     <Grid item xs={10}>
                                         <Card>
-                                            <ChangelogTable changelogs={fullChangelog} />
+                                            <ChangelogTable changelogs={fullChangelog} fileName={`Assessment${data.id}`} />
                                         </Card>
                                     </Grid>
                                 }

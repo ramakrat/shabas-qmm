@@ -273,7 +273,7 @@ const CompletedAssessment: NextPage = () => {
                                         </Grid>
                                         <Grid item xs={12}>
                                             <Card>
-                                                <ChangelogTable changelogs={changelog} />
+                                                <ChangelogTable changelogs={changelog} fileName={`Assessment${data.id} Question${selectedAssessmentQuestion.id}`} />
                                             </Card>
                                         </Grid>
                                     </Grid>
@@ -281,7 +281,7 @@ const CompletedAssessment: NextPage = () => {
                                 {question == -1 &&
                                     <Grid item xs={10}>
                                         <Card>
-                                            <ChangelogTable changelogs={fullChangelog} />
+                                            <ChangelogTable changelogs={fullChangelog} fileName={`Assessment${data.id}`} />
                                         </Card>
                                     </Grid>
                                 }
