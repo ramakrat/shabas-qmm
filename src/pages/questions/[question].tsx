@@ -16,6 +16,7 @@ import BusinessTypeModal from '~/components/Modals/QuestionFilters/BusinessTypeM
 import ManufacturingTypeModal from '~/components/Modals/QuestionFilters/ManufacturingTypeModal';
 import SiteSpecificModal from '~/components/Modals/QuestionFilters/SiteSpecificModal';
 import ChangelogTable from '~/components/Browse/ChangelogTable';
+import { underscoreToTitle } from '~/utils/utils';
 
 interface GuideType {
     id?: number;
@@ -322,7 +323,7 @@ const Question: NextPage = () => {
                         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                         if (changed[prop] != former[prop]) {
                             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-member-access
-                            const propName = prop.replace(/_/g, ' ').replace(/(?: |\b)(\w)/g, function (key) { return key.toUpperCase() });
+                            const propName = underscoreToTitle(prop);
                             createChangelog.mutate({
                                 field: prefix ? `${prefix}${propName}` : propName,
                                 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call

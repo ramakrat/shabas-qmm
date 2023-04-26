@@ -268,3 +268,7 @@ export const dateInputFormat = (date: Date, fromUTC?: boolean) => {
     if (fromUTC) return date.toISOString().substring(0, 10);
     return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().substring(0, 10);
 }
+
+export const underscoreToTitle = (str: string) => {
+    return str.replace(/_/g, ' ').replace(/(?: |\b)(\w)/g, function (key) { return key.toUpperCase() });
+}
