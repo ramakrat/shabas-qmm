@@ -158,8 +158,8 @@ const AssessmentModal: React.FC<Props> = (props) => {
             let succeeded = true;
             update.mutate({
                 id: data.id,
-                start_date: new Date(new Date(values.startDate).toUTCString()),
-                end_date: new Date(new Date(values.endDate).toUTCString()),
+                start_date: new Date(values.startDate),
+                end_date: new Date(values.endDate),
                 description: values.description,
                 site_id: Number(values.siteId),
                 engagement_id: Number(values.engagementId),
@@ -203,8 +203,8 @@ const AssessmentModal: React.FC<Props> = (props) => {
         } else {
             let succeeded = true;
             create.mutate({
-                start_date: new Date(new Date(values.startDate).toUTCString()),
-                end_date: new Date(new Date(values.endDate).toUTCString()),
+                start_date: new Date(values.startDate),
+                end_date: new Date(values.endDate),
                 description: values.description,
                 site_id: Number(values.siteId),
                 engagement_id: Number(values.engagementId),

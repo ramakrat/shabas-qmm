@@ -113,8 +113,8 @@ const EngagementModal: React.FC<Props> = (props) => {
         if (data) {
             update.mutate({
                 id: data.id,
-                start_date: new Date(new Date(values.startDate).toUTCString()),
-                end_date: new Date(new Date(values.endDate).toUTCString()),
+                start_date: new Date(values.startDate),
+                end_date: new Date(values.endDate),
                 description: values.description,
                 client_id: Number(values.clientId),
             }, {
@@ -152,8 +152,8 @@ const EngagementModal: React.FC<Props> = (props) => {
             })
         } else {
             create.mutate({
-                start_date: new Date(new Date(values.startDate).toUTCString()),
-                end_date: new Date(new Date(values.endDate).toUTCString()),
+                start_date: new Date(values.startDate),
+                end_date: new Date(values.endDate),
                 description: values.description,
                 client_id: Number(values.clientId),
             }, {
