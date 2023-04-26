@@ -111,8 +111,8 @@ const AssessmentModal: React.FC<Props> = (props) => {
         if (data) {
             setAssessment({
                 description: data.description,
-                startDate: dateInputFormat(data.start_date),
-                endDate: dateInputFormat(data.end_date),
+                startDate: dateInputFormat(data.start_date, true),
+                endDate: dateInputFormat(data.end_date, true),
                 siteId: data.site_id.toString(),
                 engagementId: data.engagement_id.toString(),
                 pocId: data.poc_id ? data.poc_id.toString() : '',

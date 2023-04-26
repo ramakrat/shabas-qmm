@@ -89,8 +89,8 @@ const EngagementModal: React.FC<Props> = (props) => {
             const existingShabasPoc = data.EngagementPOC.find(o => !o.poc.client_id);
             setEngagement({
                 description: data.description,
-                startDate: dateInputFormat(data.start_date),
-                endDate: dateInputFormat(data.end_date),
+                startDate: dateInputFormat(data.start_date, true),
+                endDate: dateInputFormat(data.end_date, true),
                 clientId: data.client_id.toString(),
                 clientPocId: existingClientPoc ? existingClientPoc.poc_id.toString() : '',
                 shabasPocId: existingShabasPoc ? existingShabasPoc.poc_id.toString() : '',

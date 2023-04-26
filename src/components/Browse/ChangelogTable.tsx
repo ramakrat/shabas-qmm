@@ -54,7 +54,7 @@ const ChangelogTable: React.FC<Props> = (props) => {
                                         {data.new_value}
                                     </TableCell>
                                     <TableCell align="left">
-                                        {dateInputFormat(data.updated_at)}
+                                        {data.updated_at.toDateString()}
                                     </TableCell>
                                     <TableCell align="left">
                                         {data.updated_by}
