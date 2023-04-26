@@ -1,6 +1,6 @@
 import * as React from 'react';
 import type { Changelog } from '@prisma/client';
-import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Button } from '@mui/material';
+import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Button, Typography } from '@mui/material';
 import * as XLSX from 'xlsx';
 import { FileDownload } from '@mui/icons-material';
 
@@ -50,7 +50,9 @@ const ChangelogTable: React.FC<Props> = (props) => {
                                         {data.former_value}
                                     </TableCell>
                                     <TableCell align="left">
-                                        {data.new_value}
+                                        {data.new_value ??
+                                            <Typography style={{ fontStyle: 'italic' }}>Deleted</Typography>
+                                        }
                                     </TableCell>
                                     <TableCell align="left">
                                         {data.updated_at.toDateString()}
