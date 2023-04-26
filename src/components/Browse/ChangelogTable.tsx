@@ -17,9 +17,9 @@ const ChangelogTable: React.FC<Props> = (props) => {
             const sheet = XLSX.utils.json_to_sheet(changelogs);
             const book = XLSX.utils.book_new();
             const fileDate = new Date().toLocaleDateString('fr-CA');
-            const fullFileName = fileName ? `${fileName} Changelog ${fileDate}` : `Changelog ${fileDate}`
+            const fullFileName = fileName ? `${fileName} Changelog ${fileDate}.xlsx` : `Changelog ${fileDate}.xlsx`
             XLSX.utils.book_append_sheet(book, sheet, 'Sheet1');
-            XLSX.writeFile(book, fullFileName, { bookType: 'csv' });
+            XLSX.writeFile(book, fullFileName, { bookType: 'xlsx' });
         }
     }
 
