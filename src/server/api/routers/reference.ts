@@ -102,6 +102,29 @@ export const referenceRouter = createTRPCRouter({
                 where: { id: input },
             });
         }),
+    deleteArray: publicProcedure
+        .input(z.array(z.number().optional()))
+        .mutation(async ({ input, ctx }) => {
+            for (const o of input) {
+                try {
+                    await ctx.prisma.reference.delete({
+                        where: { id: o },
+                    });
+                } catch (e) {
+                    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                        // The .code property can be accessed in a type-safe manner
+                        if (e.code === 'P2002') {
+                            console.log(
+                                'There is a unique constraint violation.'
+                            )
+                        }
+                    }
+                    throw e;
+                }
+
+            }
+            return undefined;
+        }),
     getByQuestionId: publicProcedure
         .input(z.object({ id: z.number().optional() }))
         .query(({ input, ctx }) => {
