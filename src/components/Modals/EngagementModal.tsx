@@ -75,14 +75,6 @@ const EngagementModal: React.FC<Props> = (props) => {
         shabasPocId: '',
     });
 
-    // =========== Submission Management ===========
-
-    const create = api.engagement.create.useMutation();
-    const update = api.engagement.update.useMutation();
-
-    const createPoc = api.engagementPoc.create.useMutation();
-    const updatePoc = api.engagementPoc.update.useMutation();
-
     React.useEffect(() => {
         if (data) {
             const existingClientPoc = data.EngagementPOC.find(o => o.poc.client_id);
@@ -106,6 +98,15 @@ const EngagementModal: React.FC<Props> = (props) => {
             })
         }
     }, [data])
+
+
+    // =========== Submission Management ===========
+
+    const create = api.engagement.create.useMutation();
+    const update = api.engagement.update.useMutation();
+
+    const createPoc = api.engagementPoc.create.useMutation();
+    const updatePoc = api.engagementPoc.update.useMutation();
 
     const handleSubmit = (
         values: FormValues,
