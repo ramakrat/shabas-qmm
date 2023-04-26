@@ -65,9 +65,9 @@ const BrowseAssessments: React.FC<Props> = () => {
     // TODO: Don't run query unless modal closed
     const { data } = api.engagement.getAllInclude.useQuery({
         filters: filterObject(),
-        states: [engagementModal, engagementModal]
+        states: [engagementModal, assessmentModal]
     });
-    const assessmentStatusCounts = api.assessment.getStatusCounts.useQuery(engagementModal).data;
+    const assessmentStatusCounts = api.assessment.getStatusCounts.useQuery(assessmentModal).data;
 
 
     return (
