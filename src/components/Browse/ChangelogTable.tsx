@@ -1,7 +1,6 @@
 import * as React from 'react';
 import type { Changelog } from '@prisma/client';
 import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Button } from '@mui/material';
-import { dateInputFormat } from '~/utils/utils';
 import * as XLSX from 'xlsx';
 import { FileDownload } from '@mui/icons-material';
 
