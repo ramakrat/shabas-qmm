@@ -1,8 +1,8 @@
 import React from "react";
-import type { Assessment, AssessmentQuestion, Filter, Question, Rating } from "@prisma/client";
+import type { Assessment, AssessmentQuestion, Engagement, Filter, Question, Rating, Site } from "@prisma/client";
 
 import * as yup from "yup";
-import { Field, Form, Formik } from "formik";
+import { Field, Form, Formik, FormikProps } from "formik";
 import TextField from "../Form/TextField";
 import Select from "../Form/Select";
 
@@ -44,7 +44,7 @@ interface FormValues {
     endDate: string;
     siteId: string;
     engagementId: string;
-    pocId?: string;
+    pocId: string;
 }
 
 const validationSchema = yup.object().shape({
@@ -247,249 +247,250 @@ const AssessmentModal: React.FC<Props> = (props) => {
                     validateOnChange={false}
                     onSubmit={handleSubmit}
                 >
-                    <Form>
-                        <Card>
-                            <CardHeader
-                                title={data ? 'Edit Assessment' : 'Create New Assessment'}
-                                action={
-                                    <IconButton onClick={() => setOpen(false)}>
-                                        <Close />
-                                    </IconButton>
-                                }
-                            />
-                            <CardContent>
-                                <Stepper nonLinear activeStep={activeStep}>
-                                    {steps.map((label, index) => (
-                                        <Step key={label}>
-                                            <StepButton color="inherit" onClick={handleStep(index)}>
-                                                {label}
-                                            </StepButton>
-                                        </Step>
-                                    ))}
-                                </Stepper>
-                                {error &&
-                                    <div className='error-text'>
-                                        <span>{error}</span>
-                                    </div>
-                                }
-                                {activeStep == 0 &&
-                                    <div className='form-info'>
-                                        <Field
-                                            name='siteId' label='Site' size='small'
-                                            component={Select}
-                                        >
-                                            <MenuItem value=''><em>Select a site...</em></MenuItem>
-                                            {sites ? sites.map(o => {
-                                                return (
-                                                    <MenuItem value={o.id} key={o.id}>
-                                                        {o.id} - {o.name}
-                                                    </MenuItem>
-                                                )
-                                            }) : 'No Sites. Please create a Site first.'}
-                                        </Field>
-                                        <Field
-                                            name='engagementId' label='Engagement' size='small'
-                                            component={Select}
-                                        >
-                                            <MenuItem value=''><em>Select an engagement...</em></MenuItem>
-                                            {engagements ? engagements.map(o => {
-                                                return (
-                                                    <MenuItem value={o.id} key={o.id}>
-                                                        {o.id} - {o.description}
-                                                    </MenuItem>
-                                                )
-                                            }) : 'No Engagements. Please create an Engagement first.'}
-                                        </Field>
-                                        <Field
-                                            name='startDate' label='Start Date' size='small' type='date'
-                                            component={TextField}
-                                        />
-                                        <Field
-                                            name='endDate' label='End Date' size='small' type='date'
-                                            component={TextField}
-                                        />
-                                        <Field
-                                            name='description' label='Description' size='small'
-                                            component={TextField}
-                                        />
-                                        <Field
-                                            name='pocId' label='Client POC' size='small'
-                                            component={Select}
-                                        >
-                                            <MenuItem value=''><em>Select a POC...</em></MenuItem>
-                                            {clientPOC ? clientPOC.map(o => {
-                                                return (
-                                                    <MenuItem value={o.id} key={o.id}>
-                                                        {o.first_name} {o.last_name} - {o.title}
-                                                    </MenuItem>
-                                                )
-                                            }) : 'No POCs.'}
-                                        </Field>
-                                    </div>
-                                }
-                                {activeStep == 1 &&
-                                    <div className='form-questions'>
-                                        <TableContainer component={Paper}>
-                                            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                                                <TableHead>
-                                                    <TableRow>
-                                                        <TableCell align="center">Question #</TableCell>
-                                                        <TableCell align="center">Filter</TableCell>
-                                                        <TableCell align="left">Content</TableCell>
-                                                    </TableRow>
-                                                </TableHead>
-                                                <TableBody>
-                                                    {existingQuestions && existingQuestions.map((q) => {
-                                                        return (
-                                                            <TableRow
-                                                                key={q.question.number}
-                                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                            >
-                                                                <TableCell align="center">
-                                                                    {q.question.number}
-                                                                </TableCell>
-                                                                <TableCell align="center">
-                                                                    <MuiSelect
-                                                                        size='small'
-                                                                        value={q.filter ? q.filter.id : -1}
-                                                                        onChange={(event) => {
-                                                                            const newArr = existingQuestions.map(o => {
-                                                                                if (o.question.id == q.question.id) {
-                                                                                    if (event.target.value == -1) {
-                                                                                        return {
-                                                                                            ...o,
-                                                                                            filter: null,
-                                                                                        }
-                                                                                    }
-                                                                                    const newFilter = o.question.Rating.find(o => o.filter_id == event.target.value);
-                                                                                    if (newFilter) {
-                                                                                        return {
-                                                                                            ...o,
-                                                                                            filter: newFilter.filter,
-                                                                                        }
-                                                                                    }
-                                                                                }
-                                                                                return o;
-                                                                            })
-                                                                            setExistingQuestions(newArr);
-                                                                        }}
-                                                                    >
-                                                                        <MenuItem value={-1}><em>Standard</em></MenuItem>
-                                                                        {q.question.Rating.map((o, i) => {
-                                                                            if (o.filter)
-                                                                                return (
-                                                                                    <MenuItem key={i} value={o.filter.id}>
-                                                                                        {titleCase(o.filter.type)}: {o.filter.name}
-                                                                                    </MenuItem>
-                                                                                );
-                                                                            return;
-                                                                        })}
-                                                                    </MuiSelect>
-                                                                </TableCell>
-                                                                <TableCell align="left">{q.question.question}</TableCell>
-                                                            </TableRow>
-                                                        )
-                                                    })}
-                                                    {newQuestions && newQuestions.map((q) => {
-                                                        const uniqueFilters = [...new Map(q.question.Rating.map(r => {
-                                                            return [r.filter?.type, r.filter]
-                                                        })).values()];
-                                                        return (
-                                                            <TableRow
-                                                                key={q.question.number}
-                                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                            >
-                                                                <TableCell align="center">
-                                                                    {q.question.number}
-                                                                </TableCell>
-                                                                <TableCell align="center">
-                                                                    <MuiSelect
-                                                                        size='small'
-                                                                        value={q.filterSelection}
-                                                                        onChange={(event) => {
-                                                                            const newArr = newQuestions.map(o => {
-                                                                                if (o.question.id == q.question.id) {
-                                                                                    return {
-                                                                                        ...o,
-                                                                                        filterSelection: Number(event.target.value),
-                                                                                    }
-                                                                                }
-                                                                                return o;
-                                                                            })
-                                                                            setNewQuestions(newArr);
-                                                                        }}
-                                                                    >
-                                                                        <MenuItem value={-1}><em>Standard</em></MenuItem>
-                                                                        {uniqueFilters.map((o, i) => {
-                                                                            if (o)
-                                                                                return (
-                                                                                    <MenuItem key={i} value={o.id}>
-                                                                                        {titleCase(o.type)}: {o.name}
-                                                                                    </MenuItem>
-                                                                                );
-                                                                            return;
-                                                                        })}
-                                                                    </MuiSelect>
-                                                                </TableCell>
-                                                                <TableCell align="left">{q.question.question}</TableCell>
-                                                            </TableRow>
-                                                        )
-                                                    })}
-                                                </TableBody>
-                                            </Table>
-                                        </TableContainer>
-                                        {addQuestion ?
-                                            <div className='questions-bank'>
-                                                {questions && questions.map((o, i) => {
-                                                    const existsA = existingQuestions.find(q => q.question.id == o.id);
-                                                    const existsB = newQuestions.find(q => q.question.id == o.id);
-                                                    if (existsA || existsB) return undefined;
+                    {(formikProps: FormikProps<FormValues>) => (
+                        <Form>
+                            <Card>
+                                <CardHeader
+                                    title={data ? 'Edit Assessment' : 'Create New Assessment'}
+                                    action={
+                                        <IconButton onClick={() => setOpen(false)}>
+                                            <Close />
+                                        </IconButton>
+                                    }
+                                />
+                                <CardContent>
+                                    <Stepper nonLinear activeStep={activeStep}>
+                                        {steps.map((label, index) => (
+                                            <Step key={label}>
+                                                <StepButton color="inherit" onClick={handleStep(index)}>
+                                                    {label}
+                                                </StepButton>
+                                            </Step>
+                                        ))}
+                                    </Stepper>
+                                    {error &&
+                                        <div className='error-text'>
+                                            <span>{error}</span>
+                                        </div>
+                                    }
+                                    {activeStep == 0 &&
+                                        <div className='form-info'>
+                                            <Field
+                                                name='siteId' label='Site' size='small'
+                                                component={Select}
+                                            >
+                                                <MenuItem value=''><em>Select a site...</em></MenuItem>
+                                                {sites && sites.map((site: Site) => {
                                                     return (
-                                                        <Typography
-                                                            key={i}
-                                                            className={selectedQuestion && selectedQuestion.id == o.id ? 'active' : ''}
-                                                            onClick={() => setSelectedQuestion(o)}
-                                                        >
-                                                            {o.number} - {o.question}
-                                                        </Typography>
+                                                        <MenuItem value={site.id} key={site.id}>
+                                                            {site.id} - {site.name}
+                                                        </MenuItem>
                                                     )
                                                 })}
-                                                <Button
-                                                    variant='contained'
-                                                    onClick={() => {
-                                                        const newArr = newQuestions;
-                                                        newArr.push({ question: selectedQuestion, filterSelection: -1 } as QuestionType)
-                                                        setSelectedQuestion(undefined);
-                                                        setNewQuestions(newArr);
-                                                        setAddQuestion(false);
-                                                    }}
-                                                >
-                                                    <Add />Add Question to Assessment
+                                            </Field>
+                                            <Field
+                                                name='engagementId' label='Engagement' size='small'
+                                                component={Select}
+                                            >
+                                                <MenuItem value=''><em>Select an engagement...</em></MenuItem>
+                                                {engagements && engagements.map((engagement: Engagement) => {
+                                                    return (
+                                                        <MenuItem value={engagement.id} key={engagement.id}>
+                                                            {engagement.id} - {engagement.description}
+                                                        </MenuItem>
+                                                    )
+                                                })}
+                                            </Field>
+                                            <Field
+                                                name='startDate' label='Start Date' size='small' type='date'
+                                                component={TextField}
+                                            />
+                                            <Field
+                                                name='endDate' label='End Date' size='small' type='date'
+                                                component={TextField}
+                                            />
+                                            <Field
+                                                name='description' label='Description' size='small'
+                                                component={TextField}
+                                            />
+                                            <Field
+                                                name='pocId' label='Client POC' size='small'
+                                                component={Select}
+                                            >
+                                                <MenuItem value=''><em>Select a POC...</em></MenuItem>
+                                                {clientPOC && clientPOC.map(poc => {
+                                                    return (
+                                                        <MenuItem value={poc.id} key={poc.id}>
+                                                            {poc.first_name} {poc.last_name} - {poc.title}
+                                                        </MenuItem>
+                                                    )
+                                                })}
+                                            </Field>
+                                        </div>
+                                    }
+                                    {activeStep == 1 &&
+                                        <div className='form-questions'>
+                                            <TableContainer component={Paper}>
+                                                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                                                    <TableHead>
+                                                        <TableRow>
+                                                            <TableCell align="center">Question #</TableCell>
+                                                            <TableCell align="center">Filter</TableCell>
+                                                            <TableCell align="left">Content</TableCell>
+                                                        </TableRow>
+                                                    </TableHead>
+                                                    <TableBody>
+                                                        {existingQuestions && existingQuestions.map((q) => {
+                                                            return (
+                                                                <TableRow
+                                                                    key={q.question.number}
+                                                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                                >
+                                                                    <TableCell align="center">
+                                                                        {q.question.number}
+                                                                    </TableCell>
+                                                                    <TableCell align="center">
+                                                                        <MuiSelect
+                                                                            size='small'
+                                                                            value={q.filter ? q.filter.id : -1}
+                                                                            onChange={(event) => {
+                                                                                const newArr = existingQuestions.map(o => {
+                                                                                    if (o.question.id == q.question.id) {
+                                                                                        if (event.target.value == -1) {
+                                                                                            return {
+                                                                                                ...o,
+                                                                                                filter: null,
+                                                                                            }
+                                                                                        }
+                                                                                        const newFilter = o.question.Rating.find(o => o.filter_id == event.target.value);
+                                                                                        if (newFilter) {
+                                                                                            return {
+                                                                                                ...o,
+                                                                                                filter: newFilter.filter,
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                    return o;
+                                                                                })
+                                                                                setExistingQuestions(newArr);
+                                                                            }}
+                                                                        >
+                                                                            <MenuItem value={-1}><em>Standard</em></MenuItem>
+                                                                            {q.question.Rating.map((o, i) => {
+                                                                                if (o.filter)
+                                                                                    return (
+                                                                                        <MenuItem key={i} value={o.filter.id}>
+                                                                                            {titleCase(o.filter.type)}: {o.filter.name}
+                                                                                        </MenuItem>
+                                                                                    );
+                                                                            })}
+                                                                        </MuiSelect>
+                                                                    </TableCell>
+                                                                    <TableCell align="left">{q.question.question}</TableCell>
+                                                                </TableRow>
+                                                            )
+                                                        })}
+                                                        {newQuestions && newQuestions.map((q) => {
+                                                            const uniqueFilters = [...new Map(q.question.Rating.map(r => {
+                                                                return [r.filter?.type, r.filter]
+                                                            })).values()];
+                                                            return (
+                                                                <TableRow
+                                                                    key={q.question.number}
+                                                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                                >
+                                                                    <TableCell align="center">
+                                                                        {q.question.number}
+                                                                    </TableCell>
+                                                                    <TableCell align="center">
+                                                                        <MuiSelect
+                                                                            size='small'
+                                                                            value={q.filterSelection}
+                                                                            onChange={(event) => {
+                                                                                const newArr = newQuestions.map(o => {
+                                                                                    if (o.question.id == q.question.id) {
+                                                                                        return {
+                                                                                            ...o,
+                                                                                            filterSelection: Number(event.target.value),
+                                                                                        }
+                                                                                    }
+                                                                                    return o;
+                                                                                })
+                                                                                setNewQuestions(newArr);
+                                                                            }}
+                                                                        >
+                                                                            <MenuItem value={-1}><em>Standard</em></MenuItem>
+                                                                            {uniqueFilters.map((o, i) => {
+                                                                                if (o)
+                                                                                    return (
+                                                                                        <MenuItem key={i} value={o.id}>
+                                                                                            {titleCase(o.type)}: {o.name}
+                                                                                        </MenuItem>
+                                                                                    );
+                                                                                return;
+                                                                            })}
+                                                                        </MuiSelect>
+                                                                    </TableCell>
+                                                                    <TableCell align="left">{q.question.question}</TableCell>
+                                                                </TableRow>
+                                                            )
+                                                        })}
+                                                    </TableBody>
+                                                </Table>
+                                            </TableContainer>
+                                            {addQuestion ?
+                                                <div className='questions-bank'>
+                                                    {questions && questions.map((o, i) => {
+                                                        const existsA = existingQuestions.find(q => q.question.id == o.id);
+                                                        const existsB = newQuestions.find(q => q.question.id == o.id);
+                                                        if (existsA || existsB) return undefined;
+                                                        return (
+                                                            <Typography
+                                                                key={i}
+                                                                className={selectedQuestion && selectedQuestion.id == o.id ? 'active' : ''}
+                                                                onClick={() => setSelectedQuestion(o)}
+                                                            >
+                                                                {o.number} - {o.question}
+                                                            </Typography>
+                                                        )
+                                                    })}
+                                                    <Button
+                                                        variant='contained'
+                                                        onClick={() => {
+                                                            const newArr = newQuestions;
+                                                            newArr.push({ question: selectedQuestion, filterSelection: -1 } as QuestionType)
+                                                            setSelectedQuestion(undefined);
+                                                            setNewQuestions(newArr);
+                                                            setAddQuestion(false);
+                                                        }}
+                                                    >
+                                                        <Add />Add Question to Assessment
+                                                    </Button>
+                                                </div> :
+                                                <Button variant='contained' onClick={() => { setAddQuestion(true) }}>
+                                                    <Add />Add Question
                                                 </Button>
-                                            </div> :
-                                            <Button variant='contained' onClick={() => { setAddQuestion(true) }}>
-                                                <Add />Add Question
-                                            </Button>
-                                        }
-                                    </div>
-                                }
-                            </CardContent>
-                            <CardActions>
-                                <Button variant='contained' color='error' onClick={() => setOpen(false)}>Cancel</Button>
-                                {data ?
-                                    <Button variant='contained' type='submit'>Save</Button> :
-                                    <Button variant='contained' type='submit' onClick={() => {
-                                        if (existingQuestions.length < 1 && newQuestions.length < 1) {
-                                            setError('Assessments must contain at least 1 question.');
-                                            return;
-                                        } else {
-                                            setError(undefined);
-                                        }
-                                    }}>Create</Button>
-                                }
-                            </CardActions>
-                        </Card>
-                    </Form>
+                                            }
+                                        </div>
+                                    }
+                                </CardContent>
+                                <CardActions>
+                                    <Button variant='contained' color='error' onClick={() => setOpen(false)}>Cancel</Button>
+                                    {data ?
+                                        <Button variant='contained' type='submit'>Save</Button> :
+                                        <Button variant='contained' type='submit' onClick={() => {
+                                            if (existingQuestions.length < 1 && newQuestions.length < 1) {
+                                                setError('Assessments must contain at least 1 question.');
+                                                return;
+                                            } else {
+                                                setError(undefined);
+                                            }
+                                        }}>Create</Button>
+                                    }
+                                </CardActions>
+                            </Card>
+                        </Form>
+                    )}
                 </Formik>
             </div>
         </Modal>
