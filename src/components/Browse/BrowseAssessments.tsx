@@ -110,7 +110,7 @@ const BrowseAssessments: React.FC<Props> = () => {
                 const existingClientPoc = e.EngagementPOC.find(o => o.poc.client_id);
                 const existingShabasPoc = e.EngagementPOC.find(o => !o.poc.client_id);
                 return (
-                    <Accordion key={i}>
+                    <Accordion key={i} defaultExpanded>
                         <AccordionSummary expandIcon={<ExpandMore />}>
                             <TableContainer>
                                 <Table sx={{ minWidth: 650 }} size="small">

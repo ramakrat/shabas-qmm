@@ -82,11 +82,28 @@ export const engagementRouter = createTRPCRouter({
                     EngagementPOC: { include: { poc: true } },
                 },
                 where: {
-                    Assessment: {
-                        some: {
-                            OR: input.filters
+                    OR: [{
+                        Assessment: {
+                            some: {
+                                OR: input.filters
+                            }
                         }
-                    }
+                    }, {
+                        NOT: {
+                            Assessment: {
+                                some: {
+                                    AND: [
+                                        { status: 'created' },
+                                        { status: 'ongoing' },
+                                        { status: 'assessor-review' },
+                                        { status: 'oversight' },
+                                        { status: 'client-review' },
+                                        { status: 'completed' },
+                                    ]
+                                }
+                            }
+                        }
+                    }]
                 }
             });
         }),
