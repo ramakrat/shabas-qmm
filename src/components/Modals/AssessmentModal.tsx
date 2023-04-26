@@ -108,6 +108,9 @@ const AssessmentModal: React.FC<Props> = (props) => {
         setError(undefined);
         setActiveStep(0);
         setAddQuestion(false);
+    }, [open])
+
+    React.useEffect(() => {
         if (data) {
             setAssessment({
                 description: data.description,
