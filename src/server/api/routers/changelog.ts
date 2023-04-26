@@ -7,8 +7,8 @@ import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/
 const inputType = z.object({
     id: z.number().optional(),
     field: z.string(),
-    former_value: z.string(),
-    new_value: z.string(),
+    former_value: z.string().optional(),
+    new_value: z.string().optional(),
     question_id: z.number().optional(),
     assessment_question_id: z.number().optional(),
 })
