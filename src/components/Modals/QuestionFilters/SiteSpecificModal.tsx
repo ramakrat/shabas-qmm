@@ -17,7 +17,7 @@ interface FormValues {
 }
 
 const validationSchema = yup.object().shape({
-    name: yup.string().required("Required")
+    siteId: yup.string().required("Required")
 });
 
 const SiteSpecificModal: React.FC<Props> = (props) => {
@@ -26,7 +26,7 @@ const SiteSpecificModal: React.FC<Props> = (props) => {
 
     // =========== Form Context ===========
 
-    const sites = api.site.getAll.useQuery(true).data;
+    const sites = api.site.getAllNonFilter.useQuery(true).data;
 
     // =========== Submission Management ===========
 
