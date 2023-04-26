@@ -93,6 +93,7 @@ const QuestionsSidebar: React.FC<Props> = (props) => {
                     <Button
                         variant='contained'
                         onClick={() => submitAssessment()}
+                        disabled={questions.length < 1}
                     >
                         Submit Assessment
                     </Button>
