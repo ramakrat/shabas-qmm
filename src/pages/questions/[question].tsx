@@ -182,7 +182,6 @@ const Question: NextPage = () => {
     }, [referencesData])
 
     React.useEffect(() => {
-        console.log(ratingData)
         if (ratingData && ratingData.length > 1) {
             setRatings(ratingData)
         } else {
@@ -262,7 +261,6 @@ const Question: NextPage = () => {
             }
             return o;
         }) as (Rating[] | RatingType[]);
-        console.log(newArr)
         setRatings(newArr);
     }
 
@@ -273,10 +271,12 @@ const Question: NextPage = () => {
 
     const createGuides = api.interviewGuide.createArray.useMutation();
     const updateGuide = api.interviewGuide.update.useMutation();
+    const updateGuides = api.interviewGuide.updateArray.useMutation();
     const deleteGuide = api.interviewGuide.delete.useMutation();
 
     const createReferences = api.reference.createArray.useMutation();
     const updateReference = api.reference.update.useMutation();
+    const updateReferences = api.reference.updateArray.useMutation();
     const deleteReference = api.reference.delete.useMutation();
 
     const createSME = api.sme.create.useMutation();
@@ -284,6 +284,7 @@ const Question: NextPage = () => {
 
     const createRatings = api.rating.createArray.useMutation();
     const updateRating = api.rating.update.useMutation();
+    const updateRatings = api.rating.updateArray.useMutation();
 
     const createChangelog = api.changelog.create.useMutation();
 
@@ -313,19 +314,20 @@ const Question: NextPage = () => {
 
     const compareChanges = (changed: any, former: any) => {
         for (const prop in changed) {
-            if (prop == 'created_at' || prop == 'updated_at') return;
-            if (Object.prototype.hasOwnProperty.call(changed, prop)) {
-                if (Object.prototype.hasOwnProperty.call(former, prop)) {
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-                    if (changed[prop] != former[prop]) {
-                        createChangelog.mutate({
-                            field: prop,
-                            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-                            former_value: former[prop].toString(),
-                            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-                            new_value: changed[prop].toString(),
-                            question_id: Number(data?.id),
-                        })
+            if (prop != 'id' && prop != 'created_at' && prop != 'updated_at') {
+                if (Object.prototype.hasOwnProperty.call(changed, prop)) {
+                    if (Object.prototype.hasOwnProperty.call(former, prop)) {
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                        if (changed[prop] != former[prop]) {
+                            createChangelog.mutate({
+                                field: prop,
+                                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+                                former_value: former[prop].toString(),
+                                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+                                new_value: changed[prop].toString(),
+                                question_id: Number(data?.id),
+                            })
+                        }
                     }
                 }
             }
@@ -338,6 +340,37 @@ const Question: NextPage = () => {
         if (data) {
             let succeeded = true;
 
+            const mappedExistingGuides = existingGuide.map(o => {
+                return {
+                    id: o.id,
+                    active: true,
+                    interview_question: o.interview_question,
+                    question_id: data.id,
+                    site_id: 1,
+                    filter_id: filterSelection ? filterSelection.id : 1,
+                }
+            })
+
+            const mappedExistingReferences = newReferences.map(o => {
+                return {
+                    id: o.id,
+                    citation: o.citation,
+                    question_id: data.id,
+                }
+            })
+
+            const mappedExistingRatings = ratings.map(r => {
+                const o = r as Rating;
+                return {
+                    id: o.id,
+                    active: true,
+                    level_number: o.level_number.toString(),
+                    criteria: o.criteria,
+                    progression_statement: o.progression_statement,
+                    question_id: data.id,
+                    filter_id: (filterType != 'default' && filterSelection) ? filterSelection.id : undefined,
+                }
+            })
 
             // ----------- Question -----------
 
@@ -363,27 +396,19 @@ const Question: NextPage = () => {
 
             // ----------- Interview Guide -----------
 
-            existingGuide.forEach((o, i) => {
-                updateGuide.mutate({
-                    id: o.id,
-                    active: true,
-                    interview_question: o.interview_question,
-                    question_id: data.id,
-                    site_id: 1,
-                    filter_id: filterSelection ? filterSelection.id : 1,
-                }, {
-                    onSuccess(data) {
-                        // createChangelog.mutate({
-                        //     field: 
-                        // })
-                        compareChanges(data, initialValues().guides)
-                    },
-                    onError(err) {
-                        succeeded = false;
-                        console.log(err);
-                    }
-                })
-            })
+            updateGuides.mutate(mappedExistingGuides, {
+                onSuccess() {
+                    mappedExistingGuides.forEach(g => {
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+                        const former = initialValues().guides.find(formerObject => formerObject.id == g.id);
+                        if (former) compareChanges(g, former);
+                    })
+                },
+                onError(err) {
+                    succeeded = false;
+                    console.log(err);
+                }
+            });
             createGuides.mutate(newGuide.map(o => {
                 return {
                     active: true,
@@ -417,24 +442,19 @@ const Question: NextPage = () => {
 
             // ----------- Reference -----------
 
-            existingReferences.forEach(o => {
-                updateReference.mutate({
-                    id: o.id,
-                    citation: o.citation,
-                    question_id: data.id,
-                }, {
-                    onSuccess(data) {
-                        // createChangelog.mutate({
-                        //     field: 
-                        // })
-                        compareChanges(data, initialValues().references)
-                    },
-                    onError(err) {
-                        succeeded = false;
-                        console.log(err);
-                    }
-                })
-            })
+            updateReferences.mutate(mappedExistingReferences, {
+                onSuccess() {
+                    mappedExistingReferences.forEach(g => {
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+                        const former = initialValues().references.find(formerObject => formerObject.id == g.id);
+                        if (former) compareChanges(g, former);
+                    })
+                },
+                onError(err) {
+                    succeeded = false;
+                    console.log(err);
+                }
+            });
             createReferences.mutate(newReferences.map(o => {
                 return {
                     citation: o.citation,
@@ -466,31 +486,23 @@ const Question: NextPage = () => {
             // ----------- Rating -----------
 
             if (ratingData && ratingData.length > 1) {
-                (ratings as Rating[]).forEach(o => {
-                    updateRating.mutate({
-                        id: o.id,
-                        active: true,
-                        level_number: o.level_number.toString(),
-                        criteria: o.criteria,
-                        progression_statement: o.progression_statement,
-                        question_id: data.id,
-                        filter_id: (filterType != 'default' && filterSelection) ? filterSelection.id : undefined,
-                    }, {
-                        onSuccess(data) {
-                            // createChangelog.mutate({
-                            //     field: 
-                            // })
-                            compareChanges(data, initialValues().sme)
-                        },
-                        onError(err) {
-                            succeeded = false;
-                            console.log(err);
-                        }
-                    })
-                })
+                updateRatings.mutate(mappedExistingRatings, {
+                    onSuccess() {
+                        mappedExistingRatings.forEach(g => {
+                            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+                            const former = initialValues().ratings.find(formerObject => formerObject.id == g.id);
+                            console.log(former)
+                            console.log(g)
+                            if (former) compareChanges(g, former);
+                        })
+                    },
+                    onError(err) {
+                        succeeded = false;
+                        console.log(err);
+                    }
+                });
             } else {
                 createRatings.mutate(ratings.map(o => {
-                    console.log(o)
                     return {
                         active: true,
                         level_number: o.level_number.toString(),
@@ -518,11 +530,8 @@ const Question: NextPage = () => {
                     email: email,
                     question_id: data.id,
                 }, {
-                    onSuccess(data) {
-                        // createChangelog.mutate({
-                        //     field: 
-                        // })
-                        compareChanges(data, initialValues().sme)
+                    onSuccess(success) {
+                        compareChanges(success, initialValues().sme)
                     },
                     onError(err) {
                         succeeded = false;
@@ -545,7 +554,7 @@ const Question: NextPage = () => {
             }
 
             if (succeeded) {
-                Router.reload();
+                // Router.reload();
             }
         }
     }
@@ -937,7 +946,7 @@ const Question: NextPage = () => {
                         </Grid>
                         <Grid item xs={12}>
                             <Card>
-                                <ChangelogTable changelogs={fullChangelog} />
+                                <ChangelogTable changelogs={fullChangelog} fileName={`Question${data ? data.id : ''} Changelog`} />
                             </Card>
                         </Grid>
                     </Grid>

@@ -63,8 +63,8 @@ export const interviewGuideRouter = createTRPCRouter({
         }),
     update: publicProcedure
         .input(inputType)
-        .mutation(({ input, ctx }) => {
-            return ctx.prisma.interviewGuide.update({
+        .mutation(async ({ input, ctx }) => {
+            return await ctx.prisma.interviewGuide.update({
                 where: { id: input.id },
                 data: {
                     active: input.active,
@@ -76,6 +76,39 @@ export const interviewGuideRouter = createTRPCRouter({
                     updated_by: '',
                 },
             })
+        }),
+    updateArray: publicProcedure
+        .input(z.array(inputType))
+        .mutation(async ({ input, ctx }) => {
+            for (const o of input) {
+                if (o.interview_question != '') {
+                    try {
+                        await ctx.prisma.interviewGuide.update({
+                            where: { id: o.id },
+                            data: {
+                                active: true,
+                                interview_question: o.interview_question,
+                                question_id: o.question_id,
+                                site_id: o.site_id,
+                                filter_id: o.filter_id,
+                                created_by: '',
+                                updated_by: '',
+                            }
+                        })
+                    } catch (e) {
+                        if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                            // The .code property can be accessed in a type-safe manner
+                            if (e.code === 'P2002') {
+                                console.log(
+                                    'There is a unique constraint violation.'
+                                )
+                            }
+                        }
+                        throw e;
+                    }
+                }
+            }
+            return undefined;
         }),
     delete: publicProcedure
         .input(z.number())
