@@ -25,10 +25,10 @@ export const Header: React.FC<Props> = (props) => {
     return (
         <div className='header'>
             <div className='nav-items'>
-                <Link href={'/'} className='logo'>
+                <Link href={'/dashboard/clients'} className='logo'>
                     <Image src={logo} alt={'Shabas Logo'} height={50} />
                 </Link>
-                <Link href={'/'} className={active == 'dashboard' ? 'active' : ''}>
+                <Link href={'/dashboard/clients'} className={active == 'dashboard' ? 'active' : ''}>
                     <Typography>
                         Dashboard
                     </Typography>
