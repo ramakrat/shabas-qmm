@@ -1,15 +1,25 @@
 .browse-table {
     box-shadow: 0px 0px 0px 1px #ADADAD;
 
+
     .MuiTableHead-root {
         background-color: #515151;
 
-        .MuiTableCell-root {
+        th {
+            border: none !important;
+            padding: 8px 16px !important;
+            line-height: 1.35;
             color: white;
+            font-size: 0.8rem;
             font-family: 'Plus Jakarta Sans';
             font-weight: 600;
             text-transform: uppercase;
-            box-shadow: 0px 0px 0px 0.5px #393939;
+            // box-shadow: 0px 0px 0px 0.5px #393939;
+        }
+
+        button {
+            padding: 6px;
+            margin: -8px;
         }
     }
 
@@ -19,11 +29,10 @@
         td {
             // outline: 0.5px solid #ADADAD;
             box-shadow: 0px 0px 0px 0.5px #ADADAD;
-            border: none;
-            outline: none;
+            border: none !important;
 
             &.null {
-                background-color: #F2F2F2;
+                background-color: #f9f9f9;
             }
         }
 
@@ -42,4 +51,31 @@
         }
     }
 
+    &.expandable {
+        td {
+            border-radius: 0px !important;
+        }
+
+        .child-table {
+            padding: 0px;
+
+            .MuiTableContainer-root {
+                border-radius: 0px !important;
+                box-shadow: none !important;
+            }
+
+            .MuiTableHead-root {
+                background-color: #E9E9E9;
+
+                th {
+                    color: #666666;
+                    font-family: 'Plus Jakarta Sans';
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    box-shadow: 0px 0px 0px 0.5px #ADADAD;
+                }
+            }
+        }
+
+    }
 }

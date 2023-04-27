@@ -9,6 +9,8 @@ import { api } from "~/utils/api";
 import AssessmentModal from "./Modals/AssessmentModal";
 import EngagementModal from "./Modals/EngagementModal";
 import { titleCase } from "~/utils/utils";
+import ExpandableBrowseTable, { type TableColumn } from "../Common/ExpandableBrowseTable";
+import BrowseTable from "../Common/BrowseTable";
 
 interface Props {
     engagementModal: boolean;
@@ -16,6 +18,118 @@ interface Props {
     assessmentModal: boolean;
     setAssessmentModal: (open: boolean) => void;
 }
+
+interface EngagementTableData {
+    id: number;
+    client: string;
+    startDate: Date;
+    endDate: Date;
+    clientPoc: string;
+    shabasPoc: string;
+    status: string;
+    actions: React.ReactNode;
+    child: React.ReactNode;
+}
+
+const engagementColumns: TableColumn[] = [{
+    type: 'id',
+    displayValue: 'Engagement ID',
+    align: 'center',
+}, {
+    type: 'client',
+    displayValue: 'Client',
+    align: 'left',
+}, {
+    type: 'startDate',
+    displayValue: 'Start Date',
+    align: 'left',
+    format: 'date',
+}, {
+    type: 'endDate',
+    displayValue: 'End Date',
+    align: 'left',
+    format: 'date',
+}, {
+    type: 'clientPoc',
+    displayValue: 'Client POC',
+    align: 'left',
+}, {
+    type: 'shabasPoc',
+    displayValue: 'Shabas POC',
+    align: 'left',
+}, {
+    type: 'status',
+    displayValue: 'Status',
+    align: 'left',
+    format: 'status',
+}, {
+    type: 'actions',
+    displayValue: 'Actions',
+    align: 'center',
+    format: 'jsx-element',
+}];
+
+interface AssessmentTableData {
+    id: number;
+    site: string;
+    startDate: Date;
+    endDate: Date;
+    clientPoc: string;
+    assessors: string;
+    status: string;
+    actions: React.ReactNode;
+}
+
+const assessmentColumns: TableColumn[] = [{
+    type: 'id',
+    displayValue: 'Assessment ID',
+    align: 'center',
+}, {
+    type: 'site',
+    displayValue: 'Site',
+    align: 'left',
+}, {
+    type: 'startDate',
+    displayValue: 'Start Date',
+    align: 'left',
+    format: 'date',
+}, {
+    type: 'endDate',
+    displayValue: 'End Date',
+    align: 'left',
+    format: 'date',
+}, {
+    type: 'clientPoc',
+    displayValue: 'Client POC',
+    align: 'left',
+}, {
+    type: 'assessors',
+    displayValue: 'Assessors',
+    align: 'left',
+}, {
+    type: 'status',
+    displayValue: 'Status',
+    align: 'left',
+    format: 'status',
+}, {
+    type: 'actions',
+    displayValue: 'Actions',
+    align: 'center',
+    format: 'jsx-element',
+}];
+
+type EngagementAssessmentType = (
+    Engagement & {
+        client: Client;
+        POC: POC[];
+        EngagementPOC: (EngagementPOC & {
+            poc: POC;
+        })[];
+        Assessment: (Assessment & {
+            poc: POC | null;
+        })[];
+    }
+)
 
 const BrowseAssessments: React.FC<Props> = () => {
 
@@ -69,6 +183,61 @@ const BrowseAssessments: React.FC<Props> = () => {
     });
     const assessmentStatusCounts = api.assessment.getStatusCounts.useQuery(assessmentModal).data;
 
+    const convertTableData = (data?: EngagementAssessmentType[]) => {
+        if (data) {
+            const newData: EngagementTableData[] = [];
+            data.forEach(obj => {
+
+                const convertAssessmentTableData = (data?: (Assessment & { poc: POC | null; })[]) => {
+                    if (data) {
+                        const newAssessmentData: AssessmentTableData[] = [];
+                        data.forEach(d => {
+                            const actions = (
+                                <IconButton onClick={() => { setAssessmentData(d); setAssessmentModal(true) }}>
+                                    <Edit fontSize='small' />
+                                </IconButton>
+                            )
+                            newAssessmentData.push({
+                                id: d.id,
+                                site: d.site_id.toString(),
+                                startDate: d.start_date,
+                                endDate: d.end_date,
+                                clientPoc: d.poc ? `${d.poc.first_name} ${d.poc.last_name}` : '',
+                                assessors: '',
+                                status: d.status,
+                                actions: actions,
+                            })
+                        })
+                        return newAssessmentData;
+                    }
+                }
+
+                const existingClientPoc = obj.EngagementPOC.find(o => o.poc.client_id);
+                const existingShabasPoc = obj.EngagementPOC.find(o => !o.poc.client_id);
+                const actions = (
+                    <IconButton onClick={() => { setEngagementData(obj); setEngagementModal(true) }}>
+                        <Edit fontSize='small' />
+                    </IconButton>
+                )
+
+                newData.push({
+                    id: obj.id,
+                    client: `${obj.client_id} - ${obj.client.name}`,
+                    startDate: obj.start_date,
+                    endDate: obj.end_date,
+                    clientPoc: existingClientPoc ? `${existingClientPoc.poc.first_name} ${existingClientPoc.poc.last_name}` : '',
+                    shabasPoc: existingShabasPoc ? `${existingShabasPoc.poc.first_name} ${existingShabasPoc.poc.last_name}` : '',
+                    status: obj.status,
+                    actions: actions,
+                    child: obj.Assessment.length > 0 && <BrowseTable
+                        dataList={convertAssessmentTableData(obj.Assessment) ?? []}
+                        tableInfoColumns={assessmentColumns}
+                    />
+                })
+            })
+            return newData;
+        }
+    }
 
     return (
         <>
@@ -106,6 +275,10 @@ const BrowseAssessments: React.FC<Props> = () => {
                     <span className='count'>{assessmentStatusCounts.completed}</span>
                 </div>
             </div>}
+            <ExpandableBrowseTable
+                dataList={convertTableData(data) ?? []}
+                tableInfoColumns={engagementColumns}
+            />
             {data && data.map((e, i) => {
                 const existingClientPoc = e.EngagementPOC.find(o => o.poc.client_id);
                 const existingShabasPoc = e.EngagementPOC.find(o => !o.poc.client_id);
