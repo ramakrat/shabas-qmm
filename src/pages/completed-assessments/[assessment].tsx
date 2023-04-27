@@ -13,7 +13,7 @@ import { FileDownload, Info } from '@mui/icons-material';
 
 import { api } from "~/utils/api";
 import Layout from "~/components/Layout/Layout";
-import QuestionsSidebar from '~/components/Assessment/QuestionsSidebar';
+import QuestionsSidebar from '~/components/Question/QuestionsSidebar';
 import QuestionContext from '~/components/Question/QuestionContext';
 import Select from '~/components/Form/Select';
 import ChangelogTable from '~/components/Browse/ChangelogTable';
