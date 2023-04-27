@@ -1,14 +1,54 @@
 import React from "react";
-import type { Site } from "@prisma/client";
-import { Button, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import type { Client, Site } from "@prisma/client";
+
+import { Button, IconButton } from "@mui/material";
 import { Add, Edit } from "@mui/icons-material";
+
 import { api } from "~/utils/api";
 import SiteModal from "./Modals/SiteModal";
+import BrowseTable, { type TableColumn } from "../Common/BrowseTable";
 
 interface Props {
     siteModal: boolean;
     setSiteModal: (open: boolean) => void;
 }
+
+interface TableData {
+    id: number;
+    client: string;
+    name: string;
+    address: React.ReactNode;
+    description: string;
+    actions: React.ReactNode;
+}
+
+const columns: TableColumn[] = [{
+    type: 'id',
+    displayValue: 'Site ID',
+    align: 'center',
+}, {
+    type: 'client',
+    displayValue: 'Client',
+    align: 'left',
+}, {
+    type: 'name',
+    displayValue: 'Name',
+    align: 'center',
+}, {
+    type: 'address',
+    displayValue: 'Address',
+    align: 'left',
+    format: 'jsx-element',
+}, {
+    type: 'description',
+    displayValue: 'Description',
+    align: 'left',
+}, {
+    type: 'actions',
+    displayValue: 'Actions',
+    align: 'center',
+    format: 'jsx-element',
+}];
 
 const BrowseSites: React.FC<Props> = () => {
 
@@ -19,6 +59,34 @@ const BrowseSites: React.FC<Props> = () => {
 
     // TODO: Don't run query unless modal closed
     const sites = api.site.getAll.useQuery(siteModal).data;
+
+    const convertTableData = (data?: (Site & { client: Client })[]) => {
+        if (data) {
+            const newData: TableData[] = [];
+            data.forEach(obj => {
+                const address = (
+                    <div>
+                        {obj.street_address}<br />
+                        {obj.city} {obj.state}, {obj.zip_code}
+                    </div>
+                )
+                const actions = (
+                    <IconButton onClick={() => { setSiteData(obj); setSiteModal(true) }}>
+                        <Edit fontSize='small' />
+                    </IconButton>
+                )
+                newData.push({
+                    id: obj.id,
+                    client: `${obj.client_id} - ${obj.client.name}`,
+                    name: obj.name,
+                    address: address,
+                    description: obj.description,
+                    actions: actions,
+                })
+            })
+            return newData;
+        }
+    }
 
     return (
         <>
@@ -31,52 +99,10 @@ const BrowseSites: React.FC<Props> = () => {
                     New Site
                 </Button>
             </div>
-            <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} size="small">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell align="center">Site ID</TableCell>
-                            <TableCell align="left">Client</TableCell>
-                            <TableCell align="left">Name</TableCell>
-                            <TableCell align="left">Address</TableCell>
-                            <TableCell align="left">Description</TableCell>
-                            <TableCell align="center">Edit</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {sites && sites.map((data, i) => {
-                            return (
-                                <TableRow
-                                    key={i}
-                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                >
-                                    <TableCell align="center">
-                                        {data.id}
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        {data.client_id} -  {data.client.name}
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        {data.name}
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        {data.street_address}<br />
-                                        {data.city} {data.state}, {data.zip_code}
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        {data.description}
-                                    </TableCell>
-                                    <TableCell align="center">
-                                        <IconButton onClick={() => { setSiteData(data); setSiteModal(true) }}>
-                                            <Edit fontSize='small' />
-                                        </IconButton>
-                                    </TableCell>
-                                </TableRow>
-                            )
-                        })}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <BrowseTable
+                dataList={convertTableData(sites) ?? []}
+                tableInfoColumns={columns}
+            />
             <SiteModal open={siteModal} setOpen={setSiteModal} data={siteData} />
         </>
     );

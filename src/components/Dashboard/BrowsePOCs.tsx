@@ -1,9 +1,12 @@
 import React from "react";
 import type { Client, Engagement, POC, Site, User } from "@prisma/client";
-import { Button, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+
+import { Button, IconButton } from "@mui/material";
 import { Add, Edit } from "@mui/icons-material";
+
 import { api } from "~/utils/api";
 import POCModal from "./Modals/POCModal";
+import BrowseTable, { type TableColumn } from "../Common/BrowseTable";
 
 interface Props {
     pocModal: boolean;
@@ -18,6 +21,58 @@ type PocType = (
         user: User | null;
     }
 )
+
+interface TableData {
+    id: number;
+    type: string;
+    typeReference: string;
+    name: string;
+    title: React.ReactNode;
+    workPhone: string;
+    mobilePhone: string;
+    email: string;
+    actions: React.ReactNode;
+}
+
+const columns: TableColumn[] = [{
+    type: 'id',
+    displayValue: 'POC ID',
+    align: 'center',
+}, {
+    type: 'type',
+    displayValue: 'Type',
+    align: 'center',
+}, {
+    type: 'typeReference',
+    displayValue: 'Type Reference',
+    align: 'center',
+}, {
+    type: 'name',
+    displayValue: 'Name',
+    align: 'center',
+}, {
+    type: 'title',
+    displayValue: 'Title',
+    align: 'center',
+}, {
+    type: 'workPhone',
+    displayValue: 'Work Phone',
+    align: 'center',
+}, {
+    type: 'mobilePhone',
+    displayValue: 'Mobile Phone',
+    align: 'center',
+}, {
+    type: 'email',
+    displayValue: 'Email',
+    align: 'center',
+}, {
+    type: 'actions',
+    displayValue: 'Actions',
+    align: 'center',
+    format: 'jsx-element',
+}];
+
 
 const BrowsePOCs: React.FC<Props> = () => {
 
@@ -44,13 +99,38 @@ const BrowsePOCs: React.FC<Props> = () => {
         if (object.Client) {
             return object.Client.name;
         } else if (object.engagement) {
-            return object.engagement.id;
+            return object.engagement.id.toString();
         } else if (object.site) {
             return object.site.name;
         } else if (object.user) {
             return object.user.first_name + ' ' + object.user.last_name;
         }
         return undefined;
+    }
+
+    const convertTableData = (data?: PocType[]) => {
+        if (data) {
+            const newData: TableData[] = [];
+            data.forEach(obj => {
+                const actions = (
+                    <IconButton onClick={() => { setPOCData(obj); setPOCModal(true) }}>
+                        <Edit fontSize='small' />
+                    </IconButton>
+                )
+                newData.push({
+                    id: obj.id,
+                    type: renderType(obj),
+                    typeReference: renderTypeReference(obj) ?? '',
+                    name: `${obj.first_name} ${obj.last_name}`,
+                    title: obj.title,
+                    workPhone: obj.work_phone,
+                    mobilePhone: obj.mobile_phone,
+                    email: obj.email,
+                    actions: actions,
+                })
+            })
+            return newData;
+        }
     }
 
     return (
@@ -64,63 +144,10 @@ const BrowsePOCs: React.FC<Props> = () => {
                     New POC
                 </Button>
             </div>
-            <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} size="small">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell align="center">POC ID</TableCell>
-                            <TableCell align="left">Type</TableCell>
-                            <TableCell align="left">Type Reference</TableCell>
-                            <TableCell align="left">Name</TableCell>
-                            <TableCell align="left">Title</TableCell>
-                            <TableCell align="left">Work Phone</TableCell>
-                            <TableCell align="left">Mobile Phone</TableCell>
-                            <TableCell align="left">Email</TableCell>
-                            <TableCell align="center">Edit</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {pocs && pocs.map((data, i) => {
-                            return (
-                                <TableRow
-                                    key={i}
-                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                >
-                                    <TableCell align="center">
-                                        {data.id}
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        {renderType(data)}
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        {renderTypeReference(data)}
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        {data.first_name} {data.last_name}
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        {data.title}
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        {data.work_phone}
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        {data.mobile_phone}
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        {data.email}
-                                    </TableCell>
-                                    <TableCell align="center">
-                                        <IconButton onClick={() => { setPOCData(data); setPOCModal(true) }}>
-                                            <Edit fontSize='small' />
-                                        </IconButton>
-                                    </TableCell>
-                                </TableRow>
-                            )
-                        })}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <BrowseTable
+                dataList={convertTableData(pocs) ?? []}
+                tableInfoColumns={columns}
+            />
             <POCModal open={pocModal} setOpen={setPOCModal} data={pocData} />
         </>
     );

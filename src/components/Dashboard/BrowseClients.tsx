@@ -1,14 +1,49 @@
 import React from "react";
 import type { Client } from "@prisma/client";
-import { Button, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+
+import { Button, IconButton } from "@mui/material";
 import { Add, Edit } from "@mui/icons-material";
+
 import { api } from "~/utils/api";
 import ClientModal from "./Modals/ClientModal";
+import BrowseTable, { type TableColumn } from "../Common/BrowseTable";
 
 interface Props {
     clientModal: boolean;
     setClientModal: (open: boolean) => void;
 }
+
+interface TableData {
+    id: number;
+    name: string;
+    address: React.ReactNode;
+    description: string;
+    actions: React.ReactNode;
+}
+
+const columns: TableColumn[] = [{
+    type: 'id',
+    displayValue: 'Client ID',
+    align: 'center',
+}, {
+    type: 'name',
+    displayValue: 'Name',
+    align: 'left',
+}, {
+    type: 'address',
+    displayValue: 'Address',
+    align: 'left',
+    format: 'jsx-element',
+}, {
+    type: 'description',
+    displayValue: 'Description',
+    align: 'left',
+}, {
+    type: 'actions',
+    displayValue: 'Actions',
+    align: 'center',
+    format: 'jsx-element',
+}];
 
 const BrowseClients: React.FC<Props> = () => {
 
@@ -21,6 +56,33 @@ const BrowseClients: React.FC<Props> = () => {
     // TODO: Don't run query unless modal closed
     const clients = api.client.getAll.useQuery(clientModal).data;
 
+    const convertTableData = (data?: Client[]) => {
+        if (data) {
+            const newData: TableData[] = [];
+            data.forEach(obj => {
+                const address = (
+                    <div>
+                        {obj.street_address}<br />
+                        {obj.city} {obj.state}, {obj.zip_code}
+                    </div>
+                )
+                const actions = (
+                    <IconButton onClick={() => { setClientData(obj); setClientModal(true) }}>
+                        <Edit fontSize='small' />
+                    </IconButton>
+                )
+                newData.push({
+                    id: obj.id,
+                    name: obj.name,
+                    address: address,
+                    description: obj.description,
+                    actions: actions,
+                })
+            })
+            return newData;
+        }
+    }
+
     return (
         <>
             <div className='browse-add'>
@@ -32,48 +94,10 @@ const BrowseClients: React.FC<Props> = () => {
                     New Client
                 </Button>
             </div>
-            <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} size="small">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell align="center">Client ID</TableCell>
-                            <TableCell align="left">Name</TableCell>
-                            <TableCell align="left">Address</TableCell>
-                            <TableCell align="left">Description</TableCell>
-                            <TableCell align="center">Edit</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {clients && clients.map((data, i) => {
-                            return (
-                                <TableRow
-                                    key={i}
-                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                >
-                                    <TableCell align="center">
-                                        {data.id}
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        {data.name}
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        {data.street_address}<br />
-                                        {data.city} {data.state}, {data.zip_code}
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        {data.description}
-                                    </TableCell>
-                                    <TableCell align="center">
-                                        <IconButton onClick={() => { setClientData(data); setClientModal(true) }}>
-                                            <Edit fontSize='small' />
-                                        </IconButton>
-                                    </TableCell>
-                                </TableRow>
-                            )
-                        })}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <BrowseTable
+                dataList={convertTableData(clients) ?? []}
+                tableInfoColumns={columns}
+            />
             <ClientModal open={clientModal} setOpen={setClientModal} data={clientData} />
         </>
     );

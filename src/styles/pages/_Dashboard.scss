@@ -14,15 +14,10 @@
     .MuiAccordionSummary-root {
         margin: 0px;
         padding: 0px;
-        // border: 2px solid palette(secondary, light);
-        // border: 2px solid palette(greyscale, 300);
-        // border-radius: shape(borderRadius) shape(borderRadius) 0px 0px;
 
         .MuiAccordionSummary-expandIconWrapper {
             padding: 10px;
         }
-
-
     }
 
     .MuiAccordionSummary-content {
@@ -53,16 +48,7 @@
             .MuiTypography-root:last-child {
                 padding: 8px 0px;
             }
-
         }
-    }
-
-    // =========== TABLE ===========
-
-    .MuiTableCell-head {
-        // color: palette(secondary, dark);
-        font-weight: 600;
-        text-transform: uppercase;
     }
 
     // =========== OTHER ===========

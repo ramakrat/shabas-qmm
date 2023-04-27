@@ -1,0 +1,22 @@
+.browse-table {
+    .MuiTableHead-root {
+        background-color: #515151;
+
+        .MuiTableCell-root {
+            color: white;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+    }
+
+    .MuiTableBody-root {
+        .MuiTableCell-root {
+            border: 0.5px solid #ADADAD;
+
+            &.null {
+                background-color: #F2F2F2;
+            }
+        }
+    }
+
+}
