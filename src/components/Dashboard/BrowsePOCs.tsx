@@ -76,7 +76,6 @@ const BrowsePOCs: React.FC<Props> = () => {
                             <TableCell align="left">Work Phone</TableCell>
                             <TableCell align="left">Mobile Phone</TableCell>
                             <TableCell align="left">Email</TableCell>
-                            <TableCell align="left">Staff</TableCell>
                             <TableCell align="center">Edit</TableCell>
                         </TableRow>
                     </TableHead>
@@ -110,9 +109,6 @@ const BrowsePOCs: React.FC<Props> = () => {
                                     </TableCell>
                                     <TableCell align="left">
                                         {data.email}
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        {data.staff}
                                     </TableCell>
                                     <TableCell align="center">
                                         <IconButton onClick={() => { setPOCData(data); setPOCModal(true) }}>
