@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { type NextPage } from "next";
-import { useRouter } from 'next/router';
 import Link from 'next/link';
 
 import { Button, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
@@ -12,13 +11,7 @@ import QuestionModal from '~/components/Question/QuestionModal';
 
 const Question: NextPage = () => {
 
-    const { push } = useRouter();
     const [questionModal, setQuestionModal] = React.useState<boolean>(false);
-
-    // const setQuestionSelection = (question: number) => {
-    //     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    //     push(`/questions/${question}`);
-    // }
 
     // =========== Retrieve Form Context ===========
 

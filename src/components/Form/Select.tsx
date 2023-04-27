@@ -10,7 +10,7 @@ import { FormControl, FormHelperText, InputLabel, Select as MuiSelect, type Sele
  */
 export const Select: React.FC<FieldProps & SelectProps & TextFieldProps> = props => {
 
-    const { children, error, helperText, field, form, label, value, ...rest } = props;
+    const { children, error, helperText, field, form, label, ...rest } = props;
 
     const isTouched = getIn(form.touched, field.name);
     const errorMessage = getIn(form.errors, field.name);

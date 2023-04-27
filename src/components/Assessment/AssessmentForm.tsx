@@ -11,7 +11,6 @@ import { Info } from '@mui/icons-material';
 
 import { api } from "~/utils/api";
 import QuestionsSidebar from '~/components/Question/QuestionsSidebar';
-import QuestionContext from '~/components/Question/QuestionContext';
 import Select from '~/components/Form/Select';
 import ChangelogTable from '~/components/Common/ChangelogTable';
 
@@ -330,7 +329,28 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                             {selectedAssessmentQuestion &&
                                 <Grid item xs={10} container spacing={2}>
                                     <Grid item xs={12}>
-                                        <QuestionContext question={questionRef && convertToQuestion(questionRef)} />
+                                        <Card className='context'>
+                                            <div>
+                                                <Typography>Question #</Typography>
+                                                <Typography>{questionRef ? convertToQuestion(questionRef).number : undefined}</Typography>
+                                            </div>
+                                            <div>
+                                                <Typography>Pillar</Typography>
+                                                <Typography>{questionRef ? convertToQuestion(questionRef).pillar : undefined}</Typography>
+                                            </div>
+                                            <div>
+                                                <Typography>Practice Area</Typography>
+                                                <Typography>{questionRef ? convertToQuestion(questionRef).practice_area : undefined}</Typography>
+                                            </div>
+                                            <div>
+                                                <Typography>Topic Area</Typography>
+                                                <Typography>{questionRef ? convertToQuestion(questionRef).topic_area : undefined}</Typography>
+                                            </div>
+                                            <div>
+                                                <Typography>Priority</Typography>
+                                                <Typography>{questionRef ? convertToQuestion(questionRef).priority : undefined}</Typography>
+                                            </div>
+                                        </Card>
                                     </Grid>
                                     <Grid item xs={6}>
                                         <Card className='pre-questions'>

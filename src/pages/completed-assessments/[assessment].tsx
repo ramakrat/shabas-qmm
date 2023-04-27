@@ -1,34 +1,15 @@
 import * as React from 'react';
 import { type NextPage } from "next";
-import Router, { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import type { Answer, Assessment, AssessmentQuestion, Engagement, Filter, InterviewGuide, Question, Rating, Reference } from '@prisma/client';
 import * as XLSX from 'xlsx';
 
-import * as yup from "yup";
-import { Field, Form, Formik } from "formik";
-import TextField from '~/components/Form/TextField';
-
-import { Button, Card, Grid, MenuItem, Typography } from '@mui/material';
-import { FileDownload, Info } from '@mui/icons-material';
+import { Card, Grid, Typography } from '@mui/material';
 
 import { api } from "~/utils/api";
 import Layout from "~/components/Layout/Layout";
 import QuestionsSidebar from '~/components/Question/QuestionsSidebar';
-import QuestionContext from '~/components/Question/QuestionContext';
-import Select from '~/components/Form/Select';
 import ChangelogTable from '~/components/Common/ChangelogTable';
-
-interface FormValues {
-    rating: string;
-    rationale: string;
-    notes: string;
-}
-
-const validationSchema = yup.object().shape({
-    rating: yup.string().required("Required"),
-    rationale: yup.string().required("Required"),
-    notes: yup.string().required("Required"),
-});
 
 const CompletedAssessment: NextPage = () => {
 
@@ -86,7 +67,6 @@ const CompletedAssessment: NextPage = () => {
     const exportData = api.assessment.getByIdExport.useQuery(data?.id).data;
 
     const exportCompleted = () => {
-        console.log(exportData)
         if (exportData) {
 
             const masterObjects: any[] = [];
@@ -171,8 +151,28 @@ const CompletedAssessment: NextPage = () => {
                     {selectedAssessmentQuestion &&
                         <Grid item xs={10} container spacing={2}>
                             <Grid item xs={12}>
-                                <QuestionContext question={questionRef && convertToQuestion(questionRef)} />
-                            </Grid>
+                                <Card className='context'>
+                                    <div>
+                                        <Typography>Question #</Typography>
+                                        <Typography>{questionRef ? convertToQuestion(questionRef).number : undefined}</Typography>
+                                    </div>
+                                    <div>
+                                        <Typography>Pillar</Typography>
+                                        <Typography>{questionRef ? convertToQuestion(questionRef).pillar : undefined}</Typography>
+                                    </div>
+                                    <div>
+                                        <Typography>Practice Area</Typography>
+                                        <Typography>{questionRef ? convertToQuestion(questionRef).practice_area : undefined}</Typography>
+                                    </div>
+                                    <div>
+                                        <Typography>Topic Area</Typography>
+                                        <Typography>{questionRef ? convertToQuestion(questionRef).topic_area : undefined}</Typography>
+                                    </div>
+                                    <div>
+                                        <Typography>Priority</Typography>
+                                        <Typography>{questionRef ? convertToQuestion(questionRef).priority : undefined}</Typography>
+                                    </div>
+                                </Card></Grid>
                             <Grid item xs={6}>
                                 <Card className='pre-questions'>
                                     <div>

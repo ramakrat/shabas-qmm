@@ -271,22 +271,17 @@ const Question: NextPage = () => {
     const changeActive = api.question.active.useMutation();
 
     const createGuides = api.interviewGuide.createArray.useMutation();
-    const updateGuide = api.interviewGuide.update.useMutation();
     const updateGuides = api.interviewGuide.updateArray.useMutation();
-    const deleteGuide = api.interviewGuide.delete.useMutation();
     const deleteGuides = api.interviewGuide.deleteArray.useMutation();
 
     const createReferences = api.reference.createArray.useMutation();
-    const updateReference = api.reference.update.useMutation();
     const updateReferences = api.reference.updateArray.useMutation();
-    const deleteReference = api.reference.delete.useMutation();
     const deleteReferences = api.reference.deleteArray.useMutation();
 
     const createSME = api.sme.create.useMutation();
     const updateSME = api.sme.update.useMutation();
 
     const createRatings = api.rating.createArray.useMutation();
-    const updateRating = api.rating.update.useMutation();
     const updateRatings = api.rating.updateArray.useMutation();
 
     const createChangelog = api.changelog.create.useMutation();
