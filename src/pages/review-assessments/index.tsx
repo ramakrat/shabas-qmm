@@ -4,8 +4,8 @@ import BrowseAssessmentForms from "~/components/Browse/BrowseAssessmentForms";
 
 const CompletedAssessments: NextPage = () => {
     return (
-        <Layout active='completed-assessments'>
-            <BrowseAssessmentForms status='completed' />
+        <Layout active='review-assessments'>
+            <BrowseAssessmentForms status='assessor-review' />
         </Layout>
     )
 }
