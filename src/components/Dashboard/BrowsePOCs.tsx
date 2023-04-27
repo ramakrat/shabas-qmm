@@ -3,7 +3,7 @@ import type { Client, Engagement, POC, Site, User } from "@prisma/client";
 import { Button, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { Add, Edit } from "@mui/icons-material";
 import { api } from "~/utils/api";
-import POCModal from "../Modals/POCModal";
+import POCModal from "./Modals/POCModal";
 
 interface Props {
     pocModal: boolean;

@@ -4,10 +4,10 @@ import { Box, Tab, Tabs } from '@mui/material';
 
 import { api } from '~/utils/api';
 import Layout from "~/components/Layout/Layout";
-import BrowseClients from '~/components/Browse/BrowseClients';
-import BrowseSites from '~/components/Browse/BrowseSites';
-import BrowseAssessments from '~/components/Browse/BrowseAssessments';
-import BrowsePOCs from '~/components/Browse/BrowsePOCs';
+import BrowseClients from '~/components/Dashboard/BrowseClients';
+import BrowseSites from '~/components/Dashboard/BrowseSites';
+import BrowseAssessments from '~/components/Dashboard/BrowseAssessments';
+import BrowsePOCs from '~/components/Dashboard/BrowsePOCs';
 import { useRouter } from 'next/router';
 
 interface Props {

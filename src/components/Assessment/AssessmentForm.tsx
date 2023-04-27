@@ -13,7 +13,7 @@ import { api } from "~/utils/api";
 import QuestionsSidebar from '~/components/Question/QuestionsSidebar';
 import QuestionContext from '~/components/Question/QuestionContext';
 import Select from '~/components/Form/Select';
-import ChangelogTable from '~/components/Browse/ChangelogTable';
+import ChangelogTable from '~/components/Common/ChangelogTable';
 
 interface FormValues {
     rating: string;

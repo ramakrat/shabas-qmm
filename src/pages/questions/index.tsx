@@ -8,7 +8,7 @@ import { Button, IconButton, Paper, Table, TableBody, TableCell, TableContainer,
 import { api } from "~/utils/api";
 import Layout from "~/components/Layout/Layout";
 import { Add, Edit } from '@mui/icons-material';
-import QuestionModal from '~/components/Modals/QuestionModal';
+import QuestionModal from '~/components/Question/QuestionModal';
 
 const Question: NextPage = () => {
 

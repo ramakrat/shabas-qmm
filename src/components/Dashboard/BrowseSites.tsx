@@ -1,25 +1,24 @@
 import React from "react";
-import type { Client } from "@prisma/client";
+import type { Site } from "@prisma/client";
 import { Button, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { Add, Edit } from "@mui/icons-material";
 import { api } from "~/utils/api";
-import ClientModal from "../Modals/ClientModal";
+import SiteModal from "./Modals/SiteModal";
 
 interface Props {
-    clientModal: boolean;
-    setClientModal: (open: boolean) => void;
+    siteModal: boolean;
+    setSiteModal: (open: boolean) => void;
 }
 
-const BrowseClients: React.FC<Props> = () => {
+const BrowseSites: React.FC<Props> = () => {
 
-    // const { clientModal, setClientModal } = props;
-    const [clientModal, setClientModal] = React.useState<boolean>(false);
+    // const { siteModal, setSiteModal } = props;
+    const [siteModal, setSiteModal] = React.useState<boolean>(false);
 
-
-    const [clientData, setClientData] = React.useState<Client | undefined>(undefined);
+    const [siteData, setSiteData] = React.useState<Site | undefined>(undefined);
 
     // TODO: Don't run query unless modal closed
-    const clients = api.client.getAll.useQuery(clientModal).data;
+    const sites = api.site.getAll.useQuery(siteModal).data;
 
     return (
         <>
@@ -27,16 +26,17 @@ const BrowseClients: React.FC<Props> = () => {
                 <Button
                     variant='contained'
                     endIcon={<Add />}
-                    onClick={() => { setClientData(undefined); setClientModal(true) }}
+                    onClick={() => { setSiteData(undefined); setSiteModal(true) }}
                 >
-                    New Client
+                    New Site
                 </Button>
             </div>
             <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} size="small">
                     <TableHead>
                         <TableRow>
-                            <TableCell align="center">Client ID</TableCell>
+                            <TableCell align="center">Site ID</TableCell>
+                            <TableCell align="left">Client</TableCell>
                             <TableCell align="left">Name</TableCell>
                             <TableCell align="left">Address</TableCell>
                             <TableCell align="left">Description</TableCell>
@@ -44,7 +44,7 @@ const BrowseClients: React.FC<Props> = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {clients && clients.map((data, i) => {
+                        {sites && sites.map((data, i) => {
                             return (
                                 <TableRow
                                     key={i}
@@ -52,6 +52,9 @@ const BrowseClients: React.FC<Props> = () => {
                                 >
                                     <TableCell align="center">
                                         {data.id}
+                                    </TableCell>
+                                    <TableCell align="left">
+                                        {data.client_id} -  {data.client.name}
                                     </TableCell>
                                     <TableCell align="left">
                                         {data.name}
@@ -64,7 +67,7 @@ const BrowseClients: React.FC<Props> = () => {
                                         {data.description}
                                     </TableCell>
                                     <TableCell align="center">
-                                        <IconButton onClick={() => { setClientData(data); setClientModal(true) }}>
+                                        <IconButton onClick={() => { setSiteData(data); setSiteModal(true) }}>
                                             <Edit fontSize='small' />
                                         </IconButton>
                                     </TableCell>
@@ -74,9 +77,9 @@ const BrowseClients: React.FC<Props> = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-            <ClientModal open={clientModal} setOpen={setClientModal} data={clientData} />
+            <SiteModal open={siteModal} setOpen={setSiteModal} data={siteData} />
         </>
     );
 };
 
-export default BrowseClients;
+export default BrowseSites;

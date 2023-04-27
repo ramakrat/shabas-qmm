@@ -12,10 +12,10 @@ import { Add, Delete } from '@mui/icons-material';
 
 import { api } from "~/utils/api";
 import Layout from "~/components/Layout/Layout";
-import BusinessTypeModal from '~/components/Modals/QuestionFilters/BusinessTypeModal';
-import ManufacturingTypeModal from '~/components/Modals/QuestionFilters/ManufacturingTypeModal';
-import SiteSpecificModal from '~/components/Modals/QuestionFilters/SiteSpecificModal';
-import ChangelogTable from '~/components/Browse/ChangelogTable';
+import BusinessTypeModal from '~/components/Question/QuestionFilters/BusinessTypeModal';
+import ManufacturingTypeModal from '~/components/Question/QuestionFilters/ManufacturingTypeModal';
+import SiteSpecificModal from '~/components/Question/QuestionFilters/SiteSpecificModal';
+import ChangelogTable from '~/components/Common/ChangelogTable';
 import { underscoreToTitle } from '~/utils/utils';
 
 interface GuideType {

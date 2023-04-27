@@ -6,8 +6,8 @@ import {
 } from "@mui/material";
 import { Add, Edit, ExpandMore } from "@mui/icons-material";
 import { api } from "~/utils/api";
-import AssessmentModal from "../Modals/AssessmentModal";
-import EngagementModal from "../Modals/EngagementModal";
+import AssessmentModal from "./Modals/AssessmentModal";
+import EngagementModal from "./Modals/EngagementModal";
 import { titleCase } from "~/utils/utils";
 
 interface Props {
