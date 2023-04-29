@@ -66,9 +66,49 @@ export const engagementRouter = createTRPCRouter({
     getAllInclude: publicProcedure
         .input(z.object({
             filters: z.array(z.any()),
-            states: z.array(z.boolean())
+            states: z.array(z.boolean()).optional(),
+            includeEmptyEngagements: z.boolean().optional(),
         }))
         .query(({ input, ctx }) => {
+            if (input.includeEmptyEngagements) {
+                return ctx.prisma.engagement.findMany({
+                    include: {
+                        Assessment: {
+                            include: { poc: true },
+                            where: {
+                                OR: input.filters
+                            }
+                        },
+                        client: true,
+                        POC: true,
+                        EngagementPOC: { include: { poc: true } },
+                    },
+                    where: {
+                        OR: [{
+                            Assessment: {
+                                some: {
+                                    OR: input.filters
+                                }
+                            }
+                        }, {
+                            NOT: {
+                                Assessment: {
+                                    some: {
+                                        AND: [
+                                            { status: 'created' },
+                                            { status: 'ongoing' },
+                                            { status: 'assessor-review' },
+                                            { status: 'oversight' },
+                                            { status: 'client-review' },
+                                            { status: 'completed' },
+                                        ]
+                                    }
+                                }
+                            }
+                        }]
+                    }
+                });
+            }
             return ctx.prisma.engagement.findMany({
                 include: {
                     Assessment: {
@@ -88,115 +128,7 @@ export const engagementRouter = createTRPCRouter({
                                 OR: input.filters
                             }
                         }
-                    }, {
-                        NOT: {
-                            Assessment: {
-                                some: {
-                                    AND: [
-                                        { status: 'created' },
-                                        { status: 'ongoing' },
-                                        { status: 'assessor-review' },
-                                        { status: 'oversight' },
-                                        { status: 'client-review' },
-                                        { status: 'completed' },
-                                    ]
-                                }
-                            }
-                        }
                     }]
-                }
-            });
-        }),
-    getAllOngoingInclude: publicProcedure
-        .input(z.array(z.boolean()))
-        .query(({ ctx }) => {
-            return ctx.prisma.engagement.findMany({
-                where: {
-                    Assessment: {
-                        some: {
-                            start_date: { lte: new Date() },
-                            OR: [
-                                { status: 'created' },
-                                { status: 'ongoing' },
-                                { status: '' },
-                            ]
-                        }
-                    }
-                },
-                include: {
-                    Assessment: {
-                        where: {
-                            start_date: { lte: new Date() },
-                            OR: [
-                                { status: 'created' },
-                                { status: 'ongoing' },
-                                { status: '' },
-                            ]
-                        }
-                    },
-                    client: true,
-                    POC: true,
-                }
-            });
-        }),
-    getAllReviewInclude: publicProcedure
-        .input(z.array(z.boolean()))
-        .query(({ ctx }) => {
-            return ctx.prisma.engagement.findMany({
-                where: {
-                    Assessment: {
-                        some: { status: 'assessor-review' }
-                    }
-                },
-                include: {
-                    Assessment: {
-                        where: { status: 'assessor-review' },
-                        // include: {
-                        //     AssessmentQuestion: {
-                        //         include: {
-
-                        //         }
-                        //     }
-                        // }
-                    },
-                    client: true,
-                    POC: true,
-                }
-            });
-        }),
-    getAllOversightInclude: publicProcedure
-        .input(z.array(z.boolean()))
-        .query(({ ctx }) => {
-            return ctx.prisma.engagement.findMany({
-                where: {
-                    Assessment: {
-                        some: { status: 'oversight' }
-                    }
-                },
-                include: {
-                    Assessment: {
-                        where: { status: 'oversight' }
-                    },
-                    client: true,
-                    POC: true,
-                }
-            });
-        }),
-    getAllCompletedInclude: publicProcedure
-        .input(z.array(z.boolean()))
-        .query(({ ctx }) => {
-            return ctx.prisma.engagement.findMany({
-                where: {
-                    Assessment: {
-                        some: { status: 'completed' }
-                    }
-                },
-                include: {
-                    Assessment: {
-                        where: { status: 'completed' }
-                    },
-                    client: true,
-                    POC: true,
                 }
             });
         }),
