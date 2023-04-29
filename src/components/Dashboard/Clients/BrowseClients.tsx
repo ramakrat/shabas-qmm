@@ -114,7 +114,7 @@ const BrowseClients: React.FC<Props> = () => {
         if (clients) {
             const newData: ClientTableData[] = [];
 
-            clients.forEach(clientSite => {
+            clients.forEach(client => {
 
                 const address = (address: any) => (
                     <div>
@@ -137,7 +137,7 @@ const BrowseClients: React.FC<Props> = () => {
                                 id: site.id,
                                 client: `${parentClient.id} - ${parentClient.name}`,
                                 name: site.name,
-                                address: address(sites),
+                                address: address(site),
                                 description: site.description,
                                 actions: actions,
                             })
@@ -148,19 +148,19 @@ const BrowseClients: React.FC<Props> = () => {
                 }
 
                 const actions = (
-                    <IconButton onClick={() => { setClientData(clientSite); setClientModal(true) }}>
+                    <IconButton onClick={() => { setClientData(client); setClientModal(true) }}>
                         <Edit fontSize='small' />
                     </IconButton>
                 )
 
                 newData.push({
-                    id: clientSite.id,
-                    name: clientSite.name,
-                    address: address(clients),
-                    description: clientSite.description,
+                    id: client.id,
+                    name: client.name,
+                    address: address(client),
+                    description: client.description,
                     actions: actions,
-                    child: clientSite.Site.length > 0 && <BrowseTable
-                        dataList={convertSiteTableData(clientSite.Site, clientSite) ?? []}
+                    child: client.Site.length > 0 && <BrowseTable
+                        dataList={convertSiteTableData(client.Site, client) ?? []}
                         tableInfoColumns={siteColumns}
                     />
                 })
