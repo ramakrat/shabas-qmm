@@ -60,6 +60,7 @@ interface AssessmentTableData {
     clientPoc: string;
     assessors: string;
     status: string;
+    onClick: any;
 }
 
 const assessmentColumns: TableColumn[] = [{
@@ -93,6 +94,9 @@ const assessmentColumns: TableColumn[] = [{
     displayValue: 'Status',
     align: 'left',
     format: 'status',
+}, {
+    type: 'onClick',
+    displayValue: '',
 }];
 
 type EngagementAssessmentType = (
@@ -152,6 +156,7 @@ const BrowseAssessmentForms: React.FC<Props> = (props) => {
                                 clientPoc: d.poc ? `${d.poc.first_name} ${d.poc.last_name}` : '',
                                 assessors: '',
                                 status: d.status,
+                                onClick: () => handleOnClick(d.id),
                             })
                         })
                         return newAssessmentData;

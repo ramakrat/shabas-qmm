@@ -10,7 +10,7 @@ import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 export interface TableColumn {
     type: string;
     displayValue: string;
-    align: 'left' | 'center' | 'right';
+    align?: 'left' | 'center' | 'right';
     style?: any;
     placeholder?: string;
     format?: 'integer' | 'currency-US' | 'date' | 'status' | 'button' | 'enum' | 'long-desc' | 'jsx-element' | 'symbol' | 'employees';
