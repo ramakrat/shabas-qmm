@@ -1,56 +1,6 @@
 .dashboard {
     margin: 10px 30px 40px;
 
-    // =========== ACCORDIONS ===========
-
-    .MuiAccordion-root {
-        margin: 10px 0px;
-    }
-
-    .MuiAccordion-root:before {
-        background-color: white !important;
-    }
-
-    .MuiAccordionSummary-root {
-        margin: 0px;
-        padding: 0px;
-
-        .MuiAccordionSummary-expandIconWrapper {
-            padding: 10px;
-        }
-    }
-
-    .MuiAccordionSummary-content {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        padding: 0px !important;
-        margin: 0px !important;
-    }
-
-    .MuiAccordionDetails-root {
-        border-top: 2px solid palette(primary, main);
-        padding: 0px 10px;
-    }
-
-    .data-row {
-        .attribute {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-
-            .MuiTypography-root:first-child {
-                color: palette(secondary, dark);
-                font-weight: 600;
-                text-decoration: underline;
-            }
-
-            .MuiTypography-root:last-child {
-                padding: 8px 0px;
-            }
-        }
-    }
-
     // =========== OTHER ===========
 
     .browse-add {
@@ -112,14 +62,5 @@
         .MuiBox-root {
             padding: 0px;
         }
-    }
-}
-
-
-.clickable-table-row {
-    cursor: pointer;
-
-    &:hover {
-        background-color: rgb(243, 243, 243);
     }
 }
