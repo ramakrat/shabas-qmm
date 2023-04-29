@@ -5,8 +5,8 @@ import { Button, IconButton } from "@mui/material";
 import { Add, Edit } from "@mui/icons-material";
 
 import { api } from "~/utils/api";
-import SiteModal from "./Modals/SiteModal";
-import BrowseTable, { type TableColumn } from "../Common/BrowseTable";
+import SiteModal from "./SiteModal";
+import BrowseTable, { type TableColumn } from "../../Common/BrowseTable";
 
 interface Props {
     siteModal: boolean;

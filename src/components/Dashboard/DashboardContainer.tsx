@@ -4,10 +4,10 @@ import { Box, Tab, Tabs } from '@mui/material';
 
 import { api } from '~/utils/api';
 import Layout from "~/components/Layout/Layout";
-import BrowseClients from '~/components/Dashboard/BrowseClients';
-import BrowseSites from '~/components/Dashboard/BrowseSites';
-import BrowseAssessments from '~/components/Dashboard/BrowseAssessments';
-import BrowsePOCs from '~/components/Dashboard/BrowsePOCs';
+import BrowseClients from '~/components/Dashboard/Clients/BrowseClients';
+import BrowseSites from '~/components/Dashboard/Sites/BrowseSites';
+import BrowseAssessments from '~/components/Dashboard/Assessments/BrowseAssessments';
+import BrowsePocs from '~/components/Dashboard/Pocs/BrowsePocs';
 import { useRouter } from 'next/router';
 
 interface Props {
@@ -118,7 +118,7 @@ const DashboardContainer: React.FC<Props> = (props) => {
                         className='tab-panel'
                     >
                         {tab == 'pocs' && (
-                            <BrowsePOCs pocModal={pocModal} setPOCModal={setPOCModal} />
+                            <BrowsePocs pocModal={pocModal} setPOCModal={setPOCModal} />
                         )}
                     </div>
                     <div

@@ -46,7 +46,7 @@ const validationSchema = yup.object().shape({
             }),
 });
 
-const POCModal: React.FC<Props> = (props) => {
+const PocModal: React.FC<Props> = (props) => {
 
     const { open, setOpen, data } = props;
 
@@ -279,4 +279,4 @@ const POCModal: React.FC<Props> = (props) => {
     )
 }
 
-export default POCModal;
+export default PocModal;

@@ -5,8 +5,8 @@ import { Button, IconButton } from "@mui/material";
 import { Add, Edit } from "@mui/icons-material";
 
 import { api } from "~/utils/api";
-import ClientModal from "./Modals/ClientModal";
-import BrowseTable, { type TableColumn } from "../Common/BrowseTable";
+import ClientModal from "./ClientModal";
+import BrowseTable, { type TableColumn } from "../../Common/BrowseTable";
 
 interface Props {
     clientModal: boolean;

@@ -5,10 +5,10 @@ import { Box, Tab, Tabs } from '@mui/material';
 
 import { api } from '~/utils/api';
 import Layout from "~/components/Layout/Layout";
-import BrowseClients from '~/components/Dashboard/BrowseClients';
-import BrowseSites from '~/components/Dashboard/BrowseSites';
-import BrowseAssessments from '~/components/Dashboard/BrowseAssessments';
-import BrowsePOCs from '~/components/Dashboard/BrowsePOCs';
+import BrowseClients from '~/components/Dashboard/Clients/BrowseClients';
+import BrowseSites from '~/components/Dashboard/Sites/BrowseSites';
+import BrowseAssessments from '~/components/Dashboard/Assessments/BrowseAssessments';
+import BrowsePocs from '~/components/Dashboard/Pocs/BrowsePocs';
 
 const AdminDashboard: NextPage = () => {
 
@@ -103,7 +103,7 @@ const AdminDashboard: NextPage = () => {
                         <BrowseSites siteModal={siteModal} setSiteModal={setSiteModal} />
                     </TabPanel>
                     <TabPanel value={value} index={2}>
-                        <BrowsePOCs pocModal={pocModal} setPOCModal={setPOCModal} />
+                        <BrowsePocs pocModal={pocModal} setPOCModal={setPOCModal} />
                     </TabPanel>
                     <TabPanel value={value} index={3}>
                         <BrowseAssessments engagementModal={engagementModal} setEngagementModal={setEngagementModal} assessmentModal={assessmentModal} setAssessmentModal={setAssessmentModal} />

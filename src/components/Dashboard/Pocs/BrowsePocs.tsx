@@ -5,8 +5,8 @@ import { Button, IconButton } from "@mui/material";
 import { Add, Edit } from "@mui/icons-material";
 
 import { api } from "~/utils/api";
-import POCModal from "./Modals/POCModal";
-import BrowseTable, { type TableColumn } from "../Common/BrowseTable";
+import BrowseTable, { type TableColumn } from "../../Common/BrowseTable";
+import PocModal from "./PocModal";
 
 interface Props {
     pocModal: boolean;
@@ -74,7 +74,7 @@ const columns: TableColumn[] = [{
 }];
 
 
-const BrowsePOCs: React.FC<Props> = () => {
+const BrowsePocs: React.FC<Props> = () => {
 
     // const { pocModal, setPOCModal } = props;
     const [pocModal, setPOCModal] = React.useState<boolean>(false);
@@ -148,9 +148,9 @@ const BrowsePOCs: React.FC<Props> = () => {
                 dataList={convertTableData(pocs) ?? []}
                 tableInfoColumns={columns}
             />
-            <POCModal open={pocModal} setOpen={setPOCModal} data={pocData} />
+            <PocModal open={pocModal} setOpen={setPOCModal} data={pocData} />
         </>
     );
 };
 
-export default BrowsePOCs;
+export default BrowsePocs;

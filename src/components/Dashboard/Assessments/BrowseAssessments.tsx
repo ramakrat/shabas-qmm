@@ -3,10 +3,10 @@ import type { Assessment, Client, Engagement, EngagementPOC, POC } from "@prisma
 import { Button, IconButton } from "@mui/material";
 import { Add, Edit } from "@mui/icons-material";
 import { api } from "~/utils/api";
-import AssessmentModal from "./Modals/AssessmentModal";
-import EngagementModal from "./Modals/EngagementModal";
-import ExpandableBrowseTable, { type TableColumn } from "../Common/ExpandableBrowseTable";
-import BrowseTable from "../Common/BrowseTable";
+import AssessmentModal from "./AssessmentModal";
+import EngagementModal from "./EngagementModal";
+import ExpandableBrowseTable, { type TableColumn } from "../../Common/ExpandableBrowseTable";
+import BrowseTable from "../../Common/BrowseTable";
 
 interface Props {
     engagementModal: boolean;
