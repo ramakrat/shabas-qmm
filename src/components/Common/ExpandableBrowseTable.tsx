@@ -57,7 +57,7 @@ const Row = (tableInfoColumns: any[], obj: any, idx: number) => {
 }
 
 const ExpandableSection = (tableInfoColumns: any[], obj: any, idx: number, child?: React.ReactNode) => {
-    const [expanded, setExpanded] = React.useState(false);
+    const [expanded, setExpanded] = React.useState(true);
 
     return (
         <>
