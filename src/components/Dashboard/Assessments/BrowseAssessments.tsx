@@ -1,12 +1,14 @@
 import React from "react";
 import type { Assessment, Client, Engagement, EngagementPOC, POC } from "@prisma/client";
+
 import { Button, IconButton } from "@mui/material";
 import { Add, Edit } from "@mui/icons-material";
+
 import { api } from "~/utils/api";
-import AssessmentModal from "./AssessmentModal";
-import EngagementModal from "./EngagementModal";
 import ExpandableBrowseTable, { type TableColumn } from "../../Common/ExpandableBrowseTable";
 import BrowseTable from "../../Common/BrowseTable";
+import EngagementModal from "./EngagementModal";
+import AssessmentModal from "./AssessmentModal";
 
 interface Props {
     engagementModal: boolean;
@@ -129,9 +131,6 @@ type EngagementAssessmentType = (
 
 const BrowseAssessments: React.FC<Props> = () => {
 
-    // const { engagementModal, setEngagementModal, assessmentModal, setAssessmentModal } = props;
-
-
     // ================== Create Management ==================
 
     const [engagementModal, setEngagementModal] = React.useState<boolean>(false);
@@ -162,6 +161,7 @@ const BrowseAssessments: React.FC<Props> = () => {
     }
 
 
+    // ================== Table Management ==================
 
     // TODO: Don't run query unless modal closed
     const { data } = api.engagement.getAllInclude.useQuery({
@@ -171,15 +171,16 @@ const BrowseAssessments: React.FC<Props> = () => {
     });
     const assessmentStatusCounts = api.assessment.getStatusCounts.useQuery(assessmentModal).data;
 
-    const convertTableData = (data?: EngagementAssessmentType[]) => {
-        if (data) {
+    const convertTableData = (engagements?: EngagementAssessmentType[]) => {
+        if (engagements) {
             const newData: EngagementTableData[] = [];
-            data.forEach(obj => {
 
-                const convertAssessmentTableData = (data?: (Assessment & { poc: POC | null; })[]) => {
-                    if (data) {
+            engagements.forEach(engagement => {
+
+                const convertAssessmentTableData = (assessment?: (Assessment & { poc: POC | null; })[]) => {
+                    if (assessment) {
                         const newAssessmentData: AssessmentTableData[] = [];
-                        data.forEach(d => {
+                        assessment.forEach(d => {
                             const actions = (
                                 <IconButton onClick={() => { setAssessmentData(d); setAssessmentModal(true) }}>
                                     <Edit fontSize='small' />
@@ -200,25 +201,25 @@ const BrowseAssessments: React.FC<Props> = () => {
                     }
                 }
 
-                const existingClientPoc = obj.EngagementPOC.find(o => o.poc.client_id);
-                const existingShabasPoc = obj.EngagementPOC.find(o => !o.poc.client_id);
+                const existingClientPoc = engagement.EngagementPOC.find(o => o.poc.client_id);
+                const existingShabasPoc = engagement.EngagementPOC.find(o => !o.poc.client_id);
                 const actions = (
-                    <IconButton onClick={() => { setEngagementData(obj); setEngagementModal(true) }}>
+                    <IconButton onClick={() => { setEngagementData(engagement); setEngagementModal(true) }}>
                         <Edit fontSize='small' />
                     </IconButton>
                 )
 
                 newData.push({
-                    id: obj.id,
-                    client: `${obj.client_id} - ${obj.client.name}`,
-                    startDate: obj.start_date,
-                    endDate: obj.end_date,
+                    id: engagement.id,
+                    client: `${engagement.client_id} - ${engagement.client.name}`,
+                    startDate: engagement.start_date,
+                    endDate: engagement.end_date,
                     clientPoc: existingClientPoc ? `${existingClientPoc.poc.first_name} ${existingClientPoc.poc.last_name}` : '',
                     shabasPoc: existingShabasPoc ? `${existingShabasPoc.poc.first_name} ${existingShabasPoc.poc.last_name}` : '',
-                    status: obj.status,
+                    status: engagement.status,
                     actions: actions,
-                    child: obj.Assessment.length > 0 && <BrowseTable
-                        dataList={convertAssessmentTableData(obj.Assessment) ?? []}
+                    child: engagement.Assessment.length > 0 && <BrowseTable
+                        dataList={convertAssessmentTableData(engagement.Assessment) ?? []}
                         tableInfoColumns={assessmentColumns}
                     />
                 })
@@ -230,10 +231,18 @@ const BrowseAssessments: React.FC<Props> = () => {
     return (
         <>
             <div className='browse-add'>
-                <Button variant='contained' endIcon={<Add />} onClick={() => { setEngagementData(undefined); setEngagementModal(true) }}>
+                <Button
+                    variant='contained'
+                    endIcon={<Add />}
+                    onClick={() => { setEngagementData(undefined); setEngagementModal(true) }}
+                >
                     New Engagement
                 </Button>
-                <Button variant='contained' endIcon={<Add />} onClick={() => { setAssessmentData(undefined); setAssessmentModal(true) }}>
+                <Button
+                    variant='contained'
+                    endIcon={<Add />}
+                    onClick={() => { setAssessmentData(undefined); setAssessmentModal(true) }}
+                >
                     New Assessment
                 </Button>
             </div>
