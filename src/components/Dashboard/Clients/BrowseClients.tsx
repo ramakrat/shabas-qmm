@@ -126,22 +126,23 @@ const BrowseClients: React.FC<Props> = () => {
                 const convertSiteTableData = (sites: Site[], parentClient: Client) => {
                     if (sites) {
                         const newData: SiteTableData[] = [];
-                        sites.forEach(obj => {
 
+                        sites.forEach(site => {
                             const actions = (
-                                <IconButton onClick={() => { setSiteData(obj); setSiteModal(true) }}>
+                                <IconButton onClick={() => { setSiteData(site); setSiteModal(true) }}>
                                     <Edit fontSize='small' />
                                 </IconButton>
                             )
                             newData.push({
-                                id: obj.id,
+                                id: site.id,
                                 client: `${parentClient.id} - ${parentClient.name}`,
-                                name: obj.name,
+                                name: site.name,
                                 address: address(sites),
-                                description: obj.description,
+                                description: site.description,
                                 actions: actions,
                             })
                         })
+
                         return newData;
                     }
                 }
@@ -151,7 +152,7 @@ const BrowseClients: React.FC<Props> = () => {
                         <Edit fontSize='small' />
                     </IconButton>
                 )
-                
+
                 newData.push({
                     id: clientSite.id,
                     name: clientSite.name,

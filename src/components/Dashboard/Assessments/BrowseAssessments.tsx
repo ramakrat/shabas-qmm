@@ -177,26 +177,28 @@ const BrowseAssessments: React.FC<Props> = () => {
 
             engagements.forEach(engagement => {
 
-                const convertAssessmentTableData = (assessment?: (Assessment & { poc: POC | null; })[]) => {
-                    if (assessment) {
+                const convertAssessmentTableData = (assessments?: (Assessment & { poc: POC | null; })[]) => {
+                    if (assessments) {
                         const newAssessmentData: AssessmentTableData[] = [];
-                        assessment.forEach(d => {
+                        
+                        assessments.forEach(assessment => {
                             const actions = (
-                                <IconButton onClick={() => { setAssessmentData(d); setAssessmentModal(true) }}>
+                                <IconButton onClick={() => { setAssessmentData(assessment); setAssessmentModal(true) }}>
                                     <Edit fontSize='small' />
                                 </IconButton>
                             )
                             newAssessmentData.push({
-                                id: d.id,
-                                site: d.site_id.toString(),
-                                startDate: d.start_date,
-                                endDate: d.end_date,
-                                clientPoc: d.poc ? `${d.poc.first_name} ${d.poc.last_name}` : '',
+                                id: assessment.id,
+                                site: assessment.site_id.toString(),
+                                startDate: assessment.start_date,
+                                endDate: assessment.end_date,
+                                clientPoc: assessment.poc ? `${assessment.poc.first_name} ${assessment.poc.last_name}` : '',
                                 assessors: '',
-                                status: d.status,
+                                status: assessment.status,
                                 actions: actions,
                             })
                         })
+                        
                         return newAssessmentData;
                     }
                 }
