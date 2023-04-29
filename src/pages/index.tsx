@@ -6,7 +6,7 @@ import { Box, Tab, Tabs } from '@mui/material';
 import { api } from '~/utils/api';
 import Layout from "~/components/Layout/Layout";
 import BrowseClients from '~/components/Dashboard/Clients/BrowseClients';
-import BrowseSites from '~/components/Dashboard/Sites/BrowseSites';
+import BrowseSites from '~/components/Dashboard/Clients/BrowseSites';
 import BrowseAssessments from '~/components/Dashboard/Assessments/BrowseAssessments';
 import BrowsePocs from '~/components/Dashboard/Pocs/BrowsePocs';
 

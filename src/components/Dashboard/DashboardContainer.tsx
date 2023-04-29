@@ -5,7 +5,6 @@ import { Box, Tab, Tabs } from '@mui/material';
 import { api } from '~/utils/api';
 import Layout from "~/components/Layout/Layout";
 import BrowseClients from '~/components/Dashboard/Clients/BrowseClients';
-import BrowseSites from '~/components/Dashboard/Sites/BrowseSites';
 import BrowseAssessments from '~/components/Dashboard/Assessments/BrowseAssessments';
 import BrowsePocs from '~/components/Dashboard/Pocs/BrowsePocs';
 import { useRouter } from 'next/router';
@@ -54,14 +53,7 @@ const DashboardContainer: React.FC<Props> = (props) => {
                                     <div className='filter'>
                                         <span className='label'>Clients</span>
                                         <span className='count'>{totalClient}</span>
-                                    </div>
-                                }
-                            />
-                            <Tab
-                                value='sites'
-                                label={
-                                    <div className='filter'>
-                                        <span className='label'>Sites</span>
+                                        <span className='label'> / Sites</span>
                                         <span className='count'>{totalSite}</span>
                                     </div>
                                 }
@@ -96,18 +88,7 @@ const DashboardContainer: React.FC<Props> = (props) => {
                         className='tab-panel'
                     >
                         {tab == 'clients' && (
-                            <BrowseClients clientModal={clientModal} setClientModal={setClientModal} />
-                        )}
-                    </div>
-                    <div
-                        role="tabpanel"
-                        hidden={tab !== 'sites'}
-                        id={`simple-tabpanel-sites`}
-                        aria-labelledby={`simple-tab-sites`}
-                        className='tab-panel'
-                    >
-                        {tab == 'sites' && (
-                            <BrowseSites siteModal={siteModal} setSiteModal={setSiteModal} />
+                            <BrowseClients clientModal={clientModal} setClientModal={setClientModal} siteModal={siteModal} setSiteModal={setSiteModal}/>
                         )}
                     </div>
                     <div

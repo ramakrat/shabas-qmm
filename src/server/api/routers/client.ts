@@ -57,10 +57,18 @@ export const clientRouter = createTRPCRouter({
                 where: { id: input.id }
             });
         }),
+    getAllInclude: publicProcedure
+        .input(z.boolean())
+        .query(({ ctx }) => {
+            return ctx.prisma.client.findMany({
+                include: {
+                    Site: true
+                }
+            });
+        }),
     getAll: publicProcedure
         .input(z.boolean())
         .query(({ ctx }) => {
-            // if (input) return;
             return ctx.prisma.client.findMany();
         }),
     getTotalCount: publicProcedure
