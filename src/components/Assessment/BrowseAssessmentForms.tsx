@@ -1,32 +1,127 @@
 import { useRouter } from "next/router";
-import type { Engagement, POC, Assessment, Client } from "@prisma/client";
-import { ExpandMore } from "@mui/icons-material";
-import { Accordion, AccordionSummary, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, AccordionDetails } from "@mui/material";
+import type { Engagement, POC, Assessment, Client, EngagementPOC } from "@prisma/client";
 import { api } from "~/utils/api";
-import { titleCase } from "~/utils/utils";
+import BrowseTable from "../Common/BrowseTable";
+import ExpandableBrowseTable, { type TableColumn } from "../Common/ExpandableBrowseTable";
 
 interface Props {
     status: 'ongoing' | 'assessor-review' | 'oversight' | 'client-review' | 'completed';
 }
+
+interface EngagementTableData {
+    id: number;
+    client: string;
+    startDate: Date;
+    endDate: Date;
+    clientPoc: string;
+    shabasPoc: string;
+    status: string;
+    child: React.ReactNode;
+}
+
+const engagementColumns: TableColumn[] = [{
+    type: 'id',
+    displayValue: 'Engagement ID',
+    align: 'center',
+}, {
+    type: 'client',
+    displayValue: 'Client',
+    align: 'left',
+}, {
+    type: 'startDate',
+    displayValue: 'Start Date',
+    align: 'left',
+    format: 'date',
+}, {
+    type: 'endDate',
+    displayValue: 'End Date',
+    align: 'left',
+    format: 'date',
+}, {
+    type: 'clientPoc',
+    displayValue: 'Client POC',
+    align: 'left',
+}, {
+    type: 'shabasPoc',
+    displayValue: 'Shabas POC',
+    align: 'left',
+}, {
+    type: 'status',
+    displayValue: 'Status',
+    align: 'left',
+    format: 'status',
+}];
+
+interface AssessmentTableData {
+    id: number;
+    site: string;
+    startDate: Date;
+    endDate: Date;
+    clientPoc: string;
+    assessors: string;
+    status: string;
+}
+
+const assessmentColumns: TableColumn[] = [{
+    type: 'id',
+    displayValue: 'Assessment ID',
+    align: 'center',
+}, {
+    type: 'site',
+    displayValue: 'Site',
+    align: 'left',
+}, {
+    type: 'startDate',
+    displayValue: 'Start Date',
+    align: 'left',
+    format: 'date',
+}, {
+    type: 'endDate',
+    displayValue: 'End Date',
+    align: 'left',
+    format: 'date',
+}, {
+    type: 'clientPoc',
+    displayValue: 'Client POC',
+    align: 'left',
+}, {
+    type: 'assessors',
+    displayValue: 'Assessors',
+    align: 'left',
+}, {
+    type: 'status',
+    displayValue: 'Status',
+    align: 'left',
+    format: 'status',
+}];
+
+type EngagementAssessmentType = (
+    Engagement & {
+        client: Client;
+        POC: POC[];
+        EngagementPOC: (EngagementPOC & {
+            poc: POC;
+        })[];
+        Assessment: (Assessment & {
+            poc: POC | null;
+        })[];
+    }
+)
 
 const BrowseAssessmentForms: React.FC<Props> = (props) => {
     const { status } = props;
     const { push } = useRouter();
 
     // TODO: Don't run query unless modal closed
-    let data: (Engagement & {
-        client: Client;
-        POC: POC[];
-        Assessment: Assessment[];
-    })[] | undefined = undefined;
+    let data = undefined;
     if (status == 'ongoing')
-        data = api.engagement.getAllOngoingInclude.useQuery([true, true]).data;
+        data = api.engagement.getAllInclude.useQuery({ filters: [{ status: 'ongoing' }] }).data;
     if (status == 'assessor-review')
-        data = api.engagement.getAllReviewInclude.useQuery([true, true]).data;
+        data = api.engagement.getAllInclude.useQuery({ filters: [{ status: 'assessor-review' }] }).data;
     if (status == 'oversight')
-        data = api.engagement.getAllOversightInclude.useQuery([true, true]).data;
+        data = api.engagement.getAllInclude.useQuery({ filters: [{ status: 'oversight' }] }).data;
     if (status == 'completed')
-        data = api.engagement.getAllCompletedInclude.useQuery([true, true]).data;
+        data = api.engagement.getAllInclude.useQuery({ filters: [{ status: 'completed' }] }).data;
 
 
     const handleOnClick = async (id: number) => {
@@ -40,83 +135,58 @@ const BrowseAssessmentForms: React.FC<Props> = (props) => {
             await push(`/completed-assessments/${id}`);
     }
 
+    const convertTableData = (data?: EngagementAssessmentType[]) => {
+        if (data) {
+            const newData: EngagementTableData[] = [];
+            data.forEach(obj => {
+
+                const convertAssessmentTableData = (data?: (Assessment & { poc: POC | null; })[]) => {
+                    if (data) {
+                        const newAssessmentData: AssessmentTableData[] = [];
+                        data.forEach(d => {
+                            newAssessmentData.push({
+                                id: d.id,
+                                site: d.site_id.toString(),
+                                startDate: d.start_date,
+                                endDate: d.end_date,
+                                clientPoc: d.poc ? `${d.poc.first_name} ${d.poc.last_name}` : '',
+                                assessors: '',
+                                status: d.status,
+                            })
+                        })
+                        return newAssessmentData;
+                    }
+                }
+
+                const existingClientPoc = obj.EngagementPOC.find(o => o.poc.client_id);
+                const existingShabasPoc = obj.EngagementPOC.find(o => !o.poc.client_id);
+
+                newData.push({
+                    id: obj.id,
+                    client: `${obj.client_id} - ${obj.client.name}`,
+                    startDate: obj.start_date,
+                    endDate: obj.end_date,
+                    clientPoc: existingClientPoc ? `${existingClientPoc.poc.first_name} ${existingClientPoc.poc.last_name}` : '',
+                    shabasPoc: existingShabasPoc ? `${existingShabasPoc.poc.first_name} ${existingShabasPoc.poc.last_name}` : '',
+                    status: obj.status,
+                    child: obj.Assessment.length > 0 && <BrowseTable
+                        dataList={convertAssessmentTableData(obj.Assessment) ?? []}
+                        tableInfoColumns={assessmentColumns}
+                    />
+                })
+            })
+            return newData;
+        }
+    }
+
     return (
         <div className='dashboard'>
-            {data && data.map((e: Engagement & { POC: POC[]; Assessment: Assessment[]; client: Client }, i) => {
-                return (
-                    <Accordion key={i}>
-                        <AccordionSummary expandIcon={<ExpandMore />}>
-                            <TableContainer>
-                                <Table sx={{ minWidth: 650 }} size="small">
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell align="center">Engagement ID</TableCell>
-                                            <TableCell align="left">Client</TableCell>
-                                            <TableCell align="left">Start Date</TableCell>
-                                            <TableCell align="left">End Date</TableCell>
-                                            <TableCell align="left">Client POC</TableCell>
-                                            <TableCell align="left">Shabas POC</TableCell>
-                                            <TableCell align="left">Status</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        <TableRow
-                                            key={i}
-                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                        >
-                                            <TableCell align="center">{e.id}</TableCell>
-                                            <TableCell align="left">{e.client_id} - {e.client.name}</TableCell>
-                                            <TableCell align="left">{e.start_date.toDateString()}</TableCell>
-                                            <TableCell align="left">{e.end_date.toDateString()}</TableCell>
-                                            <TableCell align="left"></TableCell>
-                                            <TableCell align="left"></TableCell>
-                                            <TableCell align="left">{titleCase(e.status)}</TableCell>
-                                        </TableRow>
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <TableContainer>
-                                <Table sx={{ minWidth: 650 }} size="small">
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell align="center">Assessment ID</TableCell>
-                                            <TableCell align="left">Site</TableCell>
-                                            <TableCell align="left">Start Date</TableCell>
-                                            <TableCell align="left">End Date</TableCell>
-                                            <TableCell align="left">Client POC</TableCell>
-                                            <TableCell align="left">Assessors</TableCell>
-                                            <TableCell align="left">Status</TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {e.Assessment.map((a: Assessment, i) => {
-                                            return (
-                                                <TableRow
-                                                    key={i}
-                                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                                                    onClick={() => handleOnClick(a.id)}
-                                                    className='clickable-table-row'
-                                                >
-                                                    <TableCell align="center">{a.id}</TableCell>
-                                                    <TableCell align="left">{a.site_id}</TableCell>
-                                                    <TableCell align="left">{a.start_date.toDateString()}</TableCell>
-                                                    <TableCell align="left">{a.end_date.toDateString()}</TableCell>
-                                                    <TableCell align="left"></TableCell>
-                                                    <TableCell align="left"></TableCell>
-                                                    <TableCell align="left">{titleCase(a.status)}</TableCell>
-                                                </TableRow>
-                                            )
-                                        })}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        </AccordionDetails>
-                    </Accordion>
-                )
-            })}
+            {data &&
+                <ExpandableBrowseTable
+                    dataList={convertTableData(data) ?? []}
+                    tableInfoColumns={engagementColumns}
+                />
+            }
         </div>
     )
 };

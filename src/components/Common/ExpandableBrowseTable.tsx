@@ -74,7 +74,6 @@ const ExpandableSection = (tableInfoColumns: any[], obj: any, idx: number, child
                             </TableCell>
                         );
                     })}
-
                     <TableCell key={'expandButton-' + idx} align='center'>
                         {child &&
                             <IconButton onClick={() => setExpanded(!expanded)} color="inherit">
