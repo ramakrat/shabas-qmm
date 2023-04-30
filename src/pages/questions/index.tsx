@@ -11,6 +11,7 @@ import QuestionModal from '~/components/Question/QuestionModal';
 import BrowseTable from '~/components/Common/BrowseTable';
 import type { TableColumn } from '~/components/Common/ExpandableBrowseTable';
 import { Question } from '@prisma/client';
+import { useRouter } from 'next/router';
 
 interface TableData {
     number: string;
@@ -57,6 +58,8 @@ const Question: NextPage = () => {
 
     const [questionModal, setQuestionModal] = React.useState<boolean>(false);
 
+    const { push } = useRouter();
+
     // =========== Retrieve Form Context ===========
 
     const questions = api.question.getAll.useQuery(true).data;
@@ -66,7 +69,7 @@ const Question: NextPage = () => {
             const newData: TableData[] = [];
             data.forEach(obj => {
                 const actions = (
-                    <IconButton onClick={() => { setQuestionModal(true) }}>
+                    <IconButton onClick={() => { void push(`/questions/${obj.id}`) }}>
                         <Edit fontSize='small' />
                     </IconButton>
                 )
