@@ -140,6 +140,10 @@
             display: flex;
             flex-direction: row;
             align-items: center;
+
+            .MuiTextField-root {
+                width: 100%;
+            }
         }
     }
 

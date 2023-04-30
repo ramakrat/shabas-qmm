@@ -690,38 +690,40 @@ const Question: NextPage = () => {
                                 <Grid item xs={4}>
                                     <Card className='reference'>
                                         <div className='widget-header'>General Information</div>
-                                        <div>
-                                            <Typography>Pillar</Typography>
-                                            <TextField
-                                                name='pillar' size='small'
-                                                value={pillar}
-                                                onChange={e => setPillar(e.target.value)}
-                                            />
-                                        </div>
-                                        <div>
-                                            <Typography>Practice Area</Typography>
-                                            <TextField
-                                                name='practiceArea' size='small'
-                                                value={practiceArea}
-                                                onChange={e => setPracticeArea(e.target.value)}
-                                            />
-                                        </div>
-                                        <div>
-                                            <Typography>Topic Area</Typography>
-                                            <TextField
-                                                name='topicArea' size='small'
-                                                value={topicArea}
-                                                onChange={e => setTopicArea(e.target.value)}
-                                            />
-                                        </div>
-                                        <div>
-                                            <Typography>Priority</Typography>
-                                            <TextField
-                                                name='priority' size='small'
-                                                value={priority}
-                                                onChange={e => setPriority(e.target.value)}
-                                            />
-                                        </div>
+                                        <Grid container>
+                                            <Grid item xs={6}>
+                                                <Typography>Pillar</Typography>
+                                                <TextField
+                                                    name='pillar' size='small'
+                                                    value={pillar}
+                                                    onChange={e => setPillar(e.target.value)}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <Typography>Practice Area</Typography>
+                                                <TextField
+                                                    name='practiceArea' size='small'
+                                                    value={practiceArea}
+                                                    onChange={e => setPracticeArea(e.target.value)}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <Typography>Topic Area</Typography>
+                                                <TextField
+                                                    name='topicArea' size='small'
+                                                    value={topicArea}
+                                                    onChange={e => setTopicArea(e.target.value)}
+                                                />
+                                            </Grid>
+                                            <Grid item xs={6}>
+                                                <Typography>Priority</Typography>
+                                                <TextField
+                                                    name='priority' size='small'
+                                                    value={priority}
+                                                    onChange={e => setPriority(e.target.value)}
+                                                />
+                                            </Grid>
+                                        </Grid>
                                         <div>
                                             <div className='widget-header'>Interview Guide</div>
                                             {existingGuide.map((o, i) => {
@@ -916,26 +918,36 @@ const Question: NextPage = () => {
                                         </div>
                                         <div>
                                             <div className='widget-header'>SME Information</div>
-                                            <TextField
-                                                name='firstName' label='First Name' size='small'
-                                                value={firstName}
-                                                onChange={e => setFirstName(e.target.value)}
-                                            />
-                                            <TextField
-                                                name='lastName' label='Last Name' size='small'
-                                                value={lastName}
-                                                onChange={e => setLastName(e.target.value)}
-                                            />
-                                            <TextField
-                                                name='phone' label='Phone Number' size='small'
-                                                value={phone}
-                                                onChange={e => setPhone(e.target.value)}
-                                            />
-                                            <TextField
-                                                name='email' label='Email' size='small'
-                                                value={email}
-                                                onChange={e => setEmail(e.target.value)}
-                                            />
+                                            <Grid container>
+                                                <Grid item xs={6}>
+                                                    <TextField
+                                                        name='firstName' label='First Name' size='small'
+                                                        value={firstName}
+                                                        onChange={e => setFirstName(e.target.value)}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={6}>
+                                                    <TextField
+                                                        name='lastName' label='Last Name' size='small'
+                                                        value={lastName}
+                                                        onChange={e => setLastName(e.target.value)}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={6}>
+                                                    <TextField
+                                                        name='phone' label='Phone Number' size='small'
+                                                        value={phone}
+                                                        onChange={e => setPhone(e.target.value)}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={6}>
+                                                    <TextField
+                                                        name='email' label='Email' size='small'
+                                                        value={email}
+                                                        onChange={e => setEmail(e.target.value)}
+                                                    />
+                                                </Grid>
+                                            </Grid>
                                         </div>
                                         <div>
                                             <div className='widget-header'>Details</div>
