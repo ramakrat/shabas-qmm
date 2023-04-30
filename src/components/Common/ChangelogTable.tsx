@@ -3,11 +3,43 @@ import type { Changelog } from '@prisma/client';
 import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Button, Typography } from '@mui/material';
 import * as XLSX from 'xlsx';
 import { FileDownload } from '@mui/icons-material';
+import BrowseTable, { type TableColumn } from './BrowseTable';
 
 interface Props {
     changelogs?: Changelog[];
     fileName?: string;
 }
+
+interface TableData {
+    field: string;
+    formerValue: string;
+    newValue: string;
+    updatedAt: Date;
+    updatedBy: string;
+}
+
+const columns: TableColumn[] = [{
+    type: 'field',
+    displayValue: 'Field',
+    align: 'center',
+}, {
+    type: 'formerValue',
+    displayValue: 'Former Value',
+    align: 'center',
+}, {
+    type: 'newValue',
+    displayValue: 'New Value',
+    align: 'center',
+}, {
+    type: 'updatedAt',
+    displayValue: 'Updated At',
+    align: 'center',
+    format: 'date',
+}, {
+    type: 'updatedBy',
+    displayValue: 'Updated By',
+    align: 'center',
+}];
 
 const ChangelogTable: React.FC<Props> = (props) => {
     const { changelogs, fileName } = props;
@@ -23,49 +55,28 @@ const ChangelogTable: React.FC<Props> = (props) => {
         }
     }
 
+    const convertTableData = (data?: Changelog[]) => {
+        if (data) {
+            const newData: TableData[] = [];
+            data.forEach(obj => {
+                newData.push({
+                    field: obj.field,
+                    formerValue: obj.former_value ?? '',
+                    newValue: obj.new_value ?? '',
+                    updatedAt: obj.updated_at,
+                    updatedBy: obj.updated_by ?? '',
+                })
+            })
+            return newData;
+        }
+    }
+
     return (
         <div className='changelog'>
-            <TableContainer component={Paper}>
-                <Table size="small" stickyHeader>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell align="left">Field</TableCell>
-                            <TableCell align="left">Former Value</TableCell>
-                            <TableCell align="left">New Value</TableCell>
-                            <TableCell align="left">Updated At</TableCell>
-                            <TableCell align="left">Updated By</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {changelogs && changelogs.map((data, i) => {
-                            return (
-                                <TableRow
-                                    key={i}
-                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                >
-                                    <TableCell align="left">
-                                        {data.field}
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        {data.former_value}
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        {data.new_value ??
-                                            <Typography style={{ fontStyle: 'italic' }}>Deleted</Typography>
-                                        }
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        {data.updated_at.toDateString()}
-                                    </TableCell>
-                                    <TableCell align="left">
-                                        {data.updated_by}
-                                    </TableCell>
-                                </TableRow>
-                            )
-                        })}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <BrowseTable
+                dataList={convertTableData(changelogs) ?? []}
+                tableInfoColumns={columns}
+            />
             <Button
                 variant='contained'
                 startIcon={<FileDownload />}
