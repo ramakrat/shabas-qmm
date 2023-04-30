@@ -48,7 +48,7 @@ const engagementColumns: TableColumn[] = [{
 }, {
     type: 'status',
     displayValue: 'Status',
-    align: 'left',
+    align: 'center',
     format: 'status',
 }];
 
@@ -92,7 +92,7 @@ const assessmentColumns: TableColumn[] = [{
 }, {
     type: 'status',
     displayValue: 'Status',
-    align: 'left',
+    align: 'center',
     format: 'status',
 }, {
     type: 'onClick',
