@@ -612,7 +612,7 @@ const Question: NextPage = () => {
                     <div className='assessment-content'>
                         <Card className='context'>
                             <div className='question-number'>
-                                <Typography>Question #</Typography>
+                                <Typography>Question # : </Typography>
                                 <TextField
                                     name='number' size='small'
                                     value={number}

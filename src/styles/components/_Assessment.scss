@@ -68,6 +68,10 @@
         flex-direction: row;
         align-items: center;
         margin: 10px 0px 20px;
+        width: 100%;
+        padding: 20px 10px;
+        border-top: 1px solid palette(greyscale, 300);
+        border-bottom: 1px solid palette(greyscale, 300);
 
         >.MuiTypography-root {
             font-size: 1rem;
