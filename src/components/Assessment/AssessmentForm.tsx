@@ -313,143 +313,152 @@ const OngoingAssessment: React.FC<Props> = (props) => {
             >
                 {({ resetForm }) => (
                     <Form>
-                        <Grid container spacing={2}>
-                            <Grid item xs={2}>
-                                {questions &&
-                                    <QuestionsSidebar
-                                        questions={questions.map(o => convertToQuestion(o.question))}
-                                        question={question}
-                                        setQuestion={setQuestion}
-                                        submitAssessment={handleSubmitAssesment}
-                                        resetForm={resetForm}
-                                        assessmentChangelogs={() => { setQuestion(-1) }}
-                                    />
-                                }
-                            </Grid>
-                            {selectedAssessmentQuestion &&
-                                <Grid item xs={10} container spacing={2}>
-                                    <Grid item xs={12}>
-                                        <Card className='context'>
-                                            <div>
-                                                <Typography>Question #</Typography>
-                                                <Typography>{questionRef ? convertToQuestion(questionRef).number : undefined}</Typography>
-                                            </div>
-                                            <div>
-                                                <Typography>Pillar</Typography>
-                                                <Typography>{questionRef ? convertToQuestion(questionRef).pillar : undefined}</Typography>
-                                            </div>
-                                            <div>
-                                                <Typography>Practice Area</Typography>
-                                                <Typography>{questionRef ? convertToQuestion(questionRef).practice_area : undefined}</Typography>
-                                            </div>
-                                            <div>
-                                                <Typography>Topic Area</Typography>
-                                                <Typography>{questionRef ? convertToQuestion(questionRef).topic_area : undefined}</Typography>
-                                            </div>
-                                            <div>
-                                                <Typography>Priority</Typography>
-                                                <Typography>{questionRef ? convertToQuestion(questionRef).priority : undefined}</Typography>
-                                            </div>
-                                        </Card>
-                                    </Grid>
-                                    <Grid item xs={6}>
-                                        <Card className='pre-questions'>
-                                            <div>
-                                                <Typography>Question Content: {selectedAssessmentQuestion.question.question}</Typography>
-                                                <Typography>Hint: {questionRef?.hint}</Typography>
-                                                <Typography>Start Time: XYZ</Typography>
-                                                <div className='rating'>
-                                                    <div className='rating-input'>
-                                                        <Typography>Rating</Typography>
-                                                        <Info fontSize='small' onClick={() => setShowRating(!showRating)} />
-                                                        <Field
-                                                            name='rating' label='' size='small'
-                                                            component={Select}
-                                                        >
-                                                            <MenuItem value=''><em>Select rating...</em></MenuItem>
-                                                            <MenuItem value={1}>1</MenuItem>
-                                                            <MenuItem value={2}>2</MenuItem>
-                                                            <MenuItem value={3}>3</MenuItem>
-                                                            <MenuItem value={4}>4</MenuItem>
-                                                            <MenuItem value={5}>5</MenuItem>
-                                                        </Field>
+                        {questions &&
+                            <QuestionsSidebar
+                                questions={questions.map(o => convertToQuestion(o.question))}
+                                question={question}
+                                setQuestion={setQuestion}
+                                submitAssessment={handleSubmitAssesment}
+                                resetForm={resetForm}
+                                assessmentChangelogs={() => { setQuestion(-1) }}
+                            />
+                        }
+                        {selectedAssessmentQuestion &&
+                            <div className='assessment-content'>
+                                <Card className='context'>
+                                    <div className='question-number'>
+                                        <Typography>Question # :</Typography>
+                                        <Typography>{questionRef ? convertToQuestion(questionRef).number : undefined}</Typography>
+                                    </div>
+                                    <Button variant='contained' type='submit'>Save</Button>
+                                </Card>
+                                <div className='assessment-form'>
+                                    <Grid container spacing={2}>
+                                        <Grid item xs={6}>
+                                            <Card className='question-content'>
+                                                <div className='widget-header'>General</div>
+                                                <div>
+                                                    <Typography>Question Content: {selectedAssessmentQuestion.question.question}</Typography>
+                                                    <Typography>Hint: {questionRef?.hint}</Typography>
+                                                    <Typography>Start Time: XYZ</Typography>
+                                                    <div className='rating'>
+                                                        <div className='rating-input'>
+                                                            <Typography>Rating</Typography>
+                                                            <Info fontSize='small' onClick={() => setShowRating(!showRating)} />
+                                                            <Field
+                                                                name='rating' label='' size='small'
+                                                                component={Select}
+                                                            >
+                                                                <MenuItem value=''><em>Select rating...</em></MenuItem>
+                                                                <MenuItem value={1}>1</MenuItem>
+                                                                <MenuItem value={2}>2</MenuItem>
+                                                                <MenuItem value={3}>3</MenuItem>
+                                                                <MenuItem value={4}>4</MenuItem>
+                                                                <MenuItem value={5}>5</MenuItem>
+                                                            </Field>
+                                                        </div>
+                                                        {(showRating && ratings) &&
+                                                            <div>
+                                                                {ratings.map((r, i) => {
+                                                                    return (
+                                                                        <div key={i}>
+                                                                            <div>Level {r.level_number}: {r.criteria}</div>
+                                                                            {i !== ratings.length - 1 &&
+                                                                                <div>Progression Statement: {r.progression_statement}</div>
+                                                                            }
+                                                                        </div>
+                                                                    )
+                                                                })}
+                                                            </div>
+                                                        }
                                                     </div>
-                                                    {(showRating && ratings) &&
-                                                        <div>
-                                                            {ratings.map((r, i) => {
-                                                                return (
-                                                                    <div key={i}>
-                                                                        <div>Level {r.level_number}: {r.criteria}</div>
-                                                                        {i !== ratings.length - 1 &&
-                                                                            <div>Progression Statement: {r.progression_statement}</div>
-                                                                        }
-                                                                    </div>
-                                                                )
-                                                            })}
-                                                        </div>
-                                                    }
                                                 </div>
-                                            </div>
-                                        </Card>
-                                        <Card className='question-content'>
-                                            <Typography>Rationale</Typography>
-                                            <Field
-                                                name='rationale' label='' size='small' multiline
-                                                component={TextField}
-                                            />
-                                            <Typography>Notes</Typography>
-                                            <Field
-                                                name='notes' label='' size='small' multiline
-                                                component={TextField}
-                                            />
-                                        </Card>
-                                        <Card className='actions simple'>
-                                            <Button variant='contained' type='submit'>Save</Button>
-                                        </Card>
+                                                <div className='widget-header'>Details</div>
+                                                <Typography>Rationale</Typography>
+                                                <Field
+                                                    name='rationale' label='' size='small' multiline={3}
+                                                    placeholder='Rationale...'
+                                                    component={TextField}
+                                                />
+                                                <Typography>Notes</Typography>
+                                                <Field
+                                                    name='notes' label='' size='small' multiline={3}
+                                                    placeholder='Notes...'
+                                                    component={TextField}
+                                                />
+                                            </Card>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <Card className='reference'>
+                                                <div className='widget-header'>Question Information</div>
+                                                <div>
+                                                    <div>
+                                                        <Typography>Pillar</Typography>
+                                                        <Typography>{questionRef ? convertToQuestion(questionRef).pillar : undefined}</Typography>
+                                                    </div>
+                                                    <div>
+                                                        <Typography>Practice Area</Typography>
+                                                        <Typography>{questionRef ? convertToQuestion(questionRef).practice_area : undefined}</Typography>
+                                                    </div>
+                                                    <div>
+                                                        <Typography>Topic Area</Typography>
+                                                        <Typography>{questionRef ? convertToQuestion(questionRef).topic_area : undefined}</Typography>
+                                                    </div>
+                                                    <div>
+                                                        <Typography>Priority</Typography>
+                                                        <Typography>{questionRef ? convertToQuestion(questionRef).priority : undefined}</Typography>
+                                                    </div>
+                                                </div>
+                                                <div className='widget-header'>Interview Guide</div>
+                                                <div>
+                                                    {guide?.map((r, i) => {
+                                                        return (
+                                                            <div key={i}>
+                                                                <span>{i + 1}. {r.interview_question}</span>
+                                                            </div>
+                                                        )
+                                                    })}
+                                                </div>
+                                                <div className='widget-header'>References</div>
+                                                <div>
+                                                    {references?.map((r, i) => {
+                                                        return (
+                                                            <div key={i}>
+                                                                <span>{i + 1}. {r.citation}</span>
+                                                            </div>
+                                                        )
+                                                    })}
+                                                </div>
+                                            </Card>
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <Card>
+                                                <div className='widget-header'>Changelog</div>
+                                                {changelog && changelog.length > 0 ?
+                                                    <ChangelogTable changelogs={changelog} fileName={`Assessment${data?.id} Question${selectedAssessmentQuestion.id}`} /> :
+                                                    'No Changes'
+                                                }
+                                            </Card>
+                                        </Grid>
                                     </Grid>
-                                    <Grid item xs={6}>
-                                        <Card className='reference'>
-                                            <div>
-                                                <Typography>Interview Guide</Typography>
-                                                {guide?.map((r, i) => {
-                                                    return (
-                                                        <div key={i}>
-                                                            <span>{i + 1}. {r.interview_question}</span>
-                                                        </div>
-                                                    )
-                                                })}
-                                            </div>
-                                            <div>
-                                                <Typography>References</Typography>
-                                                {references?.map((r, i) => {
-                                                    return (
-                                                        <div key={i}>
-                                                            <span>{i + 1}. {r.citation}</span>
-                                                        </div>
-                                                    )
-                                                })}
-                                            </div>
-                                        </Card>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <Card>
-                                            <ChangelogTable changelogs={changelog} fileName={`Assessment${data?.id} Question${selectedAssessmentQuestion.id}`} />
-                                        </Card>
-                                    </Grid>
-                                </Grid>
-                            }
-                            {question == -1 &&
-                                <Grid item xs={10}>
-                                    <Card>
-                                        <ChangelogTable changelogs={fullChangelog} fileName={`Assessment${data?.id}`} />
-                                    </Card>
-                                </Grid>
-                            }
-                        </Grid>
+                                </div>
+                            </div>
+                        }
+                        {question == -1 &&
+                            <Grid item xs={10}>
+                                <Card>
+                                    <div className='widget-header'>Changelog</div>
+                                    {fullChangelog && fullChangelog.length > 0 ?
+                                        <ChangelogTable changelogs={fullChangelog} fileName={`Assessment${data?.id}`} /> :
+                                        'No Changes'
+                                    }
+                                </Card>
+                            </Grid>
+                        }
                     </Form>
                 )}
             </Formik>
-        </div>
+        </div >
     );
 };
 

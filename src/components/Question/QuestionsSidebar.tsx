@@ -1,7 +1,7 @@
 import React from "react";
 import type { Question } from "@prisma/client";
-import { Button, Card, Typography } from "@mui/material";
-import { Add, FileDownload } from "@mui/icons-material";
+import { Button, Card, IconButton, Typography } from "@mui/material";
+import { Add, East, FileDownload, West } from "@mui/icons-material";
 import QuestionModal from "./QuestionModal";
 
 interface Props {
@@ -35,78 +35,88 @@ const QuestionsSidebar: React.FC<Props> = (props) => {
             <Card className='questions-sidebar'>
                 {questions.find((o: Question) => o.id == question) &&
                     <div className='question-steppers'>
-                        <Button
-                            variant='contained'
-                            disabled={questions[0] ? (question == questions[0].id) : false}
-                            onClick={() => {
-                                if (resetForm) resetForm();
-                                setQuestion(question - 1);
-                            }}
-                        >
-                            Previous
-                        </Button>
-                        <Button
-                            variant='contained'
-                            disabled={questions[questions.length - 1] ? (question == (questions[questions.length - 1] as Question).id) : false}
-                            onClick={() => {
-                                if (resetForm) resetForm();
-                                setQuestion(question + 1);
-                            }}
-                        >
-                            Next
-                        </Button>
+                        <div className='stepper'>
+                            <IconButton
+                                disabled={questions[0] ? (question == questions[0].id) : false}
+                                onClick={() => {
+                                    if (resetForm) resetForm();
+                                    setQuestion(question - 1);
+                                }}
+                            >
+                                <West />
+                            </IconButton>
+                        </div>
+                        <div className='stepper'>
+                            <IconButton
+                                disabled={questions[questions.length - 1] ? (question == (questions[questions.length - 1] as Question).id) : false}
+                                onClick={() => {
+                                    if (resetForm) resetForm();
+                                    setQuestion(question + 1);
+                                }}
+                            >
+                                <East />
+                            </IconButton>
+                        </div>
                     </div>
                 }
-                {questions.map((o: Question) => {
-                    return (
-                        <Typography
-                            key={o.id}
-                            className={o.id == question ? 'active' : ''}
-                            onClick={() => {
-                                if (resetForm) resetForm();
-                                setQuestion(o.id)
-                            }}
-                        >
-                            {o.number}
-                        </Typography>
-                    )
-                })}
-                {addOption &&
-                    <Button
-                        variant='outlined'
-                        disabled={question == 7}
-                        onClick={() => setQuestionModal(true)}
-                        startIcon={<Add />}
-                    >
-                        Add Question
-                    </Button>
-                }
-                {assessmentChangelogs != undefined &&
-                    <Typography
-                        className={question == -1 ? 'active' : ''}
-                        onClick={assessmentChangelogs}
-                    >
-                        Changelog
-                    </Typography>
-                }
-                {submitAssessment != undefined &&
-                    <Button
-                        variant='contained'
-                        onClick={() => submitAssessment()}
-                        disabled={questions.length < 1}
-                    >
-                        Submit Assessment
-                    </Button>
-                }
-                {exportAssessment != undefined &&
-                    <Button
-                        variant='contained'
-                        startIcon={<FileDownload />}
-                        onClick={() => exportAssessment()}
-                    >
-                        Export Assessment
-                    </Button>
-                }
+                <div className='sidebar-body'>
+                    <div>
+                        {questions.map((o: Question) => {
+                            const selected = o.id == question ? 'selected ' : '';
+                            const active = o.active ? 'active ' : '';
+                            return (
+                                <div key={o.id} className={'question-option ' + selected}>
+                                    <div className={'active-signature ' + active} />
+                                    <Typography
+                                        onClick={() => {
+                                            if (resetForm) resetForm();
+                                            setQuestion(o.id)
+                                        }}
+                                    >
+                                        {o.number}
+                                    </Typography>
+                                </div>
+                            )
+                        })}
+                        {assessmentChangelogs != undefined &&
+                            <div className={question == -1 ? 'question-option selected' : 'question-option'}>
+                                <Typography onClick={assessmentChangelogs}>
+                                    Changelog
+                                </Typography>
+                            </div>
+                        }
+                    </div>
+                    <div>
+                        {addOption &&
+                            <Button
+                                variant='outlined'
+                                disabled={question == 7}
+                                onClick={() => setQuestionModal(true)}
+                                startIcon={<Add />}
+                            >
+                                Add Question
+                            </Button>
+                        }
+                        {submitAssessment != undefined &&
+                            <Button
+                                variant='contained'
+                                onClick={() => submitAssessment()}
+                                disabled={questions.length < 1}
+                            >
+                                Submit Assessment
+                            </Button>
+                        }
+                        {exportAssessment != undefined &&
+                            <Button
+                                variant='contained'
+                                startIcon={<FileDownload />}
+                                onClick={() => exportAssessment()}
+                            >
+                                Export Assessment
+                            </Button>
+                        }
+                    </div>
+                </div>
             </Card>
             <QuestionModal open={questionModal} setOpen={setQuestionModal} />
         </>
