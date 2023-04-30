@@ -1,7 +1,7 @@
 import React from "react";
 import type { Assessment, Client, Engagement, EngagementPOC, POC } from "@prisma/client";
 
-import { Button, IconButton } from "@mui/material";
+import { Button, Card, IconButton } from "@mui/material";
 import { Add, Edit } from "@mui/icons-material";
 
 import { api } from "~/utils/api";
@@ -58,7 +58,7 @@ const engagementColumns: TableColumn[] = [{
 }, {
     type: 'status',
     displayValue: 'Status',
-    align: 'left',
+    align: 'center',
     format: 'status',
 }, {
     type: 'actions',
@@ -107,7 +107,7 @@ const assessmentColumns: TableColumn[] = [{
 }, {
     type: 'status',
     displayValue: 'Status',
-    align: 'left',
+    align: 'center',
     format: 'status',
 }, {
     type: 'actions',
@@ -180,7 +180,7 @@ const BrowseAssessments: React.FC<Props> = () => {
                 const convertAssessmentTableData = (assessments?: (Assessment & { poc: POC | null; })[]) => {
                     if (assessments) {
                         const newAssessmentData: AssessmentTableData[] = [];
-                        
+
                         assessments.forEach(assessment => {
                             const actions = (
                                 <IconButton onClick={() => { setAssessmentData(assessment); setAssessmentModal(true) }}>
@@ -198,7 +198,7 @@ const BrowseAssessments: React.FC<Props> = () => {
                                 actions: actions,
                             })
                         })
-                        
+
                         return newAssessmentData;
                     }
                 }
@@ -232,48 +232,52 @@ const BrowseAssessments: React.FC<Props> = () => {
 
     return (
         <>
-            <div className='browse-add'>
-                <Button
-                    variant='contained'
-                    endIcon={<Add />}
-                    onClick={() => { setEngagementData(undefined); setEngagementModal(true) }}
-                >
-                    New Engagement
-                </Button>
-                <Button
-                    variant='contained'
-                    endIcon={<Add />}
-                    onClick={() => { setAssessmentData(undefined); setAssessmentModal(true) }}
-                >
-                    New Assessment
-                </Button>
+            <div className='assessments-actions'>
+                {assessmentStatusCounts &&
+                    <Card className='assessments-filters'>
+                        <div className={'assessments-filter created ' + (createdFilter ? 'active' : '')} onClick={() => setCreatedFilter(!createdFilter)}>
+                            <span className='label'>Created</span>
+                            <span className='count'>{assessmentStatusCounts.created}</span>
+                        </div>
+                        <div className={'assessments-filter ongoing ' + (ongoingFilter ? 'active' : '')} onClick={() => setOngoingFilter(!ongoingFilter)}>
+                            <span className='label'>Ongoing</span>
+                            <span className='count'>{assessmentStatusCounts.ongoing}</span>
+                        </div>
+                        <div className={'assessments-filter assessor-review ' + (assessorReviewFilter ? 'active' : '')} onClick={() => setAssessorReviewFilter(!assessorReviewFilter)}>
+                            <span className='label'>Assessor Review</span>
+                            <span className='count'>{assessmentStatusCounts.assessorReview}</span>
+                        </div>
+                        <div className={'assessments-filter oversight ' + (oversightFilter ? 'active' : '')} onClick={() => setOversightFilter(!oversightFilter)}>
+                            <span className='label'>Oversight</span>
+                            <span className='count'>{assessmentStatusCounts.oversight}</span>
+                        </div>
+                        <div className={'assessments-filter client-review ' + (clientReviewFilter ? 'active' : '')} onClick={() => setClientReviewFilter(!clientReviewFilter)}>
+                            <span className='label'>Client Review</span>
+                            <span className='count'>{assessmentStatusCounts.clientReview}</span>
+                        </div>
+                        <div className={'assessments-filter completed ' + (completedFilter ? 'active' : '')} onClick={() => setCompletedFilter(!completedFilter)}>
+                            <span className='label'>Completed</span>
+                            <span className='count'>{assessmentStatusCounts.completed}</span>
+                        </div>
+                    </Card>
+                }
+                <div className='browse-add'>
+                    <Button
+                        variant='contained'
+                        endIcon={<Add />}
+                        onClick={() => { setEngagementData(undefined); setEngagementModal(true) }}
+                    >
+                        New Engagement
+                    </Button>
+                    <Button
+                        variant='contained'
+                        endIcon={<Add />}
+                        onClick={() => { setAssessmentData(undefined); setAssessmentModal(true) }}
+                    >
+                        New Assessment
+                    </Button>
+                </div>
             </div>
-            {assessmentStatusCounts && <div className='filters'>
-                <div className='filter' onClick={() => setCreatedFilter(!createdFilter)}>
-                    <span className={createdFilter ? 'label active' : 'label'}>Created</span>
-                    <span className='count'>{assessmentStatusCounts.created}</span>
-                </div>
-                <div className='filter' onClick={() => setOngoingFilter(!ongoingFilter)}>
-                    <span className={ongoingFilter ? 'label active' : 'label'}>Ongoing</span>
-                    <span className='count'>{assessmentStatusCounts.ongoing}</span>
-                </div>
-                <div className='filter' onClick={() => setAssessorReviewFilter(!assessorReviewFilter)}>
-                    <span className={assessorReviewFilter ? 'label active' : 'label'}>Assessor Review</span>
-                    <span className='count'>{assessmentStatusCounts.assessorReview}</span>
-                </div>
-                <div className='filter' onClick={() => setOversightFilter(!oversightFilter)}>
-                    <span className={oversightFilter ? 'label active' : 'label'}>Oversight</span>
-                    <span className='count'>{assessmentStatusCounts.oversight}</span>
-                </div>
-                <div className='filter' onClick={() => setClientReviewFilter(!clientReviewFilter)}>
-                    <span className={clientReviewFilter ? 'label active' : 'label'}>Client Review</span>
-                    <span className='count'>{assessmentStatusCounts.clientReview}</span>
-                </div>
-                <div className='filter' onClick={() => setCompletedFilter(!completedFilter)}>
-                    <span className={completedFilter ? 'label active' : 'label'}>Completed</span>
-                    <span className='count'>{assessmentStatusCounts.completed}</span>
-                </div>
-            </div>}
             <ExpandableBrowseTable
                 dataList={convertTableData(data) ?? []}
                 tableInfoColumns={engagementColumns}

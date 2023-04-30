@@ -3,32 +3,103 @@
 
     // =========== OTHER ===========
 
+
+    .assessments-actions {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 15px 0px;
+
+        .assessments-filters {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            padding: 10px 5px;
+
+            .assessments-filter {
+                cursor: pointer;
+                padding: 5px 10px;
+                font-family: 'Plus Jakarta Sans';
+
+                span {
+                    padding: 2px 7px !important;
+                }
+
+                .label {
+                    border-radius: shape(borderRadius) 0px 0px shape(borderRadius);
+                }
+
+                .count {
+                    border-radius: shape(borderRadius);
+                    background-color: white !important;
+                    border: 1px solid #d2d2d2 !important;
+                    font-weight: 600;
+                }
+
+                &.active {
+                    .label {
+                        background-color: grey;
+                        color: palette(primary, main);
+                        font-weight: 600;
+                        border-right: none !important;
+                    }
+
+                    .count {
+                        border-radius: 0px shape(borderRadius) shape(borderRadius) 0px;
+                    }
+
+                    &.created .label {
+                        background-color: #ffdcb3;
+                        color: #7a511c;
+                        border: 1px solid #cbab87;
+                    }
+
+                    &.ongoing .label {
+                        background-color: #CDEAB6;
+                        color: #416522;
+                        border: 1px solid #a6c38f;
+                    }
+
+                    &.assessor-review .label {
+                        background-color: #B4E9E0;
+                        color: #386860;
+                        border: 1px solid #8fc7be;
+                    }
+
+                    &.oversight .label {
+                        background-color: #c8e2ff;
+                        color: #345376;
+                        border: 1px solid #a0bad7;
+                    }
+
+                    &.client-review .label {
+                        background-color: #C0AEF5;
+                        color: #53467c;
+                        border: 1px solid #9f8dd3;
+                    }
+
+                    &.completed .label {
+                        background-color: #facbd6;
+                        color: #7e4351;
+                        border: 1px solid #d2a8b2;
+                    }
+                }
+            }
+        }
+    }
+
     .browse-add {
         display: flex;
         justify-content: flex-end;
-        padding: 25px 0px 20px;
+        align-items: center;
+
+        .MuiButton-root {
+            height: min-content;
+        }
 
         .MuiButton-root:last-child {
             margin-left: 10px;
         }
-    }
-
-    .add-new-buttons {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        padding-bottom: 10px;
-
-        .MuiButton-root {
-            margin: 10px;
-        }
-    }
-
-    .filters {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        padding: 5px 0px 15px;
     }
 
     .filter {

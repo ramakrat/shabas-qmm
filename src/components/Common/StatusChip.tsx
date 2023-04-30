@@ -1,13 +1,17 @@
+import { hyphenToTitle } from "~/utils/utils";
+
 interface Props {
-    status: 'ongoing' | 'assessor-review' | 'oversight' | 'client-review' | 'completed';
+    status: 'created' | 'ongoing' | 'assessor-review' | 'oversight' | 'client-review' | 'completed';
 }
 
 const StatusChip: React.FC<Props> = (props) => {
     const { status } = props;
 
     return (
-        <div>
-            {status}
+        <div className={'status-chip ' + status}>
+            <span>
+                {hyphenToTitle(status)}
+            </span>
         </div>
     )
 };

@@ -272,3 +272,7 @@ export const dateInputFormat = (date: Date, fromUTC?: boolean) => {
 export const underscoreToTitle = (str: string) => {
     return str.replace(/_/g, ' ').replace(/(?: |\b)(\w)/g, function (key) { return key.toUpperCase() });
 }
+
+export const hyphenToTitle = (str: string) => {
+    return str.replace(/-/g, ' ').replace(/(?: |\b)(\w)/g, function (key) { return key.toUpperCase() });
+}
