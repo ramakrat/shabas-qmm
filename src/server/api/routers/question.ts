@@ -93,4 +93,9 @@ export const questionRouter = createTRPCRouter({
         .query(({ ctx }) => {
             return ctx.prisma.question.findMany();
         }),
+    getTotalCount: publicProcedure
+        .input(z.boolean().optional())
+        .query(({ ctx }) => {
+            return ctx.prisma.question.count();
+        }),
 });
