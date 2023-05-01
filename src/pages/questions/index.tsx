@@ -19,7 +19,7 @@ interface TableData {
     practiceArea: string;
     topicArea: string;
     active: string;
-    actions: React.ReactNode;
+    onClick: any;
 }
 
 const columns: TableColumn[] = [{
@@ -46,11 +46,6 @@ const columns: TableColumn[] = [{
     type: 'active',
     displayValue: 'Active',
     align: 'left',
-}, {
-    type: 'actions',
-    displayValue: 'Actions',
-    align: 'center',
-    format: 'jsx-element',
 }];
 
 const Question: NextPage = () => {
@@ -67,11 +62,6 @@ const Question: NextPage = () => {
         if (data) {
             const newData: TableData[] = [];
             data.forEach(obj => {
-                const actions = (
-                    <IconButton onClick={() => { void push(`/questions/${obj.id}`) }}>
-                        <Edit fontSize='small' />
-                    </IconButton>
-                )
                 newData.push({
                     number: obj.number,
                     question: obj.question,
@@ -79,7 +69,7 @@ const Question: NextPage = () => {
                     practiceArea: obj.practice_area,
                     topicArea: obj.topic_area,
                     active: obj.active ? 'True' : 'False',
-                    actions: actions,
+                    onClick: () => { void push(`/questions/${obj.id}`) },
                 })
             })
             return newData;
