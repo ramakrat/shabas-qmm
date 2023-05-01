@@ -100,7 +100,7 @@ model Question {
     updated_by String
 
     active        Boolean
-    number        String
+    number        String  @unique
     question      String
     pillar        String
     practice_area String
@@ -247,7 +247,7 @@ model EngagementPoc {
 
     @@index([poc_id])
     @@index([engagement_id])
-	@@map("EngagementPoc")
+    @@map("EngagementPoc")
 }
 
 model Assessment {
