@@ -7,7 +7,7 @@ const Pocs: NextPage = () => {
     const [pocModal, setPOCModal] = React.useState<boolean>(false);
 
     return (
-        <Layout active='pocs'>
+        <Layout active='pocs' admin>
             <div className='dashboard'>
                 <BrowsePocs pocModal={pocModal} setPOCModal={setPOCModal} />
             </div>

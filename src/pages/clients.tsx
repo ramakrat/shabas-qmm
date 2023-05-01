@@ -8,7 +8,7 @@ const ClientsSites: NextPage = () => {
     const [siteModal, setSiteModal] = React.useState<boolean>(false);
 
     return (
-        <Layout active='clients'>
+        <Layout active='clients' admin>
             <div className='dashboard'>
                 <BrowseClients clientModal={clientModal} setClientModal={setClientModal} siteModal={siteModal} setSiteModal={setSiteModal} />
             </div>

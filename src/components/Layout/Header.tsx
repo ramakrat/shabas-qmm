@@ -8,10 +8,11 @@ import { api } from '~/utils/api';
 
 interface Props {
     active: string;
+    admin?: boolean;
 }
 
 export const Header: React.FC<Props> = (props) => {
-    const { active } = props;
+    const { active, admin } = props;
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -22,7 +23,7 @@ export const Header: React.FC<Props> = (props) => {
         setAnchorEl(null);
     };
 
-    const [admin, setAdmin] = React.useState<boolean>(true);
+    const [adminRole, setAdminRole] = React.useState<boolean>(admin ?? false);
 
     // TODO: Make dynamic
     const totalClient = api.client.getTotalCount.useQuery().data;
@@ -32,14 +33,14 @@ export const Header: React.FC<Props> = (props) => {
     const totalPOC = api.poc.getTotalCount.useQuery(true).data;
     const totalQuestion = api.question.getTotalCount.useQuery(true).data;
 
-
+    console.log(adminRole)
     return (
         <div className='header'>
             <div className='nav-items'>
                 <Link href={'/clients'} className='logo'>
                     <Image src={logo} alt={'Shabas Logo'} height={45} />
                 </Link>
-                {admin ?
+                {adminRole ?
                     <>
                         <Link href={'/clients'} className={'nav-item ' + (active == 'clients' ? 'active' : '')}>
                             <span className='label'>Clients</span>
@@ -85,7 +86,7 @@ export const Header: React.FC<Props> = (props) => {
                         </Link>
                     </>
                 }
-                <Switch value={admin} onClick={() => setAdmin(!admin)} />
+                <Switch checked={adminRole} onChange={() => setAdminRole(!adminRole)} />
             </div>
             <IconButton onClick={handleClick}>
                 <Settings />

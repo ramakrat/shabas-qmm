@@ -89,7 +89,7 @@ const Question: NextPage = () => {
 
     return (
         <>
-            <Layout active='questions'>
+            <Layout active='questions' admin>
                 <div className='dashboard'>
                     <div className='browse-add'>
                         <Button

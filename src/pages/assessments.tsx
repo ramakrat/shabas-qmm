@@ -8,7 +8,7 @@ const EngagementsAssessments: NextPage = () => {
     const [assessmentModal, setAssessmentModal] = React.useState<boolean>(false);
 
     return (
-        <Layout active='assessments'>
+        <Layout active='assessments' admin>
             <div className='dashboard'>
                 <BrowseAssessments engagementModal={engagementModal} setEngagementModal={setEngagementModal} assessmentModal={assessmentModal} setAssessmentModal={setAssessmentModal} />
             </div>

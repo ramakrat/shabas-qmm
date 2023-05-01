@@ -7,11 +7,13 @@ import Header from './Header';
 interface Props {
     active: string;
     children?: React.ReactNode;
+    admin?: boolean;
 }
 
 export const Layout: React.FC<Props> = (props) => {
 
-    const { active, children } = props;
+    const { active, children, admin } = props;
+
     return (
         <div>
             <Head>
@@ -20,7 +22,7 @@ export const Layout: React.FC<Props> = (props) => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
             <main className='content-body'>
-                <Header active={active} />
+                <Header active={active} admin={admin} />
                 {children}
             </main>
         </div>
