@@ -264,3 +264,22 @@
         background-color: palette(success, dark);
     }
 }
+
+
+.not-found {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 51px);
+
+    span {
+        font-weight: 600;
+        font-family: 'Plus Jakarta Sans';
+        font-size: 2rem;
+    }
+
+    span:first-child {
+        font-size: 3rem;
+    }
+}

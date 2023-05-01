@@ -295,7 +295,15 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                 })
         }
     }
-
+    
+    if (data?.status != status) {
+        return (
+            <div className='not-found'>
+                <span>404</span>
+                <span>Page Not Found</span>
+            </div>
+        )
+    }
     return (
         <div className='assessment'>
             <Formik

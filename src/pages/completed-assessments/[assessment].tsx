@@ -134,6 +134,16 @@ const CompletedAssessment: NextPage = () => {
         }
     }
 
+    if (data?.status != 'completed') {
+        return (
+            <Layout active='completed-assessments'>
+                <div className='not-found'>
+                    <span>404</span>
+                    <span>Page Not Found</span>
+                </div>
+            </Layout>
+        )
+    }
     return (
         <Layout active='completed-assessments'>
             <div className='assessment'>
@@ -141,6 +151,7 @@ const CompletedAssessment: NextPage = () => {
                     <Grid item xs={2}>
                         {questions &&
                             <QuestionsSidebar
+                                assessmentId={assessment?.toString() ?? ''}
                                 questions={questions.map(o => convertToQuestion(o.question))}
                                 question={question}
                                 setQuestion={setQuestion}
