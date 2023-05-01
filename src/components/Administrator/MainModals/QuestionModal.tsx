@@ -7,6 +7,7 @@ import TextField from "../../Form/TextField";
 import { Button, Card, CardActions, CardContent, CardHeader, IconButton, Modal } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { api } from "~/utils/api";
+import { useRouter } from "next/router";
 
 interface Props {
     open: boolean;
@@ -65,6 +66,7 @@ const QuestionModal: React.FC<Props> = (props) => {
         })
     }, [open])
 
+    const { reload } = useRouter();
     const handleSubmit = (
         values: FormValues,
     ) => {
@@ -78,7 +80,10 @@ const QuestionModal: React.FC<Props> = (props) => {
             hint: values.hint,
             priority: values.priority,
         }, {
-            onSuccess() { setOpen(false) }
+            onSuccess() {
+                setOpen(false);
+                reload();
+            }
         })
     }
 
