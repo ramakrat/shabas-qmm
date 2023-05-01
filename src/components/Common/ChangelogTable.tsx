@@ -1,7 +1,7 @@
 import * as React from 'react';
 import type { Changelog } from '@prisma/client';
-import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Button, Typography } from '@mui/material';
 import * as XLSX from 'xlsx';
+import { Button } from '@mui/material';
 import { FileDownload } from '@mui/icons-material';
 import BrowseTable, { type TableColumn } from './BrowseTable';
 

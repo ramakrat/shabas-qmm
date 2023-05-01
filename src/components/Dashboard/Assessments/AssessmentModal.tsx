@@ -2,7 +2,7 @@ import React from "react";
 import type { Assessment, AssessmentQuestion, Engagement, Filter, Question, Rating, Site } from "@prisma/client";
 
 import * as yup from "yup";
-import { Field, Form, Formik, type FormikProps } from "formik";
+import { Field, Form, Formik } from "formik";
 import TextField from "../../Form/TextField";
 import Select from "../../Form/Select";
 

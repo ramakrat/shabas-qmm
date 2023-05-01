@@ -38,8 +38,6 @@ interface RatingType {
 
 const Question: NextPage = () => {
 
-    const { push } = useRouter();
-
     const { question } = useRouter().query;
 
     const [filterType, setFilterType] = React.useState<string>('default');

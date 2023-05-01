@@ -33,7 +33,6 @@ export const Header: React.FC<Props> = (props) => {
     const totalPOC = api.poc.getTotalCount.useQuery(true).data;
     const totalQuestion = api.question.getTotalCount.useQuery(true).data;
 
-    console.log(adminRole)
     return (
         <div className='header'>
             <div className='nav-items'>
