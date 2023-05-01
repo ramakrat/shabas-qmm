@@ -43,23 +43,23 @@ export const Header: React.FC<Props> = (props) => {
                     <>
                         <Link href={'/clients'} className={'nav-item ' + (active == 'clients' ? 'active' : '')}>
                             <span className='label'>Clients</span>
-                            <span className='count'>{totalClient}</span>
+                            <span className='count'>{totalClient ?? 0}</span>
                             <span className='label child-label'>/ Sites</span>
-                            <span className='count'>{totalSite}</span>
+                            <span className='count'>{totalSite ?? 0}</span>
                         </Link>
                         <Link href={'/pocs'} className={'nav-item ' + (active == 'pocs' ? 'active' : '')}>
                             <span className='label'>POC</span>
-                            <span className='count'>{totalPOC}</span>
+                            <span className='count'>{totalPOC ?? 0}</span>
                         </Link>
                         <Link href={'/assessments'} className={'nav-item ' + (active == 'assessments' ? 'active' : '')}>
                             <span className='label'>Engagements</span>
-                            <span className='count'>{totalEngagement}</span>
+                            <span className='count'>{totalEngagement ?? 0}</span>
                             <span className='label child-label'>/ Assessments</span>
-                            <span className='count'>{totalAssessment}</span>
+                            <span className='count'>{totalAssessment ?? 0}</span>
                         </Link>
                         <Link href={'/questions'} className={'nav-item ' + (active == 'questions' ? 'active' : '')}>
                             <span className='label'>Question</span>
-                            <span className='count'>{totalQuestion}</span>
+                            <span className='count'>{totalQuestion ?? 0}</span>
                         </Link>
                     </> :
                     <>
