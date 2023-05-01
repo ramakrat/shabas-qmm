@@ -7,8 +7,8 @@ import { Add, Edit } from "@mui/icons-material";
 import { api } from "~/utils/api";
 import { NextPage } from "next";
 import Layout from "~/components/Layout/Layout";
-import AssessmentModal from "~/components/Administrator/Assessments/AssessmentModal";
-import EngagementModal from "~/components/Administrator/Assessments/EngagementModal";
+import AssessmentModal from "~/components/Administrator/MainModals/AssessmentModal";
+import EngagementModal from "~/components/Administrator/MainModals/EngagementModal";
 import BrowseTable, { TableColumn } from "~/components/Common/BrowseTable";
 
 interface EngagementTableData {

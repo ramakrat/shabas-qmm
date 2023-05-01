@@ -6,8 +6,8 @@ import { Add, Edit } from "@mui/icons-material";
 
 import { api } from "~/utils/api";
 import { NextPage } from "next";
-import ClientModal from "~/components/Administrator/Clients/ClientModal";
-import SiteModal from "~/components/Administrator/Clients/SiteModal";
+import ClientModal from "~/components/Administrator/MainModals/ClientModal";
+import SiteModal from "~/components/Administrator/MainModals/SiteModal";
 import BrowseTable, { TableColumn } from "~/components/Common/BrowseTable";
 import Layout from "~/components/Layout/Layout";
 

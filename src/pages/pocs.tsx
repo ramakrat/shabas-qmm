@@ -6,7 +6,7 @@ import { Add, Edit } from "@mui/icons-material";
 
 import { api } from "~/utils/api";
 import { NextPage } from "next";
-import PocModal from "~/components/Administrator/Pocs/PocModal";
+import PocModal from "~/components/Administrator/MainModals/PocModal";
 import BrowseTable, { TableColumn } from "~/components/Common/BrowseTable";
 import Layout from "~/components/Layout/Layout";
 
