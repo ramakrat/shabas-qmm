@@ -7,7 +7,7 @@ import { Field, Form, Formik } from "formik";
 import TextField from '~/components/Form/TextField';
 
 import { Button, Card, Grid, IconButton, MenuItem, Typography } from '@mui/material';
-import { ArrowDownward, ArrowDropDown, Expand, Info, KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
+import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
 import { api } from "~/utils/api";
 import QuestionsSidebar from '~/components/Assessor/QuestionsSidebar';
