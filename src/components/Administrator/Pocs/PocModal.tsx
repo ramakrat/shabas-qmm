@@ -9,6 +9,7 @@ import Select from "../../Form/Select";
 import { Button, Card, CardActions, CardContent, CardHeader, IconButton, MenuItem, Modal } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { api } from "~/utils/api";
+import { useRouter } from "next/router";
 
 interface Props {
     open: boolean;
@@ -108,6 +109,7 @@ const PocModal: React.FC<Props> = (props) => {
         }
     }, [data])
 
+    const { reload } = useRouter();
     const handleSubmit = (
         values: FormValues,
     ) => {
@@ -122,7 +124,10 @@ const PocModal: React.FC<Props> = (props) => {
                 email: values.email,
                 client_id: values.type == 'client' ? Number(values.typeId) : undefined,
             }, {
-                onSuccess() { setOpen(false) }
+                onSuccess() {
+                    setOpen(false);
+                    reload();
+                }
             })
         } else {
             create.mutate({
@@ -134,7 +139,10 @@ const PocModal: React.FC<Props> = (props) => {
                 email: values.email,
                 client_id: values.type == 'client' ? Number(values.typeId) : undefined,
             }, {
-                onSuccess() { setOpen(false) }
+                onSuccess() {
+                    setOpen(false);
+                    reload();
+                }
             })
         }
     }

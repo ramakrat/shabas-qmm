@@ -10,6 +10,7 @@ import { Button, Card, CardActions, CardContent, CardHeader, IconButton, MenuIte
 import { Add, Close } from "@mui/icons-material";
 import { api } from "~/utils/api";
 import { dateInputFormat, titleCase } from "~/utils/utils";
+import { useRouter } from "next/router";
 
 interface Props {
     open: boolean;
@@ -151,6 +152,7 @@ const AssessmentModal: React.FC<Props> = (props) => {
     const createQuestions = api.assessmentQuestion.createArray.useMutation();
     const updateQuestion = api.assessmentQuestion.update.useMutation();
 
+    const { reload } = useRouter();
     const handleSubmit = (
         values: FormValues,
     ) => {
@@ -201,7 +203,8 @@ const AssessmentModal: React.FC<Props> = (props) => {
                 }
             })
             if (succeeded) {
-                setOpen(false)
+                setOpen(false);
+                reload();
             }
         } else {
             let succeeded = true;
@@ -233,7 +236,8 @@ const AssessmentModal: React.FC<Props> = (props) => {
                 }
             })
             if (succeeded) {
-                setOpen(false)
+                setOpen(false);
+                reload();
             }
         }
     }

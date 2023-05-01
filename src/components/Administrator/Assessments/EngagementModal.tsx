@@ -10,6 +10,7 @@ import { Button, Card, CardActions, CardContent, CardHeader, IconButton, MenuIte
 import { Close } from "@mui/icons-material";
 import { api } from "~/utils/api";
 import { dateInputFormat } from "~/utils/utils";
+import { useRouter } from "next/router";
 
 interface Props {
     open: boolean;
@@ -108,6 +109,7 @@ const EngagementModal: React.FC<Props> = (props) => {
     const createPoc = api.engagementPoc.create.useMutation();
     const updatePoc = api.engagementPoc.update.useMutation();
 
+    const { reload } = useRouter();
     const handleSubmit = (
         values: FormValues,
     ) => {
@@ -148,7 +150,8 @@ const EngagementModal: React.FC<Props> = (props) => {
                         })
                     }
 
-                    setOpen(false)
+                    setOpen(false);
+                    reload();
                 }
             })
         } else {
@@ -167,7 +170,9 @@ const EngagementModal: React.FC<Props> = (props) => {
                         engagement_id: created.id,
                         poc_id: Number(values.shabasPocId),
                     })
-                    setOpen(false)
+
+                    setOpen(false);
+                    reload();
                 }
             })
         }

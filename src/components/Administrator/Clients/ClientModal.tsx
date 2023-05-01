@@ -10,6 +10,7 @@ import { Button, Card, CardActions, CardContent, CardHeader, IconButton, MenuIte
 import { Close } from "@mui/icons-material";
 import { Countries } from "~/utils/utils";
 import { api } from "~/utils/api";
+import { useRouter } from "next/router";
 
 interface Props {
     open: boolean;
@@ -82,6 +83,7 @@ const ClientModal: React.FC<Props> = (props) => {
         }
     }, [data])
 
+    const { reload } = useRouter();
     const handleSubmit = (
         values: FormValues,
     ) => {
@@ -96,7 +98,10 @@ const ClientModal: React.FC<Props> = (props) => {
                 zip_code: values.zipCode,
                 description: values.description,
             }, {
-                onSuccess() { setOpen(false) }
+                onSuccess() {
+                    setOpen(false);
+                    reload();
+                }
             })
         } else {
             create.mutate({
@@ -108,7 +113,10 @@ const ClientModal: React.FC<Props> = (props) => {
                 zip_code: values.zipCode,
                 description: values.description,
             }, {
-                onSuccess() { setOpen(false) }
+                onSuccess() {
+                    setOpen(false);
+                    reload();
+                }
             })
         }
     }
