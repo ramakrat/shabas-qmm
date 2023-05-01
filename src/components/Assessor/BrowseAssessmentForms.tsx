@@ -1,8 +1,7 @@
 import { useRouter } from "next/router";
 import type { Engagement, Poc, Assessment, Client, EngagementPoc } from "@prisma/client";
 import { api } from "~/utils/api";
-import BrowseTable from "../Common/BrowseTable";
-import ExpandableBrowseTable, { type TableColumn } from "../Common/ExpandableBrowseTable";
+import BrowseTable, { type TableColumn } from "../Common/BrowseTable";
 
 interface Props {
     status: 'ongoing' | 'assessor-review' | 'oversight' | 'client-review' | 'completed';
@@ -187,9 +186,10 @@ const BrowseAssessmentForms: React.FC<Props> = (props) => {
     return (
         <div className='dashboard'>
             {data &&
-                <ExpandableBrowseTable
+                <BrowseTable
                     dataList={convertTableData(data) ?? []}
                     tableInfoColumns={engagementColumns}
+                    expandable
                 />
             }
         </div>

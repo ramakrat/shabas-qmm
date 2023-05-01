@@ -6,7 +6,6 @@ import { Add, Edit } from "@mui/icons-material";
 
 import { api } from "~/utils/api";
 import BrowseTable, { type TableColumn } from "../../Common/BrowseTable";
-import ExpandableBrowseTable from "~/components/Common/ExpandableBrowseTable";
 import ClientModal from "./ClientModal";
 import SiteModal from "./SiteModal";
 
@@ -186,9 +185,10 @@ const BrowseClients: React.FC<Props> = () => {
                     New Site
                 </Button>
             </div>
-            <ExpandableBrowseTable
+            <BrowseTable
                 dataList={convertTableData(data) ?? []}
                 tableInfoColumns={clientColumns}
+                expandable
             />
             <ClientModal open={clientModal} setOpen={setClientModal} data={clientData} />
             <SiteModal open={siteModal} setOpen={setSiteModal} data={siteData} />

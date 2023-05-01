@@ -5,8 +5,7 @@ import { Button, Card, IconButton } from "@mui/material";
 import { Add, Edit } from "@mui/icons-material";
 
 import { api } from "~/utils/api";
-import ExpandableBrowseTable, { type TableColumn } from "../../Common/ExpandableBrowseTable";
-import BrowseTable from "../../Common/BrowseTable";
+import BrowseTable, { TableColumn } from "../../Common/BrowseTable";
 import EngagementModal from "./EngagementModal";
 import AssessmentModal from "./AssessmentModal";
 
@@ -278,9 +277,10 @@ const BrowseAssessments: React.FC<Props> = () => {
                     </Button>
                 </div>
             </div>
-            <ExpandableBrowseTable
+            <BrowseTable
                 dataList={convertTableData(data) ?? []}
                 tableInfoColumns={engagementColumns}
+                expandable
             />
             <EngagementModal open={engagementModal} setOpen={setEngagementModal} data={engagementData} />
             <AssessmentModal open={assessmentModal} setOpen={setAssessmentModal} data={assessmentData} />
