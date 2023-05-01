@@ -2,7 +2,7 @@ import React from "react";
 import type { Question } from "@prisma/client";
 import { Button, Card, IconButton, Typography } from "@mui/material";
 import { Add, East, FileDownload, West } from "@mui/icons-material";
-import QuestionModal from "./QuestionModal";
+import QuestionModal from "../Administrator/Question/QuestionModal";
 
 interface Props {
     questions: Question[];
