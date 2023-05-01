@@ -61,7 +61,7 @@ const ExpandableSection = (tableInfoColumns: any[], obj: any, idx: number, child
 
     return (
         <>
-            <TableHead>
+            <TableHead key={'header-' + idx}>
                 <TableRow>
                     {tableInfoColumns.map((header, i) => {
                         return (
@@ -83,7 +83,7 @@ const ExpandableSection = (tableInfoColumns: any[], obj: any, idx: number, child
                     </TableCell>
                 </TableRow>
             </TableHead>
-            <TableBody>
+            <TableBody key={'body-' + idx}>
                 {Row(tableInfoColumns, obj, idx)}
                 {expanded &&
                     <TableRow>
