@@ -48,29 +48,17 @@ const BrowseTable: React.FC<Props> = (props) => {
                                 onClick={obj.onClick ?? undefined}
                             >
                                 {tableInfoColumns.map(column => {
+                                    let cellData = obj[column.type];
                                     if (column.format === 'date') {
-                                        return (
-                                            <TableCell key={column.type + '-' + idx} align={column.align}>
-                                                {(obj[column.type]).toDateString()}
-                                            </TableCell>
-                                        )
-                                    } else if (column.format === 'status') {
-                                        return (
-                                            obj[column.type] ?
-                                                <TableCell key={column.type + '-' + idx} align={column.align}>
-                                                    <StatusChip status={obj[column.type]} />
-                                                </TableCell> : <TableCell key={column.type + '-' + idx} />
-                                        )
+                                        cellData = (obj[column.type]).toDateString();
+                                    } else if (column.format === 'status' && obj[column.type]) {
+                                        cellData = <StatusChip status={obj[column.type]} />;
                                     } else if (column.format === 'jsx-element') {
-                                        return (
-                                            <TableCell key={column.type + '-' + idx} align={column.align}>
-                                                {obj[column.type]}
-                                            </TableCell>
-                                        )
+                                        cellData = obj[column.type];
                                     }
                                     return (
                                         <TableCell key={column.type + '-' + idx} align={column.align} className={obj[column.type] == '' ? 'null' : ''}>
-                                            {(obj[column.type])}
+                                            {cellData}
                                         </TableCell>
                                     )
                                 })}
