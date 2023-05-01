@@ -589,7 +589,7 @@ const Question: NextPage = () => {
     }
 
     return (
-        <Layout active='questions'>
+        <Layout active='questions' admin>
             <form onSubmit={handleSubmit}>
                 <div className='assessment'>
                     <div className='assessment-content'>
