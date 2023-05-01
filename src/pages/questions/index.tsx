@@ -8,7 +8,7 @@ import { Add } from '@mui/icons-material';
 
 import { api } from "~/utils/api";
 import Layout from "~/components/Layout/Layout";
-import QuestionModal from '~/components/Administrator/Question/QuestionModal';
+import QuestionModal from '~/components/Administrator/MainModals/QuestionModal';
 import BrowseTable, { TableColumn } from '~/components/Common/BrowseTable';
 
 interface TableData {
