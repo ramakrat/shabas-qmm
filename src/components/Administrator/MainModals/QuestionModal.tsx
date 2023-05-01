@@ -1,7 +1,7 @@
 import React from "react";
 
 import * as yup from "yup";
-import { Field, Form, Formik } from "formik";
+import { Field, Form, Formik, FormikErrors, FormikHelpers } from "formik";
 import TextField from "../../Form/TextField";
 
 import { Button, Card, CardActions, CardContent, CardHeader, IconButton, Modal } from "@mui/material";
@@ -69,6 +69,7 @@ const QuestionModal: React.FC<Props> = (props) => {
     const { reload } = useRouter();
     const handleSubmit = (
         values: FormValues,
+        formikHelpers: FormikHelpers<FormValues>,
     ) => {
         create.mutate({
             active: true,
@@ -83,6 +84,10 @@ const QuestionModal: React.FC<Props> = (props) => {
             onSuccess() {
                 setOpen(false);
                 reload();
+            },
+            onError(err) {
+                if (err.shape?.code == -32603)
+                    formikHelpers.setErrors({number: 'Question with this number already exists'})
             }
         })
     }
@@ -96,7 +101,7 @@ const QuestionModal: React.FC<Props> = (props) => {
                     validationSchema={validationSchema}
                     validateOnBlur={false}
                     validateOnChange={false}
-                    onSubmit={handleSubmit}
+                    onSubmit={(values, formikHelpers) => handleSubmit(values, formikHelpers)}
                 >
                     <Form>
                         <Card>

@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
@@ -17,21 +18,34 @@ const inputType = z.object({
 export const questionRouter = createTRPCRouter({
     create: publicProcedure
         .input(inputType)
-        .mutation(({ input, ctx }) => {
-            return ctx.prisma.question.create({
-                data: {
-                    active: input.active,
-                    number: input.number,
-                    question: input.question,
-                    pillar: input.pillar,
-                    practice_area: input.practice_area,
-                    topic_area: input.topic_area,
-                    hint: input.hint,
-                    priority: input.priority,
-                    created_by: '',
-                    updated_by: '',
+        .mutation(async ({ input, ctx }) => {
+            try {
+                const created = ctx.prisma.question.create({
+                    data: {
+                        active: input.active,
+                        number: input.number,
+                        question: input.question,
+                        pillar: input.pillar,
+                        practice_area: input.practice_area,
+                        topic_area: input.topic_area,
+                        hint: input.hint,
+                        priority: input.priority,
+                        created_by: '',
+                        updated_by: '',
+                    }
+                })
+                return created;
+            } catch (e) {
+                if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                    // The .code property can be accessed in a type-safe manner
+                    if (e.code === 'P2002') {
+                        console.log(
+                            'There is a unique constraint violation.'
+                        )
+                    }
                 }
-            })
+                throw e;
+            }
         }),
     update: publicProcedure
         .input(inputType)
