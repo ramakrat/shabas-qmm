@@ -195,7 +195,7 @@ const BrowseAssessments: React.FC<Props> = () => {
                                 clientPoc: assessment.poc ? `${assessment.poc.first_name} ${assessment.poc.last_name}` : '',
                                 assessors: '',
                                 status: assessment.status,
-                                actions: actions,
+                                actions: assessment.status == 'created' ? actions : '',
                             })
                         })
 
