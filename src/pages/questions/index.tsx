@@ -3,14 +3,13 @@ import { type NextPage } from "next";
 import { useRouter } from 'next/router';
 import { Question } from '@prisma/client';
 
-import { Button, IconButton } from '@mui/material';
-import { Add, Edit } from '@mui/icons-material';
+import { Button } from '@mui/material';
+import { Add } from '@mui/icons-material';
 
 import { api } from "~/utils/api";
 import Layout from "~/components/Layout/Layout";
 import QuestionModal from '~/components/Administrator/Question/QuestionModal';
-import BrowseTable from '~/components/Common/BrowseTable';
-import type { TableColumn } from '~/components/Common/ExpandableBrowseTable';
+import BrowseTable, { TableColumn } from '~/components/Common/BrowseTable';
 
 interface TableData {
     number: string;
