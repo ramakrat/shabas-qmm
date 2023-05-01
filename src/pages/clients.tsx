@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { type NextPage } from "next";
-import BrowseClients from '~/components/Dashboard/Clients/BrowseClients';
+import BrowseClients from '~/components/Administrator/Clients/BrowseClients';
 import Layout from '~/components/Layout/Layout';
 
 const ClientsSites: NextPage = () => {

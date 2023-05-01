@@ -11,9 +11,9 @@ import { Add, Delete } from '@mui/icons-material';
 
 import { api } from "~/utils/api";
 import Layout from "~/components/Layout/Layout";
-import BusinessTypeModal from '~/components/Question/QuestionFilters/BusinessTypeModal';
-import ManufacturingTypeModal from '~/components/Question/QuestionFilters/ManufacturingTypeModal';
-import SiteSpecificModal from '~/components/Question/QuestionFilters/SiteSpecificModal';
+import BusinessTypeModal from '~/components/Administrator/Question/QuestionFilters/BusinessTypeModal';
+import ManufacturingTypeModal from '~/components/Administrator/Question/QuestionFilters/ManufacturingTypeModal';
+import SiteSpecificModal from '~/components/Administrator/Question/QuestionFilters/SiteSpecificModal';
 import ChangelogTable from '~/components/Common/ChangelogTable';
 import { underscoreToTitle } from '~/utils/utils';
 

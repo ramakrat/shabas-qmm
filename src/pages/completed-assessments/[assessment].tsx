@@ -8,7 +8,7 @@ import { Card, Grid, Typography } from '@mui/material';
 
 import { api } from "~/utils/api";
 import Layout from "~/components/Layout/Layout";
-import QuestionsSidebar from '~/components/Question/QuestionsSidebar';
+import QuestionsSidebar from '~/components/Administrator/Question/QuestionsSidebar';
 import ChangelogTable from '~/components/Common/ChangelogTable';
 
 const CompletedAssessment: NextPage = () => {

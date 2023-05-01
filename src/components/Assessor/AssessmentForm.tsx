@@ -10,7 +10,7 @@ import { Button, Card, Grid, MenuItem, Typography } from '@mui/material';
 import { Info } from '@mui/icons-material';
 
 import { api } from "~/utils/api";
-import QuestionsSidebar from '~/components/Question/QuestionsSidebar';
+import QuestionsSidebar from '~/components/Administrator/Question/QuestionsSidebar';
 import Select from '~/components/Form/Select';
 import ChangelogTable from '~/components/Common/ChangelogTable';
 

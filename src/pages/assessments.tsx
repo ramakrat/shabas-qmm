@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { type NextPage } from "next";
-import BrowseAssessments from '~/components/Dashboard/Assessments/BrowseAssessments';
+import BrowseAssessments from '~/components/Administrator/Assessments/BrowseAssessments';
 import Layout from '~/components/Layout/Layout';
 
 const EngagementsAssessments: NextPage = () => {

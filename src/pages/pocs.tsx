@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { type NextPage } from "next";
-import BrowsePocs from '~/components/Dashboard/Pocs/BrowsePocs';
+import BrowsePocs from '~/components/Administrator/Pocs/BrowsePocs';
 import Layout from '~/components/Layout/Layout';
 
 const Pocs: NextPage = () => {

@@ -2,7 +2,7 @@ import React from "react";
 
 import * as yup from "yup";
 import { Field, Form, Formik } from "formik";
-import TextField from "../Form/TextField";
+import TextField from "../../Form/TextField";
 
 import { Button, Card, CardActions, CardContent, CardHeader, IconButton, Modal } from "@mui/material";
 import { Close } from "@mui/icons-material";

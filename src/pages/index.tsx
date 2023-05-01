@@ -5,9 +5,9 @@ import { Box, Tab, Tabs } from '@mui/material';
 
 import { api } from '~/utils/api';
 import Layout from "~/components/Layout/Layout";
-import BrowseClients from '~/components/Dashboard/Clients/BrowseClients';
-import BrowseAssessments from '~/components/Dashboard/Assessments/BrowseAssessments';
-import BrowsePocs from '~/components/Dashboard/Pocs/BrowsePocs';
+import BrowseClients from '~/components/Administrator/Clients/BrowseClients';
+import BrowseAssessments from '~/components/Administrator/Assessments/BrowseAssessments';
+import BrowsePocs from '~/components/Administrator/Pocs/BrowsePocs';
 
 const AdminDashboard: NextPage = () => {
 
