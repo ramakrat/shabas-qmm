@@ -81,7 +81,7 @@ const ExpandableSection = (tableInfoColumns: any[], obj: any, idx: number, child
             </TableHead>
             <TableBody key={'body-' + idx}>
                 {Row(tableInfoColumns, obj, idx)}
-                {expanded &&
+                {(expanded && child) &&
                     <TableRow>
                         <TableCell colSpan={tableInfoColumns.length} className='child-table'>
                             {child}
