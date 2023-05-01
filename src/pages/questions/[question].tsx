@@ -588,14 +588,176 @@ const Question: NextPage = () => {
         </>)
     }
 
-    // if (inUse) {
-    //     <Layout active='questions' admin>
-    //         <div className='not-found'>
-    //             <span>404</span>
-    //             <span>Page Not Found</span>
-    //         </div>
-    //     </Layout>
-    // }
+    if (inUse) {
+        return (
+            <Layout active='questions' admin>
+                <div className='assessment'>
+                    <div className='assessment-content'>
+                        <Card className='context'>
+                            <div className='question-number'>
+                                <Typography>Question # : </Typography>
+                                <Typography>{question}</Typography>
+                                <div className='question-status'>
+                                    <div className={'active-signature ' + (active ? 'active' : '')} />
+                                    {active ? 'Active (In Use)' : 'Inactive (In Use)'}
+                                </div>
+                            </div>
+                        </Card>
+                        <div className='assessment-form'>
+                            <Grid container spacing={2}>
+                                <Grid item xs={7}>
+                                    <Card className='question-content'>
+                                        <div className='widget-header'>General</div>
+                                        <div className='widget-body information-list'>
+                                            <div>
+                                                <Typography>Question Content:</Typography>
+                                                <Typography>{data?.question}</Typography>
+                                            </div>
+                                        </div>
+                                        <div className='filters'>
+                                            <ToggleButtonGroup
+                                                exclusive
+                                                size='small'
+                                                value={filterType}
+                                                onChange={(_event, value: string) => { if (value) { setFilterType(value); setFilterSelection(null); } }}
+                                            >
+                                                <ToggleButton value='default'>Default</ToggleButton>
+                                                <ToggleButton value='business-type'>Business Type</ToggleButton>
+                                                <ToggleButton value='manufacturing-type'>Manufacturing Type</ToggleButton>
+                                                <ToggleButton value='site-specific'>Site Specific</ToggleButton>
+                                            </ToggleButtonGroup>
+                                            {filterSelect()}
+                                        </div>
+                                        {!(filterType != 'default' && filterSelection == null) &&
+                                            <div className='widget-body information-list'>
+                                                {ratings.map((r, i) => {
+                                                    return (
+                                                        <>
+                                                            <div key={'level-' + i}>
+                                                                <Typography>Level {r.level_number}:</Typography>
+                                                                <Typography>{r.criteria}</Typography>
+                                                            </div>
+                                                            {i !== ratings.length - 1 &&
+                                                                <div key={'progression-' + i}>
+                                                                    <Typography>Progression Statement:</Typography>
+                                                                    <Typography>{r.progression_statement}</Typography>
+                                                                </div>
+                                                            }
+                                                        </>
+                                                    )
+                                                })}
+                                            </div>
+                                        }
+                                    </Card>
+                                </Grid>
+                                <Grid item xs={5}>
+                                    <Card className='reference'>
+                                        <div className='widget-header'>General Information</div>
+                                        <div className='widget-body information-list'>
+                                            <div>
+                                                <Typography>Pillar:</Typography>
+                                                <Typography>{pillar}</Typography>
+                                            </div>
+                                            <div>
+                                                <Typography>Practice Area:</Typography>
+                                                <Typography>{practiceArea}</Typography>
+                                            </div>
+                                            <div>
+                                                <Typography>Topic Area:</Typography>
+                                                <Typography>{topicArea}</Typography>
+                                            </div>
+                                            <div>
+                                                <Typography>Priority:</Typography>
+                                                <Typography>{priority}</Typography>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div className='widget-header'>Interview Guide</div>
+                                            <div className='widget-body information-list'>
+                                                {existingGuide?.map((r, i) => {
+                                                    return (
+                                                        <div key={i}>
+                                                            <Typography>{i + 1}.</Typography>
+                                                            <Typography>{r.interview_question}</Typography>
+                                                        </div>
+                                                    )
+                                                })}
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div className='widget-header'>References</div>
+                                            <div className='widget-body information-list'>
+                                                {existingReferences?.map((r, i) => {
+                                                    return (
+                                                        <div key={i}>
+                                                            <Typography>{i + 1}.</Typography>
+                                                            <Typography>{r.citation}</Typography>
+                                                        </div>
+                                                    )
+                                                })}
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div className='widget-header'>SME Information</div>
+                                            <div className='widget-body information-list'>
+                                                <div>
+                                                    <Typography>First Name: </Typography>
+                                                    <Typography>{firstName}</Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography>Last Name</Typography>
+                                                    <Typography>{lastName}</Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography>Phone Number</Typography>
+                                                    <Typography>{phone}</Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography>Email</Typography>
+                                                    <Typography>{email}</Typography>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div className='widget-header'>Details</div>
+                                            <div className='widget-body information-list'>
+                                                <div>
+                                                    <Typography>Owned By:</Typography>
+                                                    <Typography></Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography>Updated At:</Typography>
+                                                    <Typography>{data?.updated_at.toLocaleString()}</Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography>Updated By:</Typography>
+                                                    <Typography>{data?.updated_by}</Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography>Created At:</Typography>
+                                                    <Typography>{data?.created_at.toLocaleString()}</Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography>Created By:</Typography>
+                                                    <Typography>{data?.created_by}</Typography>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </Card>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Card>
+                                        <div className='widget-header'>Changelog</div>
+                                        <ChangelogTable changelogs={fullChangelog} fileName={`Question${data ? data.id : ''} Changelog`} />
+                                    </Card>
+                                </Grid>
+                            </Grid>
+                        </div>
+                    </div>
+                </div>
+            </Layout>
+        )
+    }
     return (
         <Layout active='questions' admin>
             <form onSubmit={handleSubmit}>
@@ -627,7 +789,7 @@ const Question: NextPage = () => {
                         </Card>
                         <div className='assessment-form'>
                             <Grid container spacing={2}>
-                                <Grid item xs={8}>
+                                <Grid item xs={7}>
                                     <Card className='question-content'>
                                         <div className='widget-header'>General</div>
                                         <div className='widget-body widget-form'>
@@ -680,7 +842,7 @@ const Question: NextPage = () => {
                                         }
                                     </Card>
                                 </Grid>
-                                <Grid item xs={4}>
+                                <Grid item xs={5}>
                                     <Card className='reference'>
                                         <div className='widget-header'>General Information</div>
                                         <div className='widget-body widget-form'>
