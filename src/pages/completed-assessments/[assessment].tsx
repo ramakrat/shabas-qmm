@@ -147,109 +147,133 @@ const CompletedAssessment: NextPage = () => {
     return (
         <Layout active='completed-assessments'>
             <div className='assessment'>
-                <Grid container spacing={2}>
-                    <Grid item xs={2}>
-                        {questions &&
-                            <QuestionsSidebar
-                                assessmentId={assessment?.toString() ?? ''}
-                                questions={questions.map(o => convertToQuestion(o.question))}
-                                question={question}
-                                setQuestion={setQuestion}
-                                exportAssessment={exportCompleted}
-                            />
-                        }
-                    </Grid>
-                    {selectedAssessmentQuestion &&
-                        <Grid item xs={10} container spacing={2}>
-                            <Grid item xs={12}>
-                                <Card className='context'>
-                                    <div>
-                                        <Typography>Question #</Typography>
-                                        <Typography>{questionRef ? convertToQuestion(questionRef).number : undefined}</Typography>
-                                    </div>
-                                    <div>
-                                        <Typography>Pillar</Typography>
-                                        <Typography>{questionRef ? convertToQuestion(questionRef).pillar : undefined}</Typography>
-                                    </div>
-                                    <div>
-                                        <Typography>Practice Area</Typography>
-                                        <Typography>{questionRef ? convertToQuestion(questionRef).practice_area : undefined}</Typography>
-                                    </div>
-                                    <div>
-                                        <Typography>Topic Area</Typography>
-                                        <Typography>{questionRef ? convertToQuestion(questionRef).topic_area : undefined}</Typography>
-                                    </div>
-                                    <div>
-                                        <Typography>Priority</Typography>
-                                        <Typography>{questionRef ? convertToQuestion(questionRef).priority : undefined}</Typography>
-                                    </div>
-                                </Card></Grid>
-                            <Grid item xs={6}>
-                                <Card className='pre-questions'>
-                                    <div>
-                                        <Typography>Question Content: {selectedAssessmentQuestion.question.question}</Typography>
-                                        <Typography>Hint: {questionRef?.hint}</Typography>
-                                        <Typography>Start Time: XYZ</Typography>
-                                        <div className='rating'>
-                                            {(ratings) &&
+                {questions &&
+                    <QuestionsSidebar
+                        assessmentId={assessment?.toString() ?? ''}
+                        questions={questions.map(o => convertToQuestion(o.question))}
+                        question={question}
+                        setQuestion={setQuestion}
+                        exportAssessment={exportCompleted}
+                    />
+                }
+                <div className='assessment-content'>
+                    <Card className='context'>
+                        <div className='question-number'>
+                            <Typography>Question # :</Typography>
+                            <Typography>{questionRef ? convertToQuestion(questionRef).number : undefined}</Typography>
+                        </div>
+                    </Card>
+                    <div className='assessment-form'>
+                        <Grid container spacing={2}>
+                            {selectedAssessmentQuestion &&
+                                <>
+                                    <Grid item xs={6}>
+                                        <Card className='question-content'>
+                                            <div className='widget-header'>General</div>
+                                            <div className='widget-body information-list'>
                                                 <div>
-                                                    {ratings.map((r, i) => {
-                                                        return (
-                                                            <div key={i}>
-                                                                <div>Level {r.level_number}: {r.criteria}</div>
-                                                                {i !== ratings.length - 1 &&
-                                                                    <div>Progression Statement: {r.progression_statement}</div>
-                                                                }
+                                                    <Typography>Question Content:</Typography>
+                                                    <Typography>{selectedAssessmentQuestion.question.question}</Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography>Hint:</Typography>
+                                                    <Typography>{questionRef?.hint}</Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography>Start Time:</Typography>
+                                                    <Typography>XYZ</Typography>
+                                                </div>
+                                                {ratings && ratings.map((r, i) => {
+                                                    return (
+                                                        <>
+                                                            <div key={'level-' + i}>
+                                                                <Typography>Level {r.level_number}:</Typography>
+                                                                <Typography>{r.criteria}</Typography>
                                                             </div>
-                                                        )
-                                                    })}
+                                                            {i !== ratings.length - 1 &&
+                                                                <div key={'progression-' + i}>
+                                                                    <Typography>Progression Statement:</Typography>
+                                                                    <Typography>{r.progression_statement}</Typography>
+                                                                </div>
+                                                            }
+                                                        </>
+                                                    )
+                                                })}
+                                            </div>
+                                        </Card>
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <Card className='reference'>
+                                            <div className='widget-header'>Question Information</div>
+                                            <div className='widget-body information-list'>
+                                                <div>
+                                                    <Typography>Pillar:</Typography>
+                                                    <Typography>{questionRef ? convertToQuestion(questionRef).pillar : undefined}</Typography>
                                                 </div>
+                                                <div>
+                                                    <Typography>Practice Area:</Typography>
+                                                    <Typography>{questionRef ? convertToQuestion(questionRef).practice_area : undefined}</Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography>Topic Area:</Typography>
+                                                    <Typography>{questionRef ? convertToQuestion(questionRef).topic_area : undefined}</Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography>Priority:</Typography>
+                                                    <Typography>{questionRef ? convertToQuestion(questionRef).priority : undefined}</Typography>
+                                                </div>
+                                            </div>
+                                            <div className='widget-header'>Interview Guide</div>
+                                            <div className='widget-body information-list'>
+                                                {guide?.map((r, i) => {
+                                                    return (
+                                                        <div key={i}>
+                                                            <Typography>{i + 1}.</Typography>
+                                                            <Typography>{r.interview_question}</Typography>
+                                                        </div>
+                                                    )
+                                                })}
+                                            </div>
+                                            <div className='widget-header'>References</div>
+                                            <div className='widget-body information-list'>
+                                                {references?.map((r, i) => {
+                                                    return (
+                                                        <div key={i}>
+                                                            <Typography>{i + 1}.</Typography>
+                                                            <Typography>{r.citation}</Typography>
+                                                        </div>
+                                                    )
+                                                })}
+                                            </div>
+                                        </Card>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <Card>
+                                            <div className='widget-header'>Changelog</div>
+                                            {changelog && changelog.length > 0 ?
+                                                <ChangelogTable changelogs={changelog} fileName={`Assessment${data?.id} Question${selectedAssessmentQuestion.id}`} /> :
+                                                <div className='widget-body'>No Changes</div>
                                             }
-                                        </div>
-                                    </div>
-                                </Card>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Card className='reference'>
-                                    <div>
-                                        <Typography>Interview Guide</Typography>
-                                        {guide?.map((r, i) => {
-                                            return (
-                                                <div key={i}>
-                                                    <span>{i + 1}. {r.interview_question}</span>
-                                                </div>
-                                            )
-                                        })}
-                                    </div>
-                                    <div>
-                                        <Typography>References</Typography>
-                                        {references?.map((r, i) => {
-                                            return (
-                                                <div key={i}>
-                                                    <span>{i + 1}. {r.citation}</span>
-                                                </div>
-                                            )
-                                        })}
-                                    </div>
-                                </Card>
-                            </Grid>
-                            <Grid item xs={12}>
-                                <Card>
-                                    <ChangelogTable changelogs={changelog} fileName={`Assessment${data?.id} Question${selectedAssessmentQuestion.id}`} />
-                                </Card>
-                            </Grid>
+                                        </Card>
+                                    </Grid>
+                                </>
+                            }
+                            {question == -1 &&
+                                <Grid item xs={10}>
+                                    <Card>
+                                        <div className='widget-header'>Changelog</div>
+                                        {fullChangelog && fullChangelog.length > 0 ?
+                                            <ChangelogTable changelogs={fullChangelog} fileName={`Assessment${data?.id}`} /> :
+                                            <div className='widget-body'>No Changes</div>
+                                        }
+                                    </Card>
+                                </Grid>
+                            }
                         </Grid>
-                    }
-                    {question == -1 &&
-                        <Grid item xs={10}>
-                            <Card>
-                                <ChangelogTable changelogs={fullChangelog} fileName={`Assessment${data?.id}`} />
-                            </Card>
-                        </Grid>
-                    }
-                </Grid>
+                    </div>
+                </div>
             </div>
-        </Layout>
+        </Layout >
     );
 };
 
