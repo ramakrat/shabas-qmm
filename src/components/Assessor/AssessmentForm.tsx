@@ -310,6 +310,7 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                     <Form>
                         {questions &&
                             <QuestionsSidebar
+                                assessmentId={assessment.toString()}
                                 questions={questions.map(o => convertToQuestion(o.question))}
                                 question={question}
                                 setQuestion={setQuestion}

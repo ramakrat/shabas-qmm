@@ -181,6 +181,17 @@
     width: 200px;
     border-right: 1px solid palette(greyscale, 300);
     border-radius: 0px;
+    overflow-y: auto;
+
+    .assessment-id {
+        font-family: 'Plus Jakarta Sans';
+        font-weight: 600 !important;
+        font-size: 1.1rem;
+        text-align: center;
+        border-bottom: 1px solid palette(greyscale, 300);
+        padding: 15px 5px;
+        width: 100%;
+    }
 
     .sidebar-body {
         display: flex;

@@ -5,6 +5,7 @@ import { Add, East, FileDownload, West } from "@mui/icons-material";
 import QuestionModal from "../Administrator/Question/QuestionModal";
 
 interface Props {
+    assessmentId: string,
     questions: Question[];
     question: number;
     setQuestion: (question: number) => void;
@@ -18,6 +19,7 @@ interface Props {
 const QuestionsSidebar: React.FC<Props> = (props) => {
 
     const {
+        assessmentId,
         questions,
         question,
         setQuestion,
@@ -59,6 +61,9 @@ const QuestionsSidebar: React.FC<Props> = (props) => {
                         </div>
                     </div>
                 }
+                <div className='assessment-id'>
+                    Assessment {assessmentId}
+                </div>
                 <div className='sidebar-body'>
                     <div>
                         {questions.map((o: Question) => {
@@ -78,6 +83,8 @@ const QuestionsSidebar: React.FC<Props> = (props) => {
                                 </div>
                             )
                         })}
+                    </div>
+                    <div>
                         {assessmentChangelogs != undefined &&
                             <div className={question == -1 ? 'question-option selected' : 'question-option'}>
                                 <Typography onClick={assessmentChangelogs}>
@@ -85,8 +92,6 @@ const QuestionsSidebar: React.FC<Props> = (props) => {
                                 </Typography>
                             </div>
                         }
-                    </div>
-                    <div>
                         {addOption &&
                             <Button
                                 variant='outlined'
