@@ -588,6 +588,14 @@ const Question: NextPage = () => {
         </>)
     }
 
+    // if (inUse) {
+    //     <Layout active='questions' admin>
+    //         <div className='not-found'>
+    //             <span>404</span>
+    //             <span>Page Not Found</span>
+    //         </div>
+    //     </Layout>
+    // }
     return (
         <Layout active='questions' admin>
             <form onSubmit={handleSubmit}>
@@ -622,12 +630,14 @@ const Question: NextPage = () => {
                                 <Grid item xs={8}>
                                     <Card className='question-content'>
                                         <div className='widget-header'>General</div>
-                                        <Typography>Question Content</Typography>
-                                        <TextField
-                                            name='question' size='small' multiline
-                                            value={questionContent}
-                                            onChange={e => setQuestionContent(e.target.value)}
-                                        />
+                                        <div className='widget-body widget-form'>
+                                            <Typography>Question Content</Typography>
+                                            <TextField
+                                                name='question' size='small' multiline
+                                                value={questionContent}
+                                                onChange={e => setQuestionContent(e.target.value)}
+                                            />
+                                        </div>
                                         <div className='filters'>
                                             <ToggleButtonGroup
                                                 exclusive
@@ -643,7 +653,7 @@ const Question: NextPage = () => {
                                             {filterSelect()}
                                         </div>
                                         {!(filterType != 'default' && filterSelection == null) &&
-                                            <>
+                                            <div className='widget-body widget-form'>
                                                 {ratings.map((o) => {
                                                     return (
                                                         <>
@@ -666,190 +676,211 @@ const Question: NextPage = () => {
                                                         </>
                                                     )
                                                 })}
-                                            </>
+                                            </div>
                                         }
                                     </Card>
                                 </Grid>
                                 <Grid item xs={4}>
                                     <Card className='reference'>
                                         <div className='widget-header'>General Information</div>
-                                        <Grid container>
-                                            <Grid item xs={6}>
-                                                <Typography>Pillar</Typography>
-                                                <TextField
-                                                    name='pillar' size='small'
-                                                    value={pillar}
-                                                    onChange={e => setPillar(e.target.value)}
-                                                />
+                                        <div className='widget-body widget-form'>
+                                            <Grid container spacing={1}>
+                                                <Grid item xs={6}>
+                                                    <Typography>Pillar</Typography>
+                                                    <TextField
+                                                        name='pillar' size='small' placeholder='Pillar...'
+                                                        value={pillar}
+                                                        onChange={e => setPillar(e.target.value)}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={6}>
+                                                    <Typography>Practice Area</Typography>
+                                                    <TextField
+                                                        name='practiceArea' size='small' placeholder='Practice Area...'
+                                                        value={practiceArea}
+                                                        onChange={e => setPracticeArea(e.target.value)}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={6}>
+                                                    <Typography>Topic Area</Typography>
+                                                    <TextField
+                                                        name='topicArea' size='small' placeholder='Topic Area...'
+                                                        value={topicArea}
+                                                        onChange={e => setTopicArea(e.target.value)}
+                                                    />
+                                                </Grid>
+                                                <Grid item xs={6}>
+                                                    <Typography>Priority</Typography>
+                                                    <TextField
+                                                        name='priority' size='small' placeholder='Priority...'
+                                                        value={priority}
+                                                        onChange={e => setPriority(e.target.value)}
+                                                    />
+                                                </Grid>
                                             </Grid>
-                                            <Grid item xs={6}>
-                                                <Typography>Practice Area</Typography>
-                                                <TextField
-                                                    name='practiceArea' size='small'
-                                                    value={practiceArea}
-                                                    onChange={e => setPracticeArea(e.target.value)}
-                                                />
-                                            </Grid>
-                                            <Grid item xs={6}>
-                                                <Typography>Topic Area</Typography>
-                                                <TextField
-                                                    name='topicArea' size='small'
-                                                    value={topicArea}
-                                                    onChange={e => setTopicArea(e.target.value)}
-                                                />
-                                            </Grid>
-                                            <Grid item xs={6}>
-                                                <Typography>Priority</Typography>
-                                                <TextField
-                                                    name='priority' size='small'
-                                                    value={priority}
-                                                    onChange={e => setPriority(e.target.value)}
-                                                />
-                                            </Grid>
-                                        </Grid>
+                                        </div>
                                         <div>
                                             <div className='widget-header'>Interview Guide</div>
-                                            {existingGuide.map((o, i) => {
-                                                return (
-                                                    <div key={i} className='input-row'>
-                                                        <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
-                                                        <TextField
-                                                            placeholder='Reference...' size='small'
-                                                            value={o.interview_question}
-                                                            onChange={(event) => handleGuideChange(o.num, event.target.value, true)}
-                                                        />
-                                                        <IconButton
-                                                            color='default'
-                                                            onClick={() => {
-                                                                const newDeleted = deletedGuides;
-                                                                newDeleted.push(o);
-                                                                setDeletedGuides(newDeleted);
+                                            <div className='widget-body'>
+                                                {existingGuide.map((o, i) => {
+                                                    return (
+                                                        <div key={i} className='input-row'>
+                                                            <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
+                                                            <TextField
+                                                                placeholder='Guide...' size='small'
+                                                                value={o.interview_question}
+                                                                onChange={(event) => handleGuideChange(o.num, event.target.value, true)}
+                                                            />
+                                                            <IconButton
+                                                                color='default'
+                                                                onClick={() => {
+                                                                    const newDeleted = deletedGuides;
+                                                                    newDeleted.push(o);
+                                                                    setDeletedGuides(newDeleted);
 
-                                                                let count = 0;
-                                                                const newExisting: GuideType[] = []
-                                                                existingGuide.map(x => {
-                                                                    if (x.id != o.id) {
+                                                                    let count = 0;
+                                                                    const newExisting: GuideType[] = []
+                                                                    existingGuide.map(x => {
+                                                                        if (x.id != o.id) {
+                                                                            count++;
+                                                                            newExisting.push({
+                                                                                ...x,
+                                                                                num: count,
+                                                                            })
+                                                                        }
+                                                                    });
+                                                                    setExistingGuide(newExisting);
+
+                                                                    const newNew: GuideType[] = []
+                                                                    newGuide.map(x => {
                                                                         count++;
-                                                                        newExisting.push({
+                                                                        newNew.push({
                                                                             ...x,
                                                                             num: count,
                                                                         })
-                                                                    }
-                                                                });
-                                                                setExistingGuide(newExisting);
+                                                                    });
+                                                                    setNewGuide(newNew);
+                                                                }}
+                                                            ><Delete /></IconButton>
+                                                        </div>
+                                                    )
+                                                })}
+                                                {newGuide.map((o, i) => {
+                                                    if (i == newGuide.length - 1)
+                                                        return (
+                                                            <div key={i} className='input-row'>
+                                                                <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
+                                                                <TextField
+                                                                    placeholder='Guide...' size='small'
+                                                                    value={o.interview_question}
+                                                                    onChange={(event) => handleGuideChange(o.num, event.target.value)}
+                                                                />
+                                                                <IconButton
+                                                                    onClick={() => {
+                                                                        const last = newGuide[newGuide.length - 1];
+                                                                        if (last) setNewGuide([...newGuide, { num: last.num + 1, interview_question: '' }])
+                                                                    }}
+                                                                ><Add /></IconButton>
+                                                            </div>
+                                                        )
+                                                    return (
+                                                        <div key={i} className='input-row'>
+                                                            <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
+                                                            <TextField
+                                                                placeholder='Guide...' size='small'
+                                                                value={o.interview_question}
+                                                                onChange={(event) => handleGuideChange(o.num, event.target.value)}
+                                                            />
+                                                            <IconButton
+                                                                color='default'
+                                                                onClick={() => {
+                                                                    if (newGuide[0]) {
+                                                                        let newIndex = (newGuide[0]?.num) - 1;
+                                                                        const removed: GuideType[] = [];
+                                                                        newGuide.forEach(d => {
+                                                                            if (d.num != o.num) {
+                                                                                newIndex++;
+                                                                                removed.push({
+                                                                                    ...d,
+                                                                                    num: newIndex,
+                                                                                })
+                                                                            }
+                                                                            return;
 
-                                                                const newNew: GuideType[] = []
-                                                                newGuide.map(x => {
-                                                                    count++;
-                                                                    newNew.push({
-                                                                        ...x,
-                                                                        num: count,
-                                                                    })
-                                                                });
-                                                                setNewGuide(newNew);
-                                                            }}
-                                                        ><Delete /></IconButton>
-                                                    </div>
-                                                )
-                                            })}
-                                            {newGuide.map((o, i) => {
-                                                if (i == newGuide.length - 1)
+                                                                        });
+                                                                        setNewGuide(removed);
+                                                                    }
+                                                                }}
+                                                            ><Delete /></IconButton>
+                                                        </div>
+                                                    )
+                                                })}
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div className='widget-header'>References</div>
+                                            <div className='widget-body'>
+                                                {existingReferences.map((o, i) => {
                                                     return (
                                                         <div key={i} className='input-row'>
                                                             <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
                                                             <TextField
                                                                 placeholder='Reference...' size='small'
-                                                                value={o.interview_question}
-                                                                onChange={(event) => handleGuideChange(o.num, event.target.value)}
+                                                                value={o.citation}
+                                                                onChange={(event) => handleReferenceChange(o.num, event.target.value, true)}
                                                             />
                                                             <IconButton
+                                                                color='default'
                                                                 onClick={() => {
-                                                                    const last = newGuide[newGuide.length - 1];
-                                                                    if (last) setNewGuide([...newGuide, { num: last.num + 1, interview_question: '' }])
-                                                                }}
-                                                            ><Add /></IconButton>
-                                                        </div>
-                                                    )
-                                                return (
-                                                    <div key={i} className='input-row'>
-                                                        <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
-                                                        <TextField
-                                                            placeholder='Reference...' size='small'
-                                                            value={o.interview_question}
-                                                            onChange={(event) => handleGuideChange(o.num, event.target.value)}
-                                                        />
-                                                        <IconButton
-                                                            color='default'
-                                                            onClick={() => {
-                                                                if (newGuide[0]) {
-                                                                    let newIndex = (newGuide[0]?.num) - 1;
-                                                                    const removed: GuideType[] = [];
-                                                                    newGuide.forEach(d => {
-                                                                        if (d.num != o.num) {
-                                                                            newIndex++;
-                                                                            removed.push({
-                                                                                ...d,
-                                                                                num: newIndex,
+                                                                    const newDeleted = deletedReferences;
+                                                                    newDeleted.push(o);
+                                                                    setDeletedReferences(newDeleted);
+
+                                                                    let count = 0;
+                                                                    const newExisting: ReferenceType[] = []
+                                                                    existingReferences.map(x => {
+                                                                        if (x.id != o.id) {
+                                                                            count++;
+                                                                            newExisting.push({
+                                                                                ...x,
+                                                                                num: count,
                                                                             })
                                                                         }
-                                                                        return;
-
                                                                     });
-                                                                    setNewGuide(removed);
-                                                                }
-                                                            }}
-                                                        ><Delete /></IconButton>
-                                                    </div>
-                                                )
-                                            })}
-                                        </div>
-                                        <div>
-                                            <div className='widget-header'>References</div>
-                                            {existingReferences.map((o, i) => {
-                                                return (
-                                                    <div key={i} className='input-row'>
-                                                        <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
-                                                        <TextField
-                                                            placeholder='Reference...' size='small'
-                                                            value={o.citation}
-                                                            onChange={(event) => handleReferenceChange(o.num, event.target.value, true)}
-                                                        />
-                                                        <IconButton
-                                                            color='default'
-                                                            onClick={() => {
-                                                                const newDeleted = deletedReferences;
-                                                                newDeleted.push(o);
-                                                                setDeletedReferences(newDeleted);
+                                                                    setExistingReferences(newExisting);
 
-                                                                let count = 0;
-                                                                const newExisting: ReferenceType[] = []
-                                                                existingReferences.map(x => {
-                                                                    if (x.id != o.id) {
+                                                                    const newNew: ReferenceType[] = []
+                                                                    newReferences.map(x => {
                                                                         count++;
-                                                                        newExisting.push({
+                                                                        newNew.push({
                                                                             ...x,
                                                                             num: count,
                                                                         })
-                                                                    }
-                                                                });
-                                                                setExistingReferences(newExisting);
-
-                                                                const newNew: ReferenceType[] = []
-                                                                newReferences.map(x => {
-                                                                    count++;
-                                                                    newNew.push({
-                                                                        ...x,
-                                                                        num: count,
-                                                                    })
-                                                                });
-                                                                setNewReferences(newNew);
-                                                            }}
-                                                        ><Delete /></IconButton>
-                                                    </div>
-                                                )
-                                            })}
-                                            {newReferences.map((o, i) => {
-                                                if (i == newReferences.length - 1)
+                                                                    });
+                                                                    setNewReferences(newNew);
+                                                                }}
+                                                            ><Delete /></IconButton>
+                                                        </div>
+                                                    )
+                                                })}
+                                                {newReferences.map((o, i) => {
+                                                    if (i == newReferences.length - 1)
+                                                        return (
+                                                            <div key={i} className='input-row'>
+                                                                <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
+                                                                <TextField
+                                                                    placeholder='Reference...' size='small'
+                                                                    value={o.citation}
+                                                                    onChange={(event) => handleReferenceChange(o.num, event.target.value)}
+                                                                />
+                                                                <IconButton
+                                                                    onClick={() => {
+                                                                        const last = newReferences[newReferences.length - 1];
+                                                                        if (last) setNewReferences([...newReferences, { num: last.num + 1, citation: '' }])
+                                                                    }}
+                                                                ><Add /></IconButton>
+                                                            </div>
+                                                        )
                                                     return (
                                                         <div key={i} className='input-row'>
                                                             <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
@@ -859,86 +890,94 @@ const Question: NextPage = () => {
                                                                 onChange={(event) => handleReferenceChange(o.num, event.target.value)}
                                                             />
                                                             <IconButton
+                                                                color='default'
                                                                 onClick={() => {
-                                                                    const last = newReferences[newReferences.length - 1];
-                                                                    if (last) setNewReferences([...newReferences, { num: last.num + 1, citation: '' }])
+                                                                    if (newGuide[0]) {
+                                                                        let newIndex = (newGuide[0]?.num) - 1;
+                                                                        const removed: ReferenceType[] = [];
+                                                                        newReferences.forEach(d => {
+                                                                            if (d.num != o.num) {
+                                                                                newIndex++;
+                                                                                removed.push({
+                                                                                    ...d,
+                                                                                    num: newIndex,
+                                                                                })
+                                                                            }
+                                                                            return;
+
+                                                                        });
+                                                                        setNewReferences(removed);
+                                                                    }
                                                                 }}
-                                                            ><Add /></IconButton>
+                                                            ><Delete /></IconButton>
                                                         </div>
                                                     )
-                                                return (
-                                                    <div key={i} className='input-row'>
-                                                        <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
-                                                        <TextField
-                                                            placeholder='Reference...' size='small'
-                                                            value={o.citation}
-                                                            onChange={(event) => handleReferenceChange(o.num, event.target.value)}
-                                                        />
-                                                        <IconButton
-                                                            color='default'
-                                                            onClick={() => {
-                                                                if (newGuide[0]) {
-                                                                    let newIndex = (newGuide[0]?.num) - 1;
-                                                                    const removed: ReferenceType[] = [];
-                                                                    newReferences.forEach(d => {
-                                                                        if (d.num != o.num) {
-                                                                            newIndex++;
-                                                                            removed.push({
-                                                                                ...d,
-                                                                                num: newIndex,
-                                                                            })
-                                                                        }
-                                                                        return;
-
-                                                                    });
-                                                                    setNewReferences(removed);
-                                                                }
-                                                            }}
-                                                        ><Delete /></IconButton>
-                                                    </div>
-                                                )
-                                            })}
+                                                })}
+                                            </div>
                                         </div>
                                         <div>
                                             <div className='widget-header'>SME Information</div>
-                                            <Grid container>
-                                                <Grid item xs={6}>
-                                                    <TextField
-                                                        name='firstName' label='First Name' size='small'
-                                                        value={firstName}
-                                                        onChange={e => setFirstName(e.target.value)}
-                                                    />
+                                            <div className='widget-body widget-form'>
+                                                <Grid container spacing={1}>
+                                                    <Grid item xs={6}>
+                                                        <Typography>First Name</Typography>
+                                                        <TextField
+                                                            name='firstName' size='small' placeholder='First Name...'
+                                                            value={firstName}
+                                                            onChange={e => setFirstName(e.target.value)}
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={6}>
+                                                        <Typography>Last Name</Typography>
+                                                        <TextField
+                                                            name='lastName' size='small' placeholder='Last Name...'
+                                                            value={lastName}
+                                                            onChange={e => setLastName(e.target.value)}
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={6}>
+                                                        <Typography>Phone Number</Typography>
+                                                        <TextField
+                                                            name='phone' size='small' placeholder='Phone Number...'
+                                                            value={phone}
+                                                            onChange={e => setPhone(e.target.value)}
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={6}>
+                                                        <Typography>Email</Typography>
+                                                        <TextField
+                                                            name='email' size='small' placeholder='Email...'
+                                                            value={email}
+                                                            onChange={e => setEmail(e.target.value)}
+                                                        />
+                                                    </Grid>
                                                 </Grid>
-                                                <Grid item xs={6}>
-                                                    <TextField
-                                                        name='lastName' label='Last Name' size='small'
-                                                        value={lastName}
-                                                        onChange={e => setLastName(e.target.value)}
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={6}>
-                                                    <TextField
-                                                        name='phone' label='Phone Number' size='small'
-                                                        value={phone}
-                                                        onChange={e => setPhone(e.target.value)}
-                                                    />
-                                                </Grid>
-                                                <Grid item xs={6}>
-                                                    <TextField
-                                                        name='email' label='Email' size='small'
-                                                        value={email}
-                                                        onChange={e => setEmail(e.target.value)}
-                                                    />
-                                                </Grid>
-                                            </Grid>
+                                            </div>
                                         </div>
                                         <div>
                                             <div className='widget-header'>Details</div>
-                                            <Typography>Owned By:</Typography>
-                                            <Typography>{'Updated At: ' + data?.updated_at.toLocaleString()}</Typography>
-                                            <Typography>{'Updated By: ' + data?.updated_by}</Typography>
-                                            <Typography>{'Created At: ' + data?.created_at.toLocaleString()}</Typography>
-                                            <Typography>{'Created By: ' + data?.created_by}</Typography>
+                                            <div className='widget-body information-list'>
+                                                <div>
+                                                    <Typography>Owned By:</Typography>
+                                                    <Typography></Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography>Updated At:</Typography>
+                                                    <Typography>{data?.updated_at.toLocaleString()}</Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography>Updated By:</Typography>
+                                                    <Typography>{data?.updated_by}</Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography>Created At:</Typography>
+                                                    <Typography>{data?.created_at.toLocaleString()}</Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography>Created By:</Typography>
+                                                    <Typography>{data?.created_by}</Typography>
+                                                </div>
+                                            </div>
                                         </div>
                                     </Card>
                                 </Grid>

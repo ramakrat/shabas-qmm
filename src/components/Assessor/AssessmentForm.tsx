@@ -6,8 +6,8 @@ import * as yup from "yup";
 import { Field, Form, Formik } from "formik";
 import TextField from '~/components/Form/TextField';
 
-import { Button, Card, Grid, MenuItem, Typography } from '@mui/material';
-import { Info } from '@mui/icons-material';
+import { Button, Card, Grid, IconButton, MenuItem, Typography } from '@mui/material';
+import { ArrowDownward, ArrowDropDown, Expand, Info, KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
 import { api } from "~/utils/api";
 import QuestionsSidebar from '~/components/Assessor/QuestionsSidebar';
@@ -295,7 +295,7 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                 })
         }
     }
-    
+
     if (data?.status != status) {
         return (
             <div className='not-found'>
@@ -341,94 +341,115 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                                         <Grid item xs={6}>
                                             <Card className='question-content'>
                                                 <div className='widget-header'>General</div>
-                                                <div>
-                                                    <Typography>Question Content: {selectedAssessmentQuestion.question.question}</Typography>
-                                                    <Typography>Hint: {questionRef?.hint}</Typography>
-                                                    <Typography>Start Time: XYZ</Typography>
-                                                    <div className='rating'>
-                                                        <div className='rating-input'>
-                                                            <Typography>Rating</Typography>
-                                                            <Info fontSize='small' onClick={() => setShowRating(!showRating)} />
-                                                            <Field
-                                                                name='rating' label='' size='small'
-                                                                component={Select}
-                                                            >
-                                                                <MenuItem value=''><em>Select rating...</em></MenuItem>
-                                                                <MenuItem value={1}>1</MenuItem>
-                                                                <MenuItem value={2}>2</MenuItem>
-                                                                <MenuItem value={3}>3</MenuItem>
-                                                                <MenuItem value={4}>4</MenuItem>
-                                                                <MenuItem value={5}>5</MenuItem>
-                                                            </Field>
-                                                        </div>
-                                                        {(showRating && ratings) &&
-                                                            <div>
-                                                                {ratings.map((r, i) => {
-                                                                    return (
-                                                                        <div key={i}>
-                                                                            <div>Level {r.level_number}: {r.criteria}</div>
-                                                                            {i !== ratings.length - 1 &&
-                                                                                <div>Progression Statement: {r.progression_statement}</div>
-                                                                            }
-                                                                        </div>
-                                                                    )
-                                                                })}
-                                                            </div>
-                                                        }
+                                                <div className='widget-body information-list'>
+                                                    <div>
+                                                        <Typography>Question Content:</Typography>
+                                                        <Typography>{selectedAssessmentQuestion.question.question}</Typography>
+                                                    </div>
+                                                    <div>
+                                                        <Typography>Hint:</Typography>
+                                                        <Typography>{questionRef?.hint}</Typography>
+                                                    </div>
+                                                    <div>
+                                                        <Typography>Start Time:</Typography>
+                                                        <Typography>XYZ</Typography>
                                                     </div>
                                                 </div>
+                                                <div className='widget-sub-header'>
+                                                    <div className='rating-input'>
+                                                        <Typography>Rating:</Typography>
+                                                        <Field
+                                                            name='rating' label='' size='small'
+                                                            component={Select}
+                                                        >
+                                                            <MenuItem value=''><em>Select rating...</em></MenuItem>
+                                                            <MenuItem value={1}>1</MenuItem>
+                                                            <MenuItem value={2}>2</MenuItem>
+                                                            <MenuItem value={3}>3</MenuItem>
+                                                            <MenuItem value={4}>4</MenuItem>
+                                                            <MenuItem value={5}>5</MenuItem>
+                                                        </Field>
+                                                    </div>
+                                                    <IconButton onClick={() => setShowRating(!showRating)}>
+                                                        {showRating ? <KeyboardArrowUp fontSize='small' /> : <KeyboardArrowDown fontSize='small' />}
+                                                    </IconButton>
+                                                </div>
+                                                {(showRating && ratings) &&
+                                                    <div className='widget-body information-list'>
+                                                        {ratings.map((r, i) => {
+                                                            return (
+                                                                <>
+                                                                    <div key={'level-' + i}>
+                                                                        <Typography>Level {r.level_number}:</Typography>
+                                                                        <Typography>{r.criteria}</Typography>
+                                                                    </div>
+                                                                    {i !== ratings.length - 1 &&
+                                                                        <div key={'progression-' + i}>
+                                                                            <Typography>Progression Statement:</Typography>
+                                                                            <Typography>{r.progression_statement}</Typography>
+                                                                        </div>
+                                                                    }
+                                                                </>
+                                                            )
+                                                        })}
+                                                    </div>
+                                                }
                                                 <div className='widget-header'>Details</div>
-                                                <Typography>Rationale</Typography>
-                                                <Field
-                                                    name='rationale' label='' size='small' multiline={3}
-                                                    placeholder='Rationale...'
-                                                    component={TextField}
-                                                />
-                                                <Typography>Notes</Typography>
-                                                <Field
-                                                    name='notes' label='' size='small' multiline={3}
-                                                    placeholder='Notes...'
-                                                    component={TextField}
-                                                />
+                                                <div className='widget-body widget-form'>
+                                                    <Typography>Rationale</Typography>
+                                                    <Field
+                                                        name='rationale' label='' size='small' multiline={3}
+                                                        placeholder='Rationale...'
+                                                        component={TextField}
+                                                    />
+                                                    <Typography>Notes</Typography>
+                                                    <Field
+                                                        name='notes' label='' size='small' multiline={3}
+                                                        placeholder='Notes...'
+                                                        component={TextField}
+                                                    />
+                                                </div>
                                             </Card>
                                         </Grid>
                                         <Grid item xs={6}>
                                             <Card className='reference'>
                                                 <div className='widget-header'>Question Information</div>
-                                                <div>
+                                                <div className='widget-body information-list'>
                                                     <div>
-                                                        <Typography>Pillar</Typography>
+                                                        <Typography>Pillar:</Typography>
                                                         <Typography>{questionRef ? convertToQuestion(questionRef).pillar : undefined}</Typography>
                                                     </div>
                                                     <div>
-                                                        <Typography>Practice Area</Typography>
+                                                        <Typography>Practice Area:</Typography>
                                                         <Typography>{questionRef ? convertToQuestion(questionRef).practice_area : undefined}</Typography>
                                                     </div>
                                                     <div>
-                                                        <Typography>Topic Area</Typography>
+                                                        <Typography>Topic Area:</Typography>
                                                         <Typography>{questionRef ? convertToQuestion(questionRef).topic_area : undefined}</Typography>
                                                     </div>
                                                     <div>
-                                                        <Typography>Priority</Typography>
+                                                        <Typography>Priority:</Typography>
                                                         <Typography>{questionRef ? convertToQuestion(questionRef).priority : undefined}</Typography>
                                                     </div>
                                                 </div>
                                                 <div className='widget-header'>Interview Guide</div>
-                                                <div>
+                                                <div className='widget-body information-list'>
                                                     {guide?.map((r, i) => {
                                                         return (
                                                             <div key={i}>
-                                                                <span>{i + 1}. {r.interview_question}</span>
+                                                                <Typography>{i + 1}.</Typography>
+                                                                <Typography>{r.interview_question}</Typography>
                                                             </div>
                                                         )
                                                     })}
                                                 </div>
                                                 <div className='widget-header'>References</div>
-                                                <div>
+                                                <div className='widget-body information-list'>
                                                     {references?.map((r, i) => {
                                                         return (
                                                             <div key={i}>
-                                                                <span>{i + 1}. {r.citation}</span>
+                                                                <Typography>{i + 1}.</Typography>
+                                                                <Typography>{r.citation}</Typography>
                                                             </div>
                                                         )
                                                     })}
@@ -440,7 +461,7 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                                                 <div className='widget-header'>Changelog</div>
                                                 {changelog && changelog.length > 0 ?
                                                     <ChangelogTable changelogs={changelog} fileName={`Assessment${data?.id} Question${selectedAssessmentQuestion.id}`} /> :
-                                                    'No Changes'
+                                                    <div className='widget-body'>No Changes</div>
                                                 }
                                             </Card>
                                         </Grid>
@@ -454,7 +475,7 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                                     <div className='widget-header'>Changelog</div>
                                     {fullChangelog && fullChangelog.length > 0 ?
                                         <ChangelogTable changelogs={fullChangelog} fileName={`Assessment${data?.id}`} /> :
-                                        'No Changes'
+                                        <div className='widget-body'>No Changes</div>
                                     }
                                 </Card>
                             </Grid>
