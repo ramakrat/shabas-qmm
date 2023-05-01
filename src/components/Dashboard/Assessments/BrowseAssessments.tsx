@@ -232,7 +232,7 @@ const BrowseAssessments: React.FC<Props> = () => {
 
     return (
         <>
-            <div className='assessments-actions'>
+            <div className='browse-actions'>
                 {assessmentStatusCounts &&
                     <Card className='assessments-filters'>
                         <div className={'assessments-filter created ' + (createdFilter ? 'active' : '')} onClick={() => setCreatedFilter(!createdFilter)}>

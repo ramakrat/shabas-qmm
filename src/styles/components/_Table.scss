@@ -1,7 +1,6 @@
 .browse-table {
     box-shadow: 0px 0px 0px 1px #ADADAD;
 
-
     .MuiTableHead-root {
         background-color: #757575;
 
@@ -14,7 +13,6 @@
             font-family: 'Plus Jakarta Sans';
             font-weight: 600;
             text-transform: uppercase;
-            // box-shadow: 0px 0px 0px 0.5px #393939;
         }
 
         button {
@@ -24,20 +22,13 @@
     }
 
     .MuiTableBody-root {
-        // border: 0.5px solid #ADADAD;
-
         td {
-            // outline: 0.5px solid #ADADAD;
             box-shadow: 0px 0px 0px 0.5px #ADADAD;
             border: none !important;
 
             &.null {
                 background-color: #f9f9f9;
             }
-        }
-
-        .MuiTableRow-root:last-child {
-            td {}
         }
 
         .MuiTableRow-root:last-child {

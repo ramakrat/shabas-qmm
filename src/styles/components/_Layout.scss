@@ -4,13 +4,14 @@
     align-items: center;
     justify-content: space-between;
 
-    height: 70px;
-    padding: 10px 30px;
+    height: 50px;
+    padding: 10px 20px;
 
-    box-shadow: shadows(2);
+    box-shadow: shadows(3);
     background-color: white;
 
     .logo {
+        padding-top: 5px;
         padding-right: 30px;
     }
 
@@ -20,23 +21,37 @@
         align-items: center;
         text-align: center;
 
-        .MuiTypography-root {
-            font-size: 1rem;
+        .nav-item {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+
             font-weight: 500;
             font-family: 'Plus Jakarta Sans';
             margin-right: 20px;
-            padding: 10px 0px;
-            // text-transform: uppercase;
-        }
+            padding: 10px 5px;
+            cursor: pointer;
 
-        .active {
-            .MuiTypography-root {
+            .child-label {
+                padding-left: 6px;
+            }
+
+            .count {
+                border-radius: 3px !important;
+                background-color: palette(greyscale, 300) !important;
+                font-size: 0.85rem;
+                font-weight: 600;
+                padding: 1px 5px !important;
+                margin-left: 4px !important;
+            }
+
+            &.active {
                 font-weight: 600 !important;
                 border-radius: shape(borderRadius);
-                background-color: palette(primary, main);
-                padding: 10px 15px;
-                color: white;
+                border: 1px solid palette(primary, main);
+                padding: 6px 10px;
                 position: relative;
+                box-shadow: shadows(3);
             }
         }
     }

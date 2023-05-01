@@ -1,9 +1,10 @@
 import * as React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { IconButton, Menu, MenuItem, Typography } from '@mui/material';
+import { IconButton, Menu, MenuItem, Switch } from '@mui/material';
 import { Settings } from '@mui/icons-material';
 import logo from './logo.png';
+import { api } from '~/utils/api';
 
 interface Props {
     active: string;
@@ -21,43 +22,70 @@ export const Header: React.FC<Props> = (props) => {
         setAnchorEl(null);
     };
 
+    const [admin, setAdmin] = React.useState<boolean>(true);
+
+    // TODO: Make dynamic
+    const totalClient = api.client.getTotalCount.useQuery().data;
+    const totalSite = api.site.getTotalCount.useQuery(true).data;
+    const totalEngagement = api.engagement.getTotalCount.useQuery(true).data;
+    const totalAssessment = api.assessment.getTotalCount.useQuery(true).data;
+    const totalPOC = api.poc.getTotalCount.useQuery(true).data;
+    const totalQuestion = api.question.getTotalCount.useQuery(true).data;
+
 
     return (
         <div className='header'>
             <div className='nav-items'>
-                <Link href={'/dashboard/clients'} className='logo'>
-                    <Image src={logo} alt={'Shabas Logo'} height={50} />
+                <Link href={'/clients'} className='logo'>
+                    <Image src={logo} alt={'Shabas Logo'} height={45} />
                 </Link>
-                <Link href={'/dashboard/clients'} className={active == 'dashboard' ? 'active' : ''}>
-                    <Typography>
-                        Dashboard
-                    </Typography>
-                </Link>
-                <Link href={'/questions'} className={active == 'questions' ? 'active' : ''}>
-                    <Typography>
-                        Questions
-                    </Typography>
-                </Link>
-                <Link href={'/ongoing-assessments'} className={active == 'ongoing-assessments' ? 'active' : ''}>
-                    <Typography>
-                        Ongoing Assessments
-                    </Typography>
-                </Link>
-                <Link href={'/review-assessments'} className={active == 'review-assessments' ? 'active' : ''}>
-                    <Typography>
-                        Review Assessments
-                    </Typography>
-                </Link>
-                <Link href={'/oversight-assessments'} className={active == 'oversight-assessments' ? 'active' : ''}>
-                    <Typography>
-                        Oversight Assessments
-                    </Typography>
-                </Link>
-                <Link href={'/completed-assessments'} className={active == 'completed-assessments' ? 'active' : ''}>
-                    <Typography>
-                        Completed Assessments
-                    </Typography>
-                </Link>
+                {admin ?
+                    <>
+                        <Link href={'/clients'} className={'nav-item ' + (active == 'clients' ? 'active' : '')}>
+                            <span className='label'>Clients</span>
+                            <span className='count'>{totalClient}</span>
+                            <span className='label child-label'>/ Sites</span>
+                            <span className='count'>{totalSite}</span>
+                        </Link>
+                        <Link href={'/pocs'} className={'nav-item ' + (active == 'pocs' ? 'active' : '')}>
+                            <span className='label'>POC</span>
+                            <span className='count'>{totalPOC}</span>
+                        </Link>
+                        <Link href={'/assessments'} className={'nav-item ' + (active == 'assessments' ? 'active' : '')}>
+                            <span className='label'>Engagements</span>
+                            <span className='count'>{totalEngagement}</span>
+                            <span className='label child-label'>/ Assessments</span>
+                            <span className='count'>{totalAssessment}</span>
+                        </Link>
+                        <Link href={'/questions'} className={'nav-item ' + (active == 'questions' ? 'active' : '')}>
+                            <span className='label'>Question</span>
+                            <span className='count'>{totalQuestion}</span>
+                        </Link>
+                    </> :
+                    <>
+                        <Link href={'/ongoing-assessments'} className={'nav-item ' + (active == 'ongoing-assessments' ? 'active' : '')}>
+                            <span className='label'>
+                                Ongoing Assessments
+                            </span>
+                        </Link>
+                        <Link href={'/review-assessments'} className={'nav-item ' + (active == 'review-assessments' ? 'active' : '')}>
+                            <span className='label'>
+                                Review Assessments
+                            </span>
+                        </Link>
+                        <Link href={'/oversight-assessments'} className={'nav-item ' + (active == 'oversight-assessments' ? 'active' : '')}>
+                            <span className='label'>
+                                Oversight Assessments
+                            </span>
+                        </Link>
+                        <Link href={'/completed-assessments'} className={'nav-item ' + (active == 'completed-assessments' ? 'active' : '')}>
+                            <span className='label'>
+                                Completed Assessments
+                            </span>
+                        </Link>
+                    </>
+                }
+                <Switch value={admin} onClick={() => setAdmin(!admin)} />
             </div>
             <IconButton onClick={handleClick}>
                 <Settings />
