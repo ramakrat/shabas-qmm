@@ -80,7 +80,7 @@ export const questionRouter = createTRPCRouter({
             return ctx.prisma.question.findMany({
                 where: { active: true },
                 include: {
-                    Rating: {
+                    ratings: {
                         include: {
                             filter: true
                         }

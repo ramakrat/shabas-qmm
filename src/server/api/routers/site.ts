@@ -77,7 +77,7 @@ export const siteRouter = createTRPCRouter({
                     client: true
                 },
                 where: {
-                    Filter: null
+                    filter: null
                 }
             });
         }),

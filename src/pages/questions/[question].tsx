@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/restrict-plus-operands */
 import * as React from 'react';
 import { type NextPage } from "next";
 import Router, { useRouter } from 'next/router';
@@ -153,7 +152,6 @@ const Question: NextPage = () => {
             });
             setNewGuide(array);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [guideData]);
 
     React.useEffect(() => {
@@ -177,7 +175,6 @@ const Question: NextPage = () => {
             });
             setNewReferences(array);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [referencesData])
 
     React.useEffect(() => {
@@ -206,7 +203,6 @@ const Question: NextPage = () => {
                 progression_statement: '',
             }])
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ratingData])
 
     const handleGuideChange = (num: number, newVal: string, existing?: boolean) => {
@@ -313,15 +309,11 @@ const Question: NextPage = () => {
             if (prop != 'id' && prop != 'created_at' && prop != 'updated_at') {
                 if (Object.prototype.hasOwnProperty.call(changed, prop)) {
                     if (Object.prototype.hasOwnProperty.call(former, prop)) {
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                         if (changed[prop] != former[prop]) {
-                            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-member-access
                             const propName = underscoreToTitle(prop);
                             createChangelog.mutate({
                                 field: prefix ? `${prefix}${propName}` : propName,
-                                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
                                 former_value: former[prop].toString(),
-                                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
                                 new_value: changed[prop].toString(),
                                 question_id: Number(data?.id),
                             })
@@ -397,7 +389,6 @@ const Question: NextPage = () => {
             updateGuides.mutate(mappedExistingGuides, {
                 onSuccess() {
                     mappedExistingGuides.forEach(g => {
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
                         const former = initialValues().guides.find(formerObject => formerObject.id == g.id);
                         if (former) compareChanges(g, former, `Interview Guide ${g.id ?? ''}: `);
                     })
@@ -427,9 +418,7 @@ const Question: NextPage = () => {
                         if (deleted.id)
                             createChangelog.mutate({
                                 field: 'Interview Guide ' + deleted.id.toString(),
-                                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
                                 former_value: deleted.interview_question,
-                                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
                                 new_value: undefined,
                                 question_id: Number(data?.id),
                             })
@@ -442,7 +431,6 @@ const Question: NextPage = () => {
             updateReferences.mutate(mappedExistingReferences, {
                 onSuccess() {
                     mappedExistingReferences.forEach(g => {
-                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
                         const former = initialValues().references.find(formerObject => formerObject.id == g.id);
                         if (former) compareChanges(g, former, `Reference ${g.id ?? ''}: `);
                     })
@@ -469,9 +457,7 @@ const Question: NextPage = () => {
                         if (deleted.id)
                             createChangelog.mutate({
                                 field: 'Reference ' + deleted.id.toString(),
-                                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
                                 former_value: deleted.citation,
-                                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
                                 new_value: undefined,
                                 question_id: Number(data?.id),
                             })
@@ -485,7 +471,6 @@ const Question: NextPage = () => {
                 updateRatings.mutate(mappedExistingRatings, {
                     onSuccess() {
                         mappedExistingRatings.forEach(g => {
-                            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
                             const former = initialValues().ratings.find(formerObject => formerObject.id == g.id);
                             if (former) compareChanges(g, former, `Rating ${g.level_number}: `);
                         })

@@ -73,26 +73,26 @@ export const engagementRouter = createTRPCRouter({
             if (input.includeEmptyEngagements) {
                 return ctx.prisma.engagement.findMany({
                     include: {
-                        Assessment: {
+                        assessments: {
                             include: { poc: true },
                             where: {
                                 OR: input.filters
                             }
                         },
                         client: true,
-                        POC: true,
-                        EngagementPOC: { include: { poc: true } },
+                        pocs: true,
+                        engagement_pocs: { include: { poc: true } },
                     },
                     where: {
                         OR: [{
-                            Assessment: {
+                            assessments: {
                                 some: {
                                     OR: input.filters
                                 }
                             }
                         }, {
                             NOT: {
-                                Assessment: {
+                                assessments: {
                                     some: {
                                         AND: [
                                             { status: 'created' },
@@ -111,19 +111,19 @@ export const engagementRouter = createTRPCRouter({
             }
             return ctx.prisma.engagement.findMany({
                 include: {
-                    Assessment: {
+                    assessments: {
                         include: { poc: true },
                         where: {
                             OR: input.filters
                         }
                     },
                     client: true,
-                    POC: true,
-                    EngagementPOC: { include: { poc: true } },
+                    pocs: true,
+                    engagement_pocs: { include: { poc: true } },
                 },
                 where: {
                     OR: [{
-                        Assessment: {
+                        assessments: {
                             some: {
                                 OR: input.filters
                             }

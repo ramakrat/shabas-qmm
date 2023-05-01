@@ -21,7 +21,7 @@ export const pocRouter = createTRPCRouter({
     create: publicProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
-            return ctx.prisma.pOC.create({
+            return ctx.prisma.poc.create({
                 data: {
                     first_name: input.first_name,
                     last_name: input.last_name,
@@ -41,7 +41,7 @@ export const pocRouter = createTRPCRouter({
     update: publicProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
-            return ctx.prisma.pOC.update({
+            return ctx.prisma.poc.update({
                 where: { id: input.id },
                 data: {
                     first_name: input.first_name,
@@ -62,16 +62,16 @@ export const pocRouter = createTRPCRouter({
     getById: publicProcedure
         .input(z.object({ id: z.number() }))
         .query(({ input, ctx }) => {
-            return ctx.prisma.pOC.findUnique({
+            return ctx.prisma.poc.findUnique({
                 where: { id: input.id }
             });
         }),
     getAllInclude: publicProcedure
         .input(z.boolean())
         .query(({ ctx }) => {
-            return ctx.prisma.pOC.findMany({
+            return ctx.prisma.poc.findMany({
                 include: {
-                    Client: true,
+                    client: true,
                     engagement: true,
                     site: true,
                     user: true,
@@ -81,12 +81,12 @@ export const pocRouter = createTRPCRouter({
     getAll: publicProcedure
         .input(z.boolean())
         .query(({ ctx }) => {
-            return ctx.prisma.pOC.findMany();
+            return ctx.prisma.poc.findMany();
         }),
     getAllClient: publicProcedure
         .input(z.boolean().optional())
         .query(({ ctx }) => {
-            return ctx.prisma.pOC.findMany({
+            return ctx.prisma.poc.findMany({
                 where: {
                     NOT: [
                         {
@@ -99,6 +99,6 @@ export const pocRouter = createTRPCRouter({
     getTotalCount: publicProcedure
         .input(z.boolean().optional())
         .query(({ ctx }) => {
-            return ctx.prisma.pOC.count();
+            return ctx.prisma.poc.count();
         }),
 });

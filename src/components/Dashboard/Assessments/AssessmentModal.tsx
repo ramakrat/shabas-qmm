@@ -30,7 +30,7 @@ interface QuestionType {
 type AssessmentQuestionReturnType = (
     AssessmentQuestion & {
         question: (Question & {
-            Rating: (Rating & {
+            ratings: (Rating & {
                 filter: Filter | null;
             })[];
         });
@@ -136,8 +136,8 @@ const AssessmentModal: React.FC<Props> = (props) => {
 
 
     React.useEffect(() => {
-        if (assessmentData && assessmentData.AssessmentQuestion) {
-            setExistingQuestions(assessmentData.AssessmentQuestion as AssessmentQuestionReturnType);
+        if (assessmentData && assessmentData.assessment_questions) {
+            setExistingQuestions(assessmentData.assessment_questions as AssessmentQuestionReturnType);
         } else {
             setExistingQuestions([]);
         }
@@ -364,7 +364,7 @@ const AssessmentModal: React.FC<Props> = (props) => {
                                                                                             filter: null,
                                                                                         }
                                                                                     }
-                                                                                    const newFilter = o.question.Rating.find(o => o.filter_id == event.target.value);
+                                                                                    const newFilter = o.question.ratings.find(o => o.filter_id == event.target.value);
                                                                                     if (newFilter) {
                                                                                         return {
                                                                                             ...o,
@@ -378,7 +378,7 @@ const AssessmentModal: React.FC<Props> = (props) => {
                                                                         }}
                                                                     >
                                                                         <MenuItem value={-1}><em>Standard</em></MenuItem>
-                                                                        {q.question.Rating.map((o, i) => {
+                                                                        {q.question.ratings.map((o, i) => {
                                                                             if (o.filter)
                                                                                 return (
                                                                                     <MenuItem key={i} value={o.filter.id}>

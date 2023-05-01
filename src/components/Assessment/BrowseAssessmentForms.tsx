@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import type { Engagement, POC, Assessment, Client, EngagementPOC } from "@prisma/client";
+import type { Engagement, Poc, Assessment, Client, EngagementPoc } from "@prisma/client";
 import { api } from "~/utils/api";
 import BrowseTable from "../Common/BrowseTable";
 import ExpandableBrowseTable, { type TableColumn } from "../Common/ExpandableBrowseTable";
@@ -102,12 +102,12 @@ const assessmentColumns: TableColumn[] = [{
 type EngagementAssessmentType = (
     Engagement & {
         client: Client;
-        POC: POC[];
-        EngagementPOC: (EngagementPOC & {
-            poc: POC;
+        pocs: Poc[];
+        assessments: (Assessment & {
+            poc: Poc | null;
         })[];
-        Assessment: (Assessment & {
-            poc: POC | null;
+        engagement_pocs: (EngagementPoc & {
+            poc: Poc | null;
         })[];
     }
 )
@@ -144,7 +144,7 @@ const BrowseAssessmentForms: React.FC<Props> = (props) => {
             const newData: EngagementTableData[] = [];
             data.forEach(obj => {
 
-                const convertAssessmentTableData = (data?: (Assessment & { poc: POC | null; })[]) => {
+                const convertAssessmentTableData = (data?: (Assessment & { poc: Poc | null; })[]) => {
                     if (data) {
                         const newAssessmentData: AssessmentTableData[] = [];
                         data.forEach(d => {
@@ -163,19 +163,19 @@ const BrowseAssessmentForms: React.FC<Props> = (props) => {
                     }
                 }
 
-                const existingClientPoc = obj.EngagementPOC.find(o => o.poc.client_id);
-                const existingShabasPoc = obj.EngagementPOC.find(o => !o.poc.client_id);
+                const existingClientPoc = obj.engagement_pocs.find(o => o.poc?.client_id);
+                const existingShabasPoc = obj.engagement_pocs.find(o => !o.poc?.client_id);
 
                 newData.push({
                     id: obj.id,
                     client: `${obj.client_id} - ${obj.client.name}`,
                     startDate: obj.start_date,
                     endDate: obj.end_date,
-                    clientPoc: existingClientPoc ? `${existingClientPoc.poc.first_name} ${existingClientPoc.poc.last_name}` : '',
-                    shabasPoc: existingShabasPoc ? `${existingShabasPoc.poc.first_name} ${existingShabasPoc.poc.last_name}` : '',
+                    clientPoc: existingClientPoc ? `${existingClientPoc.poc?.first_name} ${existingClientPoc.poc?.last_name}` : '',
+                    shabasPoc: existingShabasPoc ? `${existingShabasPoc.poc?.first_name} ${existingShabasPoc.poc?.last_name}` : '',
                     status: obj.status,
-                    child: obj.Assessment.length > 0 && <BrowseTable
-                        dataList={convertAssessmentTableData(obj.Assessment) ?? []}
+                    child: obj.assessments.length > 0 && <BrowseTable
+                        dataList={convertAssessmentTableData(obj.assessments) ?? []}
                         tableInfoColumns={assessmentColumns}
                     />
                 })

@@ -1,5 +1,5 @@
 import React from "react";
-import type { Client, Engagement, POC, Site } from "@prisma/client";
+import type { Client, Engagement, Poc, Site } from "@prisma/client";
 
 import * as yup from "yup";
 import { Field, Form, Formik, type FormikProps } from "formik";
@@ -13,7 +13,7 @@ import { api } from "~/utils/api";
 interface Props {
     open: boolean;
     setOpen: (open: boolean) => void;
-    data?: POC;
+    data?: Poc;
 }
 
 interface FormValues {

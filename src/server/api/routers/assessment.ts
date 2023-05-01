@@ -76,12 +76,12 @@ export const assessmentRouter = createTRPCRouter({
                 return ctx.prisma.assessment.findUnique({
                     where: { id: input.id },
                     include: {
-                        AssessmentQuestion: {
+                        assessment_questions: {
                             include: {
                                 filter: true,
                                 question: {
                                     include: {
-                                        Rating: {
+                                        ratings: {
                                             include: {
                                                 filter: true
                                             }
@@ -101,7 +101,7 @@ export const assessmentRouter = createTRPCRouter({
                 return await ctx.prisma.assessment.findUnique({
                     where: { id: input.id },
                     include: {
-                        AssessmentQuestion: {
+                        assessment_questions: {
                             include: {
                                 filter: true,
                                 answer: true,
@@ -119,7 +119,7 @@ export const assessmentRouter = createTRPCRouter({
             return ctx.prisma.assessment.findMany({
                 where: { id: input },
                 include: {
-                    AssessmentQuestion: {
+                    assessment_questions: {
                         include: {
                             answer: true,
                             question: true,

@@ -83,7 +83,7 @@ model Poc {
     site_id       Int?
     site          Site?       @relation(fields: [site_id], references: [id])
 
-    engagement_pocs EngagementPOC[]
+    engagement_pocs EngagementPoc[]
     assessments     Assessment[]
 
     @@index([user_id])
@@ -232,12 +232,12 @@ model Engagement {
 
     pocs            Poc[]
     assessments     Assessment[]
-    engagement_pocs EngagementPOC[]
+    engagement_pocs EngagementPoc[]
 
     @@index([client_id])
 }
 
-model EngagementPOC {
+model EngagementPoc {
     id Int @id @default(autoincrement())
 
     engagement_id Int
@@ -247,6 +247,7 @@ model EngagementPOC {
 
     @@index([poc_id])
     @@index([engagement_id])
+	@@map("EngagementPoc")
 }
 
 model Assessment {

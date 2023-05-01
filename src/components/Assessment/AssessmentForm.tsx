@@ -40,11 +40,11 @@ const OngoingAssessment: React.FC<Props> = (props) => {
     const data = api.assessment.getByIdIncludeAssessor.useQuery({ id: assessment }).data as (
         Assessment & {
             engagement: Engagement;
-            AssessmentQuestion: (AssessmentQuestion & {
+            assessment_questions: (AssessmentQuestion & {
                 question: Question & {
-                    Rating: Rating[];
-                    Reference: Reference[];
-                    InterviewGuide: InterviewGuide[];
+                    ratings: Rating[];
+                    references: Reference[];
+                    interview_guides: InterviewGuide[];
                 };
                 filter: Filter | null;
                 answer: Answer | null;
@@ -70,7 +70,6 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                 }
             }
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data])
 
     const convertToQuestion = (object: (Question & {
@@ -85,7 +84,7 @@ const OngoingAssessment: React.FC<Props> = (props) => {
         return q as Question;
     }
 
-    const questions = data?.AssessmentQuestion;
+    const questions = data?.assessment_questions;
 
     const [question, setQuestion] = React.useState<number>(questions && questions[0] ? questions[0].question.id : -1);
 
@@ -93,7 +92,7 @@ const OngoingAssessment: React.FC<Props> = (props) => {
         setQuestion(questions && questions[0] ? questions[0].question.id : -1)
     }, [questions])
 
-    const selectedAssessmentQuestion = data?.AssessmentQuestion.find(o => o.question.id == question);
+    const selectedAssessmentQuestion = data?.assessment_questions.find(o => o.question.id == question);
     const questionRef = selectedAssessmentQuestion?.question;
     const ratings = api.rating.getByQuestionFilter.useQuery({ questionId: questionRef?.id, filterId: selectedAssessmentQuestion?.filter_id ?? undefined }).data;
     const guide = api.interviewGuide.getByQuestionId.useQuery({ id: questionRef?.id }).data;
@@ -140,7 +139,6 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                 notes: '',
             });
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedAssessmentQuestion])
 
 
@@ -172,13 +170,10 @@ const OngoingAssessment: React.FC<Props> = (props) => {
             if (prop == 'created_at' || prop == 'updated_at') return;
             if (Object.prototype.hasOwnProperty.call(changed, prop)) {
                 if (Object.prototype.hasOwnProperty.call(former, prop)) {
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                     if (changed[prop] != former[prop]) {
                         createChangelog.mutate({
                             field: prop,
-                            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
                             former_value: former[prop].toString(),
-                            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
                             new_value: changed[prop].toString(),
                             assessment_question_id: Number(selectedAssessmentQuestion?.id),
                         })

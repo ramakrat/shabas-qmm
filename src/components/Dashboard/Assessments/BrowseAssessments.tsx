@@ -1,5 +1,5 @@
 import React from "react";
-import type { Assessment, Client, Engagement, EngagementPOC, POC } from "@prisma/client";
+import type { Assessment, Client, Engagement, EngagementPoc, Poc } from "@prisma/client";
 
 import { Button, Card, IconButton } from "@mui/material";
 import { Add, Edit } from "@mui/icons-material";
@@ -119,12 +119,12 @@ const assessmentColumns: TableColumn[] = [{
 type EngagementAssessmentType = (
     Engagement & {
         client: Client;
-        POC: POC[];
-        EngagementPOC: (EngagementPOC & {
-            poc: POC;
+        pocs: Poc[];
+        engagement_pocs: (EngagementPoc & {
+            poc: Poc;
         })[];
-        Assessment: (Assessment & {
-            poc: POC | null;
+        assessments: (Assessment & {
+            poc: Poc | null;
         })[];
     }
 )
@@ -177,7 +177,7 @@ const BrowseAssessments: React.FC<Props> = () => {
 
             engagements.forEach(engagement => {
 
-                const convertAssessmentTableData = (assessments?: (Assessment & { poc: POC | null; })[]) => {
+                const convertAssessmentTableData = (assessments?: (Assessment & { poc: Poc | null; })[]) => {
                     if (assessments) {
                         const newAssessmentData: AssessmentTableData[] = [];
 
@@ -203,8 +203,8 @@ const BrowseAssessments: React.FC<Props> = () => {
                     }
                 }
 
-                const existingClientPoc = engagement.EngagementPOC.find(o => o.poc.client_id);
-                const existingShabasPoc = engagement.EngagementPOC.find(o => !o.poc.client_id);
+                const existingClientPoc = engagement.engagement_pocs.find(o => o.poc.client_id);
+                const existingShabasPoc = engagement.engagement_pocs.find(o => !o.poc.client_id);
                 const actions = (
                     <IconButton onClick={() => { setEngagementData(engagement); setEngagementModal(true) }}>
                         <Edit fontSize='small' />
@@ -220,8 +220,8 @@ const BrowseAssessments: React.FC<Props> = () => {
                     shabasPoc: existingShabasPoc ? `${existingShabasPoc.poc.first_name} ${existingShabasPoc.poc.last_name}` : '',
                     status: engagement.status,
                     actions: actions,
-                    child: engagement.Assessment.length > 0 && <BrowseTable
-                        dataList={convertAssessmentTableData(engagement.Assessment) ?? []}
+                    child: engagement.assessments.length > 0 && <BrowseTable
+                        dataList={convertAssessmentTableData(engagement.assessments) ?? []}
                         tableInfoColumns={assessmentColumns}
                     />
                 })

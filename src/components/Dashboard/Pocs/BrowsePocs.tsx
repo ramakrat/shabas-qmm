@@ -1,5 +1,5 @@
 import React from "react";
-import type { Client, Engagement, POC, Site, User } from "@prisma/client";
+import type { Client, Engagement, Poc, Site, User } from "@prisma/client";
 
 import { Button, IconButton } from "@mui/material";
 import { Add, Edit } from "@mui/icons-material";
@@ -14,10 +14,10 @@ interface Props {
 }
 
 type PocType = (
-    POC & {
+    Poc & {
         site: Site | null;
         engagement: Engagement | null;
-        Client: Client | null;
+        client: Client | null;
         user: User | null;
     }
 )
@@ -79,7 +79,7 @@ const BrowsePocs: React.FC<Props> = () => {
     // const { pocModal, setPOCModal } = props;
     const [pocModal, setPOCModal] = React.useState<boolean>(false);
 
-    const [pocData, setPOCData] = React.useState<POC | undefined>(undefined);
+    const [pocData, setPOCData] = React.useState<Poc | undefined>(undefined);
 
     // TODO: Don't run query unless modal closed
     const pocs = api.poc.getAllInclude.useQuery(pocModal).data;
@@ -96,8 +96,8 @@ const BrowsePocs: React.FC<Props> = () => {
     }
 
     const renderTypeReference = (object: PocType) => {
-        if (object.Client) {
-            return object.Client.name;
+        if (object.client) {
+            return object.client.name;
         } else if (object.engagement) {
             return object.engagement.id.toString();
         } else if (object.site) {

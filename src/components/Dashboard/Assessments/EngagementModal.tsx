@@ -1,5 +1,5 @@
 import React from "react";
-import type { Assessment, Client, Engagement, EngagementPOC, POC } from "@prisma/client";
+import type { Assessment, Client, Engagement, EngagementPoc, Poc } from "@prisma/client";
 
 import * as yup from "yup";
 import { Field, Form, Formik } from "formik";
@@ -16,12 +16,12 @@ interface Props {
     setOpen: (open: boolean) => void;
     data?: Engagement & {
         client: Client;
-        POC: POC[];
-        EngagementPOC: (EngagementPOC & {
-            poc: POC;
+        pocs: Poc[];
+        engagement_pocs: (EngagementPoc & {
+            poc: Poc;
         })[];
-        Assessment: (Assessment & {
-            poc: POC | null;
+        assessments: (Assessment & {
+            poc: Poc | null;
         })[];
     };
 }
@@ -77,8 +77,8 @@ const EngagementModal: React.FC<Props> = (props) => {
 
     React.useEffect(() => {
         if (data) {
-            const existingClientPoc = data.EngagementPOC.find(o => o.poc.client_id);
-            const existingShabasPoc = data.EngagementPOC.find(o => !o.poc.client_id);
+            const existingClientPoc = data.engagement_pocs.find(o => o.poc.client_id);
+            const existingShabasPoc = data.engagement_pocs.find(o => !o.poc.client_id);
             setEngagement({
                 description: data.description,
                 startDate: dateInputFormat(data.start_date, true),
@@ -120,7 +120,7 @@ const EngagementModal: React.FC<Props> = (props) => {
                 client_id: Number(values.clientId),
             }, {
                 onSuccess(created) {
-                    const existingClientPoc = data.EngagementPOC.find(o => o.poc.client_id);
+                    const existingClientPoc = data.engagement_pocs.find(o => o.poc.client_id);
                     if (existingClientPoc) {
                         updatePoc.mutate({
                             id: existingClientPoc.id,
@@ -134,7 +134,7 @@ const EngagementModal: React.FC<Props> = (props) => {
                         })
                     }
 
-                    const existingShabasPoc = data.EngagementPOC.find(o => !o.poc.client_id);
+                    const existingShabasPoc = data.engagement_pocs.find(o => !o.poc.client_id);
                     if (existingShabasPoc) {
                         existingShabasPoc && updatePoc.mutate({
                             id: existingShabasPoc.id,

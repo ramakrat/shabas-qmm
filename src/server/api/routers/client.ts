@@ -62,7 +62,7 @@ export const clientRouter = createTRPCRouter({
         .query(({ ctx }) => {
             return ctx.prisma.client.findMany({
                 include: {
-                    Site: true
+                    sites: true
                 }
             });
         }),

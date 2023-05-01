@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import React from "react";
 import type { Client, Site } from "@prisma/client";
 
@@ -90,7 +89,7 @@ const siteColumns: TableColumn[] = [{
 
 type ClientSiteType = (
     Client & {
-        Site: Site[];
+        sites: Site[];
     }
 )
 
@@ -159,8 +158,8 @@ const BrowseClients: React.FC<Props> = () => {
                     address: address(client),
                     description: client.description,
                     actions: actions,
-                    child: client.Site.length > 0 && <BrowseTable
-                        dataList={convertSiteTableData(client.Site, client) ?? []}
+                    child: client.sites.length > 0 && <BrowseTable
+                        dataList={convertSiteTableData(client.sites, client) ?? []}
                         tableInfoColumns={siteColumns}
                     />
                 })

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import React from 'react';
 import { type FieldProps, getIn } from 'formik';
 import { FormControl, FormHelperText, InputLabel, Select as MuiSelect, type SelectProps, type TextFieldProps } from '@mui/material';

@@ -20,11 +20,11 @@ const CompletedAssessment: NextPage = () => {
     const data = api.assessment.getByIdIncludeAssessor.useQuery({ id: Number(assessment) }).data as (
         Assessment & {
             engagement: Engagement;
-            AssessmentQuestion: (AssessmentQuestion & {
+            assessment_questions: (AssessmentQuestion & {
                 question: Question & {
-                    Rating: Rating[];
-                    Reference: Reference[];
-                    InterviewGuide: InterviewGuide[];
+                    ratings: Rating[];
+                    references: Reference[];
+                    interview_guides: InterviewGuide[];
                 };
                 filter: Filter | null;
                 answer: Answer | null;
@@ -45,7 +45,7 @@ const CompletedAssessment: NextPage = () => {
     }
 
 
-    const questions = data?.AssessmentQuestion;
+    const questions = data?.assessment_questions;
 
     const [question, setQuestion] = React.useState<number>(questions && questions[0] ? questions[0].question.id : -1);
 
@@ -53,7 +53,7 @@ const CompletedAssessment: NextPage = () => {
         setQuestion(questions && questions[0] ? questions[0].question.id : -1)
     }, [questions])
 
-    const selectedAssessmentQuestion = data?.AssessmentQuestion.find(o => o.question.id == question);
+    const selectedAssessmentQuestion = data?.assessment_questions.find(o => o.question.id == question);
     const questionRef = selectedAssessmentQuestion?.question;
     const ratings = api.rating.getByQuestionFilter.useQuery({ questionId: questionRef?.id, filterId: selectedAssessmentQuestion?.filter_id ?? undefined }).data;
     const guide = api.interviewGuide.getByQuestionId.useQuery({ id: questionRef?.id }).data;
@@ -74,7 +74,7 @@ const CompletedAssessment: NextPage = () => {
             const dashboardAveraged: any[] = [];
 
             exportData.forEach(o => {
-                o.AssessmentQuestion.forEach(q => {
+                o.assessment_questions.forEach(q => {
                     masterObjects.push({
                         'Firm': o.site.name,
                         'Assessor': '',
