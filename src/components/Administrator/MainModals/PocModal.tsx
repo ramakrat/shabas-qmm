@@ -35,7 +35,6 @@ const validationSchema = yup.object().shape({
     mobilePhone: yup.string().required("Required"),
     workPhone: yup.string().required("Required"),
     email: yup.string().required("Required"),
-    staff: yup.string().required("Required"),
     type: yup.string().required("Required"),
     typeId: yup.string()
         .when('type',
