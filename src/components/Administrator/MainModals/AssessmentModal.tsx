@@ -109,6 +109,7 @@ const AssessmentModal: React.FC<Props> = (props) => {
         setError(undefined);
         setActiveStep(0);
         setAddQuestion(false);
+        setNewQuestions([]);
     }, [open])
 
     React.useEffect(() => {
@@ -159,8 +160,8 @@ const AssessmentModal: React.FC<Props> = (props) => {
         if (existingQuestions.length < 1 && newQuestions.length < 1) {
             return;
         }
+        let succeeded = true;
         if (data) {
-            let succeeded = true;
             update.mutate({
                 id: data.id,
                 start_date: new Date(values.startDate),
@@ -202,12 +203,7 @@ const AssessmentModal: React.FC<Props> = (props) => {
                     console.log(err);
                 }
             })
-            if (succeeded) {
-                setOpen(false);
-                reload();
-            }
         } else {
-            let succeeded = true;
             create.mutate({
                 start_date: new Date(values.startDate),
                 end_date: new Date(values.endDate),
@@ -235,10 +231,10 @@ const AssessmentModal: React.FC<Props> = (props) => {
                     console.log(err);
                 }
             })
-            if (succeeded) {
-                setOpen(false);
-                reload();
-            }
+        }
+        if (succeeded) {
+            setOpen(false);
+            // reload();
         }
     }
 

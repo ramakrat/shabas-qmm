@@ -34,8 +34,8 @@ export const assessmentRouter = createTRPCRouter({
         }),
     update: publicProcedure
         .input(inputType)
-        .mutation(({ input, ctx }) => {
-            return ctx.prisma.assessment.update({
+        .mutation(async ({ input, ctx }) => {
+            return await ctx.prisma.assessment.update({
                 where: { id: input.id },
                 data: {
                     description: input.description,
