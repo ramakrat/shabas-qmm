@@ -118,7 +118,7 @@ const BrowseAssessmentForms: React.FC<Props> = (props) => {
     // TODO: Don't run query unless modal closed
     let data = undefined;
     if (status == 'ongoing')
-        data = api.engagement.getAllInclude.useQuery({ filters: [{ status: 'ongoing' }] }).data;
+        data = api.engagement.getAllInclude.useQuery({ filters: [{ status: 'created' }, { status: 'ongoing' }] }).data;
     if (status == 'assessor-review')
         data = api.engagement.getAllInclude.useQuery({ filters: [{ status: 'assessor-review' }] }).data;
     if (status == 'oversight')
