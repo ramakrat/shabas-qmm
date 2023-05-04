@@ -264,7 +264,15 @@ export const titleCase = (text: string) => {
     return capitalized;
 }
 
-export const dateInputFormat = (date: Date, fromUTC?: boolean) => {
+export const dateInputFormat = (date: Date, fromUTC?: boolean, text?: boolean) => {
+    const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    if (text) {
+        if (fromUTC) return `${weekdays[date.getUTCDay()]} ${months[date.getUTCMonth()]} ${date.getUTCDate()} ${date.getUTCFullYear()}`
+        return `${weekdays[date.getDay()]} ${months[date.getMonth()]} ${date.getDate()} ${date.getFullYear()}`
+    }
+
     if (fromUTC) return date.toISOString().substring(0, 10);
     return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().substring(0, 10);
 }

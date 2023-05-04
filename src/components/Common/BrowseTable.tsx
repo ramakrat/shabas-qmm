@@ -2,6 +2,7 @@ import React from "react";
 import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import StatusChip from "./StatusChip";
 import { KeyboardArrowUp, KeyboardArrowDown } from "@mui/icons-material";
+import { dateInputFormat } from "~/utils/utils";
 
 export interface TableColumn {
     type: string;
@@ -26,7 +27,7 @@ const Row = (tableInfoColumns: any[], obj: any, idx: number) => {
                 if (column.format === 'date') {
                     return (
                         <TableCell key={column.type + '-' + idx} align={column.align}>
-                            {(obj[column.type]).toDateString()}
+                            {dateInputFormat(obj[column.type], true, true)}
                         </TableCell>
                     )
                 } else if (column.format === 'status') {
@@ -139,7 +140,7 @@ const BrowseTable: React.FC<Props> = (props) => {
                                 {tableInfoColumns.map(column => {
                                     let cellData = obj[column.type];
                                     if (column.format === 'date') {
-                                        cellData = (obj[column.type]).toDateString();
+                                        cellData = dateInputFormat(obj[column.type], true, true);
                                     } else if (column.format === 'status' && obj[column.type]) {
                                         cellData = <StatusChip status={obj[column.type]} />;
                                     } else if (column.format === 'jsx-element') {
