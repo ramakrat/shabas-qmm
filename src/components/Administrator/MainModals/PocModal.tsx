@@ -266,10 +266,6 @@ const PocModal: React.FC<Props> = (props) => {
                                         name='email' label='Email' size='small'
                                         component={TextField}
                                     />
-                                    <Field
-                                        name='staff' label='Staff' size='small'
-                                        component={TextField}
-                                    />
                                 </CardContent>
                                 <CardActions>
                                     <Button variant='contained' color='error' onClick={() => setOpen(false)}>Cancel</Button>
