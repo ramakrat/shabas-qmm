@@ -21,7 +21,7 @@ interface Props {
 interface QuestionType {
     id?: number;
     question: (Question & {
-        Rating: (Rating & {
+        ratings: (Rating & {
             filter: Filter | null;
         })[];
     });
@@ -397,7 +397,7 @@ const AssessmentModal: React.FC<Props> = (props) => {
                                                         )
                                                     })}
                                                     {newQuestions && newQuestions.map((q) => {
-                                                        const uniqueFilters = [...new Map(q.question.Rating.map(r => {
+                                                        const uniqueFilters = [...new Map(q.question.ratings.map(r => {
                                                             return [r.filter?.type, r.filter]
                                                         })).values()];
                                                         return (
