@@ -146,7 +146,7 @@ const SiteModal: React.FC<Props> = (props) => {
                     <Form>
                         <Card>
                             <CardHeader
-                                title={data ? 'Edit Site' : 'Create New Site'}
+                                title={data ? 'Edit Site ' + data.id : 'Create New Site'}
                                 action={
                                     <IconButton onClick={() => setOpen(false)}>
                                         <Close />

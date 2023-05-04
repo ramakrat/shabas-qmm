@@ -193,7 +193,7 @@ const EngagementModal: React.FC<Props> = (props) => {
                     <Form>
                         <Card>
                             <CardHeader
-                                title={data ? 'Edit Engagement' : 'Create New Engagement'}
+                                title={data ? 'Edit Engagement ' + data.id : 'Create New Engagement'}
                                 action={
                                     <IconButton onClick={() => setOpen(false)}>
                                         <Close />

@@ -257,7 +257,7 @@ const AssessmentModal: React.FC<Props> = (props) => {
                     <Form>
                         <Card>
                             <CardHeader
-                                title={data ? 'Edit Assessment' : 'Create New Assessment'}
+                                title={data ? 'Edit Assessment ' + data.id : 'Create New Assessment'}
                                 action={
                                     <IconButton onClick={() => setOpen(false)}>
                                         <Close />

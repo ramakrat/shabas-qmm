@@ -136,7 +136,7 @@ const ClientModal: React.FC<Props> = (props) => {
                     <Form>
                         <Card>
                             <CardHeader
-                                title={data ? 'Edit Client' : 'Create New Client'}
+                                title={data ? 'Edit Client ' + data.id : 'Create New Client'}
                                 action={
                                     <IconButton onClick={() => setOpen(false)}>
                                         <Close />

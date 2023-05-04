@@ -216,7 +216,7 @@ const PocModal: React.FC<Props> = (props) => {
                         <Form>
                             <Card>
                                 <CardHeader
-                                    title={data ? 'Edit POC' : 'Create New POC'}
+                                    title={data ? 'Edit POC ' + data.id : 'Create New POC'}
                                     action={
                                         <IconButton onClick={() => setOpen(false)}>
                                             <Close />
