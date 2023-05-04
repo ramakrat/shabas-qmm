@@ -533,7 +533,7 @@ const Question: NextPage = () => {
             }
 
             if (succeeded) {
-                // Router.reload();
+                Router.reload();
             }
         }
     }
