@@ -1,10 +1,9 @@
 import React from "react";
 import * as yup from "yup";
 import { Formik, Form, Field } from "formik";
-import { Button, Card, CardActions, CardContent, CardHeader, IconButton, Modal } from "@mui/material";
+import { Button, Card, CardActions, CardContent, CardHeader, IconButton, Modal, TextField } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { api } from "~/utils/api";
-import TextField from "~/components/Form/TextField";
 
 interface Props {
     open: boolean;
@@ -19,7 +18,7 @@ const validationSchema = yup.object().shape({
     name: yup.string().required("Required")
 });
 
-const IndustryModal: React.FC<Props> = (props) => {
+const ManufacturingTypeModal: React.FC<Props> = (props) => {
 
     const { open, setOpen } = props;
 
@@ -31,7 +30,7 @@ const IndustryModal: React.FC<Props> = (props) => {
         values: FormValues,
     ) => {
         create.mutate({
-            type: 'industry',
+            type: 'manufacturing-type',
             name: values.name,
         }, {
             onSuccess() { setOpen(false) }
@@ -52,7 +51,7 @@ const IndustryModal: React.FC<Props> = (props) => {
                     <Form>
                         <Card>
                             <CardHeader
-                                title={'Create New Industry'}
+                                title={'Create New API Segment'}
                                 action={
                                     <IconButton onClick={() => setOpen(false)}>
                                         <Close />
@@ -77,4 +76,4 @@ const IndustryModal: React.FC<Props> = (props) => {
     )
 }
 
-export default IndustryModal;
+export default ManufacturingTypeModal;

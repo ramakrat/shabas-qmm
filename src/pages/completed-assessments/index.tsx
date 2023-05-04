@@ -2,12 +2,12 @@ import { type NextPage } from "next";
 import Layout from "~/components/Layout/Layout";
 import BrowseAssessmentForms from "~/components/Assessor/BrowseAssessmentForms";
 
-const OversightAssessments: NextPage = () => {
+const CompletedAssessments: NextPage = () => {
     return (
-        <Layout active='oversight-assessments'>
-            <BrowseAssessmentForms status='oversight' />
+        <Layout active='completed-assessments'>
+            <BrowseAssessmentForms status='completed' />
         </Layout>
     )
 }
 
-export default OversightAssessments;
+export default CompletedAssessments;

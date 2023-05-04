@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 
 const inputType = z.object({
@@ -34,8 +34,8 @@ export const assessmentRouter = createTRPCRouter({
         }),
     update: publicProcedure
         .input(inputType)
-        .mutation(({ input, ctx }) => {
-            return ctx.prisma.assessment.update({
+        .mutation(async ({ input, ctx }) => {
+            return await ctx.prisma.assessment.update({
                 where: { id: input.id },
                 data: {
                     description: input.description,
@@ -76,12 +76,12 @@ export const assessmentRouter = createTRPCRouter({
                 return ctx.prisma.assessment.findUnique({
                     where: { id: input.id },
                     include: {
-                        AssessmentQuestion: {
+                        assessment_questions: {
                             include: {
                                 filter: true,
                                 question: {
                                     include: {
-                                        Rating: {
+                                        ratings: {
                                             include: {
                                                 filter: true
                                             }
@@ -101,7 +101,7 @@ export const assessmentRouter = createTRPCRouter({
                 return await ctx.prisma.assessment.findUnique({
                     where: { id: input.id },
                     include: {
-                        AssessmentQuestion: {
+                        assessment_questions: {
                             include: {
                                 filter: true,
                                 answer: true,
@@ -112,6 +112,22 @@ export const assessmentRouter = createTRPCRouter({
                     }
                 });
             return null;
+        }),
+    getByIdExport: publicProcedure
+        .input(z.number())
+        .query(({ input, ctx }) => {
+            return ctx.prisma.assessment.findMany({
+                where: { id: input },
+                include: {
+                    assessment_questions: {
+                        include: {
+                            answer: true,
+                            question: true,
+                        }
+                    },
+                    site: true,
+                }
+            });
         }),
     getAll: publicProcedure
         .input(z.boolean())

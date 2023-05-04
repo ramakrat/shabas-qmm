@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 
 const inputType = z.object({
@@ -16,7 +16,7 @@ export const smeRouter = createTRPCRouter({
     create: publicProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
-            return ctx.prisma.sME.create({
+            return ctx.prisma.sme.create({
                 data: {
                     first_name: input.first_name,
                     last_name: input.last_name,
@@ -31,7 +31,7 @@ export const smeRouter = createTRPCRouter({
     update: publicProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
-            return ctx.prisma.sME.update({
+            return ctx.prisma.sme.update({
                 where: { id: input.id },
                 data: {
                     first_name: input.first_name,
@@ -47,19 +47,19 @@ export const smeRouter = createTRPCRouter({
     getByQuestionId: publicProcedure
         .input(z.object({ id: z.number() }))
         .query(({ input, ctx }) => {
-            return ctx.prisma.sME.findFirst({
+            return ctx.prisma.sme.findFirst({
                 where: { question_id: input.id }
             });
         }),
     getById: publicProcedure
         .input(z.object({ id: z.number() }))
         .query(({ input, ctx }) => {
-            return ctx.prisma.sME.findUnique({
+            return ctx.prisma.sme.findUnique({
                 where: { id: input.id }
             });
         }),
     getAll: publicProcedure
         .query(({ ctx }) => {
-            return ctx.prisma.sME.findMany();
+            return ctx.prisma.sme.findMany();
         }),
 });

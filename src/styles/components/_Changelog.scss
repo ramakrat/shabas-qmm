@@ -1,0 +1,18 @@
+.changelog {
+    .MuiButton-root {
+        width: 100%;
+    }
+
+    .MuiTableContainer-root {
+        max-height: 400px;
+        border-radius: 0px;
+
+        .MuiTableHead-root {
+            .MuiTableCell-root {
+                background-color: palette(greyscale, 300);
+                color: palette(primary, main);
+            }
+        }
+    }
+
+}

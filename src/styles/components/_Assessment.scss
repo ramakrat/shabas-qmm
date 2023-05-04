@@ -1,156 +1,306 @@
 .assessment {
     display: flex;
     flex-direction: row;
-    margin: 20px 30px 40px;
+    border-top: 1px solid palette(greyscale, 300);
 
+    form {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+    }
 
-    .questions-sidebar {
+    .assessment-content {
+        height: calc(100vh - 51px);
+        overflow-y: auto;
         display: flex;
         flex-direction: column;
-        align-items: center;
-        padding: 10px;
+        width: 100%;
+    }
 
-        .question-steppers {
-            .MuiButton-root {
-                margin: 0px 5px;
-            }
-        }
-
-        .MuiTypography-root {
-            padding: 5px 25px;
-            margin: 10px;
-            font-size: 1.3rem;
-            cursor: pointer;
-        }
-
-        .active {
-            font-weight: 600;
-            border-radius: shape(borderRadius);
-            background-color: lighten(palette(secondary, main), 45%);
-        }
+    .assessment-form {
+        margin: 15px;
     }
 
     .context {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
-        padding: 10px;
-
-        >div {
-            .MuiTypography-root:first-child {
-                font-size: 1rem;
-                font-weight: 500;
-            }
-        }
-    }
-
-    .filters {
-        display: flex;
-        flex-direction: row;
         align-items: center;
-        margin: 10px 0px 20px;
-
-        >.MuiTypography-root {
-            font-size: 1rem;
-            font-weight: 500;
-            padding-right: 10px;
-        }
-
-        .MuiInputBase-root {
-            margin-right: 15px;
-        }
-    }
-
-    .pre-questions {
         padding: 10px;
-        margin-bottom: 16px;
-    }
+        height: 50px !important;
+        min-height: 50px !important;
+        border-radius: 0px;
 
-    .question-content {
-        padding: 10px;
-
-        >.MuiTypography-root {
-            font-size: 1rem;
-            font-weight: 500;
-            padding-bottom: 5px;
-        }
-
-        .MuiTextField-root {
-            width: 100%;
-            padding-bottom: 10px;
-        }
-
-    }
-
-    .save {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .rating {
-        display: flex;
-        flex-direction: column;
-
-        .rating-input {
+        .question-number {
             display: flex;
             flex-direction: row;
             align-items: center;
+
+            .MuiTypography-root {
+                font-size: 1.1rem;
+                font-family: 'Plus Jakarta Sans';
+            }
+
+            .MuiTypography-root:first-child {
+                font-weight: 600;
+                padding-right: 10px;
+            }
         }
 
-        .MuiTypography-root:first-child {
-            font-size: 1rem;
-            font-weight: 500;
-            padding-right: 5px;
+        .question-status {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding-left: 15px;
+
+            .active-signature {
+                margin-right: 8px;
+            }
         }
 
-        .MuiSvgIcon-root {
-            margin-right: 10px;
-            color: palette(greyscale, 500);
-            cursor: pointer;
-        }
-
-        .MuiTextField-root {
-            width: 48px;
+        .MuiButton-root {
+            margin-left: 10px;
         }
     }
 
+    .question-content {
+        .filters {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            width: 100%;
+            padding: 20px 10px;
+            border: 1px solid palette(greyscale, 300);
+
+            >.MuiTypography-root {
+                font-size: 1rem;
+                font-weight: 500;
+                padding-right: 10px;
+            }
+
+            .MuiInputBase-root {
+                margin-right: 15px;
+            }
+        }
+    }
 
     .reference {
         display: flex;
         flex-direction: column;
-        padding: 10px;
-
-        >div {
-            padding-bottom: 30px;
-
-            .MuiTypography-root:first-child {
-                font-size: 1rem;
-                font-weight: 500;
-                padding-bottom: 10px;
-            }
-        }
 
         .input-row {
             display: flex;
             flex-direction: row;
             align-items: center;
+
+            .MuiTextField-root {
+                width: 100%;
+            }
         }
     }
 
-    .actions {
+    .widget-header {
+        display: flex;
+        padding: 10px;
+        border: 1px solid palette(greyscale, 700);
+        background-color: palette(greyscale, 600);
+        color: white;
+        font-weight: 600;
+        font-size: 1.1rem;
+        font-family: 'Plus Jakarta Sans';
+    }
+
+    .widget-sub-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px 10px;
+        border: 1px solid palette(greyscale, 400);
+        background-color: palette(greyscale, 300);
+        color: palette(primary, dark);
+        font-weight: 600;
+        font-size: 1.1rem;
+        font-family: 'Plus Jakarta Sans';
+
+        .rating-input {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+
+            .MuiTypography-root:first-child {
+                font-size: 1.1rem;
+                font-weight: 500;
+                padding-right: 5px;
+            }
+
+            .MuiFormControl-root {
+                margin-left: 5px;
+            }
+        }
+    }
+
+    .widget-body {
+        border-left: 1px solid palette(greyscale, 300);
+        border-right: 1px solid palette(greyscale, 300);
+        padding: 10px;
+
+        &.widget-form {
+            >.MuiTypography-root {
+                font-size: 1rem;
+                font-weight: 500;
+                padding-bottom: 5px;
+            }
+
+            .MuiTextField-root {
+                width: 100%;
+                padding-bottom: 10px;
+            }
+
+            .MuiGrid-root {
+                >.MuiTypography-root {
+                    font-size: 1rem;
+                    font-weight: 500;
+                    padding-bottom: 5px;
+                }
+
+                .MuiTextField-root {
+                    padding-bottom: 0px;
+                }
+            }
+        }
+
+        &.information-list {
+            display: flex;
+            flex-direction: column;
+
+            >div {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                padding-bottom: 5px;
+
+                .MuiTextField-root {
+                    font-size: 1rem;
+                }
+
+                .MuiTypography-root:first-child {
+                    font-weight: 500;
+                    padding-right: 10px;
+                }
+            }
+
+            >div:last-child {
+                padding-bottom: 0px;
+            }
+        }
+    }
+}
+
+.questions-sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: calc(100vh - 51px);
+    width: 200px;
+    border-right: 1px solid palette(greyscale, 300);
+    border-radius: 0px;
+    overflow-y: auto;
+
+    .assessment-id {
+        font-family: 'Plus Jakarta Sans';
+        font-weight: 600 !important;
+        font-size: 1.1rem;
+        text-align: center;
+        border-bottom: 1px solid palette(greyscale, 300);
+        padding: 15px 5px;
+        width: 100%;
+    }
+
+    .sidebar-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+        padding: 10px;
+    }
+
+    .question-steppers {
         display: flex;
         flex-direction: row;
-        justify-content: space-between;
+        border-bottom: 1px solid palette(greyscale, 300);
+        width: 100%;
 
-        &.simple {
-            justify-content: flex-end;
-            margin-top: 16px;
+        .stepper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50%;
+            padding: 5px;
+            height: 50px !important;
         }
 
-        .MuiButton-root {
-            margin: 10px;
+        .stepper:first-child {
+            border-right: 1px solid palette(greyscale, 300);
         }
+    }
+
+    .question-option {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 8px 20px;
+        margin: 2px 0px;
+        cursor: pointer;
+        color: palette(greyscale, 900);
+
+        .active-signature {
+            margin-right: 10px;
+        }
+
+        .MuiTypography-root {
+            font-family: 'Plus Jakarta Sans';
+            font-weight: 600 !important;
+            font-size: 1.1rem;
+        }
+
+        &.selected {
+            border-radius: shape(borderRadius);
+            background-color: palette(greyscale, 100);
+            border: 1px solid palette(greyscale, 500);
+
+            .MuiTypography-root {
+                font-weight: 700 !important;
+            }
+        }
+    }
+}
+
+.active-signature {
+    border-radius: 10px;
+    height: 12px;
+    width: 12px;
+    background-color: palette(greyscale, 600);
+
+    &.active {
+        background-color: palette(success, dark);
+    }
+}
+
+
+.not-found {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 51px);
+
+    span {
+        font-weight: 600;
+        font-family: 'Plus Jakarta Sans';
+        font-size: 2rem;
+    }
+
+    span:first-child {
+        font-size: 3rem;
     }
 }

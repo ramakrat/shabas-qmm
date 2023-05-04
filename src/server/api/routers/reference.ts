@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 
 const inputType = z.object({
@@ -65,12 +65,65 @@ export const referenceRouter = createTRPCRouter({
                 },
             })
         }),
+    updateArray: publicProcedure
+        .input(z.array(inputType))
+        .mutation(async ({ input, ctx }) => {
+            for (const o of input) {
+                if (o.citation != '') {
+                    try {
+                        await ctx.prisma.reference.update({
+                            where: { id: o.id },
+                            data: {
+                                citation: o.citation,
+                                question_id: o.question_id,
+                                created_by: '',
+                                updated_by: '',
+                            }
+                        })
+                    } catch (e) {
+                        if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                            // The .code property can be accessed in a type-safe manner
+                            if (e.code === 'P2002') {
+                                console.log(
+                                    'There is a unique constraint violation.'
+                                )
+                            }
+                        }
+                        throw e;
+                    }
+                }
+            }
+            return undefined;
+        }),
     delete: publicProcedure
         .input(z.number())
         .mutation(({ input, ctx }) => {
             return ctx.prisma.reference.delete({
                 where: { id: input },
             });
+        }),
+    deleteArray: publicProcedure
+        .input(z.array(z.number().optional()))
+        .mutation(async ({ input, ctx }) => {
+            for (const o of input) {
+                try {
+                    await ctx.prisma.reference.delete({
+                        where: { id: o },
+                    });
+                } catch (e) {
+                    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                        // The .code property can be accessed in a type-safe manner
+                        if (e.code === 'P2002') {
+                            console.log(
+                                'There is a unique constraint violation.'
+                            )
+                        }
+                    }
+                    throw e;
+                }
+
+            }
+            return undefined;
         }),
     getByQuestionId: publicProcedure
         .input(z.object({ id: z.number().optional() }))

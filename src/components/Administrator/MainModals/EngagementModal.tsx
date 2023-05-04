@@ -1,27 +1,28 @@
 import React from "react";
-import type { Assessment, Client, Engagement, EngagementPOC, POC } from "@prisma/client";
+import type { Assessment, Client, Engagement, EngagementPoc, Poc } from "@prisma/client";
 
 import * as yup from "yup";
 import { Field, Form, Formik } from "formik";
-import TextField from "../Form/TextField";
-import Select from "../Form/Select";
+import TextField from "../../Form/TextField";
+import Select from "../../Form/Select";
 
 import { Button, Card, CardActions, CardContent, CardHeader, IconButton, MenuItem, Modal } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { api } from "~/utils/api";
 import { dateInputFormat } from "~/utils/utils";
+import { useRouter } from "next/router";
 
 interface Props {
     open: boolean;
     setOpen: (open: boolean) => void;
     data?: Engagement & {
         client: Client;
-        POC: POC[];
-        EngagementPOC: (EngagementPOC & {
-            poc: POC;
+        pocs: Poc[];
+        engagement_pocs: (EngagementPoc & {
+            poc: Poc;
         })[];
-        Assessment: (Assessment & {
-            poc: POC | null;
+        assessments: (Assessment & {
+            poc: Poc | null;
         })[];
     };
 }
@@ -75,22 +76,14 @@ const EngagementModal: React.FC<Props> = (props) => {
         shabasPocId: '',
     });
 
-    // =========== Submission Management ===========
-
-    const create = api.engagement.create.useMutation();
-    const update = api.engagement.update.useMutation();
-
-    const createPoc = api.engagementPoc.create.useMutation();
-    const updatePoc = api.engagementPoc.update.useMutation();
-
     React.useEffect(() => {
         if (data) {
-            const existingClientPoc = data.EngagementPOC.find(o => o.poc.client_id);
-            const existingShabasPoc = data.EngagementPOC.find(o => !o.poc.client_id);
+            const existingClientPoc = data.engagement_pocs.find(o => o.poc.client_id);
+            const existingShabasPoc = data.engagement_pocs.find(o => !o.poc.client_id);
             setEngagement({
                 description: data.description,
-                startDate: dateInputFormat(data.start_date),
-                endDate: dateInputFormat(data.end_date),
+                startDate: dateInputFormat(data.start_date, true),
+                endDate: dateInputFormat(data.end_date, true),
                 clientId: data.client_id.toString(),
                 clientPocId: existingClientPoc ? existingClientPoc.poc_id.toString() : '',
                 shabasPocId: existingShabasPoc ? existingShabasPoc.poc_id.toString() : '',
@@ -107,6 +100,16 @@ const EngagementModal: React.FC<Props> = (props) => {
         }
     }, [data])
 
+
+    // =========== Submission Management ===========
+
+    const create = api.engagement.create.useMutation();
+    const update = api.engagement.update.useMutation();
+
+    const createPoc = api.engagementPoc.create.useMutation();
+    const updatePoc = api.engagementPoc.update.useMutation();
+
+    const { reload } = useRouter();
     const handleSubmit = (
         values: FormValues,
     ) => {
@@ -119,7 +122,7 @@ const EngagementModal: React.FC<Props> = (props) => {
                 client_id: Number(values.clientId),
             }, {
                 onSuccess(created) {
-                    const existingClientPoc = data.EngagementPOC.find(o => o.poc.client_id);
+                    const existingClientPoc = data.engagement_pocs.find(o => o.poc.client_id);
                     if (existingClientPoc) {
                         updatePoc.mutate({
                             id: existingClientPoc.id,
@@ -133,7 +136,7 @@ const EngagementModal: React.FC<Props> = (props) => {
                         })
                     }
 
-                    const existingShabasPoc = data.EngagementPOC.find(o => !o.poc.client_id);
+                    const existingShabasPoc = data.engagement_pocs.find(o => !o.poc.client_id);
                     if (existingShabasPoc) {
                         existingShabasPoc && updatePoc.mutate({
                             id: existingShabasPoc.id,
@@ -147,7 +150,8 @@ const EngagementModal: React.FC<Props> = (props) => {
                         })
                     }
 
-                    setOpen(false)
+                    setOpen(false);
+                    reload();
                 }
             })
         } else {
@@ -166,7 +170,9 @@ const EngagementModal: React.FC<Props> = (props) => {
                         engagement_id: created.id,
                         poc_id: Number(values.shabasPocId),
                     })
-                    setOpen(false)
+
+                    setOpen(false);
+                    reload();
                 }
             })
         }
@@ -187,7 +193,7 @@ const EngagementModal: React.FC<Props> = (props) => {
                     <Form>
                         <Card>
                             <CardHeader
-                                title={data ? 'Edit Engagement' : 'Create New Engagement'}
+                                title={data ? 'Edit Engagement ' + data.id : 'Create New Engagement'}
                                 action={
                                     <IconButton onClick={() => setOpen(false)}>
                                         <Close />

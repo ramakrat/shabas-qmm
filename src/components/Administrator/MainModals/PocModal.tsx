@@ -1,19 +1,20 @@
 import React from "react";
-import type { Client, Engagement, POC, Site } from "@prisma/client";
+import type { Client, Engagement, Poc, Site } from "@prisma/client";
 
 import * as yup from "yup";
 import { Field, Form, Formik, type FormikProps } from "formik";
-import TextField from "../Form/TextField";
-import Select from "../Form/Select";
+import TextField from "../../Form/TextField";
+import Select from "../../Form/Select";
 
 import { Button, Card, CardActions, CardContent, CardHeader, IconButton, MenuItem, Modal } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { api } from "~/utils/api";
+import { useRouter } from "next/router";
 
 interface Props {
     open: boolean;
     setOpen: (open: boolean) => void;
-    data?: POC;
+    data?: Poc;
 }
 
 interface FormValues {
@@ -23,7 +24,6 @@ interface FormValues {
     mobilePhone: string;
     workPhone: string;
     email: string;
-    staff: string;
     type: string;
     typeId?: string;
 }
@@ -35,7 +35,6 @@ const validationSchema = yup.object().shape({
     mobilePhone: yup.string().required("Required"),
     workPhone: yup.string().required("Required"),
     email: yup.string().required("Required"),
-    staff: yup.string().required("Required"),
     type: yup.string().required("Required"),
     typeId: yup.string()
         .when('type',
@@ -47,7 +46,7 @@ const validationSchema = yup.object().shape({
             }),
 });
 
-const POCModal: React.FC<Props> = (props) => {
+const PocModal: React.FC<Props> = (props) => {
 
     const { open, setOpen, data } = props;
 
@@ -68,7 +67,6 @@ const POCModal: React.FC<Props> = (props) => {
         mobilePhone: '',
         workPhone: '',
         email: '',
-        staff: '',
         type: 'shabas',
         typeId: '',
     });
@@ -93,7 +91,6 @@ const POCModal: React.FC<Props> = (props) => {
                 mobilePhone: data.mobile_phone,
                 workPhone: data.work_phone,
                 email: data.email,
-                staff: data.staff,
                 type: typeRef(),
                 typeId: data.client_id ? data.client_id.toString() : '',
             })
@@ -105,13 +102,13 @@ const POCModal: React.FC<Props> = (props) => {
                 mobilePhone: '',
                 workPhone: '',
                 email: '',
-                staff: '',
                 type: 'shabas',
                 typeId: '',
             })
         }
     }, [data])
 
+    const { reload } = useRouter();
     const handleSubmit = (
         values: FormValues,
     ) => {
@@ -124,10 +121,12 @@ const POCModal: React.FC<Props> = (props) => {
                 mobile_phone: values.mobilePhone,
                 work_phone: values.workPhone,
                 email: values.email,
-                staff: values.staff,
                 client_id: values.type == 'client' ? Number(values.typeId) : undefined,
             }, {
-                onSuccess() { setOpen(false) }
+                onSuccess() {
+                    setOpen(false);
+                    reload();
+                }
             })
         } else {
             create.mutate({
@@ -137,10 +136,12 @@ const POCModal: React.FC<Props> = (props) => {
                 mobile_phone: values.mobilePhone,
                 work_phone: values.workPhone,
                 email: values.email,
-                staff: values.staff,
                 client_id: values.type == 'client' ? Number(values.typeId) : undefined,
             }, {
-                onSuccess() { setOpen(false) }
+                onSuccess() {
+                    setOpen(false);
+                    reload();
+                }
             })
         }
     }
@@ -214,7 +215,7 @@ const POCModal: React.FC<Props> = (props) => {
                         <Form>
                             <Card>
                                 <CardHeader
-                                    title={data ? 'Edit POC' : 'Create New POC'}
+                                    title={data ? 'Edit POC ' + data.id : 'Create New POC'}
                                     action={
                                         <IconButton onClick={() => setOpen(false)}>
                                             <Close />
@@ -264,10 +265,6 @@ const POCModal: React.FC<Props> = (props) => {
                                         name='email' label='Email' size='small'
                                         component={TextField}
                                     />
-                                    <Field
-                                        name='staff' label='Staff' size='small'
-                                        component={TextField}
-                                    />
                                 </CardContent>
                                 <CardActions>
                                     <Button variant='contained' color='error' onClick={() => setOpen(false)}>Cancel</Button>
@@ -285,4 +282,4 @@ const POCModal: React.FC<Props> = (props) => {
     )
 }
 
-export default POCModal;
+export default PocModal;

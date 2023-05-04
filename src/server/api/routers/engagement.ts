@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 
 const inputType = z.object({
@@ -64,87 +64,71 @@ export const engagementRouter = createTRPCRouter({
             });
         }),
     getAllInclude: publicProcedure
-        .input(z.array(z.boolean()))
-        .query(async ({ ctx }) => {
-            // await ctx.prisma.engagement.update({
-            //     where: {}
-            // })
-            return ctx.prisma.engagement.findMany({
-                include: {
-                    Assessment: {
-                        include: { poc: true }
+        .input(z.object({
+            filters: z.array(z.any()),
+            states: z.array(z.boolean()).optional(),
+            includeEmptyEngagements: z.boolean().optional(),
+        }))
+        .query(({ input, ctx }) => {
+            if (input.includeEmptyEngagements) {
+                return ctx.prisma.engagement.findMany({
+                    include: {
+                        assessments: {
+                            include: { poc: true },
+                            where: {
+                                OR: input.filters
+                            }
+                        },
+                        client: true,
+                        pocs: true,
+                        engagement_pocs: { include: { poc: true } },
                     },
-                    client: true,
-                    POC: true,
-                    EngagementPOC: { include: { poc: true } },
-                }
-            });
-        }),
-    getAllOngoingInclude: publicProcedure
-        .input(z.array(z.boolean()))
-        .query(({ ctx }) => {
-            return ctx.prisma.engagement.findMany({
-                where: {
-                    Assessment: {
-                        some: {
-                            start_date: { lte: new Date() },
-                            OR: [
-                                { status: 'created' },
-                                { status: 'in-progress' },
-                                { status: '' },
-                            ]
-                        }
+                    where: {
+                        OR: [{
+                            assessments: {
+                                some: {
+                                    OR: input.filters
+                                }
+                            }
+                        }, {
+                            NOT: {
+                                assessments: {
+                                    some: {
+                                        AND: [
+                                            { status: 'created' },
+                                            { status: 'ongoing' },
+                                            { status: 'assessor-review' },
+                                            { status: 'oversight' },
+                                            { status: 'client-review' },
+                                            { status: 'completed' },
+                                        ]
+                                    }
+                                }
+                            }
+                        }]
                     }
-                },
+                });
+            }
+            return ctx.prisma.engagement.findMany({
                 include: {
-                    Assessment: {
+                    assessments: {
+                        include: { poc: true },
                         where: {
-                            start_date: { lte: new Date() },
-                            OR: [
-                                { status: 'created' },
-                                { status: 'in-progress' },
-                                { status: '' },
-                            ]
+                            OR: input.filters
                         }
                     },
                     client: true,
-                    POC: true,
-                }
-            });
-        }),
-    getAllReviewInclude: publicProcedure
-        .input(z.array(z.boolean()))
-        .query(({ ctx }) => {
-            return ctx.prisma.engagement.findMany({
-                where: {
-                    Assessment: {
-                        some: { status: 'in-review' }
-                    }
+                    pocs: true,
+                    engagement_pocs: { include: { poc: true } },
                 },
-                include: {
-                    Assessment: {
-                        where: { status: 'in-review' }
-                    },
-                    client: true,
-                    POC: true,
-                }
-            });
-        }),
-    getAllOversightInclude: publicProcedure
-        .input(z.array(z.boolean()))
-        .query(({ ctx }) => {
-            return ctx.prisma.engagement.findMany({
                 where: {
-                    Assessment: {
-                        some: { status: 'oversight' }
-                    }
-                },
-                include: {
-                    Assessment: {
-                        where: { status: 'oversight' }
-                    },
-                    client: true,
-                    POC: true,
+                    OR: [{
+                        assessments: {
+                            some: {
+                                OR: input.filters
+                            }
+                        }
+                    }]
                 }
             });
         }),

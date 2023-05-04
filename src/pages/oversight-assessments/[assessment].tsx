@@ -4,14 +4,14 @@ import { useRouter } from 'next/router';
 import Layout from "~/components/Layout/Layout";
 import AssessmentForm from '~/components/Assessor/AssessmentForm';
 
-const ReviewAssessment: NextPage = () => {
+const OversightAssessment: NextPage = () => {
     const { assessment } = useRouter().query;
 
     return (
-        <Layout active='review-assessments'>
-            <AssessmentForm assessment={Number(assessment)} status='assessor-review' />
+        <Layout active='oversight-assessments'>
+            <AssessmentForm assessment={Number(assessment)} status='oversight' />
         </Layout>
     );
 };
 
-export default ReviewAssessment;
+export default OversightAssessment;

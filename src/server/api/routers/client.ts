@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 
 const inputType = z.object({
@@ -57,10 +57,18 @@ export const clientRouter = createTRPCRouter({
                 where: { id: input.id }
             });
         }),
+    getAllInclude: publicProcedure
+        .input(z.boolean())
+        .query(({ ctx }) => {
+            return ctx.prisma.client.findMany({
+                include: {
+                    sites: true
+                }
+            });
+        }),
     getAll: publicProcedure
         .input(z.boolean())
         .query(({ ctx }) => {
-            // if (input) return;
             return ctx.prisma.client.findMany();
         }),
     getTotalCount: publicProcedure

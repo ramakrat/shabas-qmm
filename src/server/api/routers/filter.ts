@@ -1,12 +1,13 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 
 const inputType = z.object({
     id: z.number().optional(),
     type: z.string(),
     name: z.string(),
+    site_id: z.number().optional(),
 })
 
 export const filterRouter = createTRPCRouter({
@@ -17,6 +18,7 @@ export const filterRouter = createTRPCRouter({
                 data: {
                     type: input.type,
                     name: input.name,
+                    site_id: input.site_id,
                     created_by: '',
                     updated_by: '',
                 }
@@ -30,23 +32,24 @@ export const filterRouter = createTRPCRouter({
                 data: {
                     type: input.type,
                     name: input.name,
+                    site_id: input.site_id,
                     created_by: '',
                     updated_by: '',
                 }
             });
         }),
-    getAllIndustry: publicProcedure
+    getAllBusinessTypes: publicProcedure
         .input(z.boolean())
         .query(({ ctx }) => {
             return ctx.prisma.filter.findMany({
-                where: { type: 'industry' }
+                where: { type: 'business-type' }
             });
         }),
-    getAllApiSegment: publicProcedure
+    getAllManufacturingTypes: publicProcedure
         .input(z.boolean())
         .query(({ ctx }) => {
             return ctx.prisma.filter.findMany({
-                where: { type: 'api-segment' }
+                where: { type: 'manufacturing-type' }
             });
         }),
     getAllSiteSpecific: publicProcedure
