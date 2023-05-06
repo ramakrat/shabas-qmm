@@ -4,7 +4,7 @@ import BrowseAssessmentForms from "~/components/Assessor/BrowseAssessmentForms";
 
 const CompletedAssessments: NextPage = () => {
     return (
-        <Layout active='completed-assessments'>
+        <Layout active='completed-assessments' admin>
             <BrowseAssessmentForms status='completed' />
         </Layout>
     )

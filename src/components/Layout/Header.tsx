@@ -61,6 +61,11 @@ export const Header: React.FC<Props> = (props) => {
                             <span className='label'>Question</span>
                             <span className='count'>{totalQuestion ?? 0}</span>
                         </Link>
+                        <Link href={'/completed-assessments'} className={'nav-item ' + (active == 'completed-assessments' ? 'active' : '')}>
+                            <span className='label'>
+                                Completed Assessments
+                            </span>
+                        </Link>
                     </> :
                     <>
                         <Link href={'/ongoing-assessments'} className={'nav-item ' + (active == 'ongoing-assessments' ? 'active' : '')}>
@@ -76,11 +81,6 @@ export const Header: React.FC<Props> = (props) => {
                         <Link href={'/oversight-assessments'} className={'nav-item ' + (active == 'oversight-assessments' ? 'active' : '')}>
                             <span className='label'>
                                 Oversight Assessments
-                            </span>
-                        </Link>
-                        <Link href={'/completed-assessments'} className={'nav-item ' + (active == 'completed-assessments' ? 'active' : '')}>
-                            <span className='label'>
-                                Completed Assessments
                             </span>
                         </Link>
                     </>
