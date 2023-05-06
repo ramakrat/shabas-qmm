@@ -324,7 +324,6 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                                 setQuestion={setQuestion}
                                 submitAssessment={handleSubmitAssesment}
                                 resetForm={resetForm}
-                                assessmentChangelogs={() => { setQuestion(-1) }}
                             />
                         }
                         {selectedAssessmentQuestion &&

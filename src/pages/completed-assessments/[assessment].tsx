@@ -154,6 +154,7 @@ const CompletedAssessment: NextPage = () => {
                         question={question}
                         setQuestion={setQuestion}
                         exportAssessment={exportCompleted}
+                        assessmentChangelogs={() => { setQuestion(-1) }}
                     />
                 }
                 <div className='assessment-content'>
