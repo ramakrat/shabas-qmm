@@ -98,6 +98,8 @@
     }
 
     .error-text {
+        display: flex;
+        flex-direction: column;
         font-family: 'Roboto' !important;
         font-size: 0.8rem;
         font-style: italic;
