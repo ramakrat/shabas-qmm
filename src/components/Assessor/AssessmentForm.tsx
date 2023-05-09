@@ -23,7 +23,7 @@ interface FormValues {
 const validationSchema = yup.object().shape({
     rating: yup.string().required("Required"),
     rationale: yup.string().required("Required"),
-    notes: yup.string().required("Required"),
+    notes: yup.string(),
 });
 
 interface Props {
