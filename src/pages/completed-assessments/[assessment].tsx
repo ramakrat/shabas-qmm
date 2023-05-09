@@ -136,7 +136,7 @@ const CompletedAssessment: NextPage = () => {
 
     if (data?.status != 'completed') {
         return (
-            <Layout active='completed-assessments'>
+            <Layout active='completed-assessments' admin>
                 <div className='not-found'>
                     <span>404</span>
                     <span>Page Not Found</span>
