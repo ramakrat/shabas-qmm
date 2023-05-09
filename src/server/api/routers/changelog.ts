@@ -23,6 +23,7 @@ export const changelogRouter = createTRPCRouter({
                     new_value: input.new_value,
                     question_id: input.question_id,
                     assessment_question_id: input.assessment_question_id,
+                    updated_at: new Date(),
                     updated_by: '',
                 }
             })
