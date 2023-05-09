@@ -102,7 +102,7 @@ const BrowseTable: React.FC<Props> = (props) => {
         return (
             <>
                 <TableContainer component={Paper} className='browse-table expandable'>
-                    <Table size="small">
+                    <Table size="small" stickyHeader>
                         {dataList.map((obj, idx) => {
                             return ExpandableSection(tableInfoColumns, obj, idx, obj.child as React.ReactNode)
                         })}
@@ -113,7 +113,7 @@ const BrowseTable: React.FC<Props> = (props) => {
     }
     return (
         <TableContainer component={Paper} className='browse-table'>
-            <Table size="small">
+            <Table size="small" stickyHeader>
                 <TableHead className="table-header">
                     <TableRow>
                         {tableInfoColumns.map((header, i) => {
