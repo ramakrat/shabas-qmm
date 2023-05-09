@@ -32,10 +32,11 @@ export const interviewGuideRouter = createTRPCRouter({
     createArray: publicProcedure
         .input(z.array(inputType))
         .mutation(async ({ input, ctx }) => {
+            const returnData = [];
             for (const o of input) {
                 if (o.interview_question != '') {
                     try {
-                        await ctx.prisma.interviewGuide.create({
+                        const data = await ctx.prisma.interviewGuide.create({
                             data: {
                                 active: true,
                                 interview_question: o.interview_question,
@@ -46,6 +47,7 @@ export const interviewGuideRouter = createTRPCRouter({
                                 updated_by: '',
                             }
                         })
+                        returnData.push(data);
                     } catch (e) {
                         if (e instanceof Prisma.PrismaClientKnownRequestError) {
                             // The .code property can be accessed in a type-safe manner
@@ -59,7 +61,7 @@ export const interviewGuideRouter = createTRPCRouter({
                     }
                 }
             }
-            return undefined;
+            return returnData;
         }),
     update: publicProcedure
         .input(inputType)

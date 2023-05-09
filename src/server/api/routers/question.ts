@@ -11,7 +11,7 @@ const inputType = z.object({
     pillar: z.string(),
     practice_area: z.string(),
     topic_area: z.string(),
-    hint: z.string(),
+    hint: z.string().optional(),
     priority: z.string(),
 })
 

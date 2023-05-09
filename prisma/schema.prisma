@@ -105,7 +105,7 @@ model Question {
     pillar        String
     practice_area String
     topic_area    String
-    hint          String
+    hint          String?
     priority      String
 
     references           Reference[]

@@ -26,10 +26,11 @@ export const referenceRouter = createTRPCRouter({
     createArray: publicProcedure
         .input(z.array(inputType))
         .mutation(async ({ input, ctx }) => {
+            const returnData = [];
             for (const o of input) {
                 if (o.citation != '') {
                     try {
-                        await ctx.prisma.reference.create({
+                        const data = await ctx.prisma.reference.create({
                             data: {
                                 citation: o.citation,
                                 question_id: o.question_id,
@@ -37,6 +38,7 @@ export const referenceRouter = createTRPCRouter({
                                 updated_by: '',
                             }
                         })
+                        returnData.push(data);
                     } catch (e) {
                         if (e instanceof Prisma.PrismaClientKnownRequestError) {
                             // The .code property can be accessed in a type-safe manner
@@ -50,7 +52,7 @@ export const referenceRouter = createTRPCRouter({
                     }
                 }
             }
-            return undefined;
+            return returnData;
         }),
     update: publicProcedure
         .input(inputType)

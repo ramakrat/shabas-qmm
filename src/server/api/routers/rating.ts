@@ -35,9 +35,10 @@ export const ratingRouter = createTRPCRouter({
     createArray: publicProcedure
         .input(z.array(inputType))
         .mutation(async ({ input, ctx }) => {
+            const returnData = [];
             for (const o of input) {
                 try {
-                    await ctx.prisma.rating.create({
+                    const data = await ctx.prisma.rating.create({
                         data: {
                             active: o.active,
                             level_number: o.level_number,
@@ -50,6 +51,7 @@ export const ratingRouter = createTRPCRouter({
                             updated_by: '',
                         }
                     })
+                    returnData.push(data);
                 } catch (e) {
                     if (e instanceof Prisma.PrismaClientKnownRequestError) {
                         // The .code property can be accessed in a type-safe manner
@@ -62,7 +64,7 @@ export const ratingRouter = createTRPCRouter({
                     throw e;
                 }
             }
-            return undefined;
+            return returnData;
         }),
     update: publicProcedure
         .input(inputType)
