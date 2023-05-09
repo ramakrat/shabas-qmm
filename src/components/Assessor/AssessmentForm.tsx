@@ -383,22 +383,25 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                                                 </div>
                                                 {(showRating && ratings) &&
                                                     <div className='widget-body information-list'>
-                                                        {ratings.map((r, i) => {
-                                                            return (
-                                                                <>
-                                                                    <div key={'level-' + i}>
-                                                                        <Typography>Level {r.level_number}:</Typography>
-                                                                        <Typography>{r.criteria}</Typography>
-                                                                    </div>
-                                                                    {i !== ratings.length - 1 &&
-                                                                        <div key={'progression-' + i}>
-                                                                            <Typography>Progression Statement:</Typography>
-                                                                            <Typography>{r.progression_statement}</Typography>
+                                                        {ratings.length > 0 ?
+                                                            ratings.map((r, i) => {
+                                                                return (
+                                                                    <>
+                                                                        <div key={'level-' + i}>
+                                                                            <Typography>Level {r.level_number}:</Typography>
+                                                                            <Typography>{r.criteria}</Typography>
                                                                         </div>
-                                                                    }
-                                                                </>
-                                                            )
-                                                        })}
+                                                                        {i !== ratings.length - 1 &&
+                                                                            <div key={'progression-' + i}>
+                                                                                <Typography>Progression Statement:</Typography>
+                                                                                <Typography>{r.progression_statement}</Typography>
+                                                                            </div>
+                                                                        }
+                                                                    </>
+                                                                )
+                                                            }) :
+                                                            'None'
+                                                        }
                                                     </div>
                                                 }
                                                 <div className='widget-header'>Details</div>
@@ -449,25 +452,31 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                                                 </div>
                                                 <div className='widget-header'>Interview Guide</div>
                                                 <div className='widget-body information-list'>
-                                                    {guide?.map((r, i) => {
-                                                        return (
-                                                            <div key={i}>
-                                                                <Typography>{i + 1}.</Typography>
-                                                                <Typography>{r.interview_question}</Typography>
-                                                            </div>
-                                                        )
-                                                    })}
+                                                    {guide && guide.length > 0 ?
+                                                        guide.map((r, i) => {
+                                                            return (
+                                                                <div key={i}>
+                                                                    <Typography>{i + 1}.</Typography>
+                                                                    <Typography>{r.interview_question}</Typography>
+                                                                </div>
+                                                            )
+                                                        }) :
+                                                        'None'
+                                                    }
                                                 </div>
                                                 <div className='widget-header'>References</div>
                                                 <div className='widget-body information-list'>
-                                                    {references?.map((r, i) => {
-                                                        return (
-                                                            <div key={i}>
-                                                                <Typography>{i + 1}.</Typography>
-                                                                <Typography>{r.citation}</Typography>
-                                                            </div>
-                                                        )
-                                                    })}
+                                                    {references && references.length > 0 ?
+                                                        references?.map((r, i) => {
+                                                            return (
+                                                                <div key={i}>
+                                                                    <Typography>{i + 1}.</Typography>
+                                                                    <Typography>{r.citation}</Typography>
+                                                                </div>
+                                                            )
+                                                        }) :
+                                                        'None'
+                                                    }
                                                 </div>
                                             </Card>
                                         </Grid>
