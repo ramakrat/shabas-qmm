@@ -14,7 +14,7 @@ interface TableData {
     field: string;
     formerValue: string;
     newValue: string;
-    updatedAt: Date;
+    updatedAt: string;
     updatedBy: string;
 }
 
@@ -34,7 +34,6 @@ const columns: TableColumn[] = [{
     type: 'updatedAt',
     displayValue: 'Updated At',
     align: 'center',
-    format: 'date',
 }, {
     type: 'updatedBy',
     displayValue: 'Updated By',
@@ -63,7 +62,7 @@ const ChangelogTable: React.FC<Props> = (props) => {
                     field: obj.field,
                     formerValue: obj.former_value ?? '',
                     newValue: obj.new_value ?? '',
-                    updatedAt: obj.updated_at,
+                    updatedAt: obj.updated_at.toLocaleString(),
                     updatedBy: obj.updated_by ?? '',
                 })
             })
