@@ -17,12 +17,14 @@ import ChangelogTable from '~/components/Common/ChangelogTable';
 interface FormValues {
     rating: string;
     rationale: string;
+    suggestion: string;
     notes: string;
 }
 
 const validationSchema = yup.object().shape({
     rating: yup.string().required("Required"),
     rationale: yup.string().required("Required"),
+    suggestion: yup.string(),
     notes: yup.string(),
 });
 
@@ -108,6 +110,7 @@ const OngoingAssessment: React.FC<Props> = (props) => {
     const [answer, setAnswer] = React.useState<FormValues>({
         rating: '',
         rationale: '',
+        suggestion: '',
         notes: '',
     });
 
@@ -117,25 +120,29 @@ const OngoingAssessment: React.FC<Props> = (props) => {
             if (status == 'ongoing')
                 setAnswer({
                     rating: selectedAssessmentQuestion.answer.assessor_rating ?? '',
-                    rationale: selectedAssessmentQuestion.answer.assessor_explanation ?? '',
-                    notes: selectedAssessmentQuestion.answer.assessor_evidence ?? '',
+                    rationale: selectedAssessmentQuestion.answer.assessor_rationale ?? '',
+                    suggestion: selectedAssessmentQuestion.answer.assessor_suggestion ?? '',
+                    notes: selectedAssessmentQuestion.answer.assessor_notes ?? '',
                 });
             if (status == 'assessor-review')
                 setAnswer({
                     rating: selectedAssessmentQuestion.answer.consensus_rating ?? '',
-                    rationale: selectedAssessmentQuestion.answer.consensus_explanation ?? '',
-                    notes: selectedAssessmentQuestion.answer.consensus_evidence ?? '',
+                    rationale: selectedAssessmentQuestion.answer.consensus_rationale ?? '',
+                    suggestion: '',
+                    notes: selectedAssessmentQuestion.answer.consensus_notes ?? '',
                 });
             if (status == 'oversight')
                 setAnswer({
                     rating: selectedAssessmentQuestion.answer.oversight_concurrence ?? '',
-                    rationale: selectedAssessmentQuestion.answer.oversight_explanation ?? '',
-                    notes: selectedAssessmentQuestion.answer.oversight_evidence ?? '',
+                    rationale: selectedAssessmentQuestion.answer.oversight_rationale ?? '',
+                    suggestion: '',
+                    notes: selectedAssessmentQuestion.answer.oversight_notes ?? '',
                 });
         } else {
             setAnswer({
                 rating: '',
                 rationale: '',
+                suggestion: '',
                 notes: '',
             });
         }
@@ -148,20 +155,20 @@ const OngoingAssessment: React.FC<Props> = (props) => {
         if (status == 'ongoing')
             return {
                 assessor_rating: selectedAssessmentQuestion?.answer?.assessor_rating ?? '',
-                assessor_explanation: selectedAssessmentQuestion?.answer?.assessor_explanation ?? '',
-                assessor_evidence: selectedAssessmentQuestion?.answer?.assessor_evidence ?? '',
+                assessor_rationale: selectedAssessmentQuestion?.answer?.assessor_rationale ?? '',
+                assessor_notes: selectedAssessmentQuestion?.answer?.assessor_notes ?? '',
             }
         if (status == 'assessor-review')
             return {
                 rating: selectedAssessmentQuestion?.answer?.consensus_rating ?? '',
-                rationale: selectedAssessmentQuestion?.answer?.consensus_explanation ?? '',
-                notes: selectedAssessmentQuestion?.answer?.consensus_evidence ?? '',
+                rationale: selectedAssessmentQuestion?.answer?.consensus_rationale ?? '',
+                notes: selectedAssessmentQuestion?.answer?.consensus_notes ?? '',
             }
         if (status == 'oversight')
             return {
                 rating: selectedAssessmentQuestion?.answer?.oversight_concurrence ?? '',
-                rationale: selectedAssessmentQuestion?.answer?.oversight_explanation ?? '',
-                notes: selectedAssessmentQuestion?.answer?.oversight_evidence ?? '',
+                rationale: selectedAssessmentQuestion?.answer?.oversight_rationale ?? '',
+                notes: selectedAssessmentQuestion?.answer?.oversight_notes ?? '',
             }
     }
     const createChangelog = api.changelog.create.useMutation();
@@ -197,8 +204,9 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                         id: selectedAssessmentQuestion.answer.id,
                         assessment_question_id: selectedAssessmentQuestion.id,
                         assessor_rating: values.rating.toString(),
-                        assessor_explanation: values.rationale,
-                        assessor_evidence: values.notes,
+                        assessor_rationale: values.rationale,
+                        assessor_suggestion: values.suggestion,
+                        assessor_notes: values.notes,
                     }, {
                         onSuccess(data) {
                             compareChanges(data, initialValues);
@@ -210,8 +218,8 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                         id: selectedAssessmentQuestion.answer.id,
                         assessment_question_id: selectedAssessmentQuestion.id,
                         consensus_rating: values.rating.toString(),
-                        consensus_explanation: values.rationale,
-                        consensus_evidence: values.notes,
+                        consensus_rationale: values.rationale,
+                        consensus_notes: values.notes,
                     }, {
                         onSuccess(data) {
                             compareChanges(data, initialValues);
@@ -223,8 +231,8 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                         id: selectedAssessmentQuestion.answer.id,
                         assessment_question_id: selectedAssessmentQuestion.id,
                         oversight_concurrence: values.rating.toString(),
-                        oversight_explanation: values.rationale,
-                        oversight_evidence: values.notes,
+                        oversight_rationale: values.rationale,
+                        oversight_notes: values.notes,
                     }, {
                         onSuccess(data) {
                             compareChanges(data, initialValues);
@@ -236,8 +244,8 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                     create.mutate({
                         assessment_question_id: selectedAssessmentQuestion.id,
                         assessor_rating: values.rating.toString(),
-                        assessor_explanation: values.rationale,
-                        assessor_evidence: values.notes,
+                        assessor_rationale: values.rationale,
+                        assessor_notes: values.notes,
                     }, {
                         onSuccess() { Router.reload() }
                     })
@@ -245,8 +253,8 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                     create.mutate({
                         assessment_question_id: selectedAssessmentQuestion.id,
                         consensus_rating: values.rating.toString(),
-                        consensus_explanation: values.rationale,
-                        consensus_evidence: values.notes,
+                        consensus_rationale: values.rationale,
+                        consensus_notes: values.notes,
                     }, {
                         onSuccess() { Router.reload() }
                     })
@@ -254,8 +262,8 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                     create.mutate({
                         assessment_question_id: selectedAssessmentQuestion.id,
                         oversight_concurrence: values.rating.toString(),
-                        oversight_explanation: values.rationale,
-                        oversight_evidence: values.notes,
+                        oversight_rationale: values.rationale,
+                        oversight_notes: values.notes,
                     }, {
                         onSuccess() { Router.reload() }
                     })
@@ -401,6 +409,14 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                                                         placeholder='Rationale...'
                                                         component={TextField}
                                                     />
+                                                    {status == 'ongoing' && <>
+                                                        <Typography>Improvement Suggestion</Typography>
+                                                        <Field
+                                                            name='suggestion' label='' size='small' multiline={3}
+                                                            placeholder='Improvement Suggestion...'
+                                                            component={TextField}
+                                                        />
+                                                    </>}
                                                     <Typography>Notes</Typography>
                                                     <Field
                                                         name='notes' label='' size='small' multiline={3}

@@ -322,21 +322,22 @@ model Answer {
     created_by String
     updated_by String
 
-    assessor_rating      String?
-    assessor_explanation String?
-    assessor_evidence    String?
+    assessor_rating     String?
+    assessor_rationale  String?
+    assessor_suggestion String?
+    assessor_notes      String?
 
-    consensus_rating      String?
-    consensus_explanation String?
-    consensus_evidence    String?
+    consensus_rating    String?
+    consensus_rationale String?
+    consensus_notes     String?
 
     oversight_concurrence String?
-    oversight_explanation String?
-    oversight_evidence    String?
+    oversight_rationale   String?
+    oversight_notes       String?
 
     client_concurrence String?
-    client_explanation String?
-    client_evidence    String?
+    client_rationale   String?
+    client_notes       String?
 
     user_id                Int?
     user                   User?              @relation(fields: [user_id], references: [id])

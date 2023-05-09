@@ -84,8 +84,9 @@ const CompletedAssessment: NextPage = () => {
                         'Topic': q.question.topic_area,
                         'Question': q.question.question,
                         'Rating': q.answer?.assessor_rating,
-                        'Rationale': q.answer?.assessor_explanation,
-                        'Improvement Suggestion': q.answer?.assessor_evidence,
+                        'Rationale': q.answer?.assessor_rationale,
+                        'Improvement Suggestion': q.answer?.assessor_suggestion,
+                        'Notes': q.answer?.assessor_notes,
                     })
                     dashboardObjects.push({
                         topic: q.question.topic_area,
