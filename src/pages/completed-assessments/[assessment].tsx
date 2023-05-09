@@ -145,7 +145,7 @@ const CompletedAssessment: NextPage = () => {
         )
     }
     return (
-        <Layout active='completed-assessments'>
+        <Layout active='completed-assessments' admin>
             <div className='assessment'>
                 {questions &&
                     <QuestionsSidebar
