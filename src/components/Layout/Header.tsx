@@ -5,14 +5,17 @@ import { IconButton, Menu, MenuItem, Switch } from '@mui/material';
 import { Settings } from '@mui/icons-material';
 import logo from './logo.png';
 import { api } from '~/utils/api';
+import { useRouter } from 'next/router';
 
 interface Props {
-    active: string;
+    active?: string;
     admin?: boolean;
 }
 
 export const Header: React.FC<Props> = (props) => {
     const { active, admin } = props;
+
+    const router = useRouter();
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -96,7 +99,7 @@ export const Header: React.FC<Props> = (props) => {
                 onClose={handleClose}
             >
                 <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>User Management</MenuItem>
+                <MenuItem onClick={() => { router.push('/management'); handleClose(); }}>User Management</MenuItem>
                 <MenuItem onClick={handleClose}>Logout</MenuItem>
             </Menu>
         </div>

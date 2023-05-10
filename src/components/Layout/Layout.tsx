@@ -5,7 +5,7 @@ import Header from './Header';
 
 
 interface Props {
-    active: string;
+    active?: string;
     children?: React.ReactNode;
     admin?: boolean;
 }
