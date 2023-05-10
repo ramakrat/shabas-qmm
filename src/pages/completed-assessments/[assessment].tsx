@@ -50,7 +50,7 @@ const CompletedAssessment: NextPage = () => {
     const [question, setQuestion] = React.useState<number>(questions && questions[0] ? questions[0].question.id : -1);
 
     React.useEffect(() => {
-        setQuestion(questions && questions[0] ? questions[0].question.id : -1)
+        setQuestion(questions && questions[0] ? questions[0].question.id : -2)
     }, [questions])
 
     const selectedAssessmentQuestion = data?.assessment_questions.find(o => o.question.id == question);

@@ -91,7 +91,7 @@ const OngoingAssessment: React.FC<Props> = (props) => {
     const [question, setQuestion] = React.useState<number>(questions && questions[0] ? questions[0].question.id : -1);
 
     React.useEffect(() => {
-        setQuestion(questions && questions[0] ? questions[0].question.id : -1)
+        setQuestion(questions && questions[0] ? questions[0].question.id : -2)
     }, [questions])
 
     const selectedAssessmentQuestion = data?.assessment_questions.find(o => o.question.id == question);
@@ -492,17 +492,6 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                                     </Grid>
                                 </div>
                             </div>
-                        }
-                        {question == -1 &&
-                            <Grid item xs={10}>
-                                <Card>
-                                    <div className='widget-header'>Changelog</div>
-                                    {fullChangelog && fullChangelog.length > 0 ?
-                                        <ChangelogTable changelogs={fullChangelog} fileName={`Assessment${data?.id}`} /> :
-                                        <div className='widget-body'>No Changes</div>
-                                    }
-                                </Card>
-                            </Grid>
                         }
                     </Form>
                 )}
