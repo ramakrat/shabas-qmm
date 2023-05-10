@@ -4,21 +4,20 @@ import { Button, Card, CardActions, CardContent, CardHeader, IconButton, Modal }
 interface Props {
     title?: string;
     message?: React.ReactNode;
-    handleConfirm: any;
     open: boolean;
     setOpen: any;
 }
 
-export const ConfirmModal: React.FC<Props> = (props) => {
+export const MessageModal: React.FC<Props> = (props) => {
 
-    const { title, message, handleConfirm, open, setOpen } = props;
+    const { title, message, open, setOpen } = props;
 
     return (
         <Modal open={open} onClose={() => setOpen(false)} className='create-modal no-form'>
             <div>
                 <Card>
                     <CardHeader
-                        title={title ?? 'Confirm'}
+                        title={title ?? 'Warning'}
                         action={
                             <IconButton onClick={() => setOpen(false)}>
                                 <Close />
@@ -26,12 +25,12 @@ export const ConfirmModal: React.FC<Props> = (props) => {
                         }
                     />
                     <CardContent>
-                        {message ?? 'Are you sure you want to perform this action?'}
+                        {message}
                     </CardContent>
                     <CardActions>
-                        <Button variant='contained' color='error' onClick={() => setOpen(false)}>Cancel</Button>
-                        <Button variant='contained' onClick={handleConfirm}>
-                            Confirm
+                        <div />
+                        <Button variant='contained' onClick={() => setOpen(false)}>
+                            Okay
                         </Button>
                     </CardActions>
                 </Card>
@@ -40,4 +39,4 @@ export const ConfirmModal: React.FC<Props> = (props) => {
     )
 }
 
-export default ConfirmModal;
+export default MessageModal;
