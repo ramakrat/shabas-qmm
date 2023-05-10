@@ -1,5 +1,6 @@
 .create-modal {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     width: 100%;
@@ -11,6 +12,13 @@
         justify-content: center;
         align-items: center;
         padding: 20px;
+    }
+
+    &.no-form {
+        .MuiCard-root {
+            max-height: 100%;
+            width: breakpoints(sm);
+        }
     }
 
     form {
@@ -33,12 +41,12 @@
         max-height: calc(100vh - 200px);
         overflow-y: auto;
 
+        border-top: 1px solid palette(greyscale, 400);
+        border-bottom: 1px solid palette(greyscale, 400);
+
         .MuiFormControl-root {
             margin: 10px;
         }
-
-        border-top: 1px solid palette(greyscale, 400);
-        border-bottom: 1px solid palette(greyscale, 400);
 
         .form-info {
             display: flex;
@@ -56,7 +64,6 @@
 
         .switch {
             margin: 0px !important;
-
         }
 
         .MuiStepper-root {
@@ -108,4 +115,14 @@
         width: 100%;
         padding: 10px 0px 20px;
     }
+}
+
+
+.confirm-modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+
+
 }
