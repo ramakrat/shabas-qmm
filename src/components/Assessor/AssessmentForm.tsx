@@ -13,6 +13,8 @@ import { api } from "~/utils/api";
 import QuestionsSidebar from '~/components/Assessor/QuestionsSidebar';
 import Select from '~/components/Form/Select';
 import ChangelogTable from '~/components/Common/ChangelogTable';
+import ConfirmModal from '../Common/ConfirmModal';
+import MessageModal from '../Common/MessageModal';
 
 interface FormValues {
     rating: string;
@@ -36,6 +38,9 @@ interface Props {
 const OngoingAssessment: React.FC<Props> = (props) => {
 
     const { assessment, status } = props;
+
+    const [confirmSubmitModal, setConfirmSubmitModal] = React.useState<boolean>(false);
+    const [messageModal, setMessageModal] = React.useState<boolean>(false);
 
     // =========== Retrieve Form Context ===========
 
@@ -303,6 +308,15 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                 })
         }
     }
+    const checkCompletion = api.assessmentQuestion.getUnfinishedAssessmentQuestions.useQuery({ assessmentId: assessment, status: status }).data;
+
+    const handleSubmitAssessmentCheck = () => {
+        if (checkCompletion && checkCompletion.length > 0) {
+            setMessageModal(true);
+        } else {
+            setConfirmSubmitModal(true);
+        }
+    }
 
     if (data?.status != status) {
         return (
@@ -330,7 +344,7 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                                 questions={questions.map(o => convertToQuestion(o.question))}
                                 question={question}
                                 setQuestion={setQuestion}
-                                submitAssessment={handleSubmitAssesment}
+                                submitAssessment={handleSubmitAssessmentCheck}
                                 resetForm={resetForm}
                             />
                         }
@@ -364,7 +378,7 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                                                 </div>
                                                 <div className='widget-sub-header'>
                                                     <div className='rating-input'>
-                                                        <Typography>Rating:</Typography>
+                                                        <Typography>{status == 'assessor-review' && 'Consensus '}Rating:</Typography>
                                                         <Field
                                                             name='rating' label='' size='small'
                                                             component={Select}
@@ -496,7 +510,9 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                     </Form>
                 )}
             </Formik>
-        </div >
+            <ConfirmModal message={`Are you sure you want to submit ongoing assessment ${assessment}?`} open={confirmSubmitModal} setOpen={setConfirmSubmitModal} handleConfirm={handleSubmitAssesment} />
+            <MessageModal message={`Assessment ${assessment} cannot be submitted because there are unfinished question forms.`} open={messageModal} setOpen={setMessageModal} />
+        </div>
     );
 };
 
