@@ -19,6 +19,7 @@ interface Props {
 }
 
 interface FormValues {
+    clientId: string;
     name: string;
     streetAddress: string;
     city: string;
@@ -26,10 +27,10 @@ interface FormValues {
     zipCode: string;
     country: string;
     description: string;
-    clientId: string;
 }
 
 const validationSchema = yup.object().shape({
+    clientId: yup.string().required("Required"),
     name: yup.string().required("Required"),
     streetAddress: yup.string().required("Required"),
     city: yup.string().required("Required"),
@@ -37,7 +38,6 @@ const validationSchema = yup.object().shape({
     zipCode: yup.string().required("Required"),
     country: yup.string().required("Required"),
     description: yup.string(),
-    clientId: yup.string().required("Required"),
 });
 
 const SiteModal: React.FC<Props> = (props) => {
@@ -85,7 +85,7 @@ const SiteModal: React.FC<Props> = (props) => {
                 city: '',
                 state: '',
                 zipCode: '',
-                country: '',
+                country: 'US',
                 description: '',
                 clientId: '',
             })
