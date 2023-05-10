@@ -152,6 +152,11 @@
                 padding-bottom: 5px;
             }
 
+            .MuiFormControl-root {
+                width: 100%;
+                padding-bottom: 10px;
+            }
+
             .MuiTextField-root {
                 width: 100%;
                 padding-bottom: 10px;
@@ -162,6 +167,10 @@
                     font-size: 1rem;
                     font-weight: 500;
                     padding-bottom: 5px;
+                }
+
+                .MuiFormControl-root {
+                    padding-bottom: 0px;
                 }
 
                 .MuiTextField-root {

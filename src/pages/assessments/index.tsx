@@ -2,7 +2,7 @@ import React from "react";
 import type { Assessment, Client, Engagement, EngagementPoc, Poc } from "@prisma/client";
 
 import { Button, Card, IconButton } from "@mui/material";
-import { Add, Edit } from "@mui/icons-material";
+import { Add, Edit, Visibility } from "@mui/icons-material";
 
 import { api } from "~/utils/api";
 import { NextPage } from "next";
@@ -10,6 +10,7 @@ import Layout from "~/components/Layout/Layout";
 import AssessmentModal from "~/components/Administrator/MainModals/AssessmentModal";
 import EngagementModal from "~/components/Administrator/MainModals/EngagementModal";
 import BrowseTable, { TableColumn } from "~/components/Common/BrowseTable";
+import { useRouter } from "next/router";
 
 interface EngagementTableData {
     id: number;
@@ -125,6 +126,8 @@ type EngagementAssessmentType = (
 
 const BrowseAssessments: NextPage = () => {
 
+    const router = useRouter();
+
     // ================== Create Management ==================
 
     const [engagementModal, setEngagementModal] = React.useState<boolean>(false);
@@ -176,11 +179,16 @@ const BrowseAssessments: NextPage = () => {
                         const newAssessmentData: AssessmentTableData[] = [];
 
                         assessments.forEach(assessment => {
-                            const actions = (
-                                <IconButton onClick={() => { setAssessmentData(assessment); setAssessmentModal(true) }}>
+                            const actions = assessment.status == 'created' ? (
+                                <IconButton onClick={() => { router.push(`/assessments/${assessment.id}`) }}>
                                     <Edit fontSize='small' />
                                 </IconButton>
+                            ) : (
+                                <IconButton onClick={() => { router.push(`/assessments/${assessment.id}`) }}>
+                                    <Visibility fontSize='small' />
+                                </IconButton>
                             )
+
                             newAssessmentData.push({
                                 id: assessment.id,
                                 site: assessment.site_id.toString(),
@@ -189,7 +197,7 @@ const BrowseAssessments: NextPage = () => {
                                 clientPoc: assessment.poc ? `${assessment.poc.first_name} ${assessment.poc.last_name}` : '',
                                 assessors: '',
                                 status: assessment.status,
-                                actions: assessment.status == 'created' ? actions : '',
+                                actions: actions,
                             })
                         })
 

@@ -28,17 +28,31 @@ export const assessmentQuestionRouter = createTRPCRouter({
     createArray: publicProcedure
         .input(z.array(inputType))
         .mutation(async ({ input, ctx }) => {
+            const returnData = [];
             for (const o of input) {
                 try {
-                    await ctx.prisma.assessmentQuestion.create({
+                    const data = await ctx.prisma.assessmentQuestion.create({
                         data: {
                             question_id: o.question_id,
                             assessment_id: o.assessment_id,
                             filter_id: o.filter_id,
                             created_by: '',
                             updated_by: '',
+                        },
+                        include: {
+                            filter: true,
+                            question: {
+                                include: {
+                                    ratings: {
+                                        include: {
+                                            filter: true,
+                                        }
+                                    }
+                                }
+                            }
                         }
                     })
+                    returnData.push(data);
                 } catch (e) {
                     if (e instanceof Prisma.PrismaClientKnownRequestError) {
                         // The .code property can be accessed in a type-safe manner
@@ -51,7 +65,7 @@ export const assessmentQuestionRouter = createTRPCRouter({
                     throw e;
                 }
             }
-            return undefined;
+            return returnData;
         }),
     update: publicProcedure
         .input(inputType)

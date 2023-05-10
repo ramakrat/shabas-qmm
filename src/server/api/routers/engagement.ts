@@ -133,7 +133,7 @@ export const engagementRouter = createTRPCRouter({
             });
         }),
     getAll: publicProcedure
-        .input(z.boolean())
+        .input(z.boolean().optional())
         .query(({ ctx }) => {
             return ctx.prisma.engagement.findMany();
         }),
