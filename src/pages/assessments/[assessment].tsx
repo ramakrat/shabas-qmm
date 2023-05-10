@@ -331,6 +331,7 @@ const Assessment: NextPage = () => {
                                         {data && <Typography>{data.id}</Typography>}
                                     </div>
                                     <div>
+                                        <StatusChip status='created' />
                                         {data ?
                                             <Button variant='contained' type='submit'>Save</Button> :
                                             <Button variant='contained' type='submit' onClick={() => {
