@@ -216,7 +216,7 @@ const Assessment: NextPage = () => {
                     <div className='assessment-content'>
                         <Card className='context'>
                             <div className='question-number'>
-                                <Typography>Assessment # : </Typography>
+                                <Typography>View Assessment # : </Typography>
                                 <Typography>{data.id}</Typography>
                             </div>
                             <div>
@@ -327,7 +327,8 @@ const Assessment: NextPage = () => {
                             <div className='assessment-content'>
                                 <Card className='context'>
                                     <div className='question-number'>
-                                        <Typography>{data ? 'Edit Assessment ' + data.id : 'Create New Assessment'}</Typography>
+                                        <Typography>{data ? 'Edit Assessment # : ' : 'Create New Assessment'}</Typography>
+                                        {data && <Typography>{data.id}</Typography>}
                                     </div>
                                     <div>
                                         {data ?
