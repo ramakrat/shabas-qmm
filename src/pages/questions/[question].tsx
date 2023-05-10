@@ -92,6 +92,7 @@ const validationSchema = yup.object().shape({
 const Question: NextPage = () => {
 
     const { question } = useRouter().query;
+    const router = useRouter();
 
     // =========== Form Context ===========
 
@@ -111,7 +112,7 @@ const Question: NextPage = () => {
         questionId: Number(question),
         filterId: (filterType != 'default' && filterSelection) ? filterSelection.id : undefined,
     }).data;
-    const fullChangelog = api.changelog.getAllByQuestion.useQuery(data?.id).data;
+    const fullChangelog = api.changelog.getAllByQuestion.useQuery(data?.id);
 
     interface AllValues {
         question: any;
@@ -397,7 +398,7 @@ const Question: NextPage = () => {
                         }
                     });
                     setExistingGuide(newExistingArray);
-                    setNewGuide([]);
+                    setNewGuide([{ num: 1, interview_question: '' }]);
                 }
             });
             deleteGuides.mutate(deletedGuides.map(o => o.id), {
@@ -448,7 +449,7 @@ const Question: NextPage = () => {
                         };
                     });
                     setExistingReferences(newExistingArray);
-                    setNewReferences([]);
+                    setNewReferences([{ num: 1, citation: '' }]);
                 }
             });
             deleteReferences.mutate(deletedReferences.map(o => o.id), {
@@ -535,6 +536,8 @@ const Question: NextPage = () => {
                     }
                 })
             }
+
+            fullChangelog?.refetch();
         }
     }
 
@@ -768,7 +771,7 @@ const Question: NextPage = () => {
                                 <Grid item xs={12}>
                                     <Card>
                                         <div className='widget-header'>Changelog</div>
-                                        <ChangelogTable changelogs={fullChangelog} fileName={`Question${data ? data.id : ''} Changelog`} />
+                                        <ChangelogTable changelogs={fullChangelog.data} fileName={`Question${data ? data.id : ''} Changelog`} />
                                     </Card>
                                 </Grid>
                             </Grid>
@@ -1206,7 +1209,7 @@ const Question: NextPage = () => {
                                     <Grid item xs={12}>
                                         <Card>
                                             <div className='widget-header'>Changelog</div>
-                                            <ChangelogTable changelogs={fullChangelog} fileName={`Question${data ? data.id : ''} Changelog`} />
+                                            <ChangelogTable changelogs={fullChangelog.data} fileName={`Question${data ? data.id : ''} Changelog`} />
                                         </Card>
                                     </Grid>
                                 </Grid>
@@ -1218,7 +1221,7 @@ const Question: NextPage = () => {
                     <SiteSpecificModal open={addSiteSpecific} setOpen={setAddSiteSpecific} />
                 </Form>
             </Formik>
-        </Layout >
+        </Layout>
     );
 };
 
