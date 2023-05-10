@@ -13,7 +13,7 @@ export const engagementpocRouter = createTRPCRouter({
     create: publicProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
-            return ctx.prisma.engagementPOC.create({
+            return ctx.prisma.engagementPoc.create({
                 data: {
                     engagement_id: input.engagement_id,
                     poc_id: input.poc_id,
@@ -23,7 +23,7 @@ export const engagementpocRouter = createTRPCRouter({
     update: publicProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
-            return ctx.prisma.engagementPOC.update({
+            return ctx.prisma.engagementPoc.update({
                 where: { id: input.id },
                 data: {
                     engagement_id: input.engagement_id,
@@ -34,14 +34,14 @@ export const engagementpocRouter = createTRPCRouter({
     getById: publicProcedure
         .input(z.object({ id: z.number() }))
         .query(({ input, ctx }) => {
-            return ctx.prisma.engagementPOC.findUnique({
+            return ctx.prisma.engagementPoc.findUnique({
                 where: { id: input.id }
             });
         }),
     getByEngagementId: publicProcedure
         .input(z.object({ id: z.number().optional() }))
         .query(({ input, ctx }) => {
-            return ctx.prisma.engagementPOC.findMany({
+            return ctx.prisma.engagementPoc.findMany({
                 where: { engagement_id: input.id },
                 include: {
                     poc: true
@@ -50,6 +50,6 @@ export const engagementpocRouter = createTRPCRouter({
         }),
     getAll: publicProcedure
         .query(({ ctx }) => {
-            return ctx.prisma.engagementPOC.findMany();
+            return ctx.prisma.engagementPoc.findMany();
         }),
 });
