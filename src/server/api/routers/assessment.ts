@@ -50,7 +50,7 @@ export const assessmentRouter = createTRPCRouter({
                 },
             });
         }),
-    status: publicProcedure
+    updateStatus: publicProcedure
         .input(z.object({ id: z.number(), status: z.string() }))
         .mutation(({ input, ctx }) => {
             return ctx.prisma.assessment.update({

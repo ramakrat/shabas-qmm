@@ -44,7 +44,7 @@ export const engagementRouter = createTRPCRouter({
                 }
             })
         }),
-    status: publicProcedure
+    updateStatus: publicProcedure
         .input(z.object({ id: z.number(), status: z.string() }))
         .mutation(({ input, ctx }) => {
             return ctx.prisma.engagement.update({
