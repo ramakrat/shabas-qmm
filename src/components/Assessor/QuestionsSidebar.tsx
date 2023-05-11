@@ -71,7 +71,7 @@ const QuestionsSidebar: React.FC<Props> = (props) => {
                             const active = o.active ? 'active ' : '';
                             return (
                                 <div key={o.id} className={'question-option ' + selected}>
-                                    <div className={'active-signature ' + active} />
+                                    {/* <div className={'active-signature ' + active} /> */}
                                     <Typography
                                         onClick={() => {
                                             if (resetForm) resetForm();
