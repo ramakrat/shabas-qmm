@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { type NextPage } from "next";
 import Router, { useRouter } from 'next/router';
-import type { Changelog, Filter, Rating } from '@prisma/client';
+import type { Filter } from '@prisma/client';
 
 import * as yup from "yup";
 import { Field, Form, Formik } from "formik";
@@ -31,12 +31,6 @@ interface ReferenceType {
     id?: number;
     num: number;
     citation: string;
-}
-
-interface RatingType {
-    level_number: number;
-    criteria: string;
-    progression_statement: string;
 }
 
 interface FormValues {
