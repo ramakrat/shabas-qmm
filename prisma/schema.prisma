@@ -344,7 +344,7 @@ model Answer {
     assessment_question_id Int                @unique
     assessment_question    AssessmentQuestion @relation(fields: [assessment_question_id], references: [id])
 
-    start_times StartTime[]
+    start_time DateTime?
 
     @@index([user_id])
     @@index([assessment_question_id])
@@ -367,26 +367,11 @@ model Answer {
 //     assessment_question_id Int                @unique
 //     assessment_question    AssessmentQuestion @relation(fields: [assessment_question_id], references: [id])
 
-//     start_times StartTime[]
+//     start_times DateTime?
 
 //     @@index([user_id])
 //     @@index([assessment_question_id])
 // }
-
-model StartTime {
-    id         Int      @id @default(autoincrement())
-    created_at DateTime @default(now())
-    updated_at DateTime @default(now())
-    created_by String
-    updated_by String
-
-    time DateTime
-
-    answer_id Int
-    answer    Answer @relation(fields: [answer_id], references: [id])
-
-    @@index([answer_id])
-}
 
 model Changelog {
     id Int @id @default(autoincrement())
