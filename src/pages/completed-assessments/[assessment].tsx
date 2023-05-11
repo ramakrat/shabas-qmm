@@ -10,6 +10,7 @@ import { api } from "~/utils/api";
 import Layout from "~/components/Layout/Layout";
 import QuestionsSidebar from '~/components/Assessor/QuestionsSidebar';
 import ChangelogTable from '~/components/Common/ChangelogTable';
+import { priorityIndicator } from '../questions/[question]';
 
 const CompletedAssessment: NextPage = () => {
 
@@ -222,7 +223,7 @@ const CompletedAssessment: NextPage = () => {
                                                 </div>
                                                 <div>
                                                     <Typography>Priority:</Typography>
-                                                    <Typography>{questionRef ? convertToQuestion(questionRef).priority : undefined}</Typography>
+                                                    <Typography>{questionRef ? priorityIndicator(convertToQuestion(questionRef).priority) : undefined}</Typography>
                                                 </div>
                                             </div>
                                             <div className='widget-header'>Interview Guide</div>

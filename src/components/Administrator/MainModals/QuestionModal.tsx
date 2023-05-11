@@ -4,10 +4,11 @@ import * as yup from "yup";
 import { Field, Form, Formik, FormikErrors, FormikHelpers } from "formik";
 import TextField from "../../Form/TextField";
 
-import { Button, Card, CardActions, CardContent, CardHeader, IconButton, Modal } from "@mui/material";
-import { Close } from "@mui/icons-material";
+import { Button, Card, CardActions, CardContent, CardHeader, IconButton, MenuItem, Modal } from "@mui/material";
+import { ArrowDownward, ArrowUpward, Close, HorizontalRule } from "@mui/icons-material";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
+import Select from "~/components/Form/Select";
 
 interface Props {
     open: boolean;
@@ -87,7 +88,7 @@ const QuestionModal: React.FC<Props> = (props) => {
             },
             onError(err) {
                 if (err.shape?.code == -32603)
-                    formikHelpers.setErrors({number: 'Question with this number already exists'})
+                    formikHelpers.setErrors({ number: 'Question with this number already exists' })
             }
         })
     }
@@ -140,8 +141,28 @@ const QuestionModal: React.FC<Props> = (props) => {
                                 />
                                 <Field
                                     name='priority' label='Priority' size='small'
-                                    component={TextField}
-                                />
+                                    component={Select}
+                                >
+                                    <MenuItem value=''><em>Select priority...</em></MenuItem>
+                                    <MenuItem value='low'>
+                                        <div className='priority'>
+                                            <ArrowDownward color='success' />
+                                            Low
+                                        </div>
+                                    </MenuItem>
+                                    <MenuItem value='medium'>
+                                        <div className='priority'>
+                                            <HorizontalRule color='primary' />
+                                            Medium
+                                        </div>
+                                    </MenuItem>
+                                    <MenuItem value='high'>
+                                        <div className='priority'>
+                                            <ArrowUpward color='error' />
+                                            High
+                                        </div>
+                                    </MenuItem>
+                                </Field>
                             </CardContent>
                             <CardActions>
                                 <Button variant='contained' color='error' onClick={() => setOpen(false)}>Cancel</Button>

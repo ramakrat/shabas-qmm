@@ -158,6 +158,11 @@
                 padding-bottom: 5px;
             }
 
+            .MuiInputBase-root {
+                width: 100%;
+                padding-bottom: 10px;
+            }
+
             .MuiFormControl-root {
                 width: 100%;
                 padding-bottom: 10px;
@@ -173,6 +178,10 @@
                     font-size: 1rem;
                     font-weight: 500;
                     padding-bottom: 5px;
+                }
+
+                .MuiInputBase-root {
+                    padding-bottom: 0px;
                 }
 
                 .MuiFormControl-root {
@@ -318,5 +327,16 @@
 
     span:first-child {
         font-size: 3rem;
+    }
+}
+
+.priority {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .MuiSvgIcon-root {
+        margin-right: 4px;
+        font-size: 1.2rem;
     }
 }

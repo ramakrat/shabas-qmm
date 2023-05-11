@@ -6,12 +6,13 @@ import type { Filter } from '@prisma/client';
 import * as yup from "yup";
 import { Field, Form, Formik } from "formik";
 import TextField from '~/components/Form/TextField';
+import Select from '~/components/Form/Select';
 
 import {
-    Button, Card, Grid, IconButton, MenuItem, Select,
+    Button, Card, Grid, IconButton, MenuItem, Select as MuiSelect,
     TextField as MuiTextField, ToggleButton, ToggleButtonGroup, Typography
 } from '@mui/material';
-import { Add, Delete } from '@mui/icons-material';
+import { Add, ArrowDownward, ArrowDropDown, ArrowDropUp, ArrowUpward, Delete, HorizontalRule } from '@mui/icons-material';
 
 import { api } from "~/utils/api";
 import Layout from "~/components/Layout/Layout";
@@ -84,6 +85,34 @@ const validationSchema = yup.object().shape({
     smePhone: yup.string().required("Required"),
     smeEmail: yup.string().required("Required"),
 });
+
+export const priorityIndicator = (priority: string) => {
+    if (priority == 'low') {
+        return (
+            <div className='priority'>
+                <ArrowDownward color='success' />
+                Low
+            </div>
+        )
+    }
+    if (priority == 'medium') {
+        return (
+            <div className='priority'>
+                <HorizontalRule color='primary' />
+                Medium
+            </div>
+        )
+    }
+    if (priority == 'high') {
+        return (
+            <div className='priority'>
+                <ArrowUpward color='error' />
+                High
+            </div>
+        )
+    }
+    return priority;
+}
 
 const Question: NextPage = () => {
 
@@ -557,7 +586,7 @@ const Question: NextPage = () => {
 
         return (<>
             <Typography style={{ padding: '0px 10px 0px 5px' }}>:</Typography>
-            <Select
+            <MuiSelect
                 size='small' displayEmpty
                 value={filterSelection ? filterSelection.id : ''}
                 onChange={(event) => {
@@ -586,7 +615,7 @@ const Question: NextPage = () => {
                         {filterType == 'site-specific' && 'Add Site Specific'}
                     </Button>
                 </MenuItem>
-            </Select>
+            </MuiSelect>
         </>)
     }
 
@@ -690,7 +719,7 @@ const Question: NextPage = () => {
                                             </div>
                                             <div>
                                                 <Typography>Priority:</Typography>
-                                                <Typography>{questionData.priority}</Typography>
+                                                <Typography>{priorityIndicator(questionData.priority)}</Typography>
                                             </div>
                                             <div>
                                                 <Typography>Hint:</Typography>
@@ -941,9 +970,28 @@ const Question: NextPage = () => {
                                                         <Typography>Priority</Typography>
                                                         <Field
                                                             name='priority' label='' size='small'
-                                                            placeholder='Priority...'
-                                                            component={TextField}
-                                                        />
+                                                            component={Select}
+                                                        >
+                                                            <MenuItem value=''><em>Select priority...</em></MenuItem>
+                                                            <MenuItem value='low'>
+                                                                <div className='priority'>
+                                                                    <ArrowDownward color='success' />
+                                                                    Low
+                                                                </div>
+                                                            </MenuItem>
+                                                            <MenuItem value='medium'>
+                                                                <div className='priority'>
+                                                                    <HorizontalRule color='primary' />
+                                                                    Medium
+                                                                </div>
+                                                            </MenuItem>
+                                                            <MenuItem value='high'>
+                                                                <div className='priority'>
+                                                                    <ArrowUpward color='error' />
+                                                                    High
+                                                                </div>
+                                                            </MenuItem>
+                                                        </Field>
                                                     </Grid>
                                                     <Grid item xs={12}>
                                                         <Typography>Hint</Typography>

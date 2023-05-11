@@ -15,6 +15,7 @@ import Select from '~/components/Form/Select';
 import ChangelogTable from '~/components/Common/ChangelogTable';
 import ConfirmModal from '../Common/ConfirmModal';
 import MessageModal from '../Common/MessageModal';
+import { priorityIndicator } from '~/pages/questions/[question]';
 
 type AssessmentType = (
     Assessment & {
@@ -445,7 +446,7 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                                                     </div>
                                                     <div>
                                                         <Typography>Priority:</Typography>
-                                                        <Typography>{questionRef ? convertToQuestion(questionRef).priority : undefined}</Typography>
+                                                        <Typography>{questionRef ? priorityIndicator(convertToQuestion(questionRef).priority) : undefined}</Typography>
                                                     </div>
                                                 </div>
                                                 <div className='widget-header'>Interview Guide</div>
