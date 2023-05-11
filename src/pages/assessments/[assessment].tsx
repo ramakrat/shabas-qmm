@@ -331,9 +331,11 @@ const Assessment: NextPage = () => {
                                         {data && <Typography>{data.id}</Typography>}
                                     </div>
                                     <div>
-                                        <StatusChip status='created' />
                                         {data ?
-                                            <Button variant='contained' type='submit'>Save</Button> :
+                                            <>
+                                                <StatusChip status='created' />
+                                                <Button variant='contained' type='submit'>Save</Button>
+                                            </> :
                                             <Button variant='contained' type='submit' onClick={() => {
                                                 const errStr = [];
                                                 if (Object.keys(formikProps.errors).length > 0) {
@@ -581,10 +583,12 @@ const Assessment: NextPage = () => {
                                                             <Button
                                                                 variant='contained'
                                                                 onClick={() => {
-                                                                    const newArr = newQuestions;
-                                                                    newArr.push({ question: selectedQuestion, filterSelection: -1 } as QuestionType)
-                                                                    setSelectedQuestion(undefined);
-                                                                    setNewQuestions(newArr);
+                                                                    if (selectedQuestion) {
+                                                                        const newArr = newQuestions;
+                                                                        newArr.push({ question: selectedQuestion, filterSelection: -1 } as QuestionType)
+                                                                        setSelectedQuestion(undefined);
+                                                                        setNewQuestions(newArr);
+                                                                    }
                                                                     setAddQuestion(false);
                                                                 }}
                                                             >
