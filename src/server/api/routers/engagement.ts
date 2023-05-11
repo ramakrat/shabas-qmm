@@ -44,44 +44,6 @@ export const engagementRouter = createTRPCRouter({
                 }
             })
         }),
-    updateStatus: publicProcedure
-        .input(z.object({ id: z.number(), status: z.string() }))
-        .mutation(({ input, ctx }) => {
-            return ctx.prisma.engagement.update({
-                where: { id: input.id },
-                data: {
-                    status: input.status,
-                    updated_at: new Date(),
-                    updated_by: '',
-                },
-            });
-        }),
-    updateAllStatus: publicProcedure
-        .mutation(async ({ ctx }) => {
-            // const allEngagements = await ctx.prisma.engagement.findMany();
-            // allEngagements.forEach(async e => {
-            //     const utcDate = new Date();
-            //     const currDate = new Date(utcDate.getTime() - utcDate.getTimezoneOffset() * 60000);
-            //     if (e.status != 'open' && e.start_date < currDate && e.end_date > currDate) {
-            //         await ctx.prisma.engagement.update({
-            //             where: { id: e.id },
-            //             data: {
-            //                 status: 'open',
-            //                 updated_at: new Date(),
-            //             },
-            //         });
-            //     }
-            //     if (e.status != 'closed' && e.end_date < currDate) {
-            //         await ctx.prisma.engagement.update({
-            //             where: { id: e.id },
-            //             data: {
-            //                 status: 'closed',
-            //                 updated_at: new Date(),
-            //             },
-            //         });
-            //     }
-            // });
-        }),
     getById: publicProcedure
         .input(z.object({ id: z.number() }))
         .query(({ input, ctx }) => {
