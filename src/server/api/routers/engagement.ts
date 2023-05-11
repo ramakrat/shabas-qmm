@@ -54,7 +54,7 @@ export const engagementRouter = createTRPCRouter({
     getAllInclude: publicProcedure
         .input(z.object({
             filters: z.array(z.any()),
-            states: z.array(z.boolean()).optional(),
+            states: z.boolean().optional(),
             includeEmptyEngagements: z.boolean().optional(),
         }))
         .query(async ({ input, ctx }) => {

@@ -132,10 +132,8 @@ const BrowseAssessments: NextPage = () => {
     // ================== Create Management ==================
 
     const [engagementModal, setEngagementModal] = React.useState<boolean>(false);
-    const [assessmentModal, setAssessmentModal] = React.useState<boolean>(false);
 
     const [engagementData, setEngagementData] = React.useState<EngagementAssessmentType | undefined>(undefined);
-    const [assessmentData, setAssessmentData] = React.useState<Assessment | undefined>(undefined);
 
 
     // ================== Filter Management ==================
@@ -164,10 +162,10 @@ const BrowseAssessments: NextPage = () => {
     // TODO: Don't run query unless modal closed
     const { data } = api.engagement.getAllInclude.useQuery({
         filters: filterObject(),
-        states: [engagementModal, assessmentModal],
+        states: engagementModal,
         includeEmptyEngagements: true,
     });
-    const assessmentStatusCounts = api.assessment.getStatusCounts.useQuery(assessmentModal).data;
+    const assessmentStatusCounts = api.assessment.getStatusCounts.useQuery().data;
 
     const convertTableData = (engagements?: EngagementAssessmentType[]) => {
         if (engagements) {
@@ -276,7 +274,7 @@ const BrowseAssessments: NextPage = () => {
                         <Button
                             variant='contained'
                             endIcon={<Add />}
-                            onClick={() => { setAssessmentData(undefined); setAssessmentModal(true) }}
+                            onClick={() => router.push('/assessments/new')}
                         >
                             New Assessment
                         </Button>
@@ -288,7 +286,6 @@ const BrowseAssessments: NextPage = () => {
                     expandable
                 />
                 <EngagementModal open={engagementModal} setOpen={setEngagementModal} data={engagementData} />
-                <AssessmentModal open={assessmentModal} setOpen={setAssessmentModal} data={assessmentData} />
             </div>
         </Layout>
     );
