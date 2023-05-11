@@ -16,7 +16,24 @@ import ChangelogTable from '~/components/Common/ChangelogTable';
 import ConfirmModal from '../Common/ConfirmModal';
 import MessageModal from '../Common/MessageModal';
 
+type AssessmentType = (
+    Assessment & {
+        engagement: Engagement;
+        assessment_questions: (AssessmentQuestion & {
+            question: Question & {
+                ratings: Rating[];
+                references: Reference[];
+                interview_guides: InterviewGuide[];
+            };
+            filter: Filter | null;
+            answer: Answer | null;
+        })[];
+    }
+)
+
 interface FormValues {
+    id?: number;
+    startTime?: Date;
     rating: string;
     rationale: string;
     suggestion: string;
@@ -44,40 +61,8 @@ const OngoingAssessment: React.FC<Props> = (props) => {
 
     // =========== Retrieve Form Context ===========
 
-    const data = api.assessment.getByIdIncludeAssessor.useQuery({ id: assessment }).data as (
-        Assessment & {
-            engagement: Engagement;
-            assessment_questions: (AssessmentQuestion & {
-                question: Question & {
-                    ratings: Rating[];
-                    references: Reference[];
-                    interview_guides: InterviewGuide[];
-                };
-                filter: Filter | null;
-                answer: Answer | null;
-            })[];
-        }
-    );
+    const data = api.assessment.getByIdIncludeAssessor.useQuery({ id: assessment }).data as AssessmentType;
 
-    // Update the statuses of Assessment and Engagement if needed
-    const assessmentStatus = api.assessment.status.useMutation();
-    const engagementStatus = api.engagement.status.useMutation();
-    React.useEffect(() => {
-        if (data && status == 'ongoing') {
-            if (data.status == 'created' || data.status == '') {
-                assessmentStatus.mutate({
-                    id: data.id,
-                    status: 'ongoing',
-                })
-                if (data.engagement.status == 'created' || data.status == '') {
-                    engagementStatus.mutate({
-                        id: data.id,
-                        status: 'ongoing',
-                    })
-                }
-            }
-        }
-    }, [data])
 
     const convertToQuestion = (object: (Question & {
         Rating?: Rating[];
@@ -105,7 +90,6 @@ const OngoingAssessment: React.FC<Props> = (props) => {
     const guide = api.interviewGuide.getByQuestionId.useQuery({ id: questionRef?.id }).data;
     const references = api.reference.getByQuestionId.useQuery({ id: questionRef?.id }).data
     const changelog = api.changelog.getAllByAssessmentQuestion.useQuery(selectedAssessmentQuestion?.id).data;
-    const fullChangelog = api.changelog.getAllByAssessment.useQuery(data?.id).data;
 
 
     // =========== Input Field States ===========
@@ -120,17 +104,53 @@ const OngoingAssessment: React.FC<Props> = (props) => {
     });
 
 
+    // Update the statuses of Assessment and Engagement if needed
+    const assessmentStatus = api.assessment.updateStatus.useMutation();
+    const engagementStatus = api.engagement.updateStatus.useMutation();
+    const createAnswer = api.answer.create.useMutation()
     React.useEffect(() => {
+        if (data && status == 'ongoing') {
+            if (data.status == 'created' || data.status == '') {
+                assessmentStatus.mutate({
+                    id: data.id,
+                    status: 'ongoing',
+                })
+                if (data.engagement.status == 'created' || data.status == '') {
+                    engagementStatus.mutate({
+                        id: data.id,
+                        status: 'ongoing',
+                    })
+                }
+            }
+        }
+    }, [data])
+    React.useEffect(() => {
+        if (selectedAssessmentQuestion && !selectedAssessmentQuestion.answer) {
+            createAnswer.mutate({ assessmentQuestionId: selectedAssessmentQuestion.id }, {
+                onSuccess(data) {
+                    setAnswer({
+                        ...answer,
+                        id: data.id,
+                        startTime: data.start_time ?? undefined,
+                    })
+                }
+            })
+        }
         if (selectedAssessmentQuestion && selectedAssessmentQuestion.answer) {
-            if (status == 'ongoing')
+            if (status == 'ongoing') {
                 setAnswer({
+                    id: selectedAssessmentQuestion.answer.id ?? '',
+                    startTime: selectedAssessmentQuestion.answer.start_time ?? undefined,
                     rating: selectedAssessmentQuestion.answer.assessor_rating ?? '',
                     rationale: selectedAssessmentQuestion.answer.assessor_rationale ?? '',
                     suggestion: selectedAssessmentQuestion.answer.assessor_suggestion ?? '',
                     notes: selectedAssessmentQuestion.answer.assessor_notes ?? '',
                 });
+            }
             if (status == 'assessor-review')
                 setAnswer({
+                    id: selectedAssessmentQuestion.answer.id ?? '',
+                    startTime: selectedAssessmentQuestion.answer.start_time ?? undefined,
                     rating: selectedAssessmentQuestion.answer.consensus_rating ?? '',
                     rationale: selectedAssessmentQuestion.answer.consensus_rationale ?? '',
                     suggestion: '',
@@ -138,6 +158,8 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                 });
             if (status == 'oversight')
                 setAnswer({
+                    id: selectedAssessmentQuestion.answer.id ?? '',
+                    startTime: selectedAssessmentQuestion.answer.start_time ?? undefined,
                     rating: selectedAssessmentQuestion.answer.oversight_concurrence ?? '',
                     rationale: selectedAssessmentQuestion.answer.oversight_rationale ?? '',
                     suggestion: '',
@@ -145,6 +167,7 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                 });
         } else {
             setAnswer({
+                ...answer,
                 rating: '',
                 rationale: '',
                 suggestion: '',
@@ -195,18 +218,17 @@ const OngoingAssessment: React.FC<Props> = (props) => {
         }
     }
 
-    const create = api.answer.create.useMutation();
     const update = api.answer.update.useMutation();
-    const statusChange = api.assessment.status.useMutation();
+    const statusChange = api.assessment.updateStatus.useMutation();
 
     const handleSubmit = (
         values: FormValues,
     ) => {
         if (selectedAssessmentQuestion) {
-            if (selectedAssessmentQuestion.answer) {
+            if (values.id && values.startTime) {
                 if (status == 'ongoing')
                     update.mutate({
-                        id: selectedAssessmentQuestion.answer.id,
+                        id: values.id,
                         assessment_question_id: selectedAssessmentQuestion.id,
                         assessor_rating: values.rating.toString(),
                         assessor_rationale: values.rationale,
@@ -215,12 +237,11 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                     }, {
                         onSuccess(data) {
                             compareChanges(data, initialValues);
-                            Router.reload();
                         }
                     })
                 if (status == 'assessor-review')
                     update.mutate({
-                        id: selectedAssessmentQuestion.answer.id,
+                        id: values.id,
                         assessment_question_id: selectedAssessmentQuestion.id,
                         consensus_rating: values.rating.toString(),
                         consensus_rationale: values.rationale,
@@ -228,12 +249,11 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                     }, {
                         onSuccess(data) {
                             compareChanges(data, initialValues);
-                            Router.reload();
                         }
                     })
                 if (status == 'oversight')
                     update.mutate({
-                        id: selectedAssessmentQuestion.answer.id,
+                        id: values.id,
                         assessment_question_id: selectedAssessmentQuestion.id,
                         oversight_concurrence: values.rating.toString(),
                         oversight_rationale: values.rationale,
@@ -241,36 +261,7 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                     }, {
                         onSuccess(data) {
                             compareChanges(data, initialValues);
-                            Router.reload();
                         }
-                    })
-            } else {
-                if (status == 'ongoing')
-                    create.mutate({
-                        assessment_question_id: selectedAssessmentQuestion.id,
-                        assessor_rating: values.rating.toString(),
-                        assessor_rationale: values.rationale,
-                        assessor_notes: values.notes,
-                    }, {
-                        onSuccess() { Router.reload() }
-                    })
-                if (status == 'assessor-review')
-                    create.mutate({
-                        assessment_question_id: selectedAssessmentQuestion.id,
-                        consensus_rating: values.rating.toString(),
-                        consensus_rationale: values.rationale,
-                        consensus_notes: values.notes,
-                    }, {
-                        onSuccess() { Router.reload() }
-                    })
-                if (status == 'oversight')
-                    create.mutate({
-                        assessment_question_id: selectedAssessmentQuestion.id,
-                        oversight_concurrence: values.rating.toString(),
-                        oversight_rationale: values.rationale,
-                        oversight_notes: values.notes,
-                    }, {
-                        onSuccess() { Router.reload() }
                     })
             }
         }
@@ -318,7 +309,7 @@ const OngoingAssessment: React.FC<Props> = (props) => {
         }
     }
 
-    if (data?.status != status) {
+    if (data && (data.status != 'created') && (data.status != status)) {
         return (
             <div className='not-found'>
                 <span>404</span>
@@ -373,7 +364,7 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                                                     </div>
                                                     <div>
                                                         <Typography>Start Time:</Typography>
-                                                        <Typography>XYZ</Typography>
+                                                        <Typography>{answer.startTime?.toLocaleString() ?? 'Not Started'}</Typography>
                                                     </div>
                                                 </div>
                                                 <div className='widget-sub-header'>
