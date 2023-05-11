@@ -105,7 +105,7 @@ model Question {
     pillar        String
     practice_area String
     topic_area    String
-    hint          String?
+    hint          String
     priority      String
 
     references           Reference[]
@@ -349,6 +349,29 @@ model Answer {
     @@index([user_id])
     @@index([assessment_question_id])
 }
+
+// model Answer {
+//     id         Int      @id @default(autoincrement())
+//     created_at DateTime @default(now())
+//     updated_at DateTime @default(now())
+//     created_by String
+//     updated_by String
+
+//     rating     String?
+//     rationale  String?
+//     suggestion String? // Only on Ongoing
+//     notes      String?
+
+//     user_id                Int?
+//     user                   User?              @relation(fields: [user_id], references: [id])
+//     assessment_question_id Int                @unique
+//     assessment_question    AssessmentQuestion @relation(fields: [assessment_question_id], references: [id])
+
+//     start_times StartTime[]
+
+//     @@index([user_id])
+//     @@index([assessment_question_id])
+// }
 
 model StartTime {
     id         Int      @id @default(autoincrement())

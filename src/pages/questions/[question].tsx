@@ -46,6 +46,7 @@ interface FormValues {
     practiceArea: string;
     topicArea: string;
     priority: string;
+    hint: string;
     level1?: number;
     criteria1: string;
     progression1: string;
@@ -74,6 +75,7 @@ const validationSchema = yup.object().shape({
     practiceArea: yup.string().required("Required"),
     topicArea: yup.string().required("Required"),
     priority: yup.string().required("Required"),
+    hint: yup.string().required("Required"),
     criteria1: yup.string().required("Required"),
     progression1: yup.string().required("Required"),
     criteria2: yup.string().required("Required"),
@@ -92,7 +94,7 @@ const validationSchema = yup.object().shape({
 const Question: NextPage = () => {
 
     const { question } = useRouter().query;
-    const router = useRouter();
+    const [refetch, setRefetch] = React.useState<number>(0);
 
     // =========== Form Context ===========
 
@@ -112,7 +114,7 @@ const Question: NextPage = () => {
         questionId: Number(question),
         filterId: (filterType != 'default' && filterSelection) ? filterSelection.id : undefined,
     }).data;
-    const fullChangelog = api.changelog.getAllByQuestion.useQuery(data?.id);
+    const fullChangelog = api.changelog.getAllByQuestion.useQuery({ questionId: data?.id, refetch: refetch }).data;
 
     interface AllValues {
         question: any;
@@ -141,6 +143,7 @@ const Question: NextPage = () => {
         practiceArea: '',
         topicArea: '',
         priority: '',
+        hint: '',
         criteria1: '',
         progression1: '',
         criteria2: '',
@@ -281,6 +284,7 @@ const Question: NextPage = () => {
                 practiceArea: data.practice_area,
                 topicArea: data.topic_area,
                 priority: data.priority,
+                hint: data.hint,
             }
         }
         if (ratingData) {
@@ -353,6 +357,7 @@ const Question: NextPage = () => {
                 practice_area: values.practiceArea,
                 topic_area: values.topicArea,
                 priority: values.priority,
+                hint: values.hint,
             }, {
                 onSuccess(data) {
                     compareChanges(data, initialValues().question, `Question: `)
@@ -391,11 +396,11 @@ const Question: NextPage = () => {
                 onSuccess(data) {
                     const newExistingArray = existingGuide;
                     data.forEach((o, i) => {
-                        return {
+                        newExistingArray.push({
                             id: o.id,
                             num: existingGuide.length + i + 1,
                             interview_question: o.interview_question,
-                        }
+                        })
                     });
                     setExistingGuide(newExistingArray);
                     setNewGuide([{ num: 1, interview_question: '' }]);
@@ -442,11 +447,11 @@ const Question: NextPage = () => {
                 onSuccess(data) {
                     const newExistingArray = existingReferences;
                     data.forEach((o, i) => {
-                        return {
+                        newExistingArray.push({
                             id: o.id,
                             num: existingReferences.length + i + 1,
                             citation: o.citation,
-                        };
+                        });
                     });
                     setExistingReferences(newExistingArray);
                     setNewReferences([{ num: 1, citation: '' }]);
@@ -537,8 +542,8 @@ const Question: NextPage = () => {
                 })
             }
 
-            fullChangelog?.refetch();
         }
+        setRefetch(refetch + 1);
     }
 
 
@@ -693,6 +698,10 @@ const Question: NextPage = () => {
                                                 <Typography>Priority:</Typography>
                                                 <Typography>{questionData.priority}</Typography>
                                             </div>
+                                            <div>
+                                                <Typography>Hint:</Typography>
+                                                <Typography>{questionData.hint}</Typography>
+                                            </div>
                                         </div>
                                         <div>
                                             <div className='widget-header'>Interview Guide</div>
@@ -771,7 +780,7 @@ const Question: NextPage = () => {
                                 <Grid item xs={12}>
                                     <Card>
                                         <div className='widget-header'>Changelog</div>
-                                        <ChangelogTable changelogs={fullChangelog.data} fileName={`Question${data ? data.id : ''} Changelog`} />
+                                        <ChangelogTable changelogs={fullChangelog} fileName={`Question${data ? data.id : ''} Changelog`} />
                                     </Card>
                                 </Grid>
                             </Grid>
@@ -939,6 +948,14 @@ const Question: NextPage = () => {
                                                         <Field
                                                             name='priority' label='' size='small'
                                                             placeholder='Priority...'
+                                                            component={TextField}
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={12}>
+                                                        <Typography>Hint</Typography>
+                                                        <Field
+                                                            name='hint' label='' size='small'
+                                                            placeholder='Hint...'
                                                             component={TextField}
                                                         />
                                                     </Grid>
@@ -1209,7 +1226,7 @@ const Question: NextPage = () => {
                                     <Grid item xs={12}>
                                         <Card>
                                             <div className='widget-header'>Changelog</div>
-                                            <ChangelogTable changelogs={fullChangelog.data} fileName={`Question${data ? data.id : ''} Changelog`} />
+                                            <ChangelogTable changelogs={fullChangelog} fileName={`Question${data ? data.id : ''} Changelog`} />
                                         </Card>
                                     </Grid>
                                 </Grid>
