@@ -49,7 +49,7 @@ model Site {
     zip_code       String
 
     client_id Int
-    client    Client  @relation(fields: [client_id], references: [id])
+    client    Client  @relation(fields: [client_id], references: [id], onDelete: Restrict)
     filter    Filter?
 
     pocs             Poc[]
@@ -75,13 +75,13 @@ model Poc {
     email        String
 
     user_id       Int?
-    user          User?       @relation(fields: [user_id], references: [id])
+    user          User?       @relation(fields: [user_id], references: [id], onDelete: Restrict)
     client_id     Int?
-    client        Client?     @relation(fields: [client_id], references: [id])
+    client        Client?     @relation(fields: [client_id], references: [id], onDelete: Restrict)
     engagement_id Int?
-    engagement    Engagement? @relation(fields: [engagement_id], references: [id])
+    engagement    Engagement? @relation(fields: [engagement_id], references: [id], onDelete: Restrict)
     site_id       Int?
-    site          Site?       @relation(fields: [site_id], references: [id])
+    site          Site?       @relation(fields: [site_id], references: [id], onDelete: Restrict)
 
     engagement_pocs EngagementPoc[]
     assessments     Assessment[]
@@ -129,11 +129,11 @@ model Rating {
     progression_statement String
 
     question_id Int
-    question    Question @relation(fields: [question_id], references: [id])
+    question    Question @relation(fields: [question_id], references: [id], onDelete: Cascade)
     site_id     Int?
-    site        Site?    @relation(fields: [site_id], references: [id])
+    site        Site?    @relation(fields: [site_id], references: [id], onDelete: Restrict)
     filter_id   Int?
-    filter      Filter?  @relation(fields: [filter_id], references: [id])
+    filter      Filter?  @relation(fields: [filter_id], references: [id], onDelete: Restrict)
 
     @@index([question_id])
     @@index([site_id])
@@ -150,7 +150,7 @@ model Reference {
     citation String
 
     question_id Int
-    question    Question @relation(fields: [question_id], references: [id])
+    question    Question @relation(fields: [question_id], references: [id], onDelete: Cascade)
 
     @@index([question_id])
 }
@@ -168,7 +168,7 @@ model Sme {
     email        String
 
     question_id Int
-    question    Question @relation(fields: [question_id], references: [id])
+    question    Question @relation(fields: [question_id], references: [id], onDelete: Cascade)
 
     @@index([question_id])
 }
@@ -184,11 +184,11 @@ model InterviewGuide {
     interview_question String
 
     question_id Int
-    question    Question @relation(fields: [question_id], references: [id])
+    question    Question @relation(fields: [question_id], references: [id], onDelete: Cascade)
     site_id     Int
-    site        Site     @relation(fields: [site_id], references: [id])
+    site        Site     @relation(fields: [site_id], references: [id], onDelete: Restrict)
     filter_id   Int
-    filter      Filter   @relation(fields: [filter_id], references: [id])
+    filter      Filter   @relation(fields: [filter_id], references: [id], onDelete: Restrict)
 
     @@index([question_id])
     @@index([site_id])
@@ -206,7 +206,7 @@ model Filter {
     name String
 
     site_id Int?  @unique
-    site    Site? @relation(fields: [site_id], references: [id])
+    site    Site? @relation(fields: [site_id], references: [id], onDelete: Restrict)
 
     ratings              Rating[]
     interview_guides     InterviewGuide[]
@@ -228,7 +228,7 @@ model Engagement {
     end_date    DateTime
 
     client_id Int
-    client    Client @relation(fields: [client_id], references: [id])
+    client    Client @relation(fields: [client_id], references: [id], onDelete: Restrict)
 
     pocs            Poc[]
     assessments     Assessment[]
@@ -241,9 +241,9 @@ model EngagementPoc {
     id Int @id @default(autoincrement())
 
     engagement_id Int
-    engagement    Engagement @relation(fields: [engagement_id], references: [id])
+    engagement    Engagement @relation(fields: [engagement_id], references: [id], onDelete: Restrict)
     poc_id        Int
-    poc           Poc        @relation(fields: [poc_id], references: [id])
+    poc           Poc        @relation(fields: [poc_id], references: [id], onDelete: Restrict)
 
     @@index([poc_id])
     @@index([engagement_id])
@@ -263,11 +263,11 @@ model Assessment {
     end_date    DateTime
 
     poc_id        Int?
-    poc           Poc?       @relation(fields: [poc_id], references: [id])
+    poc           Poc?       @relation(fields: [poc_id], references: [id], onDelete: Restrict)
     site_id       Int
-    site          Site       @relation(fields: [site_id], references: [id])
+    site          Site       @relation(fields: [site_id], references: [id], onDelete: Restrict)
     engagement_id Int
-    engagement    Engagement @relation(fields: [engagement_id], references: [id])
+    engagement    Engagement @relation(fields: [engagement_id], references: [id], onDelete: Restrict)
 
     assessment_users     AssessmentUser[]
     assessment_questions AssessmentQuestion[]
@@ -285,9 +285,9 @@ model AssessmentUser {
     updated_by String
 
     user_id       Int
-    user          User       @relation(fields: [user_id], references: [id])
+    user          User       @relation(fields: [user_id], references: [id], onDelete: Restrict)
     assessment_id Int
-    assessment    Assessment @relation(fields: [assessment_id], references: [id])
+    assessment    Assessment @relation(fields: [assessment_id], references: [id], onDelete: Restrict)
 
     @@index([user_id])
     @@index([assessment_id])
@@ -301,11 +301,11 @@ model AssessmentQuestion {
     updated_by String
 
     question_id   Int
-    question      Question   @relation(fields: [question_id], references: [id])
+    question      Question   @relation(fields: [question_id], references: [id], onDelete: Cascade)
     assessment_id Int
-    assessment    Assessment @relation(fields: [assessment_id], references: [id])
+    assessment    Assessment @relation(fields: [assessment_id], references: [id], onDelete: Restrict)
     filter_id     Int?
-    filter        Filter?    @relation(fields: [filter_id], references: [id])
+    filter        Filter?    @relation(fields: [filter_id], references: [id], onDelete: Restrict)
     answer        Answer?
 
     changelogs Changelog[]
@@ -340,9 +340,9 @@ model Answer {
     client_notes       String?
 
     user_id                Int?
-    user                   User?              @relation(fields: [user_id], references: [id])
+    user                   User?              @relation(fields: [user_id], references: [id], onDelete: Restrict)
     assessment_question_id Int                @unique
-    assessment_question    AssessmentQuestion @relation(fields: [assessment_question_id], references: [id])
+    assessment_question    AssessmentQuestion @relation(fields: [assessment_question_id], references: [id], onDelete: Restrict)
 
     start_time DateTime?
 
