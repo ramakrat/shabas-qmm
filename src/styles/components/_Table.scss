@@ -139,4 +139,22 @@
         color: #7e4351;
         border: 1px solid #d2a8b2;
     }
+
+    &.pending span {
+        background-color: #c5c5c5;
+        color: #414141;
+        border: 1px solid #ababab;
+    }
+
+    &.open span {
+        background-color: #CDEAB6;
+        color: #416522;
+        border: 1px solid #a6c38f;
+    }
+
+    &.closed span {
+        background-color: #facbd6;
+        color: #7e4351;
+        border: 1px solid #d2a8b2;
+    }
 }

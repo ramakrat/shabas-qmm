@@ -1,7 +1,7 @@
 import { hyphenToTitle } from "~/utils/utils";
 
 interface Props {
-    status: 'created' | 'ongoing' | 'assessor-review' | 'oversight' | 'client-review' | 'completed';
+    status: 'created' | 'ongoing' | 'assessor-review' | 'oversight' | 'client-review' | 'completed' | 'pending' | 'open' | 'closed';
 }
 
 const StatusChip: React.FC<Props> = (props) => {

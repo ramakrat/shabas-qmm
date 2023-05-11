@@ -106,7 +106,6 @@ const OngoingAssessment: React.FC<Props> = (props) => {
 
     // Update the statuses of Assessment and Engagement if needed
     const assessmentStatus = api.assessment.updateStatus.useMutation();
-    const engagementStatus = api.engagement.updateStatus.useMutation();
     const createAnswer = api.answer.create.useMutation()
     React.useEffect(() => {
         if (data && status == 'ongoing') {
@@ -115,12 +114,6 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                     id: data.id,
                     status: 'ongoing',
                 })
-                if (data.engagement.status == 'created' || data.status == '') {
-                    engagementStatus.mutate({
-                        id: data.id,
-                        status: 'ongoing',
-                    })
-                }
             }
         }
     }, [data])
