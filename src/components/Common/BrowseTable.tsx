@@ -106,6 +106,30 @@ const BrowseTable: React.FC<Props> = (props) => {
                         {dataList.map((obj, idx) => {
                             return ExpandableSection(tableInfoColumns, obj, idx, obj.child as React.ReactNode)
                         })}
+                        {dataList.length === 0 && <>
+                            <TableHead className="table-header">
+                                <TableRow>
+                                    {tableInfoColumns.map((header, i) => {
+                                        return (
+                                            <TableCell
+                                                key={'header-' + i}
+                                                className={`primary-cell`}
+                                                align={header.align}
+                                            >
+                                                {header.displayValue}
+                                            </TableCell>
+                                        );
+                                    })}
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                <TableRow>
+                                    <TableCell colSpan={tableInfoColumns.length + 1} className='body-cell center' style={{ height: 80, fontSize: 16 }}>
+                                        No data to display.
+                                    </TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </>}
                     </Table>
                 </TableContainer>
             </>
