@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { type NextPage } from "next";
 import { useRouter } from 'next/router';
-import type { AssessmentQuestion, Engagement, Filter, Question, Rating, Site } from '@prisma/client';
+import type { AssessmentQuestion, Engagement, Filter, Poc, Question, Rating, Site } from '@prisma/client';
 
 import * as yup from "yup";
 import { Field, Form, Formik, FormikProps } from "formik";
@@ -93,6 +93,10 @@ const Assessment: NextPage = () => {
         pocId: '',
     });
 
+    const [existingAssessors, setExistingAssessors] = React.useState<Site[]>([]);
+    const [newAssessors, setNewAssessors] = React.useState<Site[]>([]);
+    const [deletedAssessors, setDeletedAssessors] = React.useState<Poc[]>([]);
+
     const [existingQuestions, setExistingQuestions] = React.useState<AssessmentQuestionReturnType>([]);
     const [newQuestions, setNewQuestions] = React.useState<QuestionType[]>([]);
 
@@ -133,6 +137,24 @@ const Assessment: NextPage = () => {
             setExistingQuestions([]);
         }
     }, [data])
+
+    // const handleAssessorChange = (num: number, newVal: string, existing?: boolean) => {
+    //     const ref = existing ? existingAssessors : newAssessors;
+    //     const newArr = ref.map(o => {
+    //         if (o.num == num) {
+    //             return {
+    //                 ...o,
+    //                 citation: newVal,
+    //             }
+    //         }
+    //         return o;
+    //     });
+    //     if (existing) {
+    //         setExistingAssessors(newArr);
+    //     } else {
+    //         setNewAssessors(newArr);
+    //     }
+    // }
 
     // =========== Submission Management ===========
 
@@ -358,12 +380,12 @@ const Assessment: NextPage = () => {
                                 </Card>
                                 <div className='assessment-form'>
                                     <Grid container spacing={2}>
-                                        <Grid item xs={12}>
+                                        <Grid item xs={6}>
                                             <Card>
                                                 <div className='widget-header'>General</div>
                                                 <div className='widget-body widget-form'>
                                                     <Grid container spacing={1}>
-                                                        <Grid item xs={12} md={4}>
+                                                        <Grid item xs={12}>
                                                             <Typography>Site</Typography>
                                                             <Field
                                                                 name='siteId' label='' size='small'
@@ -379,7 +401,7 @@ const Assessment: NextPage = () => {
                                                                 })}
                                                             </Field>
                                                         </Grid>
-                                                        <Grid item xs={12} md={4}>
+                                                        <Grid item xs={12}>
                                                             <Typography>Engagement</Typography>
                                                             <Field
                                                                 name='engagementId' label='' size='small'
@@ -395,7 +417,7 @@ const Assessment: NextPage = () => {
                                                                 })}
                                                             </Field>
                                                         </Grid>
-                                                        <Grid item xs={12} md={4}>
+                                                        <Grid item xs={12}>
                                                             <Typography>Client POC</Typography>
                                                             <Field
                                                                 name='pocId' label='' size='small'
@@ -434,6 +456,126 @@ const Assessment: NextPage = () => {
                                                             />
                                                         </Grid>
                                                     </Grid>
+                                                </div>
+                                            </Card>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <Card>
+                                                <div className='widget-header'>Assessors</div>
+                                                <div className='widget-body widget-form'>
+                                                    <Typography>Oversight Assessor</Typography>
+                                                    <Field
+                                                        name='oversightAssessorId' label='' size='small'
+                                                        component={Select}
+                                                    >
+                                                        <MenuItem value=''><em>Select a user...</em></MenuItem>
+                                                        {sites && sites.map((site: Site) => {
+                                                            return (
+                                                                <MenuItem value={site.id} key={site.id}>
+                                                                    {site.id} - {site.name}
+                                                                </MenuItem>
+                                                            )
+                                                        })}
+                                                    </Field>
+                                                    <Typography>Lead Assessor</Typography>
+                                                    <Field
+                                                        name='leadAssessorId' label='' size='small'
+                                                        component={Select}
+                                                    >
+                                                        <MenuItem value=''><em>Select a user...</em></MenuItem>
+                                                        {sites && sites.map((site: Site) => {
+                                                            return (
+                                                                <MenuItem value={site.id} key={site.id}>
+                                                                    {site.id} - {site.name}
+                                                                </MenuItem>
+                                                            )
+                                                        })}
+                                                    </Field>
+                                                    {/* {existingAssessors.map((o, i) => {
+                                                        return (
+                                                            <div key={i} className='input-row'>
+                                                                <MuiTextField
+                                                                    placeholder='Reference...' size='small'
+                                                                    value={o.citation}
+                                                                    onChange={(event) => handleAssessorChange(o.num, event.target.value, true)}
+                                                                />
+                                                                <IconButton
+                                                                    color='default'
+                                                                    onClick={() => {
+                                                                        const newDeleted = deletedAssessors;
+                                                                        newDeleted.push(o);
+                                                                        setDeletedAssessors(newDeleted);
+
+                                                                        let count = 0;
+                                                                        const newExisting: Site[] = []
+                                                                        existingAssessors.map(x => {
+                                                                            if (x.id != o.id) {
+                                                                                count++;
+                                                                                newExisting.push(x)
+                                                                            }
+                                                                        });
+                                                                        setExistingAssessors(newExisting);
+
+                                                                        const newNew: Site[] = []
+                                                                        newAssessors.map(x => {
+                                                                            count++;
+                                                                            newNew.push(x)
+                                                                        });
+                                                                        setNewAssessors(newNew);
+                                                                    }}
+                                                                ><Delete /></IconButton>
+                                                            </div>
+                                                        )
+                                                    })}
+                                                    {newAssessors.map((o, i) => {
+                                                        if (i == newAssessors.length - 1)
+                                                            return (
+                                                                <div key={i} className='input-row'>
+                                                                    <MuiTextField
+                                                                        placeholder='Reference...' size='small'
+                                                                        value={o.citation}
+                                                                        onChange={(event) => handleAssessorChange(o.num, event.target.value)}
+                                                                    />
+                                                                    <IconButton
+                                                                        onClick={() => {
+                                                                            const last = newAssessors[newAssessors.length - 1];
+                                                                            if (last) setNewAssessors([...newAssessors, { num: last.num + 1, citation: '' }])
+                                                                        }}
+                                                                    ><Add /></IconButton>
+                                                                </div>
+                                                            )
+                                                        return (
+                                                            <div key={i} className='input-row'>
+                                                                <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
+                                                                <MuiTextField
+                                                                    placeholder='Reference...' size='small'
+                                                                    value={o.citation}
+                                                                    onChange={(event) => handleAssessorChange(o.num, event.target.value)}
+                                                                />
+                                                                <IconButton
+                                                                    color='default'
+                                                                    onClick={() => {
+                                                                        if (newGuide[0]) {
+                                                                            let newIndex = (newGuide[0]?.num) - 1;
+                                                                            const removed: Site[] = [];
+                                                                            newAssessors.forEach(d => {
+                                                                                if (d.num != o.num) {
+                                                                                    newIndex++;
+                                                                                    removed.push({
+                                                                                        ...d,
+                                                                                        num: newIndex,
+                                                                                    })
+                                                                                }
+                                                                                return;
+
+                                                                            });
+                                                                            setNewAssessors(removed);
+                                                                        }
+                                                                    }}
+                                                                ><Delete /></IconButton>
+                                                            </div>
+                                                        )
+                                                    })} */}
                                                 </div>
                                             </Card>
                                         </Grid>
@@ -600,11 +742,6 @@ const Assessment: NextPage = () => {
                                                         </Button>
                                                     }
                                                 </div>
-                                            </Card>
-                                        </Grid>
-                                        <Grid item xs={12}>
-                                            <Card>
-                                                <div className='widget-header'>Assessors</div>
                                             </Card>
                                         </Grid>
                                     </Grid>
