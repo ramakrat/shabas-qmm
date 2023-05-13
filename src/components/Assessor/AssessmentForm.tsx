@@ -16,6 +16,7 @@ import ChangelogTable from '~/components/Common/ChangelogTable';
 import ConfirmModal from '../Common/ConfirmModal';
 import MessageModal from '../Common/MessageModal';
 import { priorityIndicator } from '~/pages/questions/[question]';
+import BrowseTable from '../Common/BrowseTable';
 
 type AssessmentType = (
     Assessment & {
@@ -37,14 +38,12 @@ interface FormValues {
     startTime?: Date;
     rating: string;
     rationale: string;
-    suggestion: string;
     notes: string;
 }
 
 const validationSchema = yup.object().shape({
     rating: yup.string().required("Required"),
     rationale: yup.string().required("Required"),
-    suggestion: yup.string(),
     notes: yup.string(),
 });
 
@@ -90,7 +89,6 @@ const OngoingAssessment: React.FC<Props> = (props) => {
     const ratings = api.rating.getByQuestionFilter.useQuery({ questionId: questionRef?.id, filterId: selectedAssessmentQuestion?.filter_id ?? undefined }).data;
     const guide = api.interviewGuide.getByQuestionId.useQuery({ id: questionRef?.id }).data;
     const references = api.reference.getByQuestionId.useQuery({ id: questionRef?.id }).data
-    const changelog = api.changelog.getAllByAssessmentQuestion.useQuery(selectedAssessmentQuestion?.id).data;
 
 
     // =========== Input Field States ===========
@@ -100,7 +98,6 @@ const OngoingAssessment: React.FC<Props> = (props) => {
     const [answer, setAnswer] = React.useState<FormValues>({
         rating: '',
         rationale: '',
-        suggestion: '',
         notes: '',
     });
 
@@ -131,67 +128,32 @@ const OngoingAssessment: React.FC<Props> = (props) => {
             })
         }
         if (selectedAssessmentQuestion && selectedAssessmentQuestion.answer) {
-            if (status == 'ongoing') {
-                setAnswer({
-                    id: selectedAssessmentQuestion.answer.id ?? '',
-                    startTime: selectedAssessmentQuestion.answer.start_time ?? undefined,
-                    rating: selectedAssessmentQuestion.answer.assessor_rating ?? '',
-                    rationale: selectedAssessmentQuestion.answer.assessor_rationale ?? '',
-                    suggestion: selectedAssessmentQuestion.answer.assessor_suggestion ?? '',
-                    notes: selectedAssessmentQuestion.answer.assessor_notes ?? '',
-                });
-            }
-            if (status == 'assessor-review')
-                setAnswer({
-                    id: selectedAssessmentQuestion.answer.id ?? '',
-                    startTime: selectedAssessmentQuestion.answer.start_time ?? undefined,
-                    rating: selectedAssessmentQuestion.answer.consensus_rating ?? '',
-                    rationale: selectedAssessmentQuestion.answer.consensus_rationale ?? '',
-                    suggestion: '',
-                    notes: selectedAssessmentQuestion.answer.consensus_notes ?? '',
-                });
-            if (status == 'oversight')
-                setAnswer({
-                    id: selectedAssessmentQuestion.answer.id ?? '',
-                    startTime: selectedAssessmentQuestion.answer.start_time ?? undefined,
-                    rating: selectedAssessmentQuestion.answer.oversight_concurrence ?? '',
-                    rationale: selectedAssessmentQuestion.answer.oversight_rationale ?? '',
-                    suggestion: '',
-                    notes: selectedAssessmentQuestion.answer.oversight_notes ?? '',
-                });
+            setAnswer({
+                id: selectedAssessmentQuestion.answer.id ?? '',
+                startTime: selectedAssessmentQuestion.answer.start_time ?? undefined,
+                rating: selectedAssessmentQuestion.answer.rating ?? '',
+                rationale: selectedAssessmentQuestion.answer.rationale ?? '',
+                notes: selectedAssessmentQuestion.answer.notes ?? '',
+            });
         } else {
             setAnswer({
                 ...answer,
                 rating: '',
                 rationale: '',
-                suggestion: '',
                 notes: '',
             });
         }
     }, [selectedAssessmentQuestion])
 
 
+    const changelog = api.changelog.getAllByAnswer.useQuery(answer?.id).data;
+
     // =========== Submission Management ===========
 
-    const initialValues = () => {
-        if (status == 'ongoing')
-            return {
-                assessor_rating: selectedAssessmentQuestion?.answer?.assessor_rating ?? '',
-                assessor_rationale: selectedAssessmentQuestion?.answer?.assessor_rationale ?? '',
-                assessor_notes: selectedAssessmentQuestion?.answer?.assessor_notes ?? '',
-            }
-        if (status == 'assessor-review')
-            return {
-                rating: selectedAssessmentQuestion?.answer?.consensus_rating ?? '',
-                rationale: selectedAssessmentQuestion?.answer?.consensus_rationale ?? '',
-                notes: selectedAssessmentQuestion?.answer?.consensus_notes ?? '',
-            }
-        if (status == 'oversight')
-            return {
-                rating: selectedAssessmentQuestion?.answer?.oversight_concurrence ?? '',
-                rationale: selectedAssessmentQuestion?.answer?.oversight_rationale ?? '',
-                notes: selectedAssessmentQuestion?.answer?.oversight_notes ?? '',
-            }
+    const initialValues = {
+        rating: selectedAssessmentQuestion?.answer?.rating ?? '',
+        rationale: selectedAssessmentQuestion?.answer?.rationale ?? '',
+        notes: selectedAssessmentQuestion?.answer?.notes ?? '',
     }
     const createChangelog = api.changelog.create.useMutation();
     const compareChanges = (changed: any, former: any) => {
@@ -220,43 +182,17 @@ const OngoingAssessment: React.FC<Props> = (props) => {
     ) => {
         if (selectedAssessmentQuestion) {
             if (values.id && values.startTime) {
-                if (status == 'ongoing')
-                    update.mutate({
-                        id: values.id,
-                        assessment_question_id: selectedAssessmentQuestion.id,
-                        assessor_rating: values.rating.toString(),
-                        assessor_rationale: values.rationale,
-                        assessor_suggestion: values.suggestion,
-                        assessor_notes: values.notes,
-                    }, {
-                        onSuccess(data) {
-                            compareChanges(data, initialValues);
-                        }
-                    })
-                if (status == 'assessor-review')
-                    update.mutate({
-                        id: values.id,
-                        assessment_question_id: selectedAssessmentQuestion.id,
-                        consensus_rating: values.rating.toString(),
-                        consensus_rationale: values.rationale,
-                        consensus_notes: values.notes,
-                    }, {
-                        onSuccess(data) {
-                            compareChanges(data, initialValues);
-                        }
-                    })
-                if (status == 'oversight')
-                    update.mutate({
-                        id: values.id,
-                        assessment_question_id: selectedAssessmentQuestion.id,
-                        oversight_concurrence: values.rating.toString(),
-                        oversight_rationale: values.rationale,
-                        oversight_notes: values.notes,
-                    }, {
-                        onSuccess(data) {
-                            compareChanges(data, initialValues);
-                        }
-                    })
+                update.mutate({
+                    id: values.id,
+                    assessment_question_id: selectedAssessmentQuestion.id,
+                    rating: values.rating.toString(),
+                    rationale: values.rationale,
+                    notes: values.notes,
+                }, {
+                    onSuccess(data) {
+                        compareChanges(data, initialValues);
+                    }
+                })
             }
         }
     }
@@ -363,7 +299,9 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                                                 </div>
                                                 <div className='widget-sub-header'>
                                                     <div className='rating-input'>
-                                                        <Typography>{status == 'assessor-review' && 'Consensus '}Rating:</Typography>
+                                                        {status == 'ongoing' && <Typography>Rating:</Typography>}
+                                                        {status == 'assessor-review' && <Typography>Consensus Rating:</Typography>}
+                                                        {status == 'oversight' && <Typography>Oversight Rating:</Typography>}
                                                         <Field
                                                             name='rating' label='' size='small'
                                                             component={Select}
@@ -405,21 +343,17 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                                                 }
                                                 <div className='widget-header'>Details</div>
                                                 <div className='widget-body widget-form'>
-                                                    <Typography>Rationale</Typography>
-                                                    <Field
-                                                        name='rationale' label='' size='small' multiline={3}
-                                                        placeholder='Rationale...'
-                                                        component={TextField}
-                                                    />
-                                                    {status == 'ongoing' && <>
-                                                        <Typography>Improvement Suggestion</Typography>
+                                                    {status == 'ongoing' || status == 'assessor-review' && <>
+                                                        <Typography>Rationale</Typography>
                                                         <Field
-                                                            name='suggestion' label='' size='small' multiline={3}
-                                                            placeholder='Improvement Suggestion...'
+                                                            name='rationale' label='' size='small' multiline={3}
+                                                            placeholder='Rationale...'
                                                             component={TextField}
                                                         />
                                                     </>}
-                                                    <Typography>Notes</Typography>
+                                                    {status == 'ongoing' && <Typography>Notes</Typography>}
+                                                    {status == 'assessor-review' && <Typography>Improvement Suggestions</Typography>}
+                                                    {status == 'oversight' && <Typography>Oversight Comments</Typography>}
                                                     <Field
                                                         name='notes' label='' size='small' multiline={3}
                                                         placeholder='Notes...'
@@ -449,34 +383,44 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                                                         <Typography>{questionRef ? priorityIndicator(convertToQuestion(questionRef).priority) : undefined}</Typography>
                                                     </div>
                                                 </div>
-                                                <div className='widget-header'>Interview Guide</div>
-                                                <div className='widget-body information-list'>
-                                                    {guide && guide.length > 0 ?
-                                                        guide.map((r, i) => {
-                                                            return (
-                                                                <div key={i}>
-                                                                    <Typography>{i + 1}.</Typography>
-                                                                    <Typography>{r.interview_question}</Typography>
-                                                                </div>
-                                                            )
-                                                        }) :
-                                                        'None'
-                                                    }
-                                                </div>
-                                                <div className='widget-header'>References</div>
-                                                <div className='widget-body information-list'>
-                                                    {references && references.length > 0 ?
-                                                        references?.map((r, i) => {
-                                                            return (
-                                                                <div key={i}>
-                                                                    <Typography>{i + 1}.</Typography>
-                                                                    <Typography>{r.citation}</Typography>
-                                                                </div>
-                                                            )
-                                                        }) :
-                                                        'None'
-                                                    }
-                                                </div>
+                                                {status == 'ongoing' && <>
+                                                    <div className='widget-header'>Interview Guide</div>
+                                                    <div className='widget-body information-list'>
+                                                        {guide && guide.length > 0 ?
+                                                            guide.map((r, i) => {
+                                                                return (
+                                                                    <div key={i}>
+                                                                        <Typography>{i + 1}.</Typography>
+                                                                        <Typography>{r.interview_question}</Typography>
+                                                                    </div>
+                                                                )
+                                                            }) :
+                                                            'None'
+                                                        }
+                                                    </div>
+                                                    <div className='widget-header'>References</div>
+                                                    <div className='widget-body information-list'>
+                                                        {references && references.length > 0 ?
+                                                            references?.map((r, i) => {
+                                                                return (
+                                                                    <div key={i}>
+                                                                        <Typography>{i + 1}.</Typography>
+                                                                        <Typography>{r.citation}</Typography>
+                                                                    </div>
+                                                                )
+                                                            }) :
+                                                            'None'
+                                                        }
+                                                    </div>
+                                                </>}
+                                                {status == 'assessor-review' && <>
+                                                    <div className='widget-header'>Assessor Answers</div>
+                                                    <ChangelogTable changelogs={changelog} fileName={`Assessment${data?.id} Question${selectedAssessmentQuestion.id}`} />
+                                                    {/* <BrowseTable
+                                                        dataList={convertTableData(changelogs) ?? []}
+                                                        tableInfoColumns={columns}
+                                                    /> */}
+                                                </>}
                                             </Card>
                                         </Grid>
                                         <Grid item xs={12}>
@@ -497,7 +441,7 @@ const OngoingAssessment: React.FC<Props> = (props) => {
             </Formik>
             <ConfirmModal message={`Are you sure you want to submit ongoing assessment ${assessment}?`} open={confirmSubmitModal} setOpen={setConfirmSubmitModal} handleConfirm={handleSubmitAssesment} />
             <MessageModal message={`Assessment ${assessment} cannot be submitted because there are unfinished question forms.`} open={messageModal} setOpen={setMessageModal} />
-        </div>
+        </div >
     );
 };
 
