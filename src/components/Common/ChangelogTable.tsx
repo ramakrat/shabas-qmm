@@ -71,7 +71,7 @@ const ChangelogTable: React.FC<Props> = (props) => {
     }
 
     return (
-        <div className='changelog'>
+        <div className='widget-table'>
             <BrowseTable
                 dataList={convertTableData(changelogs) ?? []}
                 tableInfoColumns={columns}

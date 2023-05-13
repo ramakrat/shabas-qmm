@@ -16,7 +16,7 @@ import ChangelogTable from '~/components/Common/ChangelogTable';
 import ConfirmModal from '../Common/ConfirmModal';
 import MessageModal from '../Common/MessageModal';
 import { priorityIndicator } from '~/pages/questions/[question]';
-import BrowseTable from '../Common/BrowseTable';
+import BrowseTable, { TableColumn } from '../Common/BrowseTable';
 
 type AssessmentType = (
     Assessment & {
@@ -147,6 +147,36 @@ const OngoingAssessment: React.FC<Props> = (props) => {
 
 
     const changelog = api.changelog.getAllByAnswer.useQuery(answer?.id).data;
+
+    interface TableData {
+        userId: string;
+        rating: string;
+        rationale: string;
+    }
+
+    const columns: TableColumn[] = [{
+        type: 'userId',
+        displayValue: 'Assessor',
+    }, {
+        type: 'rating',
+        displayValue: 'Rating',
+    }, {
+        type: 'rationale',
+        displayValue: 'Rationale',
+    }];
+    const convertTableData = (data?: any[]) => {
+        if (data) {
+            const newData: TableData[] = [];
+            data.forEach(obj => {
+                newData.push({
+                    userId: obj.userId,
+                    rating: obj.rating ?? '',
+                    rationale: obj.rationale ?? '',
+                })
+            })
+            return newData;
+        }
+    }
 
     // =========== Submission Management ===========
 
@@ -415,11 +445,12 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                                                 </>}
                                                 {status == 'assessor-review' && <>
                                                     <div className='widget-header'>Assessor Answers</div>
-                                                    <ChangelogTable changelogs={changelog} fileName={`Assessment${data?.id} Question${selectedAssessmentQuestion.id}`} />
-                                                    {/* <BrowseTable
-                                                        dataList={convertTableData(changelogs) ?? []}
-                                                        tableInfoColumns={columns}
-                                                    /> */}
+                                                    <div className='widget-table'>
+                                                        <BrowseTable
+                                                            dataList={convertTableData([]) ?? []}
+                                                            tableInfoColumns={columns}
+                                                        />
+                                                    </div>
                                                 </>}
                                             </Card>
                                         </Grid>
