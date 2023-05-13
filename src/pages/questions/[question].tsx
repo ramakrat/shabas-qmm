@@ -1176,8 +1176,8 @@ const Question: NextPage = () => {
                                                                 <IconButton
                                                                     color='default'
                                                                     onClick={() => {
-                                                                        if (newGuide[0]) {
-                                                                            let newIndex = (newGuide[0]?.num) - 1;
+                                                                        if (newReferences[0]) {
+                                                                            let newIndex = (newReferences[0]?.num) - 1;
                                                                             const removed: ReferenceType[] = [];
                                                                             newReferences.forEach(d => {
                                                                                 if (d.num != o.num) {
