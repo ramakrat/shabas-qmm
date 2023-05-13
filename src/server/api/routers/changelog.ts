@@ -9,7 +9,7 @@ const inputType = z.object({
     former_value: z.string().optional(),
     new_value: z.string().optional(),
     question_id: z.number().optional(),
-    assessment_question_id: z.number().optional(),
+    answer_id: z.number().optional(),
 })
 
 export const changelogRouter = createTRPCRouter({
@@ -22,7 +22,7 @@ export const changelogRouter = createTRPCRouter({
                     former_value: input.former_value,
                     new_value: input.new_value,
                     question_id: input.question_id,
-                    assessment_question_id: input.assessment_question_id,
+                    answer_id: input.answer_id,
                     updated_at: new Date(),
                     updated_by: '',
                 }
@@ -38,7 +38,7 @@ export const changelogRouter = createTRPCRouter({
                     former_value: input.former_value,
                     new_value: input.new_value,
                     question_id: input.question_id,
-                    assessment_question_id: input.assessment_question_id,
+                    answer_id: input.answer_id,
                     updated_at: new Date(),
                     updated_by: '',
                 }
@@ -52,11 +52,11 @@ export const changelogRouter = createTRPCRouter({
             });
         }),
     getAllByQuestion: publicProcedure
-        .input(z.number().optional())
+        .input(z.object({ questionId: z.number().optional(), refetch: z.number().optional() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.changelog.findMany({
                 orderBy: { updated_at: 'asc' },
-                where: { question_id: input }
+                where: { question_id: input.questionId }
             });
         }),
     getAllByAssessment: publicProcedure
@@ -65,18 +65,20 @@ export const changelogRouter = createTRPCRouter({
             return ctx.prisma.changelog.findMany({
                 orderBy: { updated_at: 'asc' },
                 where: {
-                    assessment_question: {
-                        assessment_id: input
+                    answer: {
+                        assessment_question: {
+                            assessment_id: input
+                        }
                     }
                 }
             });
         }),
-    getAllByAssessmentQuestion: publicProcedure
+    getAllByAnswer: publicProcedure
         .input(z.number().optional())
         .query(({ input, ctx }) => {
             return ctx.prisma.changelog.findMany({
                 orderBy: { updated_at: 'asc' },
-                where: { assessment_question_id: input }
+                where: { answer_id: input }
             });
         }),
     getAll: publicProcedure

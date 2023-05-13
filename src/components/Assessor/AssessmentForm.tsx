@@ -166,7 +166,7 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                             field: prop,
                             former_value: former[prop].toString(),
                             new_value: changed[prop].toString(),
-                            assessment_question_id: Number(selectedAssessmentQuestion?.id),
+                            answer_id: Number(answer?.id),
                         })
                     }
                 }
