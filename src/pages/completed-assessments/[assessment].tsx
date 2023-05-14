@@ -59,7 +59,6 @@ const CompletedAssessment: NextPage = () => {
     const ratings = api.rating.getByQuestionFilter.useQuery({ questionId: questionRef?.id, filterId: selectedAssessmentQuestion?.filter_id ?? undefined }).data;
     const guide = api.interviewGuide.getByQuestionId.useQuery({ id: questionRef?.id }).data;
     const references = api.reference.getByQuestionId.useQuery({ id: questionRef?.id }).data
-    const changelog = api.changelog.getAllByAssessmentQuestion.useQuery(selectedAssessmentQuestion?.id).data;
     const fullChangelog = api.changelog.getAllByAssessment.useQuery(data?.id).data;
 
 
@@ -84,14 +83,13 @@ const CompletedAssessment: NextPage = () => {
                         'Practice Area': q.question.practice_area,
                         'Topic': q.question.topic_area,
                         'Question': q.question.question,
-                        'Rating': q.answer?.assessor_rating,
-                        'Rationale': q.answer?.assessor_rationale,
-                        'Improvement Suggestion': q.answer?.assessor_suggestion,
-                        'Notes': q.answer?.assessor_notes,
+                        'Rating': q.answer?.rating,
+                        'Rationale': q.answer?.rationale,
+                        'Notes': q.answer?.notes,
                     })
                     dashboardObjects.push({
                         topic: q.question.topic_area,
-                        rating: q.answer?.assessor_rating,
+                        rating: q.answer?.rating,
                     })
                 })
             })
@@ -135,8 +133,8 @@ const CompletedAssessment: NextPage = () => {
             XLSX.writeFile(book, filename, { bookType: 'xlsx' });
         }
     }
-
-    if (data?.status != 'completed') {
+    console.log(questions)
+    if (data && data.status != 'completed') {
         return (
             <Layout active='completed-assessments' admin>
                 <div className='not-found'>
@@ -250,19 +248,10 @@ const CompletedAssessment: NextPage = () => {
                                             </div>
                                         </Card>
                                     </Grid>
-                                    <Grid item xs={12}>
-                                        <Card>
-                                            <div className='widget-header'>Changelog</div>
-                                            {changelog && changelog.length > 0 ?
-                                                <ChangelogTable changelogs={changelog} fileName={`Assessment${data?.id} Question${selectedAssessmentQuestion.id}`} /> :
-                                                <div className='widget-body'>No Changes</div>
-                                            }
-                                        </Card>
-                                    </Grid>
                                 </>
                             }
                             {question == -1 &&
-                                <Grid item xs={10}>
+                                <Grid item xs={12}>
                                     <Card>
                                         <div className='widget-header'>Changelog</div>
                                         {fullChangelog && fullChangelog.length > 0 ?

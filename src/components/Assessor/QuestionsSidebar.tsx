@@ -35,32 +35,30 @@ const QuestionsSidebar: React.FC<Props> = (props) => {
     return (
         <>
             <Card className='questions-sidebar'>
-                {questions.find((o: Question) => o.id == question) &&
-                    <div className='question-steppers'>
-                        <div className='stepper'>
-                            <IconButton
-                                disabled={questions[0] ? (question == questions[0].id) : false}
-                                onClick={() => {
-                                    if (resetForm) resetForm();
-                                    setQuestion(question - 1);
-                                }}
-                            >
-                                <West />
-                            </IconButton>
-                        </div>
-                        <div className='stepper'>
-                            <IconButton
-                                disabled={questions[questions.length - 1] ? (question == (questions[questions.length - 1] as Question).id) : false}
-                                onClick={() => {
-                                    if (resetForm) resetForm();
-                                    setQuestion(question + 1);
-                                }}
-                            >
-                                <East />
-                            </IconButton>
-                        </div>
+                <div className='question-steppers'>
+                    <div className='stepper'>
+                        <IconButton
+                            disabled={questions[0] ? (question == questions[0].id) : false}
+                            onClick={() => {
+                                if (resetForm) resetForm();
+                                setQuestion(question - 1);
+                            }}
+                        >
+                            <West />
+                        </IconButton>
                     </div>
-                }
+                    <div className='stepper'>
+                        <IconButton
+                            disabled={questions[questions.length - 1] ? (question == (questions[questions.length - 1] as Question).id) : false}
+                            onClick={() => {
+                                if (resetForm) resetForm();
+                                setQuestion(question + 1);
+                            }}
+                        >
+                            <East />
+                        </IconButton>
+                    </div>
+                </div>
                 <div className='assessment-id'>
                     Assessment {assessmentId}
                 </div>
