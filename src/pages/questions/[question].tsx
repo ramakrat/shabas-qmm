@@ -322,6 +322,15 @@ const Question: NextPage = () => {
                     }
                 }
             }
+        } else {
+            for (let i = 1; i <= 5; i++) {
+                newQuestionData = {
+                    ...newQuestionData,
+                    ['level' + i.toString()]: undefined,
+                    ['criteria' + i.toString()]: '',
+                    ['progression' + i.toString()]: '',
+                }
+            }
         }
         if (SME) {
             newQuestionData = {
