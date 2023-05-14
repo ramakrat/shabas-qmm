@@ -17,7 +17,8 @@ interface TableData {
     pillar: React.ReactNode;
     practiceArea: string;
     topicArea: string;
-    active: string;
+    active: React.ReactNode;
+    // inUse: string;
     onClick: any;
 }
 
@@ -44,7 +45,12 @@ const columns: TableColumn[] = [{
 }, {
     type: 'active',
     displayValue: 'Active',
+    format: 'jsx-element',
     align: 'left',
+// }, {
+//     type: 'inUse',
+//     displayValue: 'In Use',
+//     align: 'left',
 }];
 
 const Question: NextPage = () => {
@@ -61,13 +67,20 @@ const Question: NextPage = () => {
         if (data) {
             const newData: TableData[] = [];
             data.forEach(obj => {
+                const activeSignature = (
+                    <div className='question-status'>
+                        <div className={'active-signature ' + (obj.active ? 'active' : '')} />
+                        {obj.active ? 'Active' : 'Inactive'}
+                    </div>
+                )
                 newData.push({
                     number: obj.number,
                     question: obj.question,
                     pillar: obj.pillar,
                     practiceArea: obj.practice_area,
                     topicArea: obj.topic_area,
-                    active: obj.active ? 'True' : 'False',
+                    active: activeSignature,
+                    // inUse: 'True',
                     onClick: () => { void push(`/questions/${obj.id}`) },
                 })
             })

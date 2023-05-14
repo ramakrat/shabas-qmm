@@ -49,14 +49,7 @@
         }
 
         .question-status {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
             padding-left: 15px;
-
-            .active-signature {
-                margin-right: 8px;
-            }
         }
 
         .MuiButton-root {
@@ -329,5 +322,15 @@
     .MuiSvgIcon-root {
         margin-right: 4px;
         font-size: 1.2rem;
+    }
+}
+
+.question-status {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .active-signature {
+        margin-right: 8px;
     }
 }
