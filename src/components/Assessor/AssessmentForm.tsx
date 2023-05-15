@@ -37,13 +37,18 @@ interface FormValues {
     id?: number;
     startTime?: Date;
     rating: string;
-    rationale: string;
+    rationale?: string;
     notes: string;
 }
 
 const validationSchema = yup.object().shape({
     rating: yup.string().required("Required"),
     rationale: yup.string().required("Required"),
+    notes: yup.string(),
+});
+
+const validationSchemaOversight = yup.object().shape({
+    rating: yup.string().required("Required"),
     notes: yup.string(),
 });
 
@@ -187,18 +192,16 @@ const OngoingAssessment: React.FC<Props> = (props) => {
     }
     const createChangelog = api.changelog.create.useMutation();
     const compareChanges = (changed: any, former: any) => {
-        for (const prop in changed) {
+        for (const prop in former) {
             if (prop == 'created_at' || prop == 'updated_at') return;
             if (Object.prototype.hasOwnProperty.call(changed, prop)) {
-                if (Object.prototype.hasOwnProperty.call(former, prop)) {
-                    if (changed[prop] != former[prop]) {
-                        createChangelog.mutate({
-                            field: prop,
-                            former_value: former[prop].toString(),
-                            new_value: changed[prop].toString(),
-                            answer_id: Number(answer?.id),
-                        })
-                    }
+                if (changed[prop] != former[prop]) {
+                    createChangelog.mutate({
+                        field: prop,
+                        former_value: former[prop].toString(),
+                        new_value: changed[prop].toString(),
+                        answer_id: Number(answer?.id),
+                    })
                 }
             }
         }
@@ -207,9 +210,7 @@ const OngoingAssessment: React.FC<Props> = (props) => {
     const update = api.answer.update.useMutation();
     const statusChange = api.assessment.updateStatus.useMutation();
 
-    const handleSubmit = (
-        values: FormValues,
-    ) => {
+    const handleSubmit = (values: FormValues) => {
         if (selectedAssessmentQuestion) {
             if (values.id && values.startTime) {
                 update.mutate({
@@ -260,7 +261,6 @@ const OngoingAssessment: React.FC<Props> = (props) => {
         }
     }
     const checkCompletion = api.assessmentQuestion.getUnfinishedAssessmentQuestions.useQuery({ assessmentId: assessment, status: status }).data;
-
     const handleSubmitAssessmentCheck = () => {
         if (checkCompletion && checkCompletion.length > 0) {
             setMessageModal(true);
@@ -282,7 +282,7 @@ const OngoingAssessment: React.FC<Props> = (props) => {
             <Formik
                 enableReinitialize
                 initialValues={answer}
-                validationSchema={validationSchema}
+                validationSchema={status == 'oversight' ? validationSchemaOversight : validationSchema}
                 validateOnBlur={false}
                 validateOnChange={false}
                 onSubmit={handleSubmit}
@@ -376,7 +376,7 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                                                     {status == 'ongoing' || status == 'assessor-review' && <>
                                                         <Typography>Rationale</Typography>
                                                         <Field
-                                                            name='rationale' label='' size='small' multiline={3}
+                                                            name='rationale' label='' size='small' multiline
                                                             placeholder='Rationale...'
                                                             component={TextField}
                                                         />
@@ -385,7 +385,7 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                                                     {status == 'assessor-review' && <Typography>Improvement Suggestions</Typography>}
                                                     {status == 'oversight' && <Typography>Oversight Comments</Typography>}
                                                     <Field
-                                                        name='notes' label='' size='small' multiline={3}
+                                                        name='notes' label='' size='small' multiline
                                                         placeholder='Notes...'
                                                         component={TextField}
                                                     />
@@ -410,7 +410,7 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                                                     </div>
                                                     <div>
                                                         <Typography>Priority:</Typography>
-                                                        <Typography>{questionRef ? priorityIndicator(convertToQuestion(questionRef).priority) : undefined}</Typography>
+                                                        <div>{questionRef ? priorityIndicator(convertToQuestion(questionRef).priority) : undefined}</div>
                                                     </div>
                                                 </div>
                                                 {status == 'ongoing' && <>
