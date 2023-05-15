@@ -98,23 +98,15 @@ export const assessmentQuestionRouter = createTRPCRouter({
     getUnfinishedAssessmentQuestions: publicProcedure
         .input(z.object({ assessmentId: z.number(), status: z.string() }))
         .query(({ input, ctx }) => {
-            let nullFields: any = [];
-            if (input.status == 'ongoing') {
-                nullFields = [
-                    { assessor_rating: null },
-                    { assessor_rationale: null }
-                ]
-            }
-            if (input.status == 'assessor-review') {
-                nullFields = [
-                    { consensus_rating: null },
-                    { consensus_rationale: null }
-                ]
-            }
+            let nullFields: any = [
+                { start_time: null },
+                { rating: null },
+                { rationale: null }
+            ];
             if (input.status == 'oversight') {
                 nullFields = [
-                    { oversight_concurrence: null },
-                    { oversight_rationale: null }
+                    { start_time: null },
+                    { rating: null },
                 ]
             }
             return ctx.prisma.assessmentQuestion.findMany({
@@ -122,7 +114,7 @@ export const assessmentQuestionRouter = createTRPCRouter({
                     assessment_id: input.assessmentId,
                     OR: [{
                         answer: {
-                            OR: nullFields,
+                            OR: nullFields
                         }
                     }, {
                         answer: null
