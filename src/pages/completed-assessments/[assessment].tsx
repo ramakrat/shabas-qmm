@@ -133,7 +133,7 @@ const CompletedAssessment: NextPage = () => {
             XLSX.writeFile(book, filename, { bookType: 'xlsx' });
         }
     }
-    console.log(questions)
+    
     if (data && data.status != 'completed') {
         return (
             <Layout active='completed-assessments' admin>
