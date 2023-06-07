@@ -7,7 +7,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
 
 import { api } from "~/utils/api";
-import theme from '../styles/_Theme.module.scss';
+import theme from '../styles/global/_Theme.module.scss';
 import '../styles/Index.scss';
 
 
