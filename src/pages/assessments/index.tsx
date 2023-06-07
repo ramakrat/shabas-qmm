@@ -11,6 +11,8 @@ import AssessmentModal from "~/components/Administrator/MainModals/AssessmentMod
 import EngagementModal from "~/components/Administrator/MainModals/EngagementModal";
 import BrowseTable, { TableColumn } from "~/components/Common/BrowseTable";
 import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
+import AccessDenied from "~/components/Common/AccessDenied";
 
 interface EngagementTableData {
     id: number;
@@ -126,8 +128,9 @@ type EngagementAssessmentType = (
 
 const BrowseAssessments: NextPage = () => {
 
-    const router = useRouter();
+    const { data: session } = useSession();
 
+    const router = useRouter();
 
     // ================== Create Management ==================
 
@@ -156,139 +159,145 @@ const BrowseAssessments: NextPage = () => {
         return filters;
     }
 
+    if (session?.user && session.user.role == 'ADMIN') {
 
-    // ================== Table Management ==================
+        // ================== Table Management ==================
 
-    // TODO: Don't run query unless modal closed
-    const { data } = api.engagement.getAllInclude.useQuery({
-        filters: filterObject(),
-        states: engagementModal,
-        includeEmptyEngagements: true,
-    });
-    const assessmentStatusCounts = api.assessment.getStatusCounts.useQuery().data;
+        // TODO: Don't run query unless modal closed
+        const { data } = api.engagement.getAllInclude.useQuery({
+            filters: filterObject(),
+            states: engagementModal,
+            includeEmptyEngagements: true,
+        });
+        const assessmentStatusCounts = api.assessment.getStatusCounts.useQuery().data;
 
-    const convertTableData = (engagements?: EngagementAssessmentType[]) => {
-        if (engagements) {
-            const newData: EngagementTableData[] = [];
+        const convertTableData = (engagements?: EngagementAssessmentType[]) => {
+            if (engagements) {
+                const newData: EngagementTableData[] = [];
 
-            engagements.forEach(engagement => {
+                engagements.forEach(engagement => {
 
-                const convertAssessmentTableData = (assessments?: (Assessment & { poc: Poc | null; })[]) => {
-                    if (assessments) {
-                        const newAssessmentData: AssessmentTableData[] = [];
+                    const convertAssessmentTableData = (assessments?: (Assessment & { poc: Poc | null; })[]) => {
+                        if (assessments) {
+                            const newAssessmentData: AssessmentTableData[] = [];
 
-                        assessments.forEach(assessment => {
-                            const actions = assessment.status == 'created' ? (
-                                <IconButton onClick={() => { router.push(`/assessments/${assessment.id}`) }}>
-                                    <Edit fontSize='small' />
-                                </IconButton>
-                            ) : (
-                                <IconButton onClick={() => { router.push(`/assessments/${assessment.id}`) }}>
-                                    <Visibility fontSize='small' />
-                                </IconButton>
-                            )
+                            assessments.forEach(assessment => {
+                                const actions = assessment.status == 'created' ? (
+                                    <IconButton onClick={() => { router.push(`/assessments/${assessment.id}`) }}>
+                                        <Edit fontSize='small' />
+                                    </IconButton>
+                                ) : (
+                                    <IconButton onClick={() => { router.push(`/assessments/${assessment.id}`) }}>
+                                        <Visibility fontSize='small' />
+                                    </IconButton>
+                                )
 
-                            newAssessmentData.push({
-                                id: assessment.id,
-                                site: assessment.site_id.toString(),
-                                startDate: assessment.start_date,
-                                endDate: assessment.end_date,
-                                clientPoc: assessment.poc ? `${assessment.poc.first_name} ${assessment.poc.last_name}` : '',
-                                assessors: '',
-                                status: assessment.status,
-                                actions: actions,
+                                newAssessmentData.push({
+                                    id: assessment.id,
+                                    site: assessment.site_id.toString(),
+                                    startDate: assessment.start_date,
+                                    endDate: assessment.end_date,
+                                    clientPoc: assessment.poc ? `${assessment.poc.first_name} ${assessment.poc.last_name}` : '',
+                                    assessors: '',
+                                    status: assessment.status,
+                                    actions: actions,
+                                })
                             })
-                        })
 
-                        return newAssessmentData;
+                            return newAssessmentData;
+                        }
                     }
-                }
 
-                const existingClientPoc = engagement.engagement_pocs.find(o => o.poc.client_id);
-                const existingShabasPoc = engagement.engagement_pocs.find(o => !o.poc.client_id);
-                const actions = (
-                    <IconButton onClick={() => { setEngagementData(engagement); setEngagementModal(true) }}>
-                        <Edit fontSize='small' />
-                    </IconButton>
-                )
+                    const existingClientPoc = engagement.engagement_pocs.find(o => o.poc.client_id);
+                    const existingShabasPoc = engagement.engagement_pocs.find(o => !o.poc.client_id);
+                    const actions = (
+                        <IconButton onClick={() => { setEngagementData(engagement); setEngagementModal(true) }}>
+                            <Edit fontSize='small' />
+                        </IconButton>
+                    )
 
-                newData.push({
-                    id: engagement.id,
-                    client: `${engagement.client_id} - ${engagement.client.name}`,
-                    startDate: engagement.start_date,
-                    endDate: engagement.end_date,
-                    clientPoc: existingClientPoc ? `${existingClientPoc.poc.first_name} ${existingClientPoc.poc.last_name}` : '',
-                    shabasPoc: existingShabasPoc ? `${existingShabasPoc.poc.first_name} ${existingShabasPoc.poc.last_name}` : '',
-                    status: engagement.status,
-                    actions: actions,
-                    child: engagement.assessments.length > 0 && <BrowseTable
-                        dataList={convertAssessmentTableData(engagement.assessments) ?? []}
-                        tableInfoColumns={assessmentColumns}
-                    />
+                    newData.push({
+                        id: engagement.id,
+                        client: `${engagement.client_id} - ${engagement.client.name}`,
+                        startDate: engagement.start_date,
+                        endDate: engagement.end_date,
+                        clientPoc: existingClientPoc ? `${existingClientPoc.poc.first_name} ${existingClientPoc.poc.last_name}` : '',
+                        shabasPoc: existingShabasPoc ? `${existingShabasPoc.poc.first_name} ${existingShabasPoc.poc.last_name}` : '',
+                        status: engagement.status,
+                        actions: actions,
+                        child: engagement.assessments.length > 0 && <BrowseTable
+                            dataList={convertAssessmentTableData(engagement.assessments) ?? []}
+                            tableInfoColumns={assessmentColumns}
+                        />
+                    })
                 })
-            })
-            return newData;
+                return newData;
+            }
         }
-    }
 
-    return (
-        <Layout active='assessments' admin>
-            <div className='dashboard'>
-                <div className='browse-actions'>
-                    {assessmentStatusCounts &&
-                        <Card className='assessments-filters'>
-                            <div className={'assessments-filter created ' + (createdFilter ? 'active' : '')} onClick={() => setCreatedFilter(!createdFilter)}>
-                                <span className='label'>Created</span>
-                                <span className='count'>{assessmentStatusCounts.created}</span>
-                            </div>
-                            <div className={'assessments-filter ongoing ' + (ongoingFilter ? 'active' : '')} onClick={() => setOngoingFilter(!ongoingFilter)}>
-                                <span className='label'>Ongoing</span>
-                                <span className='count'>{assessmentStatusCounts.ongoing}</span>
-                            </div>
-                            <div className={'assessments-filter assessor-review ' + (assessorReviewFilter ? 'active' : '')} onClick={() => setAssessorReviewFilter(!assessorReviewFilter)}>
-                                <span className='label'>Assessor Review</span>
-                                <span className='count'>{assessmentStatusCounts.assessorReview}</span>
-                            </div>
-                            <div className={'assessments-filter oversight ' + (oversightFilter ? 'active' : '')} onClick={() => setOversightFilter(!oversightFilter)}>
-                                <span className='label'>Oversight</span>
-                                <span className='count'>{assessmentStatusCounts.oversight}</span>
-                            </div>
-                            <div className={'assessments-filter client-review ' + (clientReviewFilter ? 'active' : '')} onClick={() => setClientReviewFilter(!clientReviewFilter)}>
-                                <span className='label'>Client Review</span>
-                                <span className='count'>{assessmentStatusCounts.clientReview}</span>
-                            </div>
-                            <div className={'assessments-filter completed ' + (completedFilter ? 'active' : '')} onClick={() => setCompletedFilter(!completedFilter)}>
-                                <span className='label'>Completed</span>
-                                <span className='count'>{assessmentStatusCounts.completed}</span>
-                            </div>
-                        </Card>
-                    }
-                    <div className='browse-add'>
-                        <Button
-                            variant='contained'
-                            endIcon={<Add />}
-                            onClick={() => { setEngagementData(undefined); setEngagementModal(true) }}
-                        >
-                            New Engagement
-                        </Button>
-                        <Button
-                            variant='contained'
-                            endIcon={<Add />}
-                            onClick={() => router.push('/assessments/new')}
-                        >
-                            New Assessment
-                        </Button>
+        return (
+            <Layout active='assessments' admin>
+                <div className='dashboard'>
+                    <div className='browse-actions'>
+                        {assessmentStatusCounts &&
+                            <Card className='assessments-filters'>
+                                <div className={'assessments-filter created ' + (createdFilter ? 'active' : '')} onClick={() => setCreatedFilter(!createdFilter)}>
+                                    <span className='label'>Created</span>
+                                    <span className='count'>{assessmentStatusCounts.created}</span>
+                                </div>
+                                <div className={'assessments-filter ongoing ' + (ongoingFilter ? 'active' : '')} onClick={() => setOngoingFilter(!ongoingFilter)}>
+                                    <span className='label'>Ongoing</span>
+                                    <span className='count'>{assessmentStatusCounts.ongoing}</span>
+                                </div>
+                                <div className={'assessments-filter assessor-review ' + (assessorReviewFilter ? 'active' : '')} onClick={() => setAssessorReviewFilter(!assessorReviewFilter)}>
+                                    <span className='label'>Assessor Review</span>
+                                    <span className='count'>{assessmentStatusCounts.assessorReview}</span>
+                                </div>
+                                <div className={'assessments-filter oversight ' + (oversightFilter ? 'active' : '')} onClick={() => setOversightFilter(!oversightFilter)}>
+                                    <span className='label'>Oversight</span>
+                                    <span className='count'>{assessmentStatusCounts.oversight}</span>
+                                </div>
+                                <div className={'assessments-filter client-review ' + (clientReviewFilter ? 'active' : '')} onClick={() => setClientReviewFilter(!clientReviewFilter)}>
+                                    <span className='label'>Client Review</span>
+                                    <span className='count'>{assessmentStatusCounts.clientReview}</span>
+                                </div>
+                                <div className={'assessments-filter completed ' + (completedFilter ? 'active' : '')} onClick={() => setCompletedFilter(!completedFilter)}>
+                                    <span className='label'>Completed</span>
+                                    <span className='count'>{assessmentStatusCounts.completed}</span>
+                                </div>
+                            </Card>
+                        }
+                        <div className='browse-add'>
+                            <Button
+                                variant='contained'
+                                endIcon={<Add />}
+                                onClick={() => { setEngagementData(undefined); setEngagementModal(true) }}
+                            >
+                                New Engagement
+                            </Button>
+                            <Button
+                                variant='contained'
+                                endIcon={<Add />}
+                                onClick={() => router.push('/assessments/new')}
+                            >
+                                New Assessment
+                            </Button>
+                        </div>
                     </div>
+                    <BrowseTable
+                        dataList={convertTableData(data) ?? []}
+                        tableInfoColumns={engagementColumns}
+                        expandable
+                    />
+                    <EngagementModal open={engagementModal} setOpen={setEngagementModal} data={engagementData} />
                 </div>
-                <BrowseTable
-                    dataList={convertTableData(data) ?? []}
-                    tableInfoColumns={engagementColumns}
-                    expandable
-                />
-                <EngagementModal open={engagementModal} setOpen={setEngagementModal} data={engagementData} />
-            </div>
-        </Layout>
-    );
+            </Layout>
+        );
+    } else {
+        return (
+            <AccessDenied />
+        )
+    }
 };
 
 export default BrowseAssessments;

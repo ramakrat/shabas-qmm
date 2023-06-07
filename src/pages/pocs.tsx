@@ -9,6 +9,8 @@ import { NextPage } from "next";
 import PocModal from "~/components/Administrator/MainModals/PocModal";
 import BrowseTable, { TableColumn } from "~/components/Common/BrowseTable";
 import Layout from "~/components/Layout/Layout";
+import { useSession } from "next-auth/react";
+import AccessDenied from "~/components/Common/AccessDenied";
 
 type PocType = (
     Poc & {
@@ -73,85 +75,94 @@ const columns: TableColumn[] = [{
 
 const BrowsePocs: NextPage = () => {
 
+    const { data: session } = useSession();
+
     // ================== Create Management ==================
 
     const [pocModal, setPOCModal] = React.useState<boolean>(false);
     const [pocData, setPOCData] = React.useState<Poc | undefined>(undefined);
 
-    // ================== Table Management ==================
+    if (session?.user && session.user.role == 'ADMIN') {
 
-    // TODO: Don't run query unless modal closed
-    const pocs = api.poc.getAllInclude.useQuery(pocModal).data;
+        // ================== Table Management ==================
 
-    const renderType = (object: PocType) => {
-        if (object.client_id) {
-            return 'Client';
-        } else if (object.engagement_id) {
-            return 'Engagement';
-        } else if (object.site_id) {
-            return 'Site';
+        // TODO: Don't run query unless modal closed
+        const pocs = api.poc.getAllInclude.useQuery(pocModal).data;
+
+        const renderType = (object: PocType) => {
+            if (object.client_id) {
+                return 'Client';
+            } else if (object.engagement_id) {
+                return 'Engagement';
+            } else if (object.site_id) {
+                return 'Site';
+            }
+            return 'Shabas';
         }
-        return 'Shabas';
-    }
 
-    const renderTypeReference = (object: PocType) => {
-        if (object.client) {
-            return object.client.name;
-        } else if (object.engagement) {
-            return object.engagement.id.toString();
-        } else if (object.site) {
-            return object.site.name;
-        } else if (object.user) {
-            return object.user.first_name + ' ' + object.user.last_name;
+        const renderTypeReference = (object: PocType) => {
+            if (object.client) {
+                return object.client.name;
+            } else if (object.engagement) {
+                return object.engagement.id.toString();
+            } else if (object.site) {
+                return object.site.name;
+            } else if (object.user) {
+                return object.user.first_name + ' ' + object.user.last_name;
+            }
+            return undefined;
         }
-        return undefined;
-    }
 
-    const convertTableData = (data?: PocType[]) => {
-        if (data) {
-            const newData: TableData[] = [];
-            data.forEach(obj => {
-                const actions = (
-                    <IconButton onClick={() => { setPOCData(obj); setPOCModal(true) }}>
-                        <Edit fontSize='small' />
-                    </IconButton>
-                )
-                newData.push({
-                    id: obj.id,
-                    type: renderType(obj),
-                    typeReference: renderTypeReference(obj) ?? '',
-                    name: `${obj.first_name} ${obj.last_name}`,
-                    title: obj.title,
-                    workPhone: obj.work_phone,
-                    mobilePhone: obj.mobile_phone,
-                    email: obj.email,
-                    actions: actions,
+        const convertTableData = (data?: PocType[]) => {
+            if (data) {
+                const newData: TableData[] = [];
+                data.forEach(obj => {
+                    const actions = (
+                        <IconButton onClick={() => { setPOCData(obj); setPOCModal(true) }}>
+                            <Edit fontSize='small' />
+                        </IconButton>
+                    )
+                    newData.push({
+                        id: obj.id,
+                        type: renderType(obj),
+                        typeReference: renderTypeReference(obj) ?? '',
+                        name: `${obj.first_name} ${obj.last_name}`,
+                        title: obj.title,
+                        workPhone: obj.work_phone,
+                        mobilePhone: obj.mobile_phone,
+                        email: obj.email,
+                        actions: actions,
+                    })
                 })
-            })
-            return newData;
+                return newData;
+            }
         }
-    }
 
-    return (
-        <Layout active='pocs' admin>
-            <div className='dashboard'>
-                <div className='browse-add'>
-                    <Button
-                        variant='contained'
-                        endIcon={<Add />}
-                        onClick={() => { setPOCData(undefined); setPOCModal(true) }}
-                    >
-                        New POC
-                    </Button>
+        return (
+            <Layout active='pocs' admin>
+                <div className='dashboard'>
+                    <div className='browse-add'>
+                        <Button
+                            variant='contained'
+                            endIcon={<Add />}
+                            onClick={() => { setPOCData(undefined); setPOCModal(true) }}
+                        >
+                            New POC
+                        </Button>
+                    </div>
+                    <BrowseTable
+                        dataList={convertTableData(pocs) ?? []}
+                        tableInfoColumns={columns}
+                    />
+                    <PocModal open={pocModal} setOpen={setPOCModal} data={pocData} />
                 </div>
-                <BrowseTable
-                    dataList={convertTableData(pocs) ?? []}
-                    tableInfoColumns={columns}
-                />
-                <PocModal open={pocModal} setOpen={setPOCModal} data={pocData} />
-            </div>
-        </Layout>
-    );
+            </Layout>
+        );
+    } else {
+        return (
+            <AccessDenied />
+        )
+    }
 };
 
 export default BrowsePocs;

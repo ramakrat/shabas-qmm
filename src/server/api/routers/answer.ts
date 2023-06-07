@@ -13,31 +13,6 @@ const inputType = z.object({
 })
 
 export const answerRouter = createTRPCRouter({
-    // create: publicProcedure
-    //     .input(inputType)
-    //     .mutation(({ input, ctx }) => {
-    //         return ctx.prisma.answer.create({
-    //             data: {
-    //                 assessor_rating: input.assessor_rating,
-    //                 assessor_rationale: input.assessor_rationale,
-    //                 assessor_suggestion: input.assessor_suggestion,
-    //                 assessor_notes: input.assessor_notes,
-    //                 consensus_rating: input.consensus_rating,
-    //                 consensus_rationale: input.consensus_rationale,
-    //                 consensus_notes: input.consensus_notes,
-    //                 oversight_concurrence: input.oversight_concurrence,
-    //                 oversight_rationale: input.oversight_rationale,
-    //                 oversight_notes: input.oversight_notes,
-    //                 client_concurrence: input.client_concurrence,
-    //                 client_rationale: input.client_rationale,
-    //                 client_notes: input.client_notes,
-    //                 user_id: input.user_id,
-    //                 assessment_question_id: input.assessment_question_id,
-    //                 updated_by: '',
-    //                 created_by: '',
-    //             },
-    //         })
-    //     }),
     create: publicProcedure
         .input(z.object({ assessmentQuestionId: z.number() }))
         .mutation(({ input, ctx }) => {

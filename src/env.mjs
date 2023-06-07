@@ -18,9 +18,17 @@ const server = z.object({
     // VERCEL_URL doesn't include `https` so it cant be validated as a URL
     process.env.VERCEL ? z.string().min(1) : z.string().url(),
   ),
+  NEXTAUTH_URL_INTERNAL: z.preprocess(
+    // This makes Vercel deployments not fail if you don't set NEXTAUTH_URL
+    // Since NextAuth.js automatically uses the VERCEL_URL if present.
+    (str) => process.env.VERCEL_URL ?? str,
+    // VERCEL_URL doesn't include `https` so it cant be validated as a URL
+    process.env.VERCEL ? z.string().min(1) : z.string().url(),
+  ),
   // Add `.min(1) on ID and SECRET if you want to make sure they're not empty
-  DISCORD_CLIENT_ID: z.string(),
-  DISCORD_CLIENT_SECRET: z.string(),
+  GOOGLE_ID: z.string(),
+  GOOGLE_SECRET: z.string(),
+  JWT_SECRET: z.string(),
 });
 
 /**
@@ -42,8 +50,10 @@ const processEnv = {
   NODE_ENV: process.env.NODE_ENV,
   NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   NEXTAUTH_URL: process.env.NEXTAUTH_URL,
-  DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID,
-  DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET,
+  NEXTAUTH_URL_INTERNAL: process.env.NEXTAUTH_URL_INTERNAL,
+  GOOGLE_ID: process.env.GOOGLE_ID,
+  GOOGLE_SECRET: process.env.GOOGLE_SECRET,
+  JWT_SECRET: process.env.JWT_SECRET,
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
 };
 

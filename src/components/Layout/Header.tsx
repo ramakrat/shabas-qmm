@@ -10,10 +10,11 @@ import { useRouter } from 'next/router';
 interface Props {
     active?: string;
     admin?: boolean;
+    empty?: boolean;
 }
 
 export const Header: React.FC<Props> = (props) => {
-    const { active, admin } = props;
+    const { active, admin, empty } = props;
 
     const router = useRouter();
 
@@ -36,10 +37,33 @@ export const Header: React.FC<Props> = (props) => {
     const totalPOC = api.poc.getTotalCount.useQuery(true).data;
     const totalQuestion = api.question.getTotalCount.useQuery(true).data;
 
+    if (empty) {
+        return (
+            <div className='header'>
+                <div className='nav-items'>
+                    <Link href='/' className='logo'>
+                        <Image src={logo} alt={'Shabas Logo'} height={45} />
+                    </Link>
+                </div>
+                <IconButton onClick={handleClick}>
+                    <Settings />
+                </IconButton>
+                <Menu
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleClose}
+                >
+                    <MenuItem onClick={handleClose}>Profile</MenuItem>
+                    <MenuItem onClick={() => { router.push('/management'); handleClose(); }}>User Management</MenuItem>
+                    <MenuItem onClick={handleClose}>Logout</MenuItem>
+                </Menu>
+            </div>
+        )
+    }
     return (
         <div className='header'>
             <div className='nav-items'>
-                <Link href={'/clients'} className='logo'>
+                <Link href='/' className='logo'>
                     <Image src={logo} alt={'Shabas Logo'} height={45} />
                 </Link>
                 {adminRole ?

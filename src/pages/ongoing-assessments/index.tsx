@@ -1,13 +1,23 @@
 import { type NextPage } from "next";
 import Layout from "~/components/Layout/Layout";
 import BrowseAssessmentForms from "~/components/Assessor/BrowseAssessmentForms";
+import { useSession } from "next-auth/react";
+import AccessDenied from "~/components/Common/AccessDenied";
 
 const OngoingAssessments: NextPage = () => {
-    return (
-        <Layout active='ongoing-assessments'>
-            <BrowseAssessmentForms status='ongoing' />
-        </Layout>
-    )
+    const { data: session } = useSession();
+
+    if (session?.user && session.user.role == 'ADMIN') {
+        return (
+            <Layout active='ongoing-assessments'>
+                <BrowseAssessmentForms status='ongoing' />
+            </Layout>
+        )
+    } else {
+        return (
+            <AccessDenied />
+        )
+    }
 }
 
 export default OngoingAssessments;

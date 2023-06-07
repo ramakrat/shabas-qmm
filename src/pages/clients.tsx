@@ -10,6 +10,8 @@ import ClientModal from "~/components/Administrator/MainModals/ClientModal";
 import SiteModal from "~/components/Administrator/MainModals/SiteModal";
 import BrowseTable, { TableColumn } from "~/components/Common/BrowseTable";
 import Layout from "~/components/Layout/Layout";
+import { useSession } from "next-auth/react";
+import AccessDenied from "~/components/Common/AccessDenied";
 
 interface ClientTableData {
     id: number;
@@ -89,6 +91,8 @@ type ClientSiteType = (
 
 const BrowseClients: NextPage = () => {
 
+    const { data: session } = useSession();
+
     // ================== Create Management ==================
 
     const [clientModal, setClientModal] = React.useState<boolean>(false);
@@ -162,35 +166,41 @@ const BrowseClients: NextPage = () => {
         }
     }
 
-    return (
-        <Layout active='clients' admin>
-            <div className='dashboard'>
-                <div className='browse-add'>
-                    <Button
-                        variant='contained'
-                        endIcon={<Add />}
-                        onClick={() => { setClientData(undefined); setClientModal(true) }}
-                    >
-                        New Client
-                    </Button>
-                    <Button
-                        variant='contained'
-                        endIcon={<Add />}
-                        onClick={() => { setSiteData(undefined); setSiteModal(true) }}
-                    >
-                        New Site
-                    </Button>
+    if (session?.user && session.user.role == 'ADMIN') {
+        return (
+            <Layout active='clients' admin>
+                <div className='dashboard'>
+                    <div className='browse-add'>
+                        <Button
+                            variant='contained'
+                            endIcon={<Add />}
+                            onClick={() => { setClientData(undefined); setClientModal(true) }}
+                        >
+                            New Client
+                        </Button>
+                        <Button
+                            variant='contained'
+                            endIcon={<Add />}
+                            onClick={() => { setSiteData(undefined); setSiteModal(true) }}
+                        >
+                            New Site
+                        </Button>
+                    </div>
+                    <BrowseTable
+                        dataList={convertTableData(data) ?? []}
+                        tableInfoColumns={clientColumns}
+                        expandable
+                    />
+                    <ClientModal open={clientModal} setOpen={setClientModal} data={clientData} />
+                    <SiteModal open={siteModal} setOpen={setSiteModal} data={siteData} />
                 </div>
-                <BrowseTable
-                    dataList={convertTableData(data) ?? []}
-                    tableInfoColumns={clientColumns}
-                    expandable
-                />
-                <ClientModal open={clientModal} setOpen={setClientModal} data={clientData} />
-                <SiteModal open={siteModal} setOpen={setSiteModal} data={siteData} />
-            </div>
-        </Layout>
-    );
+            </Layout>
+        );
+    } else {
+        return (
+            <AccessDenied />
+        )
+    }
 };
 
 export default BrowseClients;

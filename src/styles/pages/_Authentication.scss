@@ -37,3 +37,23 @@
         margin: 10px 0px;
     }
 }
+
+
+.page-message {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 50px);
+    padding: 20px 10px;
+
+    .title {
+        font-size: 2rem;
+        text-align: center;
+    }
+
+    .subheading {
+        font-size: 1.2rem;
+        text-align: center;
+    }
+}
