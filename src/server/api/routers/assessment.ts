@@ -89,7 +89,12 @@ export const assessmentRouter = createTRPCRouter({
                                     }
                                 }
                             }
-                        }
+                        },
+                        assessment_users: {
+                            include: {
+                                user: true,
+                            }
+                        },
                     }
                 });
             return null;
