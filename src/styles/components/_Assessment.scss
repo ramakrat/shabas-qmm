@@ -87,15 +87,34 @@
     .reference {
         display: flex;
         flex-direction: column;
+    }
 
-        .input-row {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
+    .input-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
 
-            .MuiTextField-root {
-                width: 100%;
+        .MuiTextField-root {
+            width: 100%;
+        }
+
+        .MuiInputBase-root {
+            width: 100%;
+        }
+
+        .content {
+            width: 100%;
+        }
+
+        &.hover-focus {
+            &:hover {
+                border-radius: shape(borderRadius);
+                background-color: palette(greyscale, 100);
             }
+        }
+
+        &.read-only {
+            padding-left: 13px;
         }
     }
 
