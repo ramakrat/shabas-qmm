@@ -15,6 +15,7 @@ import { pocRouter } from "./routers/poc";
 import { engagementpocRouter } from "./routers/engagementpoc";
 import { changelogRouter } from "./routers/changelog";
 import { userRouter } from "./routers/user";
+import { assessmentUserRouter } from "./routers/assessmentuser";
 
 /**
  * This is the primary router for your server.
@@ -38,6 +39,7 @@ export const appRouter = createTRPCRouter({
     engagementPoc: engagementpocRouter,
     changelog: changelogRouter,
     user: userRouter,
+    assessmentUser: assessmentUserRouter,
 });
 
 // export type definition of API
