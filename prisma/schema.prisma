@@ -247,7 +247,6 @@ model EngagementPoc {
 
     @@index([poc_id])
     @@index([engagement_id])
-    @@map("EngagementPoc")
 }
 
 model Assessment {
@@ -279,10 +278,6 @@ model Assessment {
 
 model AssessmentUser {
     id         Int      @id @default(autoincrement())
-    created_at DateTime @default(now())
-    updated_at DateTime @default(now())
-    created_by String
-    updated_by String
 
     user_id       Int
     user          User       @relation(fields: [user_id], references: [id], onDelete: Restrict)
@@ -417,8 +412,9 @@ model Changelog {
 
 enum Role {
     ADMIN
-    LEAD_ASSESSOR
     ASSESSOR
+    LEAD_ASSESSOR
+    OVERSIGHT_ASSESSOR
 }
 
 model User {
