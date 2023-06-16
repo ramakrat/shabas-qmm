@@ -44,6 +44,15 @@ export const userRouter = createTRPCRouter({
     //             },
     //         })
     //     }),
+    getAllByRole: publicProcedure
+        .input(z.string())
+        .query(({ input, ctx }) => {
+            return ctx.prisma.user.findMany({
+                where: {
+                    role: input as any
+                }
+            });
+        }),
     getById: publicProcedure
         .input(z.object({ id: z.number() }))
         .query(({ input, ctx }) => {
