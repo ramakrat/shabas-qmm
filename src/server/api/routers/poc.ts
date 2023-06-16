@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 
 const inputType = z.object({
@@ -18,7 +18,7 @@ const inputType = z.object({
 })
 
 export const pocRouter = createTRPCRouter({
-    create: publicProcedure
+    create: protectedProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
             return ctx.prisma.poc.create({
@@ -38,7 +38,7 @@ export const pocRouter = createTRPCRouter({
                 }
             })
         }),
-    update: publicProcedure
+    update: protectedProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
             return ctx.prisma.poc.update({
@@ -59,14 +59,14 @@ export const pocRouter = createTRPCRouter({
                 },
             });
         }),
-    getById: publicProcedure
+    getById: protectedProcedure
         .input(z.object({ id: z.number() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.poc.findUnique({
                 where: { id: input.id }
             });
         }),
-    getAllInclude: publicProcedure
+    getAllInclude: protectedProcedure
         .input(z.boolean())
         .query(({ ctx }) => {
             return ctx.prisma.poc.findMany({
@@ -78,12 +78,12 @@ export const pocRouter = createTRPCRouter({
                 }
             });
         }),
-    getAll: publicProcedure
+    getAll: protectedProcedure
         .input(z.boolean())
         .query(({ ctx }) => {
             return ctx.prisma.poc.findMany();
         }),
-    getAllClient: publicProcedure
+    getAllClient: protectedProcedure
         .input(z.boolean().optional())
         .query(({ ctx }) => {
             return ctx.prisma.poc.findMany({
@@ -96,7 +96,7 @@ export const pocRouter = createTRPCRouter({
                 }
             });
         }),
-    getTotalCount: publicProcedure
+    getTotalCount: protectedProcedure
         .input(z.boolean().optional())
         .query(({ ctx }) => {
             return ctx.prisma.poc.count();

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 
 const inputType = z.object({
@@ -15,7 +15,7 @@ const inputType = z.object({
 })
 
 export const assessmentRouter = createTRPCRouter({
-    create: publicProcedure
+    create: protectedProcedure
         .input(inputType)
         .mutation(async ({ input, ctx }) => {
             return await ctx.prisma.assessment.create({
@@ -32,7 +32,7 @@ export const assessmentRouter = createTRPCRouter({
                 }
             });
         }),
-    update: publicProcedure
+    update: protectedProcedure
         .input(inputType)
         .mutation(async ({ input, ctx }) => {
             return await ctx.prisma.assessment.update({
@@ -50,7 +50,7 @@ export const assessmentRouter = createTRPCRouter({
                 },
             });
         }),
-    updateStatus: publicProcedure
+    updateStatus: protectedProcedure
         .input(z.object({ id: z.number(), status: z.string() }))
         .mutation(({ input, ctx }) => {
             return ctx.prisma.assessment.update({
@@ -62,14 +62,14 @@ export const assessmentRouter = createTRPCRouter({
                 },
             });
         }),
-    getById: publicProcedure
+    getById: protectedProcedure
         .input(z.object({ id: z.number() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.assessment.findUnique({
                 where: { id: input.id }
             });
         }),
-    getByIdInclude: publicProcedure
+    getByIdInclude: protectedProcedure
         .input(z.object({ id: z.number().optional() }))
         .query(({ input, ctx }) => {
             if (input.id)
@@ -99,7 +99,7 @@ export const assessmentRouter = createTRPCRouter({
                 });
             return null;
         }),
-    getByIdIncludeAssessor: publicProcedure
+    getByIdIncludeAssessor: protectedProcedure
         .input(z.object({ id: z.number().optional() }))
         .query(async ({ input, ctx }) => {
             if (input.id)
@@ -118,7 +118,7 @@ export const assessmentRouter = createTRPCRouter({
                 });
             return null;
         }),
-    getByIdExport: publicProcedure
+    getByIdExport: protectedProcedure
         .input(z.number())
         .query(({ input, ctx }) => {
             return ctx.prisma.assessment.findMany({
@@ -134,17 +134,17 @@ export const assessmentRouter = createTRPCRouter({
                 }
             });
         }),
-    getAll: publicProcedure
+    getAll: protectedProcedure
         .input(z.boolean())
         .query(({ ctx }) => {
             return ctx.prisma.assessment.findMany();
         }),
-    getTotalCount: publicProcedure
+    getTotalCount: protectedProcedure
         .input(z.boolean().optional())
         .query(({ ctx }) => {
             return ctx.prisma.assessment.count();
         }),
-    getStatusCounts: publicProcedure
+    getStatusCounts: protectedProcedure
         .input(z.boolean().optional())
         .query(async ({ ctx }) => {
             const getCounts = async () => {

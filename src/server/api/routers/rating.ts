@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 const inputType = z.object({
     id: z.number().optional(),
@@ -15,7 +15,7 @@ const inputType = z.object({
 })
 
 export const ratingRouter = createTRPCRouter({
-    create: publicProcedure
+    create: protectedProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
             return ctx.prisma.rating.create({
@@ -32,7 +32,7 @@ export const ratingRouter = createTRPCRouter({
                 }
             })
         }),
-    createArray: publicProcedure
+    createArray: protectedProcedure
         .input(z.array(inputType))
         .mutation(async ({ input, ctx }) => {
             const returnData = [];
@@ -66,7 +66,7 @@ export const ratingRouter = createTRPCRouter({
             }
             return returnData;
         }),
-    update: publicProcedure
+    update: protectedProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
             return ctx.prisma.rating.update({
@@ -84,7 +84,7 @@ export const ratingRouter = createTRPCRouter({
                 },
             })
         }),
-    updateArray: publicProcedure
+    updateArray: protectedProcedure
         .input(z.array(inputType))
         .mutation(async ({ input, ctx }) => {
             for (const o of input) {
@@ -117,7 +117,7 @@ export const ratingRouter = createTRPCRouter({
             }
             return undefined;
         }),
-    getByQuestionFilter: publicProcedure
+    getByQuestionFilter: protectedProcedure
         .input(z.object({ questionId: z.number().optional(), filterId: z.number().optional() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.rating.findMany({
@@ -128,14 +128,14 @@ export const ratingRouter = createTRPCRouter({
                 orderBy: { level_number: 'asc' }
             });
         }),
-    getById: publicProcedure
+    getById: protectedProcedure
         .input(z.object({ id: z.number() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.rating.findUnique({
                 where: { id: input.id }
             });
         }),
-    getAll: publicProcedure
+    getAll: protectedProcedure
         .query(({ ctx }) => {
             return ctx.prisma.rating.findMany();
         }),

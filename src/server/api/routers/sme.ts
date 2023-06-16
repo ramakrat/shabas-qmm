@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 
 const inputType = z.object({
@@ -13,7 +13,7 @@ const inputType = z.object({
 })
 
 export const smeRouter = createTRPCRouter({
-    create: publicProcedure
+    create: protectedProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
             return ctx.prisma.sme.create({
@@ -28,7 +28,7 @@ export const smeRouter = createTRPCRouter({
                 }
             })
         }),
-    update: publicProcedure
+    update: protectedProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
             return ctx.prisma.sme.update({
@@ -44,21 +44,21 @@ export const smeRouter = createTRPCRouter({
                 },
             })
         }),
-    getByQuestionId: publicProcedure
+    getByQuestionId: protectedProcedure
         .input(z.object({ id: z.number() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.sme.findFirst({
                 where: { question_id: input.id }
             });
         }),
-    getById: publicProcedure
+    getById: protectedProcedure
         .input(z.object({ id: z.number() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.sme.findUnique({
                 where: { id: input.id }
             });
         }),
-    getAll: publicProcedure
+    getAll: protectedProcedure
         .query(({ ctx }) => {
             return ctx.prisma.sme.findMany();
         }),

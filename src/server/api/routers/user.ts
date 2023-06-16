@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 
 const inputType = z.object({
@@ -13,7 +13,7 @@ const inputType = z.object({
 })
 
 export const userRouter = createTRPCRouter({
-    // create: publicProcedure
+    // create: protectedProcedure
     //     .input(inputType)
     //     .mutation(({ input, ctx }) => {
     //         return ctx.prisma.user.create({
@@ -28,7 +28,7 @@ export const userRouter = createTRPCRouter({
     //             }
     //         })
     //     }),
-    // update: publicProcedure
+    // update: protectedProcedure
     //     .input(inputType)
     //     .mutation(({ input, ctx }) => {
     //         return ctx.prisma.user.update({
@@ -44,7 +44,7 @@ export const userRouter = createTRPCRouter({
     //             },
     //         })
     //     }),
-    getAllByRole: publicProcedure
+    getAllByRole: protectedProcedure
         .input(z.string())
         .query(({ input, ctx }) => {
             return ctx.prisma.user.findMany({
@@ -53,14 +53,14 @@ export const userRouter = createTRPCRouter({
                 }
             });
         }),
-    getById: publicProcedure
+    getById: protectedProcedure
         .input(z.object({ id: z.number() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.user.findUnique({
                 where: { id: input.id }
             });
         }),
-    getAll: publicProcedure
+    getAll: protectedProcedure
         .input(z.boolean())
         .query(({ ctx }) => {
             return ctx.prisma.user.findMany();

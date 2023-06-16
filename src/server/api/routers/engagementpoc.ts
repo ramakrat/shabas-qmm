@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 
 const inputType = z.object({
@@ -10,7 +10,7 @@ const inputType = z.object({
 })
 
 export const engagementpocRouter = createTRPCRouter({
-    create: publicProcedure
+    create: protectedProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
             return ctx.prisma.engagementPoc.create({
@@ -20,7 +20,7 @@ export const engagementpocRouter = createTRPCRouter({
                 }
             })
         }),
-    update: publicProcedure
+    update: protectedProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
             return ctx.prisma.engagementPoc.update({
@@ -31,14 +31,14 @@ export const engagementpocRouter = createTRPCRouter({
                 },
             })
         }),
-    getById: publicProcedure
+    getById: protectedProcedure
         .input(z.object({ id: z.number() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.engagementPoc.findUnique({
                 where: { id: input.id }
             });
         }),
-    getByEngagementId: publicProcedure
+    getByEngagementId: protectedProcedure
         .input(z.object({ id: z.number().optional() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.engagementPoc.findMany({
@@ -48,7 +48,7 @@ export const engagementpocRouter = createTRPCRouter({
                 }
             });
         }),
-    getAll: publicProcedure
+    getAll: protectedProcedure
         .query(({ ctx }) => {
             return ctx.prisma.engagementPoc.findMany();
         }),

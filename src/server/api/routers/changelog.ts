@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 
 const inputType = z.object({
@@ -13,7 +13,7 @@ const inputType = z.object({
 })
 
 export const changelogRouter = createTRPCRouter({
-    create: publicProcedure
+    create: protectedProcedure
         .input(inputType)
         .mutation(async ({ input, ctx }) => {
             return await ctx.prisma.changelog.create({
@@ -28,7 +28,7 @@ export const changelogRouter = createTRPCRouter({
                 }
             })
         }),
-    update: publicProcedure
+    update: protectedProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
             return ctx.prisma.changelog.update({
@@ -44,14 +44,14 @@ export const changelogRouter = createTRPCRouter({
                 }
             })
         }),
-    getById: publicProcedure
+    getById: protectedProcedure
         .input(z.object({ id: z.number() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.changelog.findUnique({
                 where: { id: input.id }
             });
         }),
-    getAllByQuestion: publicProcedure
+    getAllByQuestion: protectedProcedure
         .input(z.object({ questionId: z.number().optional(), refetch: z.number().optional() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.changelog.findMany({
@@ -59,7 +59,7 @@ export const changelogRouter = createTRPCRouter({
                 where: { question_id: input.questionId }
             });
         }),
-    getAllByAssessment: publicProcedure
+    getAllByAssessment: protectedProcedure
         .input(z.number().optional())
         .query(({ input, ctx }) => {
             return ctx.prisma.changelog.findMany({
@@ -73,7 +73,7 @@ export const changelogRouter = createTRPCRouter({
                 }
             });
         }),
-    getAllByAnswer: publicProcedure
+    getAllByAnswer: protectedProcedure
         .input(z.number().optional())
         .query(({ input, ctx }) => {
             return ctx.prisma.changelog.findMany({
@@ -81,7 +81,7 @@ export const changelogRouter = createTRPCRouter({
                 where: { answer_id: input }
             });
         }),
-    getAll: publicProcedure
+    getAll: protectedProcedure
         .query(({ ctx }) => {
             return ctx.prisma.changelog.findMany();
         }),

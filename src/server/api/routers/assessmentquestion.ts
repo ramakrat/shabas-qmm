@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 
 const inputType = z.object({
@@ -12,7 +12,7 @@ const inputType = z.object({
 })
 
 export const assessmentQuestionRouter = createTRPCRouter({
-    create: publicProcedure
+    create: protectedProcedure
         .input(inputType)
         .mutation(async ({ input, ctx }) => {
             return await ctx.prisma.assessmentQuestion.create({
@@ -25,7 +25,7 @@ export const assessmentQuestionRouter = createTRPCRouter({
                 }
             })
         }),
-    createArray: publicProcedure
+    createArray: protectedProcedure
         .input(z.array(inputType))
         .mutation(async ({ input, ctx }) => {
             const returnData = [];
@@ -67,7 +67,7 @@ export const assessmentQuestionRouter = createTRPCRouter({
             }
             return returnData;
         }),
-    update: publicProcedure
+    update: protectedProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
             return ctx.prisma.assessmentQuestion.update({
@@ -81,21 +81,21 @@ export const assessmentQuestionRouter = createTRPCRouter({
                 }
             })
         }),
-    getById: publicProcedure
+    getById: protectedProcedure
         .input(z.object({ id: z.number() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.assessmentQuestion.findUnique({
                 where: { id: input.id }
             });
         }),
-    getByQuestionUsage: publicProcedure
+    getByQuestionUsage: protectedProcedure
         .input(z.number())
         .query(({ input, ctx }) => {
             return ctx.prisma.assessmentQuestion.findFirst({
                 where: { question_id: input }
             });
         }),
-    getUnfinishedAssessmentQuestions: publicProcedure
+    getUnfinishedAssessmentQuestions: protectedProcedure
         .input(z.object({ assessmentId: z.number(), status: z.string() }))
         .query(({ input, ctx }) => {
             let nullFields: any = [
@@ -122,7 +122,7 @@ export const assessmentQuestionRouter = createTRPCRouter({
                 }
             });
         }),
-    getAll: publicProcedure
+    getAll: protectedProcedure
         .query(({ ctx }) => {
             return ctx.prisma.assessmentQuestion.findMany();
         }),

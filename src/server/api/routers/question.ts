@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 const inputType = z.object({
     id: z.number().optional(),
@@ -16,7 +16,7 @@ const inputType = z.object({
 })
 
 export const questionRouter = createTRPCRouter({
-    create: publicProcedure
+    create: protectedProcedure
         .input(inputType)
         .mutation(async ({ input, ctx }) => {
             try {
@@ -47,7 +47,7 @@ export const questionRouter = createTRPCRouter({
                 throw e;
             }
         }),
-    update: publicProcedure
+    update: protectedProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
             return ctx.prisma.question.update({
@@ -66,7 +66,7 @@ export const questionRouter = createTRPCRouter({
                 }
             })
         }),
-    active: publicProcedure
+    active: protectedProcedure
         .input(z.object({
             id: z.number(),
             active: z.boolean(),
@@ -81,14 +81,14 @@ export const questionRouter = createTRPCRouter({
                 }
             })
         }),
-    getById: publicProcedure
+    getById: protectedProcedure
         .input(z.object({ id: z.number() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.question.findUnique({
                 where: { id: input.id }
             });
         }),
-    getAllActiveInclude: publicProcedure
+    getAllActiveInclude: protectedProcedure
         .input(z.boolean().optional())
         .query(({ ctx }) => {
             return ctx.prisma.question.findMany({
@@ -102,12 +102,12 @@ export const questionRouter = createTRPCRouter({
                 }
             });
         }),
-    getAll: publicProcedure
+    getAll: protectedProcedure
         .input(z.boolean())
         .query(({ ctx }) => {
             return ctx.prisma.question.findMany();
         }),
-    getTotalCount: publicProcedure
+    getTotalCount: protectedProcedure
         .input(z.boolean().optional())
         .query(({ ctx }) => {
             return ctx.prisma.question.count();

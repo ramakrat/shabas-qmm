@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 
 const inputType = z.object({
@@ -13,7 +13,7 @@ const inputType = z.object({
 })
 
 export const engagementRouter = createTRPCRouter({
-    create: publicProcedure
+    create: protectedProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
             return ctx.prisma.engagement.create({
@@ -28,7 +28,7 @@ export const engagementRouter = createTRPCRouter({
                 }
             })
         }),
-    update: publicProcedure
+    update: protectedProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
             return ctx.prisma.engagement.update({
@@ -44,14 +44,14 @@ export const engagementRouter = createTRPCRouter({
                 }
             })
         }),
-    getById: publicProcedure
+    getById: protectedProcedure
         .input(z.object({ id: z.number() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.engagement.findUnique({
                 where: { id: input.id }
             });
         }),
-    getAllInclude: publicProcedure
+    getAllInclude: protectedProcedure
         .input(z.object({
             filters: z.array(z.any()),
             states: z.boolean().optional(),
@@ -143,12 +143,12 @@ export const engagementRouter = createTRPCRouter({
                 }
             });
         }),
-    getAll: publicProcedure
+    getAll: protectedProcedure
         .input(z.boolean().optional())
         .query(({ ctx }) => {
             return ctx.prisma.engagement.findMany();
         }),
-    getTotalCount: publicProcedure
+    getTotalCount: protectedProcedure
         .input(z.boolean().optional())
         .query(({ ctx }) => {
             return ctx.prisma.engagement.count();
