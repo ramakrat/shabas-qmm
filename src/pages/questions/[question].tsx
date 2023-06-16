@@ -350,291 +350,291 @@ const Question: NextPage = () => {
         setQuestionData(newQuestionData);
     }, [data, ratingData, SME])
 
-    if (session?.user && session.user.role == 'ADMIN') {
 
-        const handleActive = () => {
-            if (data) {
-                changeActive.mutate({
-                    id: data.id,
-                    active: !active,
-                }, {
-                    onSuccess() { Router.reload() }
-                })
-            }
+    const handleActive = () => {
+        if (data) {
+            changeActive.mutate({
+                id: data.id,
+                active: !active,
+            }, {
+                onSuccess() { Router.reload() }
+            })
         }
+    }
 
-        const compareChanges = (changed: any, former: any, prefix?: string) => {
-            for (const prop in changed) {
-                if (prop != 'id' && prop != 'created_at' && prop != 'updated_at') {
-                    if (Object.prototype.hasOwnProperty.call(changed, prop)) {
-                        if (Object.prototype.hasOwnProperty.call(former, prop)) {
-                            if (changed[prop] != former[prop]) {
-                                const propName = underscoreToTitle(prop);
-                                createChangelog.mutate({
-                                    field: prefix ? `${prefix}${propName}` : propName,
-                                    former_value: former[prop].toString(),
-                                    new_value: changed[prop].toString(),
-                                    question_id: Number(data?.id),
-                                })
-                            }
+    const compareChanges = (changed: any, former: any, prefix?: string) => {
+        for (const prop in changed) {
+            if (prop != 'id' && prop != 'created_at' && prop != 'updated_at') {
+                if (Object.prototype.hasOwnProperty.call(changed, prop)) {
+                    if (Object.prototype.hasOwnProperty.call(former, prop)) {
+                        if (changed[prop] != former[prop]) {
+                            const propName = underscoreToTitle(prop);
+                            createChangelog.mutate({
+                                field: prefix ? `${prefix}${propName}` : propName,
+                                former_value: former[prop].toString(),
+                                new_value: changed[prop].toString(),
+                                question_id: Number(data?.id),
+                            })
                         }
                     }
                 }
             }
         }
+    }
 
-        const handleSubmit = (values: FormValues) => {
-            if (data) {
-                // ----------- Question -----------
+    const handleSubmit = (values: FormValues) => {
+        if (data) {
+            // ----------- Question -----------
 
-                update.mutate({
-                    id: data.id,
-                    active: active,
-                    number: values.number,
-                    question: values.question,
-                    pillar: values.pillar,
-                    practice_area: values.practiceArea,
-                    topic_area: values.topicArea,
-                    priority: values.priority,
-                    hint: values.hint,
-                }, {
-                    onSuccess(data) {
-                        compareChanges(data, initialValues().question, `Question: `)
-                    }
-                })
+            update.mutate({
+                id: data.id,
+                active: active,
+                number: values.number,
+                question: values.question,
+                pillar: values.pillar,
+                practice_area: values.practiceArea,
+                topic_area: values.topicArea,
+                priority: values.priority,
+                hint: values.hint,
+            }, {
+                onSuccess(data) {
+                    compareChanges(data, initialValues().question, `Question: `)
+                }
+            })
 
-                // ----------- Interview Guide -----------
+            // ----------- Interview Guide -----------
 
-                const mappedExistingGuides = existingGuide.map(o => {
-                    return {
-                        id: o.id,
-                        active: true,
-                        interview_question: o.interview_question,
-                        question_id: data.id,
-                        site_id: 1,
-                        filter_id: filterSelection ? filterSelection.id : 1,
-                    }
-                })
-                updateGuides.mutate(mappedExistingGuides, {
-                    onSuccess() {
-                        mappedExistingGuides.forEach(g => {
-                            const former = initialValues().guides.find(formerObject => formerObject.id == g.id);
-                            if (former) compareChanges(g, former, `Interview Guide ${g.id ?? ''}: `);
-                        })
-                    }
-                });
-                createGuides.mutate(newGuide.map(o => {
-                    return {
-                        active: true,
-                        interview_question: o.interview_question,
-                        question_id: data.id,
-                        site_id: 1,
-                        filter_id: filterSelection ? filterSelection.id : 1,
-                    }
-                }), {
-                    onSuccess(data) {
-                        const newExistingArray = existingGuide;
-                        data.forEach((o, i) => {
-                            newExistingArray.push({
-                                id: o.id,
-                                num: existingGuide.length + i + 1,
-                                interview_question: o.interview_question,
-                            })
-                        });
-                        setExistingGuide(newExistingArray);
-                        setNewGuide([{ num: 1, interview_question: '' }]);
-                    }
-                });
-                deleteGuides.mutate(deletedGuides.map(o => o.id), {
-                    onSuccess() {
-                        deletedGuides.forEach(deleted => {
-                            if (deleted.id)
-                                createChangelog.mutate({
-                                    field: 'Interview Guide ' + deleted.id.toString(),
-                                    former_value: deleted.interview_question,
-                                    new_value: undefined,
-                                    question_id: Number(data?.id),
-                                })
-                        });
-                        setDeletedGuides([]);
-                    }
-                })
-
-                // ----------- Reference -----------
-
-                const mappedExistingReferences = existingReferences.map(o => {
-                    return {
-                        id: o.id,
-                        citation: o.citation,
-                        question_id: data.id,
-                    }
-                })
-                updateReferences.mutate(mappedExistingReferences, {
-                    onSuccess() {
-                        mappedExistingReferences.forEach(g => {
-                            const former = initialValues().references.find(formerObject => formerObject.id == g.id);
-                            if (former) compareChanges(g, former, `Reference ${g.id ?? ''}: `);
-                        })
-                    }
-                });
-                createReferences.mutate(newReferences.map(o => {
-                    return {
-                        citation: o.citation,
-                        question_id: data.id,
-                    }
-                }), {
-                    onSuccess(data) {
-                        const newExistingArray = existingReferences;
-                        data.forEach((o, i) => {
-                            newExistingArray.push({
-                                id: o.id,
-                                num: existingReferences.length + i + 1,
-                                citation: o.citation,
-                            });
-                        });
-                        setExistingReferences(newExistingArray);
-                        setNewReferences([{ num: 1, citation: '' }]);
-                    }
-                });
-                deleteReferences.mutate(deletedReferences.map(o => o.id), {
-                    onSuccess() {
-                        deletedReferences.forEach(deleted => {
-                            if (deleted.id)
-                                createChangelog.mutate({
-                                    field: 'Reference ' + deleted.id.toString(),
-                                    former_value: deleted.citation,
-                                    new_value: undefined,
-                                    question_id: Number(data?.id),
-                                })
-                        });
-                        setDeletedReferences([]);
-                    }
-                })
-
-                // ----------- Rating -----------
-
-                const mappedRatings: any[] = [];
-                for (let i = 1; i <= 5; i++) {
-                    mappedRatings.push({
-                        id: (values as any)[`level${i}`],
-                        active: true,
-                        level_number: i.toString(),
-                        criteria: (values as any)[`criteria${i}`],
-                        progression_statement: (values as any)[`progression${i}`],
-                        question_id: data.id,
-                        filter_id: (filterType != 'default' && filterSelection) ? filterSelection.id : undefined,
+            const mappedExistingGuides = existingGuide.map(o => {
+                return {
+                    id: o.id,
+                    active: true,
+                    interview_question: o.interview_question,
+                    question_id: data.id,
+                    site_id: 1,
+                    filter_id: filterSelection ? filterSelection.id : 1,
+                }
+            })
+            updateGuides.mutate(mappedExistingGuides, {
+                onSuccess() {
+                    mappedExistingGuides.forEach(g => {
+                        const former = initialValues().guides.find(formerObject => formerObject.id == g.id);
+                        if (former) compareChanges(g, former, `Interview Guide ${g.id ?? ''}: `);
                     })
                 }
-                if (ratingData && ratingData.length > 1) {
-                    updateRatings.mutate(mappedRatings, {
-                        onSuccess() {
-                            mappedRatings.forEach(g => {
-                                const former = initialValues().ratings.find(formerObject => formerObject.id == g.id);
-                                if (former) compareChanges(g, former, `Rating ${g.level_number}: `);
-                            })
-                        }
+            });
+            createGuides.mutate(newGuide.map(o => {
+                return {
+                    active: true,
+                    interview_question: o.interview_question,
+                    question_id: data.id,
+                    site_id: 1,
+                    filter_id: filterSelection ? filterSelection.id : 1,
+                }
+            }), {
+                onSuccess(data) {
+                    const newExistingArray = existingGuide;
+                    data.forEach((o, i) => {
+                        newExistingArray.push({
+                            id: o.id,
+                            num: existingGuide.length + i + 1,
+                            interview_question: o.interview_question,
+                        })
                     });
-                } else {
-                    createRatings.mutate(mappedRatings, {
-                        onSuccess(data) {
-                            let newQuestionData = questionData;
-                            for (let i = 1; i <= 5; i++) {
-                                const currRating = data.find(o => o.level_number == i.toString());
-                                if (currRating) {
-                                    newQuestionData = {
-                                        ...newQuestionData,
-                                        ['level' + i.toString()]: currRating.id,
-                                    }
+                    setExistingGuide(newExistingArray);
+                    setNewGuide([{ num: 1, interview_question: '' }]);
+                }
+            });
+            deleteGuides.mutate(deletedGuides.map(o => o.id), {
+                onSuccess() {
+                    deletedGuides.forEach(deleted => {
+                        if (deleted.id)
+                            createChangelog.mutate({
+                                field: 'Interview Guide ' + deleted.id.toString(),
+                                former_value: deleted.interview_question,
+                                new_value: undefined,
+                                question_id: Number(data?.id),
+                            })
+                    });
+                    setDeletedGuides([]);
+                }
+            })
+
+            // ----------- Reference -----------
+
+            const mappedExistingReferences = existingReferences.map(o => {
+                return {
+                    id: o.id,
+                    citation: o.citation,
+                    question_id: data.id,
+                }
+            })
+            updateReferences.mutate(mappedExistingReferences, {
+                onSuccess() {
+                    mappedExistingReferences.forEach(g => {
+                        const former = initialValues().references.find(formerObject => formerObject.id == g.id);
+                        if (former) compareChanges(g, former, `Reference ${g.id ?? ''}: `);
+                    })
+                }
+            });
+            createReferences.mutate(newReferences.map(o => {
+                return {
+                    citation: o.citation,
+                    question_id: data.id,
+                }
+            }), {
+                onSuccess(data) {
+                    const newExistingArray = existingReferences;
+                    data.forEach((o, i) => {
+                        newExistingArray.push({
+                            id: o.id,
+                            num: existingReferences.length + i + 1,
+                            citation: o.citation,
+                        });
+                    });
+                    setExistingReferences(newExistingArray);
+                    setNewReferences([{ num: 1, citation: '' }]);
+                }
+            });
+            deleteReferences.mutate(deletedReferences.map(o => o.id), {
+                onSuccess() {
+                    deletedReferences.forEach(deleted => {
+                        if (deleted.id)
+                            createChangelog.mutate({
+                                field: 'Reference ' + deleted.id.toString(),
+                                former_value: deleted.citation,
+                                new_value: undefined,
+                                question_id: Number(data?.id),
+                            })
+                    });
+                    setDeletedReferences([]);
+                }
+            })
+
+            // ----------- Rating -----------
+
+            const mappedRatings: any[] = [];
+            for (let i = 1; i <= 5; i++) {
+                mappedRatings.push({
+                    id: (values as any)[`level${i}`],
+                    active: true,
+                    level_number: i.toString(),
+                    criteria: (values as any)[`criteria${i}`],
+                    progression_statement: (values as any)[`progression${i}`],
+                    question_id: data.id,
+                    filter_id: (filterType != 'default' && filterSelection) ? filterSelection.id : undefined,
+                })
+            }
+            if (ratingData && ratingData.length > 1) {
+                updateRatings.mutate(mappedRatings, {
+                    onSuccess() {
+                        mappedRatings.forEach(g => {
+                            const former = initialValues().ratings.find(formerObject => formerObject.id == g.id);
+                            if (former) compareChanges(g, former, `Rating ${g.level_number}: `);
+                        })
+                    }
+                });
+            } else {
+                createRatings.mutate(mappedRatings, {
+                    onSuccess(data) {
+                        let newQuestionData = questionData;
+                        for (let i = 1; i <= 5; i++) {
+                            const currRating = data.find(o => o.level_number == i.toString());
+                            if (currRating) {
+                                newQuestionData = {
+                                    ...newQuestionData,
+                                    ['level' + i.toString()]: currRating.id,
                                 }
                             }
-                            setQuestionData(newQuestionData);
                         }
-                    });
-                }
-
-                // ----------- SME -----------
-
-                if (values.sme) {
-                    updateSME.mutate({
-                        id: values.sme,
-                        first_name: values.smeFirstName,
-                        last_name: values.smeLastName,
-                        mobile_phone: values.smePhone,
-                        email: values.smeEmail,
-                        question_id: data.id,
-                    }, {
-                        onSuccess(success) {
-                            compareChanges(success, initialValues().sme, `SME: `)
-                        }
-                    })
-                } else {
-                    createSME.mutate({
-                        first_name: values.smeFirstName,
-                        last_name: values.smeLastName,
-                        mobile_phone: values.smePhone,
-                        email: values.smeEmail,
-                        question_id: data.id,
-                    }, {
-                        onSuccess(data) {
-                            setQuestionData({ ...questionData, sme: data.id })
-                        }
-                    })
-                }
-
+                        setQuestionData(newQuestionData);
+                    }
+                });
             }
-            setRefetch(refetch + 1);
+
+            // ----------- SME -----------
+
+            if (values.sme) {
+                updateSME.mutate({
+                    id: values.sme,
+                    first_name: values.smeFirstName,
+                    last_name: values.smeLastName,
+                    mobile_phone: values.smePhone,
+                    email: values.smeEmail,
+                    question_id: data.id,
+                }, {
+                    onSuccess(success) {
+                        compareChanges(success, initialValues().sme, `SME: `)
+                    }
+                })
+            } else {
+                createSME.mutate({
+                    first_name: values.smeFirstName,
+                    last_name: values.smeLastName,
+                    mobile_phone: values.smePhone,
+                    email: values.smeEmail,
+                    question_id: data.id,
+                }, {
+                    onSuccess(data) {
+                        setQuestionData({ ...questionData, sme: data.id })
+                    }
+                })
+            }
+
         }
+        setRefetch(refetch + 1);
+    }
 
 
-        // =========== Retrieve Form Context ===========
+    // =========== Retrieve Form Context ===========
 
-        // TODO: Don't run query unless modal closed
-        const businessTypes = api.filter.getAllBusinessTypes.useQuery(addBusinessType).data;
-        const manufacturingTypes = api.filter.getAllManufacturingTypes.useQuery(addManufacturingType).data;
-        const siteSpecifics = api.filter.getAllSiteSpecific.useQuery(addSiteSpecific).data;
+    // TODO: Don't run query unless modal closed
+    const businessTypes = api.filter.getAllBusinessTypes.useQuery(addBusinessType).data;
+    const manufacturingTypes = api.filter.getAllManufacturingTypes.useQuery(addManufacturingType).data;
+    const siteSpecifics = api.filter.getAllSiteSpecific.useQuery(addSiteSpecific).data;
 
-        const filterSelect = () => {
-            if (filterType == 'default') return;
+    const filterSelect = () => {
+        if (filterType == 'default') return;
 
-            let filterOptions: Filter[] | undefined = businessTypes;
-            if (filterType == 'manufacturing-type') filterOptions = manufacturingTypes;
-            if (filterType == 'site-specific') filterOptions = siteSpecifics;
+        let filterOptions: Filter[] | undefined = businessTypes;
+        if (filterType == 'manufacturing-type') filterOptions = manufacturingTypes;
+        if (filterType == 'site-specific') filterOptions = siteSpecifics;
 
-            return (<>
-                <Typography style={{ padding: '0px 10px 0px 5px' }}>:</Typography>
-                <MuiSelect
-                    size='small' displayEmpty
-                    value={filterSelection ? filterSelection.id : ''}
-                    onChange={(event) => {
-                        if (filterOptions) {
-                            const selected = filterOptions.find(o => o.id == event.target.value);
-                            if (selected) setFilterSelection(selected);
-                        }
-                    }}
-                >
-                    <MenuItem value=''><em>Select a filter...</em></MenuItem>
-                    {filterOptions?.map((o, i) => {
-                        return <MenuItem key={i} value={o.id}>{o.name}</MenuItem>;
-                    })}
-                    <MenuItem>
-                        <Button
-                            variant='contained'
-                            onClick={() => {
-                                if (filterType == 'business-type') setAddBusinessType(true)
-                                if (filterType == 'manufacturing-type') setAddManufacturingType(true)
-                                if (filterType == 'site-specific') setAddSiteSpecific(true)
-                            }}
-                        >
-                            <Add />
-                            {filterType == 'business-type' && 'Add Business Type'}
-                            {filterType == 'manufacturing-type' && 'Add Manufacturing Type'}
-                            {filterType == 'site-specific' && 'Add Site Specific'}
-                        </Button>
-                    </MenuItem>
-                </MuiSelect>
-            </>)
-        }
+        return (<>
+            <Typography style={{ padding: '0px 10px 0px 5px' }}>:</Typography>
+            <MuiSelect
+                size='small' displayEmpty
+                value={filterSelection ? filterSelection.id : ''}
+                onChange={(event) => {
+                    if (filterOptions) {
+                        const selected = filterOptions.find(o => o.id == event.target.value);
+                        if (selected) setFilterSelection(selected);
+                    }
+                }}
+            >
+                <MenuItem value=''><em>Select a filter...</em></MenuItem>
+                {filterOptions?.map((o, i) => {
+                    return <MenuItem key={i} value={o.id}>{o.name}</MenuItem>;
+                })}
+                <MenuItem>
+                    <Button
+                        variant='contained'
+                        onClick={() => {
+                            if (filterType == 'business-type') setAddBusinessType(true)
+                            if (filterType == 'manufacturing-type') setAddManufacturingType(true)
+                            if (filterType == 'site-specific') setAddSiteSpecific(true)
+                        }}
+                    >
+                        <Add />
+                        {filterType == 'business-type' && 'Add Business Type'}
+                        {filterType == 'manufacturing-type' && 'Add Manufacturing Type'}
+                        {filterType == 'site-specific' && 'Add Site Specific'}
+                    </Button>
+                </MenuItem>
+            </MuiSelect>
+        </>)
+    }
 
+    if (session?.user && session.user.role == 'ADMIN') {
         if (inUse) {
             return (
                 <Layout active='questions' admin>

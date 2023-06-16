@@ -159,82 +159,81 @@ const BrowseAssessments: NextPage = () => {
         return filters;
     }
 
-    if (session?.user && session.user.role == 'ADMIN') {
+    // ================== Table Management ==================
 
-        // ================== Table Management ==================
+    // TODO: Don't run query unless modal closed
+    const { data } = api.engagement.getAllInclude.useQuery({
+        filters: filterObject(),
+        states: engagementModal,
+        includeEmptyEngagements: true,
+    });
+    const assessmentStatusCounts = api.assessment.getStatusCounts.useQuery().data;
 
-        // TODO: Don't run query unless modal closed
-        const { data } = api.engagement.getAllInclude.useQuery({
-            filters: filterObject(),
-            states: engagementModal,
-            includeEmptyEngagements: true,
-        });
-        const assessmentStatusCounts = api.assessment.getStatusCounts.useQuery().data;
+    const convertTableData = (engagements?: EngagementAssessmentType[]) => {
+        if (engagements) {
+            const newData: EngagementTableData[] = [];
 
-        const convertTableData = (engagements?: EngagementAssessmentType[]) => {
-            if (engagements) {
-                const newData: EngagementTableData[] = [];
+            engagements.forEach(engagement => {
 
-                engagements.forEach(engagement => {
+                const convertAssessmentTableData = (assessments?: (Assessment & { poc: Poc | null; })[]) => {
+                    if (assessments) {
+                        const newAssessmentData: AssessmentTableData[] = [];
 
-                    const convertAssessmentTableData = (assessments?: (Assessment & { poc: Poc | null; })[]) => {
-                        if (assessments) {
-                            const newAssessmentData: AssessmentTableData[] = [];
+                        assessments.forEach(assessment => {
+                            const actions = assessment.status == 'created' ? (
+                                <IconButton onClick={() => { router.push(`/assessments/${assessment.id}`) }}>
+                                    <Edit fontSize='small' />
+                                </IconButton>
+                            ) : (
+                                <IconButton onClick={() => { router.push(`/assessments/${assessment.id}`) }}>
+                                    <Visibility fontSize='small' />
+                                </IconButton>
+                            )
 
-                            assessments.forEach(assessment => {
-                                const actions = assessment.status == 'created' ? (
-                                    <IconButton onClick={() => { router.push(`/assessments/${assessment.id}`) }}>
-                                        <Edit fontSize='small' />
-                                    </IconButton>
-                                ) : (
-                                    <IconButton onClick={() => { router.push(`/assessments/${assessment.id}`) }}>
-                                        <Visibility fontSize='small' />
-                                    </IconButton>
-                                )
-
-                                newAssessmentData.push({
-                                    id: assessment.id,
-                                    site: assessment.site_id.toString(),
-                                    startDate: assessment.start_date,
-                                    endDate: assessment.end_date,
-                                    clientPoc: assessment.poc ? `${assessment.poc.first_name} ${assessment.poc.last_name}` : '',
-                                    assessors: '',
-                                    status: assessment.status,
-                                    actions: actions,
-                                })
+                            newAssessmentData.push({
+                                id: assessment.id,
+                                site: assessment.site_id.toString(),
+                                startDate: assessment.start_date,
+                                endDate: assessment.end_date,
+                                clientPoc: assessment.poc ? `${assessment.poc.first_name} ${assessment.poc.last_name}` : '',
+                                assessors: '',
+                                status: assessment.status,
+                                actions: actions,
                             })
+                        })
 
-                            return newAssessmentData;
-                        }
+                        return newAssessmentData;
                     }
+                }
 
-                    const existingClientPoc = engagement.engagement_pocs.find(o => o.poc.client_id);
-                    const existingShabasPoc = engagement.engagement_pocs.find(o => !o.poc.client_id);
-                    const actions = (
-                        <IconButton onClick={() => { setEngagementData(engagement); setEngagementModal(true) }}>
-                            <Edit fontSize='small' />
-                        </IconButton>
-                    )
+                const existingClientPoc = engagement.engagement_pocs.find(o => o.poc.client_id);
+                const existingShabasPoc = engagement.engagement_pocs.find(o => !o.poc.client_id);
+                const actions = (
+                    <IconButton onClick={() => { setEngagementData(engagement); setEngagementModal(true) }}>
+                        <Edit fontSize='small' />
+                    </IconButton>
+                )
 
-                    newData.push({
-                        id: engagement.id,
-                        client: `${engagement.client_id} - ${engagement.client.name}`,
-                        startDate: engagement.start_date,
-                        endDate: engagement.end_date,
-                        clientPoc: existingClientPoc ? `${existingClientPoc.poc.first_name} ${existingClientPoc.poc.last_name}` : '',
-                        shabasPoc: existingShabasPoc ? `${existingShabasPoc.poc.first_name} ${existingShabasPoc.poc.last_name}` : '',
-                        status: engagement.status,
-                        actions: actions,
-                        child: engagement.assessments.length > 0 && <BrowseTable
-                            dataList={convertAssessmentTableData(engagement.assessments) ?? []}
-                            tableInfoColumns={assessmentColumns}
-                        />
-                    })
+                newData.push({
+                    id: engagement.id,
+                    client: `${engagement.client_id} - ${engagement.client.name}`,
+                    startDate: engagement.start_date,
+                    endDate: engagement.end_date,
+                    clientPoc: existingClientPoc ? `${existingClientPoc.poc.first_name} ${existingClientPoc.poc.last_name}` : '',
+                    shabasPoc: existingShabasPoc ? `${existingShabasPoc.poc.first_name} ${existingShabasPoc.poc.last_name}` : '',
+                    status: engagement.status,
+                    actions: actions,
+                    child: engagement.assessments.length > 0 && <BrowseTable
+                        dataList={convertAssessmentTableData(engagement.assessments) ?? []}
+                        tableInfoColumns={assessmentColumns}
+                    />
                 })
-                return newData;
-            }
+            })
+            return newData;
         }
+    }
 
+    if (session?.user && session.user.role == 'ADMIN') {
         return (
             <Layout active='assessments' admin>
                 <div className='dashboard'>

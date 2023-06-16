@@ -63,38 +63,38 @@ const Question: NextPage = () => {
 
     const { push } = useRouter();
 
-    if (session?.user && session.user.role == 'ADMIN') {
 
 
-        // =========== Retrieve Form Context ===========
+    // =========== Retrieve Form Context ===========
 
-        const questions = api.question.getAll.useQuery(true).data;
+    const questions = api.question.getAll.useQuery(true).data;
 
-        const convertTableData = (data?: Question[]) => {
-            if (data) {
-                const newData: TableData[] = [];
-                data.forEach(obj => {
-                    const activeSignature = (
-                        <div className='question-status'>
-                            <div className={'active-signature ' + (obj.active ? 'active' : '')} />
-                            {obj.active ? 'Active' : 'Inactive'}
-                        </div>
-                    )
-                    newData.push({
-                        number: obj.number,
-                        question: obj.question,
-                        pillar: obj.pillar,
-                        practiceArea: obj.practice_area,
-                        topicArea: obj.topic_area,
-                        active: activeSignature,
-                        // inUse: 'True',
-                        onClick: () => { void push(`/questions/${obj.id}`) },
-                    })
+    const convertTableData = (data?: Question[]) => {
+        if (data) {
+            const newData: TableData[] = [];
+            data.forEach(obj => {
+                const activeSignature = (
+                    <div className='question-status'>
+                        <div className={'active-signature ' + (obj.active ? 'active' : '')} />
+                        {obj.active ? 'Active' : 'Inactive'}
+                    </div>
+                )
+                newData.push({
+                    number: obj.number,
+                    question: obj.question,
+                    pillar: obj.pillar,
+                    practiceArea: obj.practice_area,
+                    topicArea: obj.topic_area,
+                    active: activeSignature,
+                    // inUse: 'True',
+                    onClick: () => { void push(`/questions/${obj.id}`) },
                 })
-                return newData;
-            }
+            })
+            return newData;
         }
+    }
 
+    if (session?.user && session.user.role == 'ADMIN') {
         return (
             <>
                 <Layout active='questions' admin>
