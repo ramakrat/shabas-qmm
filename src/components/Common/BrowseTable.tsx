@@ -124,7 +124,7 @@ const BrowseTable: React.FC<Props> = (props) => {
                             </TableHead>
                             <TableBody>
                                 <TableRow>
-                                    <TableCell colSpan={tableInfoColumns.length + 1} className='body-cell center' style={{ height: 80, fontSize: 16 }}>
+                                    <TableCell colSpan={tableInfoColumns.length + 1} className='empty-table-body'>
                                         No data to display.
                                     </TableCell>
                                 </TableRow>
@@ -181,7 +181,7 @@ const BrowseTable: React.FC<Props> = (props) => {
                     })}
                     {dataList.length === 0 &&
                         <TableRow>
-                            <TableCell colSpan={tableInfoColumns.length + 1} className='body-cell center' style={{ height: 80, fontSize: 16 }}>
+                            <TableCell colSpan={tableInfoColumns.length + 1} className='empty-table-body'>
                                 No data to display.
                             </TableCell>
                         </TableRow>
