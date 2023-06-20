@@ -11,7 +11,7 @@ const CompletedAssessments: NextPage = () => {
     if (session?.user && session.user.role == 'ADMIN') {
         return (
             <Layout active='review-assessments'>
-                <BrowseAssessmentForms status='assessor-review' />
+                <BrowseAssessmentForms status='assessor-review' userId={Number(session.user.id)} />
             </Layout>
         )
     } else {

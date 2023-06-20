@@ -5,6 +5,7 @@ import BrowseTable, { type TableColumn } from "../Common/BrowseTable";
 
 interface Props {
     status: 'ongoing' | 'assessor-review' | 'oversight' | 'client-review' | 'completed';
+    userId: number;
 }
 
 interface EngagementTableData {
@@ -112,20 +113,11 @@ type EngagementAssessmentType = (
 )
 
 const BrowseAssessmentForms: React.FC<Props> = (props) => {
-    const { status } = props;
+    const { status, userId } = props;
     const { push } = useRouter();
 
     // TODO: Don't run query unless modal closed
-    let data = undefined;
-    if (status == 'ongoing')
-        data = api.engagement.getAllInclude.useQuery({ filters: [{ status: 'created' }, { status: 'ongoing' }] }).data;
-    if (status == 'assessor-review')
-        data = api.engagement.getAllInclude.useQuery({ filters: [{ status: 'assessor-review' }] }).data;
-    if (status == 'oversight')
-        data = api.engagement.getAllInclude.useQuery({ filters: [{ status: 'oversight' }] }).data;
-    if (status == 'completed')
-        data = api.engagement.getAllInclude.useQuery({ filters: [{ status: 'completed' }] }).data;
-
+    let data = api.engagement.getUserAssessments.useQuery({ userId: userId, status: status }).data;
 
     const handleOnClick = async (id: number) => {
         if (status == 'ongoing')

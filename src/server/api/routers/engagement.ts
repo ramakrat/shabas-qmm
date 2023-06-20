@@ -153,4 +153,47 @@ export const engagementRouter = createTRPCRouter({
         .query(({ ctx }) => {
             return ctx.prisma.engagement.count();
         }),
+    getUserAssessments: protectedProcedure
+        .input(z.object({ userId: z.number(), status: z.string() }))
+        .query(async ({ input, ctx }) => {
+
+            const filters = input.status == 'ongoing' ? [{ status: 'created' }, { status: 'ongoing' }] : [{ status: input.status }];
+
+            return ctx.prisma.engagement.findMany({
+                include: {
+                    assessments: {
+                        include: { poc: true },
+                        where: {
+                            assessment_users: {
+                                some: {
+                                    user_id: input.userId,
+                                }
+                            },
+                            OR: filters
+                        }
+                    },
+                    client: true,
+                    pocs: true,
+                    engagement_pocs: { include: { poc: true } },
+                },
+                where: {
+                    assessments: {
+                        some: {
+                            assessment_users: {
+                                some: {
+                                    user_id: input.userId,
+                                }
+                            }
+                        }
+                    },
+                    OR: [{
+                        assessments: {
+                            some: {
+                                OR: filters
+                            }
+                        }
+                    }]
+                }
+            });
+        }),
 });

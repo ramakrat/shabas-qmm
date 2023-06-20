@@ -54,34 +54,34 @@ const Management: NextPage = () => {
     const [userModal, setUserModal] = React.useState<boolean>(false);
     const [userData, setUserData] = React.useState<User | undefined>(undefined);
 
-    if (session?.user && session.user.role == 'ADMIN') {
 
-        // ================== Table Management ==================
+    // ================== Table Management ==================
 
-        // TODO: Don't run query unless modal closed
-        const users = api.user.getAll.useQuery(userModal).data;
+    // TODO: Don't run query unless modal closed
+    const users = api.user.getAll.useQuery(userModal).data;
 
-        const convertTableData = (data?: User[]) => {
-            if (data) {
-                const newData: TableData[] = [];
-                data.forEach(obj => {
-                    const actions = (
-                        <IconButton onClick={() => { setUserData(obj); setUserModal(true) }}>
-                            <Edit fontSize='small' />
-                        </IconButton>
-                    )
-                    newData.push({
-                        id: obj.id,
-                        name: `${obj.first_name} ${obj.last_name}`,
-                        email: obj.email,
-                        role: obj.email,
-                        actions: actions,
-                    })
+    const convertTableData = (data?: User[]) => {
+        if (data) {
+            const newData: TableData[] = [];
+            data.forEach(obj => {
+                const actions = (
+                    <IconButton onClick={() => { setUserData(obj); setUserModal(true) }}>
+                        <Edit fontSize='small' />
+                    </IconButton>
+                )
+                newData.push({
+                    id: obj.id,
+                    name: `${obj.first_name} ${obj.last_name}`,
+                    email: obj.email,
+                    role: obj.email,
+                    actions: actions,
                 })
-                return newData;
-            }
+            })
+            return newData;
         }
+    }
 
+    if (session?.user && session.user.role == 'ADMIN') {
         return (
             <Layout admin>
                 <div className='dashboard'>

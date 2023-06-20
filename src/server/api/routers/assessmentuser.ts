@@ -104,7 +104,6 @@ export const assessmentUserRouter = createTRPCRouter({
                     }
                     throw e;
                 }
-
             }
             return undefined;
         }),
@@ -118,5 +117,32 @@ export const assessmentUserRouter = createTRPCRouter({
     getAll: protectedProcedure
         .query(({ ctx }) => {
             return ctx.prisma.assessmentUser.findMany();
+        }),
+    existsOnAssessment: protectedProcedure
+        .input(z.object({ userId: z.number(), assessmentId: z.number() }))
+        .query(async ({ input, ctx }) => {
+            const assessmentsOfUser = await ctx.prisma.assessmentUser.findMany({
+                where: { user_id: input.userId },
+                include: {
+                    user: true,
+                    assessment: true,
+                }
+            });
+
+            const foundAccessibleAssessment = assessmentsOfUser.find(o => {
+                const assessmentMatch = o.assessment_id == input.assessmentId;
+                if (assessmentMatch) {
+                    const role = o.user.role;
+                    const status = o.assessment.status;
+                    const roleMatchStatus = status == 'created' && role == 'ASSESSOR' ||
+                        status == 'ongoing' && role == 'ASSESSOR' ||
+                        status == 'assessor-review' && role == 'LEAD_ASSESSOR' ||
+                        status == 'oversight' && role == 'OVERSIGHT_ASSESSOR';
+                    return roleMatchStatus;
+                }
+                return false;
+            });
+
+            return foundAccessibleAssessment ? true : false;
         }),
 });

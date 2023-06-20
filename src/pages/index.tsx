@@ -10,7 +10,7 @@ const Homepage: NextPage = () => {
 
     if (session && session.user) {
         return (
-            <Layout admin={session.user.role == 'ADMIN'}>
+            <Layout>
                 <div className='page-message'>
                     <span className='title'>
                         Welcome to Shabas QMM

@@ -11,7 +11,7 @@ const OversightAssessments: NextPage = () => {
     if (session?.user && session.user.role == 'ADMIN') {
         return (
             <Layout active='oversight-assessments'>
-                <BrowseAssessmentForms status='oversight' />
+                <BrowseAssessmentForms status='oversight' userId={Number(session.user.id)} />
             </Layout>
         )
     } else {
