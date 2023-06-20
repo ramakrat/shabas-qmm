@@ -277,7 +277,7 @@ model Assessment {
 }
 
 model AssessmentUser {
-    id         Int      @id @default(autoincrement())
+    id Int @id @default(autoincrement())
 
     user_id       Int
     user          User       @relation(fields: [user_id], references: [id], onDelete: Restrict)
@@ -426,12 +426,11 @@ model User {
     createdAt  DateTime @default(now())
     updatedAt  DateTime @updatedAt
 
-    role     Role      @default(ASSESSOR)
-    sessions Session[]
-
-    POC             Poc[]
-    Assessment_User AssessmentUser[]
-    Answer          Answer[]
+    role             Role             @default(ASSESSOR)
+    sessions         Session[]
+    pocs             Poc[]
+    assessment_users AssessmentUser[]
+    answers          Answer[]
 }
 
 model Session {
