@@ -18,7 +18,7 @@ const OngoingAssessment: NextPage = () => {
     if (session?.user && session.user.role == 'ADMIN' && userCanAccess) {
         return (
             <Layout active='ongoing-assessments'>
-                <AssessmentForm assessment={Number(assessment)} status='ongoing' />
+                <AssessmentForm assessment={Number(assessment)} status='ongoing' userId={Number(session.user.id)} />
             </Layout>
         );
     } else {

@@ -55,11 +55,12 @@ const validationSchemaOversight = yup.object().shape({
 interface Props {
     assessment: number;
     status: 'ongoing' | 'assessor-review' | 'oversight' | 'client-review';
+    userId: number;
 }
 
 const OngoingAssessment: React.FC<Props> = (props) => {
 
-    const { assessment, status } = props;
+    const { assessment, status, userId } = props;
 
     const [confirmSubmitModal, setConfirmSubmitModal] = React.useState<boolean>(false);
     const [messageModal, setMessageModal] = React.useState<boolean>(false);
@@ -122,7 +123,7 @@ const OngoingAssessment: React.FC<Props> = (props) => {
     }, [data])
     React.useEffect(() => {
         if (selectedAssessmentQuestion && !selectedAssessmentQuestion.answer) {
-            createAnswer.mutate({ assessmentQuestionId: selectedAssessmentQuestion.id }, {
+            createAnswer.mutate({ assessmentQuestionId: selectedAssessmentQuestion.id, userId: userId }, {
                 onSuccess(data) {
                     setAnswer({
                         ...answer,
@@ -216,6 +217,7 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                 update.mutate({
                     id: values.id,
                     assessment_question_id: selectedAssessmentQuestion.id,
+                    user_id: userId,
                     rating: values.rating.toString(),
                     rationale: values.rationale,
                     notes: values.notes,
