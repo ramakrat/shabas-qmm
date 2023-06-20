@@ -5,7 +5,7 @@ import BrowseTable, { type TableColumn } from "../Common/BrowseTable";
 
 interface Props {
     status: 'ongoing' | 'assessor-review' | 'oversight' | 'client-review' | 'completed';
-    userId: number;
+    userId?: number;
 }
 
 interface EngagementTableData {
