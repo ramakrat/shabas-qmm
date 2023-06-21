@@ -32,7 +32,7 @@ const CompletedAssessment: NextPage = () => {
                     interview_guides: InterviewGuide[];
                 };
                 filter: Filter | null;
-                answer: Answer | null;
+                answers: Answer[];
             })[];
         }
     );
@@ -81,21 +81,23 @@ const CompletedAssessment: NextPage = () => {
 
                 exportData.forEach(o => {
                     o.assessment_questions.forEach(q => {
-                        masterObjects.push({
-                            'Firm': o.site.name,
-                            'Assessor': '',
-                            'Question Number': q.question.number,
-                            'Pillar': q.question.pillar,
-                            'Practice Area': q.question.practice_area,
-                            'Topic': q.question.topic_area,
-                            'Question': q.question.question,
-                            'Rating': q.answer?.rating,
-                            'Rationale': q.answer?.rationale,
-                            'Notes': q.answer?.notes,
-                        })
-                        dashboardObjects.push({
-                            topic: q.question.topic_area,
-                            rating: q.answer?.rating,
+                        q.answers.forEach(a => {
+                            masterObjects.push({
+                                'Firm': o.site.name,
+                                'Assessor': a.user?.first_name + ' ' + a.user?.last_name,
+                                'Question Number': q.question.number,
+                                'Pillar': q.question.pillar,
+                                'Practice Area': q.question.practice_area,
+                                'Topic': q.question.topic_area,
+                                'Question': q.question.question,
+                                'Rating': a.rating,
+                                'Rationale': a.rationale,
+                                'Notes': a.notes,
+                            })
+                            dashboardObjects.push({
+                                topic: q.question.topic_area,
+                                rating: a.rating,
+                            })
                         })
                     })
                 })
