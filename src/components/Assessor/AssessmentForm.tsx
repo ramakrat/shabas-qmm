@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Router, { useRouter } from 'next/router';
-import type { Answer, Assessment, AssessmentQuestion, Engagement, Filter, InterviewGuide, Question, Rating, Reference } from '@prisma/client';
+import type { Answer, Assessment, AssessmentQuestion, Engagement, Filter, InterviewGuide, Question, Rating, Reference, User } from '@prisma/client';
 
 import * as yup from "yup";
 import { Field, Form, Formik } from "formik";
@@ -28,7 +28,9 @@ type AssessmentType = (
                 interview_guides: InterviewGuide[];
             };
             filter: Filter | null;
-            answer: Answer | null;
+            answers: (Answer & {
+                user: User | null;
+            })[];
         })[];
     }
 )
@@ -58,7 +60,7 @@ interface Props {
     userId: number;
 }
 
-const OngoingAssessment: React.FC<Props> = (props) => {
+const AssessmentForm: React.FC<Props> = (props) => {
 
     const { assessment, status, userId } = props;
 
@@ -96,6 +98,10 @@ const OngoingAssessment: React.FC<Props> = (props) => {
     const guide = api.interviewGuide.getByQuestionId.useQuery({ id: questionRef?.id }).data;
     const references = api.reference.getByQuestionId.useQuery({ id: questionRef?.id }).data
 
+    const userAnswer = selectedAssessmentQuestion?.answers.find(a => a.user_id == userId);
+
+    // const userAnswer = api.answer.getByAssessmentUser.useQuery({ userId: userId, assessmentQuestionId: selectedAssessmentQuestion?.id }).data;
+    console.log(userAnswer)
 
     // =========== Input Field States ===========
 
@@ -122,7 +128,8 @@ const OngoingAssessment: React.FC<Props> = (props) => {
         }
     }, [data])
     React.useEffect(() => {
-        if (selectedAssessmentQuestion && !selectedAssessmentQuestion.answer) {
+        if (selectedAssessmentQuestion && userId && !userAnswer) {
+            console.log(userAnswer)
             createAnswer.mutate({ assessmentQuestionId: selectedAssessmentQuestion.id, userId: userId }, {
                 onSuccess(data) {
                     setAnswer({
@@ -133,13 +140,13 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                 }
             })
         }
-        if (selectedAssessmentQuestion && selectedAssessmentQuestion.answer) {
+        if (selectedAssessmentQuestion && userAnswer) {
             setAnswer({
-                id: selectedAssessmentQuestion.answer.id ?? '',
-                startTime: selectedAssessmentQuestion.answer.start_time ?? undefined,
-                rating: selectedAssessmentQuestion.answer.rating ?? '',
-                rationale: selectedAssessmentQuestion.answer.rationale ?? '',
-                notes: selectedAssessmentQuestion.answer.notes ?? '',
+                id: userAnswer.id ?? '',
+                startTime: userAnswer.start_time ?? undefined,
+                rating: userAnswer.rating ?? '',
+                rationale: userAnswer.rationale ?? '',
+                notes: userAnswer.notes ?? '',
             });
         } else {
             setAnswer({
@@ -155,13 +162,13 @@ const OngoingAssessment: React.FC<Props> = (props) => {
     const changelog = api.changelog.getAllByAnswer.useQuery(answer?.id).data;
 
     interface TableData {
-        userId: string;
+        user: string;
         rating: string;
         rationale: string;
     }
 
     const columns: TableColumn[] = [{
-        type: 'userId',
+        type: 'user',
         displayValue: 'Assessor',
     }, {
         type: 'rating',
@@ -175,7 +182,7 @@ const OngoingAssessment: React.FC<Props> = (props) => {
             const newData: TableData[] = [];
             data.forEach(obj => {
                 newData.push({
-                    userId: obj.userId,
+                    user: obj.user.first_name + ' ' + obj.user.last_name,
                     rating: obj.rating ?? '',
                     rationale: obj.rationale ?? '',
                 })
@@ -187,9 +194,9 @@ const OngoingAssessment: React.FC<Props> = (props) => {
     // =========== Submission Management ===========
 
     const initialValues = {
-        rating: selectedAssessmentQuestion?.answer?.rating ?? '',
-        rationale: selectedAssessmentQuestion?.answer?.rationale ?? '',
-        notes: selectedAssessmentQuestion?.answer?.notes ?? '',
+        rating: userAnswer?.rating ?? '',
+        rationale: userAnswer?.rationale ?? '',
+        notes: userAnswer?.notes ?? '',
     }
     const createChangelog = api.changelog.create.useMutation();
     const compareChanges = (changed: any, former: any) => {
@@ -449,7 +456,7 @@ const OngoingAssessment: React.FC<Props> = (props) => {
                                                     <div className='widget-header'>Assessor Answers</div>
                                                     <div className='widget-table'>
                                                         <BrowseTable
-                                                            dataList={convertTableData([]) ?? []}
+                                                            dataList={convertTableData(selectedAssessmentQuestion.answers.filter(a => a.user?.role == 'ASSESSOR')) ?? []}
                                                             tableInfoColumns={columns}
                                                         />
                                                     </div>
@@ -474,8 +481,8 @@ const OngoingAssessment: React.FC<Props> = (props) => {
             </Formik>
             <ConfirmModal message={`Are you sure you want to submit ongoing assessment ${assessment}?`} open={confirmSubmitModal} setOpen={setConfirmSubmitModal} handleConfirm={handleSubmitAssesment} />
             <MessageModal message={`Assessment ${assessment} cannot be submitted because there are unfinished question forms.`} open={messageModal} setOpen={setMessageModal} />
-        </div >
+        </div>
     );
 };
 
-export default OngoingAssessment;
+export default AssessmentForm;
