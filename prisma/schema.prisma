@@ -301,7 +301,7 @@ model AssessmentQuestion {
     assessment    Assessment @relation(fields: [assessment_id], references: [id], onDelete: Restrict)
     filter_id     Int?
     filter        Filter?    @relation(fields: [filter_id], references: [id], onDelete: Restrict)
-    answer        Answer?
+    answers        Answer[]
 
     @@index([question_id])
     @@index([assessment_id])
@@ -321,7 +321,7 @@ model Answer {
 
     user_id                Int?
     user                   User?              @relation(fields: [user_id], references: [id])
-    assessment_question_id Int                @unique
+    assessment_question_id Int
     assessment_question    AssessmentQuestion @relation(fields: [assessment_question_id], references: [id])
 
     start_time DateTime?
