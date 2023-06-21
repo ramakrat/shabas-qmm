@@ -50,18 +50,48 @@ export const authOptions: NextAuthOptions = {
             },
             async authorize(credentials, req) {
                 // Add logic here to look up the user from the credentials supplied
+                const users = [{
+                    id: '1',
+                    name: "Jessica Caforio",
+                    email: "jessica@email.com",
+                    role: 'ADMIN',
+                }, {
+                    id: '2',
+                    name: "Kevin Angel",
+                    email: "kevin@email.com",
+                    role: 'ASSESSOR',
+                }, {
+                    id: '3',
+                    name: "Amanda McGill",
+                    email: "amanda@email.com",
+                    role: 'ASSESSOR',
+                }, {
+                    id: '4',
+                    name: "Linda Smith",
+                    email: "linda@email.com",
+                    role: 'LEAD_ASSESSOR',
+                }, {
+                    id: '5',
+                    name: "Alex Hans",
+                    email: "alex@email.com",
+                    role: 'LEAD_ASSESSOR',
+                }, {
+                    id: '6',
+                    name: "Sally Kim",
+                    email: "sally@email.com",
+                    role: 'OVERSIGHT_ASSESSOR',
+                }, {
+                    id: '7',
+                    name: "Tyler Wong",
+                    email: "tyler@email.com",
+                    role: 'OVERSIGHT_ASSESSOR',
+                }]
 
-                if (credentials &&
-                    credentials.username === "john@email.com" &&
-                    credentials.password === "test"
-                ) {
+                const foundUser = users.find(o => o.email == credentials?.username && credentials?.password == 'password');
+
+                if (foundUser) {
                     // Any object returned will be saved in `user` property of the JWT
-                    return {
-                        id: '2',
-                        name: "John",
-                        email: "johndoe@test.com",
-                        role: 'ADMIN',
-                    };
+                    return foundUser as User;
                 }
                 // If you return null then an error will be displayed advising the user to check their details.
                 return null;
