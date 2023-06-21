@@ -100,9 +100,6 @@ const AssessmentForm: React.FC<Props> = (props) => {
 
     const userAnswer = selectedAssessmentQuestion?.answers.find(a => a.user_id == userId);
 
-    // const userAnswer = api.answer.getByAssessmentUser.useQuery({ userId: userId, assessmentQuestionId: selectedAssessmentQuestion?.id }).data;
-    console.log(userAnswer)
-
     // =========== Input Field States ===========
 
     const [showRating, setShowRating] = React.useState<boolean>(false);
