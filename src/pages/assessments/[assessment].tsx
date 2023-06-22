@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { type NextPage } from "next";
 import { useRouter } from 'next/router';
-import type { AssessmentQuestion, Engagement, Filter, Poc, Question, Rating, Site, User } from '@prisma/client';
+import type { AssessmentQuestion, AssessmentUser, Engagement, Filter, Question, Rating, Site, User } from '@prisma/client';
 
 import * as yup from "yup";
 import { Field, Form, Formik, FormikProps } from "formik";
@@ -10,13 +10,13 @@ import Select from "~/components/Form/Select";
 
 import {
     Button, Card, Grid, IconButton, MenuItem, Select as MuiSelect,
-    TextField as MuiTextField, Typography, CardActions, CardContent, CardHeader, Paper, Step, StepButton, Stepper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow
+    TextField as MuiTextField, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow
 } from '@mui/material';
-import { Add, Close, Delete } from '@mui/icons-material';
+import { Add, Delete } from '@mui/icons-material';
 
 import { api } from "~/utils/api";
 import Layout from "~/components/Layout/Layout";
-import { dateInputFormat, titleCase, underscoreToTitle } from '~/utils/utils';
+import { dateInputFormat, titleCase } from '~/utils/utils';
 import StatusChip from '~/components/Common/StatusChip';
 import { useSession } from 'next-auth/react';
 import AccessDenied from '~/components/Common/AccessDenied';
@@ -40,7 +40,14 @@ type AssessmentQuestionReturnType = (
         });
         filter: Filter | null
     }
-)[];
+);
+
+type AssessmentUserReturnType = (
+    AssessmentUser & {
+        user: User;
+        id?: number;
+    }
+)
 
 interface FormValues {
     description: string;
@@ -71,6 +78,8 @@ const validationSchema = yup.object().shape({
     siteId: yup.string().required("Required"),
     engagementId: yup.string().required("Required"),
     pocId: yup.string().required("Required"),
+    leadAssessorId: yup.number().required("Required"),
+    oversightAssessorId: yup.number().required("Required"),
 });
 
 const Assessment: NextPage = () => {
@@ -91,12 +100,12 @@ const Assessment: NextPage = () => {
     const allLeadAssessors = api.user.getAllByRole.useQuery('LEAD_ASSESSOR').data;
     const allAssessors = api.user.getAllByRole.useQuery('ASSESSOR').data;
 
-    const existingOversightAssessor = data?.assessment_users.find(o => o.user.role == 'ADMIN')?.user;
-    const existingLeadAssessor = data?.assessment_users.find(o => o.user.role == 'LEAD_ASSESSOR')?.user;
+    const existingOversightAssessor = data?.assessment_users.find(o => o.user.role == 'ADMIN');
+    const existingLeadAssessor = data?.assessment_users.find(o => o.user.role == 'LEAD_ASSESSOR');
 
     const oversightAssessor = data?.assessment_users.find(o => o.user.role == 'OVERSIGHT_ASSESSOR')
     const leadAssessor = data?.assessment_users.find(o => o.user.role == 'LEAD_ASSESSOR')
-    const assessors = data?.assessment_users.filter(o => o.user.role == 'ASSESSOR').map(o => o.user)
+    const assessors = data?.assessment_users.filter(o => o.user.role == 'ASSESSOR')
 
 
     // =========== Input Field States ===========
@@ -112,12 +121,12 @@ const Assessment: NextPage = () => {
         oversightAssessorId: '',
     });
 
-    const [existingAssessors, setExistingAssessors] = React.useState<User[]>([]);
+    const [existingAssessors, setExistingAssessors] = React.useState<AssessmentUserReturnType[]>([]);
     const [newAssessors, setNewAssessors] = React.useState<User[]>([]);
-    const [deletedAssessors, setDeletedAssessors] = React.useState<User[]>([]);
-    const [selectedAssessor, setSelectedAssessor] = React.useState<Question | undefined>(undefined);
+    const [deletedAssessors, setDeletedAssessors] = React.useState<AssessmentUserReturnType[]>([]);
+    const [selectedAssessor, setSelectedAssessor] = React.useState<number | undefined>(undefined);
 
-    const [existingQuestions, setExistingQuestions] = React.useState<AssessmentQuestionReturnType>([]);
+    const [existingQuestions, setExistingQuestions] = React.useState<AssessmentQuestionReturnType[]>([]);
     const [newQuestions, setNewQuestions] = React.useState<QuestionType[]>([]);
     const [deletedQuestions, setDeletedQuestions] = React.useState<AssessmentQuestionReturnType[]>([]);
 
@@ -126,10 +135,12 @@ const Assessment: NextPage = () => {
 
     const [error, setError] = React.useState<string[] | undefined>(undefined);
 
-    const assessorSelections = existingAssessors.concat(newAssessors).map(o => o.id);
+    const assessorSelections = existingAssessors.map(o => o.user).concat(newAssessors).map(o => o.id);
     const assessorOptions = allAssessors?.filter(a => {
         return !assessorSelections.includes(a.id);
     })
+
+    console.log(deletedAssessors)
 
     React.useEffect(() => {
         if (data) {
@@ -150,7 +161,7 @@ const Assessment: NextPage = () => {
             }
 
             if (data.assessment_questions) {
-                setExistingQuestions(data.assessment_questions as AssessmentQuestionReturnType);
+                setExistingQuestions(data.assessment_questions as AssessmentQuestionReturnType[]);
             } else {
                 setExistingQuestions([]);
             }
@@ -177,6 +188,7 @@ const Assessment: NextPage = () => {
 
     const createQuestions = api.assessmentQuestion.createArray.useMutation();
     const updateQuestion = api.assessmentQuestion.update.useMutation();
+    const deleteQuestions = api.assessmentQuestion.deleteArray.useMutation();
 
     const createAssessmentUser = api.assessmentUser.create.useMutation();
     const createAssessmentUsers = api.assessmentUser.createArray.useMutation();
@@ -221,10 +233,54 @@ const Assessment: NextPage = () => {
                                 newExistingArray.push(o)
                             });
                             setExistingQuestions(newExistingArray);
+                            setNewQuestions([]);
+                        }
+                    })
+                    deleteQuestions.mutate(deletedQuestions.map(o => o.id), {
+                        onSuccess() {
+                            setDeletedQuestions([]);
                         }
                     })
 
                     // Update Lead and Oversight
+
+                    if (existingOversightAssessor) {
+                        updateAssessmentUser.mutate({
+                            id: existingOversightAssessor.id,
+                            user_id: Number(values.oversightAssessorId),
+                            assessment_id: data.id,
+                        }, {
+                            onSuccess() {
+                            }
+                        })
+                    } else {
+                        createAssessmentUser.mutate({
+                            user_id: Number(values.oversightAssessorId),
+                            assessment_id: data.id,
+                        }, {
+                            onSuccess() {
+                            }
+                        })
+                    }
+
+                    if (existingLeadAssessor) {
+                        updateAssessmentUser.mutate({
+                            id: existingLeadAssessor.id,
+                            user_id: Number(values.leadAssessorId),
+                            assessment_id: data.id,
+                        }, {
+                            onSuccess() {
+                            }
+                        })
+                    } else {
+                        createAssessmentUser.mutate({
+                            user_id: Number(values.leadAssessorId),
+                            assessment_id: data.id,
+                        }, {
+                            onSuccess() {
+                            }
+                        })
+                    }
 
                     existingAssessors.forEach(o =>
                         updateAssessmentUser.mutate({
@@ -241,10 +297,12 @@ const Assessment: NextPage = () => {
                     }), {
                         onSuccess(data) {
                             const newExistingArray = existingAssessors;
-                            newAssessors.forEach((o, i) => {
-                                newExistingArray.push(o)
+                            data.forEach((o) => {
+                                const currUser = newAssessors.find(n => n.id == o.id)
+                                if (currUser) newExistingArray.push({ ...o, user: currUser })
                             });
                             setExistingAssessors(newExistingArray);
+                            setNewAssessors([]);
                         }
                     })
                     deleteAssessmentUsers.mutate(deletedAssessors.map(o => o.id), {
@@ -409,13 +467,13 @@ const Assessment: NextPage = () => {
                                                 <Typography>Oversight Assessor</Typography>
                                                 <div className='input-row read-only'>
                                                     <span className='content'>
-                                                        {existingOversightAssessor?.first_name + ' ' + existingOversightAssessor?.last_name}
+                                                        {existingOversightAssessor?.user.first_name + ' ' + existingOversightAssessor?.user.last_name}
                                                     </span>
                                                 </div>
                                                 <Typography>Lead Assessor</Typography>
                                                 <div className='input-row read-only'>
                                                     <span className='content'>
-                                                        {existingLeadAssessor?.first_name + ' ' + existingLeadAssessor?.last_name}
+                                                        {existingLeadAssessor?.user.first_name + ' ' + existingLeadAssessor?.user.last_name}
                                                     </span>
                                                 </div>
                                                 <Typography>Assessors</Typography>
@@ -423,7 +481,7 @@ const Assessment: NextPage = () => {
                                                     return (
                                                         <div key={i} className='input-row read-only'>
                                                             <span className='content'>
-                                                                {o.first_name + ' ' + o.last_name}
+                                                                {o.user.first_name + ' ' + o.user.last_name}
                                                             </span>
                                                         </div>
                                                     )
@@ -601,7 +659,7 @@ const Assessment: NextPage = () => {
                                                             return (
                                                                 <div key={i} className='input-row hover-focus read-only'>
                                                                     <span className='content'>
-                                                                        {o.first_name} {o.first_name}
+                                                                        {o.user.first_name} {o.user.last_name}
                                                                     </span>
                                                                     <IconButton
                                                                         color='default'
@@ -618,7 +676,7 @@ const Assessment: NextPage = () => {
                                                             return (
                                                                 <div key={i} className='input-row hover-focus read-only'>
                                                                     <span className='content'>
-                                                                        {o.first_name} {o.first_name}
+                                                                        {o.first_name} {o.last_name}
                                                                     </span>
                                                                     <IconButton
                                                                         color='default'
@@ -633,9 +691,9 @@ const Assessment: NextPage = () => {
                                                         <div className='input-row'>
                                                             <MuiSelect
                                                                 size='small'
-                                                                value={selectedAssessor ? selectedAssessor.id : -1}
+                                                                value={selectedAssessor ?? -1}
                                                                 onChange={(event) => {
-                                                                    // setSelectedAssessor
+                                                                    setSelectedAssessor(Number(event.target.value))
                                                                     // setNewAssessors([...newAssessors, allAssessors.find(o => o.id == event.target.value]);
                                                                 }}
                                                             >
@@ -650,7 +708,11 @@ const Assessment: NextPage = () => {
                                                             </MuiSelect>
                                                             <IconButton
                                                                 onClick={() => {
-                                                                    setNewAssessors([...newAssessors,])
+                                                                    const assessor = allAssessors?.find(o => o.id == selectedAssessor)
+                                                                    if (assessor) {
+                                                                        setNewAssessors([...newAssessors, assessor]);
+                                                                        setSelectedAssessor(undefined);
+                                                                    }
                                                                 }}
                                                             ><Add /></IconButton>
                                                         </div>
@@ -731,7 +793,7 @@ const Assessment: NextPage = () => {
                                                                                         <IconButton
                                                                                             color='default'
                                                                                             onClick={() => {
-                                                                                                setDeletedQuestions([...deletedQuestions, q as unknown as AssessmentQuestionReturnType]);
+                                                                                                setDeletedQuestions([...deletedQuestions, q]);
                                                                                                 const newExisting = existingQuestions.filter(x => x.id != q.id);
                                                                                                 setExistingQuestions(newExisting);
                                                                                             }}
