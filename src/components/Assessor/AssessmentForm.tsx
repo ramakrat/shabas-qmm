@@ -266,7 +266,7 @@ const AssessmentForm: React.FC<Props> = (props) => {
                 })
         }
     }
-    const checkCompletion = api.assessmentQuestion.getUnfinishedAssessmentQuestions.useQuery({ assessmentId: assessment, status: status }).data;
+    const checkCompletion = api.assessmentUser.getUnfinishedAssessmentQuestions.useQuery({ assessmentId: assessment, userId: userId, status: status }).data;
     const handleSubmitAssessmentCheck = () => {
         if (checkCompletion && checkCompletion.length > 0) {
             setMessageModal(true);

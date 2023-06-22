@@ -145,4 +145,46 @@ export const assessmentUserRouter = createTRPCRouter({
 
             return foundAccessibleAssessment ? true : false;
         }),
+    getUnfinishedAssessmentQuestions: protectedProcedure
+        .input(z.object({ assessmentId: z.number(), userId: z.number(), status: z.string() }))
+        .query(({ input, ctx }) => {
+            let nullFields: any = [
+                { start_time: null },
+                { rating: null },
+                { rationale: null }
+            ];
+            if (input.status == 'oversight') {
+                nullFields = [
+                    { start_time: null },
+                    { rating: null },
+                ]
+            }
+            return ctx.prisma.assessmentUser.findMany({
+                where: {
+                    assessment_id: input.assessmentId,
+                    user_id: input.userId,
+                    assessment: {
+                        OR: [{
+                            assessment_questions: {
+                                some: {
+                                    answers: {
+                                        some: {
+                                            OR: nullFields
+                                        }
+                                    }
+                                }
+                            }
+                        }, {
+                            assessment_questions: {
+                                some: {
+                                    answers: {
+                                        none: {}
+                                    }
+                                }
+                            }
+                        }]
+                    }
+                }
+            });
+        }),
 });
