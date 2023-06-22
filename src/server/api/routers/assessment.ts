@@ -109,8 +109,18 @@ export const assessmentRouter = createTRPCRouter({
                         assessment_questions: {
                             include: {
                                 filter: true,
-                                answers: true,
-                                question: true,
+                                answers: {
+                                    include: {
+                                        user: true,
+                                    }
+                                },
+                                question: {
+                                    include: {
+                                        ratings: true,
+                                        references: true,
+                                        interview_guides: true,
+                                    }
+                                },
                             }
                         },
                         engagement: true

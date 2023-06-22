@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import { isEmptyArray } from "formik";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
@@ -113,11 +114,15 @@ export const assessmentQuestionRouter = createTRPCRouter({
                 where: {
                     assessment_id: input.assessmentId,
                     OR: [{
-                        answer: {
-                            OR: nullFields
+                        answers: {
+                            some: {
+                                OR: nullFields
+                            }
                         }
                     }, {
-                        answer: null
+                        answers: {
+                            none: {}
+                        }
                     }]
                 }
             });
