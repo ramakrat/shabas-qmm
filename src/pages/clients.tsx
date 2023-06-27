@@ -48,7 +48,6 @@ const clientColumns: TableColumn[] = [{
 
 interface SiteTableData {
     id: number;
-    client: string;
     name: string;
     address: React.ReactNode;
     description: string;
@@ -59,10 +58,6 @@ const siteColumns: TableColumn[] = [{
     type: 'id',
     displayValue: 'Site ID',
     align: 'center',
-}, {
-    type: 'client',
-    displayValue: 'Client',
-    align: 'left',
 }, {
     type: 'name',
     displayValue: 'Name',
@@ -132,7 +127,6 @@ const BrowseClients: NextPage = () => {
                             )
                             newData.push({
                                 id: site.id,
-                                client: `${parentClient.id} - ${parentClient.name}`,
                                 name: site.name,
                                 address: address(site),
                                 description: site.description,
@@ -166,41 +160,35 @@ const BrowseClients: NextPage = () => {
         }
     }
 
-    if (session?.user && session.user.role == 'ADMIN') {
-        return (
-            <Layout active='clients' admin>
-                <div className='dashboard'>
-                    <div className='browse-add'>
-                        <Button
-                            variant='contained'
-                            endIcon={<Add />}
-                            onClick={() => { setClientData(undefined); setClientModal(true) }}
-                        >
-                            New Client
-                        </Button>
-                        <Button
-                            variant='contained'
-                            endIcon={<Add />}
-                            onClick={() => { setSiteData(undefined); setSiteModal(true) }}
-                        >
-                            New Site
-                        </Button>
-                    </div>
-                    <BrowseTable
-                        dataList={convertTableData(data) ?? []}
-                        tableInfoColumns={clientColumns}
-                        expandable
-                    />
-                    <ClientModal open={clientModal} setOpen={setClientModal} data={clientData} />
-                    <SiteModal open={siteModal} setOpen={setSiteModal} data={siteData} />
+    return (
+        <Layout active='clients' session={session} requiredRoles={['ADMIN']}>
+            <div className='dashboard'>
+                <div className='browse-add'>
+                    <Button
+                        variant='contained'
+                        endIcon={<Add />}
+                        onClick={() => { setClientData(undefined); setClientModal(true) }}
+                    >
+                        New Client
+                    </Button>
+                    <Button
+                        variant='contained'
+                        endIcon={<Add />}
+                        onClick={() => { setSiteData(undefined); setSiteModal(true) }}
+                    >
+                        New Site
+                    </Button>
                 </div>
-            </Layout>
-        );
-    } else {
-        return (
-            <AccessDenied />
-        )
-    }
+                <BrowseTable
+                    dataList={convertTableData(data) ?? []}
+                    tableInfoColumns={clientColumns}
+                    expandable
+                />
+                <ClientModal open={clientModal} setOpen={setClientModal} data={clientData} />
+                <SiteModal open={siteModal} setOpen={setSiteModal} data={siteData} />
+            </div>
+        </Layout>
+    );
 };
 
 export default BrowseClients;
