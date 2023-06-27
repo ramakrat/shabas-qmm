@@ -146,26 +146,28 @@ export const Layout: React.FC<Props> = (props) => {
     }
 
     if (!session) {
-        <div>
-            <Head>
-                <title>Shabas QMM</title>
-                <meta name="description" content="Shabas QMM" />
-                <link rel="icon" href="/favicon.ico" />
-            </Head>
-            <main className='content-body'>
-                <div className='header'>
-                    <div className='nav-items'>
-                        <Link href='/' className='logo'>
-                            <Image src={logo} alt={'Shabas Logo'} height={45} />
-                        </Link>
-                    </div>
+        return (
+            <div>
+                <Head>
+                    <title>Shabas QMM</title>
+                    <meta name="description" content="Shabas QMM" />
+                    <link rel="icon" href="/favicon.ico" />
+                </Head>
+                <main className='content-body'>
+                    <div className='header'>
+                        <div className='nav-items'>
+                            <Link href='/' className='logo'>
+                                <Image src={logo} alt={'Shabas Logo'} height={45} />
+                            </Link>
+                        </div>
 
-                    <Button onClick={() => router.push(`/api/auth/signin`)} className='user-button'>
-                        Login
-                    </Button>
-                </div>
-            </main>
-        </div>
+                        <Button onClick={() => router.push(`/api/auth/signin`)} className='user-button'>
+                            Login
+                        </Button>
+                    </div>
+                </main>
+            </div>
+        )
     }
     if (!permitted) {
         return (
