@@ -19,7 +19,6 @@ import Layout from "~/components/Layout/Layout";
 import { dateInputFormat, titleCase } from '~/utils/utils';
 import StatusChip from '~/components/Common/StatusChip';
 import { useSession } from 'next-auth/react';
-import AccessDenied from '~/components/Common/AccessDenied';
 
 interface QuestionType {
     id?: number;
@@ -108,6 +107,10 @@ const Assessment: NextPage = () => {
     const assessors = data?.assessment_users.filter(o => o.user.role == 'ASSESSOR')
 
 
+    console.log(oversightAssessor)
+    console.log(leadAssessor)
+    console.log(assessors)
+
     // =========== Input Field States ===========
 
     const [assessmentData, setAssessmentData] = React.useState<FormValues>({
@@ -139,8 +142,6 @@ const Assessment: NextPage = () => {
     const assessorOptions = allAssessors?.filter(a => {
         return !assessorSelections.includes(a.id);
     })
-
-    console.log(deletedAssessors)
 
     React.useEffect(() => {
         if (data) {
@@ -369,557 +370,551 @@ const Assessment: NextPage = () => {
         }
     }
 
-    if (session?.user && session.user.role == 'ADMIN') {
-        if (data && data.status != 'created') {
-            return (
-                <Layout active='assessments' admin>
-                    <div className='assessment'>
-                        <div className='assessment-content'>
-                            <Card className='context'>
-                                <div className='question-number'>
-                                    <Typography>View Assessment # : </Typography>
-                                    <Typography>{data.id}</Typography>
-                                </div>
-                                <div>
-                                    <StatusChip status={data.status as any} />
-                                </div>
-                            </Card>
-                            <div className='assessment-form'>
-                                <Grid container spacing={2}>
-                                    <Grid item xs={12}>
-                                        <Card>
-                                            <div className='widget-header'>General</div>
-                                            <div className='widget-body information-list'>
-                                                <div>
-                                                    <Typography>Site</Typography>
-                                                    <Typography>{data.site_id}</Typography>
-                                                </div>
-                                                <div>
-                                                    <Typography>Engagement</Typography>
-                                                    <Typography>{data.engagement_id}</Typography>
-                                                </div>
-                                                <div>
-                                                    <Typography>Client POC</Typography>
-                                                    <Typography>{data.poc_id}</Typography>
-                                                </div>
-                                                <div>
-                                                    <Typography>Start Date</Typography>
-                                                    <Typography>{dateInputFormat(data.start_date, true, true)}</Typography>
-                                                </div>
-                                                <div>
-                                                    <Typography>End Date</Typography>
-                                                    <Typography>{dateInputFormat(data.end_date, true, true)}</Typography>
-                                                </div>
-                                                <div>
-                                                    <Typography>Description</Typography>
-                                                    <Typography>{data.description}</Typography>
-                                                </div>
-                                            </div>
-                                        </Card>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <Card>
-                                            <div className='widget-header'>Assessment Questions</div>
-                                            <div className='changelog'>
-                                                {error &&
-                                                    <div className='error-text'>
-                                                        {error.map((e, i) => {
-                                                            return <span key={i}>{e}</span>;
-                                                        })}
-                                                    </div>
-                                                }
-                                                <TableContainer component={Paper} className='browse-table'>
-                                                    <Table>
-                                                        <TableHead>
-                                                            <TableRow>
-                                                                <TableCell align="center">Question #</TableCell>
-                                                                <TableCell align="center">Filter</TableCell>
-                                                                <TableCell align="left">Content</TableCell>
-                                                            </TableRow>
-                                                        </TableHead>
-                                                        <TableBody>
-                                                            {existingQuestions && existingQuestions.map((q) => {
-                                                                return (
-                                                                    <TableRow
-                                                                        key={q.question.number}
-                                                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                                    >
-                                                                        <TableCell align="center">
-                                                                            {q.question.number}
-                                                                        </TableCell>
-                                                                        <TableCell align="center">
-                                                                            {q.filter ? q.filter.toString() : 'Standard'}
-                                                                        </TableCell>
-                                                                        <TableCell align="left">{q.question.question}</TableCell>
-                                                                    </TableRow>
-                                                                )
-                                                            })}
-                                                        </TableBody>
-                                                    </Table>
-                                                </TableContainer>
-                                            </div>
-                                        </Card>
-                                    </Grid>
-                                    <Grid item xs={12}>
-                                        <Card>
-                                            <div className='widget-header'>Assessors</div>
-                                            <div className='widget-body widget-form'>
-                                                <Typography>Oversight Assessor</Typography>
-                                                <div className='input-row read-only'>
-                                                    <span className='content'>
-                                                        {existingOversightAssessor?.user.first_name + ' ' + existingOversightAssessor?.user.last_name}
-                                                    </span>
-                                                </div>
-                                                <Typography>Lead Assessor</Typography>
-                                                <div className='input-row read-only'>
-                                                    <span className='content'>
-                                                        {existingLeadAssessor?.user.first_name + ' ' + existingLeadAssessor?.user.last_name}
-                                                    </span>
-                                                </div>
-                                                <Typography>Assessors</Typography>
-                                                {existingAssessors.map((o, i) => {
-                                                    return (
-                                                        <div key={i} className='input-row read-only'>
-                                                            <span className='content'>
-                                                                {o.user.first_name + ' ' + o.user.last_name}
-                                                            </span>
-                                                        </div>
-                                                    )
-                                                })}
-                                            </div>
-                                        </Card>
-                                    </Grid>
-                                </Grid>
-                            </div>
-                        </div>
-                    </div>
-                </Layout >
-            )
-        }
+    if (data && data.status != 'created') {
         return (
-            <Layout active='assessments' admin>
-                <Formik
-                    enableReinitialize
-                    initialValues={assessmentData}
-                    validationSchema={validationSchema}
-                    validateOnBlur={false}
-                    validateOnChange={false}
-                    onSubmit={handleSubmit}
-                >
-                    {(formikProps: FormikProps<FormValues>) => (
-                        <Form>
-                            <div className='assessment'>
-                                <div className='assessment-content'>
-                                    <Card className='context'>
-                                        <div className='question-number'>
-                                            <Typography>{data ? 'Edit Assessment # : ' : 'Create New Assessment'}</Typography>
-                                            {data && <Typography>{data.id}</Typography>}
-                                        </div>
-                                        <div>
-                                            {data ?
-                                                <>
-                                                    <StatusChip status='created' />
-                                                    <Button variant='contained' type='submit'>Save</Button>
-                                                </> :
-                                                <Button variant='contained' type='submit' onClick={() => {
-                                                    const errStr = [];
-                                                    if (Object.keys(formikProps.errors).length > 0) {
-                                                        errStr.push(`Cannot create assessment with errors in "General Information" form.`);
-                                                    }
-                                                    if (existingQuestions.length < 1 && newQuestions.length < 1) {
-                                                        errStr.push(`Assessments must contain ${'\n'} at least 1 question.`);
-                                                    }
-
-                                                    if (errStr.length > 1) {
-                                                        setError(errStr)
-                                                    } else {
-                                                        setError(undefined);
-                                                    }
-                                                }}>
-                                                    Create
-                                                </Button>
-                                            }
+            <Layout active='assessments' session={session} requiredRoles={['ADMIN']}>
+                <div className='assessment'>
+                    <div className='assessment-content'>
+                        <Card className='context'>
+                            <div className='question-number'>
+                                <Typography>View Assessment # : </Typography>
+                                <Typography>{data.id}</Typography>
+                            </div>
+                            <div>
+                                <StatusChip status={data.status as any} />
+                            </div>
+                        </Card>
+                        <div className='assessment-form'>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12}>
+                                    <Card>
+                                        <div className='widget-header'>General</div>
+                                        <div className='widget-body information-list'>
+                                            <div>
+                                                <Typography>Site</Typography>
+                                                <Typography>{data.site_id}</Typography>
+                                            </div>
+                                            <div>
+                                                <Typography>Engagement</Typography>
+                                                <Typography>{data.engagement_id}</Typography>
+                                            </div>
+                                            <div>
+                                                <Typography>Client POC</Typography>
+                                                <Typography>{data.poc_id}</Typography>
+                                            </div>
+                                            <div>
+                                                <Typography>Start Date</Typography>
+                                                <Typography>{dateInputFormat(data.start_date, true, true)}</Typography>
+                                            </div>
+                                            <div>
+                                                <Typography>End Date</Typography>
+                                                <Typography>{dateInputFormat(data.end_date, true, true)}</Typography>
+                                            </div>
+                                            <div>
+                                                <Typography>Description</Typography>
+                                                <Typography>{data.description}</Typography>
+                                            </div>
                                         </div>
                                     </Card>
-                                    <div className='assessment-form'>
-                                        <Grid container spacing={2}>
-                                            <Grid item xs={6}>
-                                                <Card>
-                                                    <div className='widget-header'>General</div>
-                                                    <div className='widget-body widget-form'>
-                                                        <Grid container spacing={1}>
-                                                            <Grid item xs={12}>
-                                                                <Typography>Site</Typography>
-                                                                <Field
-                                                                    name='siteId' label='' size='small'
-                                                                    component={Select}
-                                                                >
-                                                                    <MenuItem value=''><em>Select a site...</em></MenuItem>
-                                                                    {sites && sites.map((site: Site) => {
-                                                                        return (
-                                                                            <MenuItem value={site.id} key={site.id}>
-                                                                                {site.id} - {site.name}
-                                                                            </MenuItem>
-                                                                        )
-                                                                    })}
-                                                                </Field>
-                                                            </Grid>
-                                                            <Grid item xs={12}>
-                                                                <Typography>Engagement</Typography>
-                                                                <Field
-                                                                    name='engagementId' label='' size='small'
-                                                                    component={Select}
-                                                                >
-                                                                    <MenuItem value=''><em>Select an engagement...</em></MenuItem>
-                                                                    {engagements && engagements.map((engagement: Engagement) => {
-                                                                        return (
-                                                                            <MenuItem value={engagement.id} key={engagement.id}>
-                                                                                {engagement.id} - {engagement.description}
-                                                                            </MenuItem>
-                                                                        )
-                                                                    })}
-                                                                </Field>
-                                                            </Grid>
-                                                            <Grid item xs={12}>
-                                                                <Typography>Client POC</Typography>
-                                                                <Field
-                                                                    name='pocId' label='' size='small'
-                                                                    component={Select}
-                                                                >
-                                                                    <MenuItem value=''><em>Select a POC...</em></MenuItem>
-                                                                    {clientPOC && clientPOC.map(poc => {
-                                                                        return (
-                                                                            <MenuItem value={poc.id} key={poc.id}>
-                                                                                {poc.first_name} {poc.last_name} - {poc.title}
-                                                                            </MenuItem>
-                                                                        )
-                                                                    })}
-                                                                </Field>
-                                                            </Grid>
-                                                            <Grid item xs={12} md={6}>
-                                                                <Typography>Start Date</Typography>
-                                                                <Field
-                                                                    name='startDate' label='' size='small' type='date'
-                                                                    component={TextField}
-                                                                />
-                                                            </Grid>
-                                                            <Grid item xs={12} md={6}>
-                                                                <Typography>End Date</Typography>
-                                                                <Field
-                                                                    name='endDate' label='' size='small' type='date'
-                                                                    component={TextField}
-                                                                />
-                                                            </Grid>
-                                                            <Grid item xs={12}>
-                                                                <Typography>Description</Typography>
-                                                                <Field
-                                                                    name='description' label='' size='small' multiline
-                                                                    placeholder='Description...'
-                                                                    component={TextField}
-                                                                />
-                                                            </Grid>
-                                                        </Grid>
-                                                    </div>
-                                                </Card>
-                                            </Grid>
-                                            <Grid item xs={6}>
-                                                <Card>
-                                                    <div className='widget-header'>Assessors</div>
-                                                    <div className='widget-body widget-form'>
-                                                        <Typography>Oversight Assessor</Typography>
-                                                        <Field
-                                                            name='oversightAssessorId' label='' size='small'
-                                                            component={Select}
-                                                        >
-                                                            <MenuItem value=''><em>Select a user...</em></MenuItem>
-                                                            {allOversightAssessors && allOversightAssessors.map((user: User) => {
-                                                                return (
-                                                                    <MenuItem value={user.id} key={user.id}>
-                                                                        {user.first_name} {user.last_name}
-                                                                    </MenuItem>
-                                                                )
-                                                            })}
-                                                        </Field>
-                                                        <Typography>Lead Assessor</Typography>
-                                                        <Field
-                                                            name='leadAssessorId' label='' size='small'
-                                                            component={Select}
-                                                        >
-                                                            <MenuItem value=''><em>Select a user...</em></MenuItem>
-                                                            {allLeadAssessors && allLeadAssessors.map((user: User) => {
-                                                                return (
-                                                                    <MenuItem value={user.id} key={user.id}>
-                                                                        {user.first_name} {user.last_name}
-                                                                    </MenuItem>
-                                                                )
-                                                            })}
-                                                        </Field>
-                                                        <Typography>Assessors</Typography>
-                                                        {existingAssessors.map((o, i) => {
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Card>
+                                        <div className='widget-header'>Assessment Questions</div>
+                                        <div className='changelog'>
+                                            {error &&
+                                                <div className='error-text'>
+                                                    {error.map((e, i) => {
+                                                        return <span key={i}>{e}</span>;
+                                                    })}
+                                                </div>
+                                            }
+                                            <TableContainer component={Paper} className='browse-table'>
+                                                <Table>
+                                                    <TableHead>
+                                                        <TableRow>
+                                                            <TableCell align="center">Question #</TableCell>
+                                                            <TableCell align="center">Filter</TableCell>
+                                                            <TableCell align="left">Content</TableCell>
+                                                        </TableRow>
+                                                    </TableHead>
+                                                    <TableBody>
+                                                        {existingQuestions && existingQuestions.map((q) => {
                                                             return (
-                                                                <div key={i} className='input-row hover-focus read-only'>
-                                                                    <span className='content'>
-                                                                        {o.user.first_name} {o.user.last_name}
-                                                                    </span>
-                                                                    <IconButton
-                                                                        color='default'
-                                                                        onClick={() => {
-                                                                            setDeletedAssessors([...deletedAssessors, o]);
-                                                                            const newExisting = existingAssessors.filter(x => x.id != o.id);
-                                                                            setExistingAssessors(newExisting);
-                                                                        }}
-                                                                    ><Delete /></IconButton>
-                                                                </div>
+                                                                <TableRow
+                                                                    key={q.question.number}
+                                                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                                >
+                                                                    <TableCell align="center">
+                                                                        {q.question.number}
+                                                                    </TableCell>
+                                                                    <TableCell align="center">
+                                                                        {q.filter ? q.filter.toString() : 'Standard'}
+                                                                    </TableCell>
+                                                                    <TableCell align="left">{q.question.question}</TableCell>
+                                                                </TableRow>
                                                             )
                                                         })}
-                                                        {newAssessors.map((o, i) => {
-                                                            return (
-                                                                <div key={i} className='input-row hover-focus read-only'>
-                                                                    <span className='content'>
-                                                                        {o.first_name} {o.last_name}
-                                                                    </span>
-                                                                    <IconButton
-                                                                        color='default'
-                                                                        onClick={() => {
-                                                                            const newNew = newAssessors.filter(x => x.id != o.id);
-                                                                            setNewAssessors(newNew);
-                                                                        }}
-                                                                    ><Delete /></IconButton>
-                                                                </div>
-                                                            )
-                                                        })}
-                                                        <div className='input-row'>
-                                                            <MuiSelect
-                                                                size='small'
-                                                                value={selectedAssessor ?? -1}
-                                                                onChange={(event) => {
-                                                                    setSelectedAssessor(Number(event.target.value))
-                                                                    // setNewAssessors([...newAssessors, allAssessors.find(o => o.id == event.target.value]);
-                                                                }}
-                                                            >
-                                                                <MenuItem value={-1}><em>Select a user...</em></MenuItem>
-                                                                {assessorOptions && assessorOptions.map((o, i) => {
-                                                                    return (
-                                                                        <MenuItem key={i} value={o.id}>
-                                                                            {o.first_name} {o.last_name}
-                                                                        </MenuItem>
-                                                                    );
-                                                                })}
-                                                            </MuiSelect>
-                                                            <IconButton
-                                                                onClick={() => {
-                                                                    const assessor = allAssessors?.find(o => o.id == selectedAssessor)
-                                                                    if (assessor) {
-                                                                        setNewAssessors([...newAssessors, assessor]);
-                                                                        setSelectedAssessor(undefined);
-                                                                    }
-                                                                }}
-                                                            ><Add /></IconButton>
-                                                        </div>
+                                                    </TableBody>
+                                                </Table>
+                                            </TableContainer>
+                                        </div>
+                                    </Card>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Card>
+                                        <div className='widget-header'>Assessors</div>
+                                        <div className='widget-body widget-form'>
+                                            <Typography>Oversight Assessor</Typography>
+                                            <div className='input-row read-only'>
+                                                <span className='content'>
+                                                    {existingOversightAssessor?.user.first_name + ' ' + existingOversightAssessor?.user.last_name}
+                                                </span>
+                                            </div>
+                                            <Typography>Lead Assessor</Typography>
+                                            <div className='input-row read-only'>
+                                                <span className='content'>
+                                                    {existingLeadAssessor?.user.first_name + ' ' + existingLeadAssessor?.user.last_name}
+                                                </span>
+                                            </div>
+                                            <Typography>Assessors</Typography>
+                                            {existingAssessors.map((o, i) => {
+                                                return (
+                                                    <div key={i} className='input-row read-only'>
+                                                        <span className='content'>
+                                                            {o.user.first_name + ' ' + o.user.last_name}
+                                                        </span>
                                                     </div>
-                                                </Card>
-                                            </Grid>
-                                            <Grid item xs={12}>
-                                                <Card>
-                                                    <div className='widget-header'>Assessment Questions</div>
-                                                    <div className='changelog'>
-                                                        <div className='widget-table'>
-                                                            {error &&
-                                                                <div className='error-text'>
-                                                                    {error.map((e, i) => {
-                                                                        return <span key={i}>{e}</span>;
-                                                                    })}
-                                                                </div>
-                                                            }
-                                                            <TableContainer component={Paper} className='browse-table'>
-                                                                <Table>
-                                                                    <TableHead>
-                                                                        <TableRow>
-                                                                            <TableCell align="center">Question #</TableCell>
-                                                                            <TableCell align="center">Filter</TableCell>
-                                                                            <TableCell align="left">Content</TableCell>
-                                                                            <TableCell align="center">Action</TableCell>
-                                                                        </TableRow>
-                                                                    </TableHead>
-                                                                    <TableBody>
-                                                                        {existingQuestions && existingQuestions.map((q) => {
-                                                                            return (
-                                                                                <TableRow
-                                                                                    key={q.question.number}
-                                                                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                                                >
-                                                                                    <TableCell align="center">
-                                                                                        {q.question.number}
-                                                                                    </TableCell>
-                                                                                    <TableCell align="center">
-                                                                                        <MuiSelect
-                                                                                            size='small'
-                                                                                            value={q.filter ? q.filter.id : -1}
-                                                                                            onChange={(event) => {
-                                                                                                const newArr = existingQuestions.map(o => {
-                                                                                                    if (o.question.id == q.question.id) {
-                                                                                                        if (event.target.value == -1) {
-                                                                                                            return {
-                                                                                                                ...o,
-                                                                                                                filter: null,
-                                                                                                            }
-                                                                                                        }
-                                                                                                        const newFilter = o.question.ratings.find(o => o.filter_id == event.target.value);
-                                                                                                        if (newFilter) {
-                                                                                                            return {
-                                                                                                                ...o,
-                                                                                                                filter: newFilter.filter,
-                                                                                                            }
-                                                                                                        }
-                                                                                                    }
-                                                                                                    return o;
-                                                                                                })
-                                                                                                setExistingQuestions(newArr);
-                                                                                            }}
-                                                                                        >
-                                                                                            <MenuItem value={-1}><em>Standard</em></MenuItem>
-                                                                                            {q.question.ratings.map((o, i) => {
-                                                                                                if (o.filter)
-                                                                                                    return (
-                                                                                                        <MenuItem key={i} value={o.filter.id}>
-                                                                                                            {titleCase(o.filter.type)}: {o.filter.name}
-                                                                                                        </MenuItem>
-                                                                                                    );
-                                                                                            })}
-                                                                                        </MuiSelect>
-                                                                                    </TableCell>
-                                                                                    <TableCell align="left">{q.question.question}</TableCell>
-                                                                                    <TableCell align="center">
-                                                                                        <IconButton
-                                                                                            color='default'
-                                                                                            onClick={() => {
-                                                                                                setDeletedQuestions([...deletedQuestions, q]);
-                                                                                                const newExisting = existingQuestions.filter(x => x.id != q.id);
-                                                                                                setExistingQuestions(newExisting);
-                                                                                            }}
-                                                                                        ><Delete /></IconButton>
-                                                                                    </TableCell>
-                                                                                </TableRow>
-                                                                            )
-                                                                        })}
-                                                                        {newQuestions && newQuestions.map((q) => {
-                                                                            const uniqueFilters = [...new Map(q.question.ratings.map(r => {
-                                                                                return [r.filter?.type, r.filter]
-                                                                            })).values()];
-                                                                            return (
-                                                                                <TableRow
-                                                                                    key={q.question.number}
-                                                                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                                                >
-                                                                                    <TableCell align="center">
-                                                                                        {q.question.number}
-                                                                                    </TableCell>
-                                                                                    <TableCell align="center">
-                                                                                        <MuiSelect
-                                                                                            size='small'
-                                                                                            value={q.filterSelection}
-                                                                                            onChange={(event) => {
-                                                                                                const newArr = newQuestions.map(o => {
-                                                                                                    if (o.question.id == q.question.id) {
-                                                                                                        return {
-                                                                                                            ...o,
-                                                                                                            filterSelection: Number(event.target.value),
-                                                                                                        }
-                                                                                                    }
-                                                                                                    return o;
-                                                                                                })
-                                                                                                setNewQuestions(newArr);
-                                                                                            }}
-                                                                                        >
-                                                                                            <MenuItem value={-1}><em>Standard</em></MenuItem>
-                                                                                            {uniqueFilters.map((o, i) => {
-                                                                                                if (o)
-                                                                                                    return (
-                                                                                                        <MenuItem key={i} value={o.id}>
-                                                                                                            {titleCase(o.type)}: {o.name}
-                                                                                                        </MenuItem>
-                                                                                                    );
-                                                                                                return;
-                                                                                            })}
-                                                                                        </MuiSelect>
-                                                                                    </TableCell>
-                                                                                    <TableCell align="left">{q.question.question}</TableCell>
-                                                                                    <TableCell align="center">
-                                                                                        <IconButton
-                                                                                            color='default'
-                                                                                            onClick={() => {
-                                                                                                const newNew = newQuestions.filter(x => x.id != q.id);
-                                                                                                setNewQuestions(newNew);
-                                                                                            }}
-                                                                                        ><Delete /></IconButton>
-                                                                                    </TableCell>
-                                                                                </TableRow>
-                                                                            )
-                                                                        })}
-                                                                    </TableBody>
-                                                                </Table>
-                                                            </TableContainer>
-                                                            {addQuestion ?
-                                                                <div className='questions-bank'>
-                                                                    <div>
-                                                                        {questions && questions.map((o, i) => {
-                                                                            const existsA = existingQuestions.find(q => q.question.id == o.id);
-                                                                            const existsB = newQuestions.find(q => q.question.id == o.id);
-                                                                            if (existsA || existsB) return undefined;
-                                                                            return (
-                                                                                <Typography
-                                                                                    key={i}
-                                                                                    className={selectedQuestion && selectedQuestion.id == o.id ? 'active' : ''}
-                                                                                    onClick={() => {
-                                                                                        if (selectedQuestion == o) {
-                                                                                            setSelectedQuestion(undefined)
-                                                                                        } else {
-                                                                                            setSelectedQuestion(o)
-                                                                                        }
-                                                                                    }}
-                                                                                >
-                                                                                    {o.number} - {o.question}
-                                                                                </Typography>
-                                                                            )
-                                                                        })}
-                                                                    </div>
-                                                                    <Button
-                                                                        variant='contained'
-                                                                        onClick={() => {
-                                                                            if (selectedQuestion) {
-                                                                                const newArr = newQuestions;
-                                                                                newArr.push({ question: selectedQuestion, filterSelection: -1 } as QuestionType)
-                                                                                setSelectedQuestion(undefined);
-                                                                                setNewQuestions(newArr);
-                                                                            }
-                                                                            setAddQuestion(false);
-                                                                        }}
-                                                                    >
-                                                                        <Add />Add Question to Assessment
-                                                                    </Button>
-                                                                </div> :
-                                                                <Button variant='contained' onClick={() => { setAddQuestion(true) }}>
-                                                                    <Add />Add Question
-                                                                </Button>
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                </Card>
-                                            </Grid>
-                                        </Grid>
-                                    </div>
-                                </div>
-                            </div>
-                        </Form>
-                    )}
-                </Formik>
-            </Layout>
-        );
-    } else {
-        return (
-            <AccessDenied />
+                                                )
+                                            })}
+                                        </div>
+                                    </Card>
+                                </Grid>
+                            </Grid>
+                        </div>
+                    </div>
+                </div>
+            </Layout >
         )
     }
+    return (
+        <Layout active='assessments' session={session} requiredRoles={['ADMIN']}>
+            <Formik
+                enableReinitialize
+                initialValues={assessmentData}
+                validationSchema={validationSchema}
+                validateOnBlur={false}
+                validateOnChange={false}
+                onSubmit={handleSubmit}
+            >
+                {(formikProps: FormikProps<FormValues>) => (
+                    <Form>
+                        <div className='assessment'>
+                            <div className='assessment-content'>
+                                <Card className='context'>
+                                    <div className='question-number'>
+                                        <Typography>{data ? 'Edit Assessment # : ' : 'Create New Assessment'}</Typography>
+                                        {data && <Typography>{data.id}</Typography>}
+                                    </div>
+                                    <div>
+                                        {data ?
+                                            <>
+                                                <StatusChip status='created' />
+                                                <Button variant='contained' type='submit'>Save</Button>
+                                            </> :
+                                            <Button variant='contained' type='submit' onClick={() => {
+                                                const errStr = [];
+                                                if (Object.keys(formikProps.errors).length > 0) {
+                                                    errStr.push(`Cannot create assessment with errors in "General Information" form.`);
+                                                }
+                                                if (existingQuestions.length < 1 && newQuestions.length < 1) {
+                                                    errStr.push(`Assessments must contain ${'\n'} at least 1 question.`);
+                                                }
+
+                                                if (errStr.length > 1) {
+                                                    setError(errStr)
+                                                } else {
+                                                    setError(undefined);
+                                                }
+                                            }}>
+                                                Create
+                                            </Button>
+                                        }
+                                    </div>
+                                </Card>
+                                <div className='assessment-form'>
+                                    <Grid container spacing={2}>
+                                        <Grid item xs={6}>
+                                            <Card>
+                                                <div className='widget-header'>General</div>
+                                                <div className='widget-body widget-form'>
+                                                    <Grid container spacing={1}>
+                                                        <Grid item xs={12}>
+                                                            <Typography>Site</Typography>
+                                                            <Field
+                                                                name='siteId' label='' size='small'
+                                                                component={Select}
+                                                            >
+                                                                <MenuItem value=''><em>Select a site...</em></MenuItem>
+                                                                {sites && sites.map((site: Site) => {
+                                                                    return (
+                                                                        <MenuItem value={site.id} key={site.id}>
+                                                                            {site.id} - {site.name}
+                                                                        </MenuItem>
+                                                                    )
+                                                                })}
+                                                            </Field>
+                                                        </Grid>
+                                                        <Grid item xs={12}>
+                                                            <Typography>Engagement</Typography>
+                                                            <Field
+                                                                name='engagementId' label='' size='small'
+                                                                component={Select}
+                                                            >
+                                                                <MenuItem value=''><em>Select an engagement...</em></MenuItem>
+                                                                {engagements && engagements.map((engagement: Engagement) => {
+                                                                    return (
+                                                                        <MenuItem value={engagement.id} key={engagement.id}>
+                                                                            {engagement.id} - {engagement.description}
+                                                                        </MenuItem>
+                                                                    )
+                                                                })}
+                                                            </Field>
+                                                        </Grid>
+                                                        <Grid item xs={12}>
+                                                            <Typography>Client POC</Typography>
+                                                            <Field
+                                                                name='pocId' label='' size='small'
+                                                                component={Select}
+                                                            >
+                                                                <MenuItem value=''><em>Select a POC...</em></MenuItem>
+                                                                {clientPOC && clientPOC.map(poc => {
+                                                                    return (
+                                                                        <MenuItem value={poc.id} key={poc.id}>
+                                                                            {poc.first_name} {poc.last_name} - {poc.title}
+                                                                        </MenuItem>
+                                                                    )
+                                                                })}
+                                                            </Field>
+                                                        </Grid>
+                                                        <Grid item xs={12} md={6}>
+                                                            <Typography>Start Date</Typography>
+                                                            <Field
+                                                                name='startDate' label='' size='small' type='date'
+                                                                component={TextField}
+                                                            />
+                                                        </Grid>
+                                                        <Grid item xs={12} md={6}>
+                                                            <Typography>End Date</Typography>
+                                                            <Field
+                                                                name='endDate' label='' size='small' type='date'
+                                                                component={TextField}
+                                                            />
+                                                        </Grid>
+                                                        <Grid item xs={12}>
+                                                            <Typography>Description</Typography>
+                                                            <Field
+                                                                name='description' label='' size='small' multiline
+                                                                placeholder='Description...'
+                                                                component={TextField}
+                                                            />
+                                                        </Grid>
+                                                    </Grid>
+                                                </div>
+                                            </Card>
+                                        </Grid>
+                                        <Grid item xs={6}>
+                                            <Card>
+                                                <div className='widget-header'>Assessors</div>
+                                                <div className='widget-body widget-form'>
+                                                    <Typography>Oversight Assessor</Typography>
+                                                    <Field
+                                                        name='oversightAssessorId' label='' size='small'
+                                                        component={Select}
+                                                    >
+                                                        <MenuItem value=''><em>Select a user...</em></MenuItem>
+                                                        {allOversightAssessors && allOversightAssessors.map((user: User) => {
+                                                            return (
+                                                                <MenuItem value={user.id} key={user.id}>
+                                                                    {user.first_name} {user.last_name}
+                                                                </MenuItem>
+                                                            )
+                                                        })}
+                                                    </Field>
+                                                    <Typography>Lead Assessor</Typography>
+                                                    <Field
+                                                        name='leadAssessorId' label='' size='small'
+                                                        component={Select}
+                                                    >
+                                                        <MenuItem value=''><em>Select a user...</em></MenuItem>
+                                                        {allLeadAssessors && allLeadAssessors.map((user: User) => {
+                                                            return (
+                                                                <MenuItem value={user.id} key={user.id}>
+                                                                    {user.first_name} {user.last_name}
+                                                                </MenuItem>
+                                                            )
+                                                        })}
+                                                    </Field>
+                                                    <Typography>Assessors</Typography>
+                                                    {existingAssessors.map((o, i) => {
+                                                        return (
+                                                            <div key={i} className='input-row hover-focus read-only'>
+                                                                <span className='content'>
+                                                                    {o.user.first_name} {o.user.last_name}
+                                                                </span>
+                                                                <IconButton
+                                                                    color='default'
+                                                                    onClick={() => {
+                                                                        setDeletedAssessors([...deletedAssessors, o]);
+                                                                        const newExisting = existingAssessors.filter(x => x.id != o.id);
+                                                                        setExistingAssessors(newExisting);
+                                                                    }}
+                                                                ><Delete /></IconButton>
+                                                            </div>
+                                                        )
+                                                    })}
+                                                    {newAssessors.map((o, i) => {
+                                                        return (
+                                                            <div key={i} className='input-row hover-focus read-only'>
+                                                                <span className='content'>
+                                                                    {o.first_name} {o.last_name}
+                                                                </span>
+                                                                <IconButton
+                                                                    color='default'
+                                                                    onClick={() => {
+                                                                        const newNew = newAssessors.filter(x => x.id != o.id);
+                                                                        setNewAssessors(newNew);
+                                                                    }}
+                                                                ><Delete /></IconButton>
+                                                            </div>
+                                                        )
+                                                    })}
+                                                    <div className='input-row'>
+                                                        <MuiSelect
+                                                            size='small'
+                                                            value={selectedAssessor ?? -1}
+                                                            onChange={(event) => {
+                                                                setSelectedAssessor(Number(event.target.value))
+                                                                // setNewAssessors([...newAssessors, allAssessors.find(o => o.id == event.target.value]);
+                                                            }}
+                                                        >
+                                                            <MenuItem value={-1}><em>Select a user...</em></MenuItem>
+                                                            {assessorOptions && assessorOptions.map((o, i) => {
+                                                                return (
+                                                                    <MenuItem key={i} value={o.id}>
+                                                                        {o.first_name} {o.last_name}
+                                                                    </MenuItem>
+                                                                );
+                                                            })}
+                                                        </MuiSelect>
+                                                        <IconButton
+                                                            onClick={() => {
+                                                                const assessor = allAssessors?.find(o => o.id == selectedAssessor)
+                                                                if (assessor) {
+                                                                    setNewAssessors([...newAssessors, assessor]);
+                                                                    setSelectedAssessor(undefined);
+                                                                }
+                                                            }}
+                                                        ><Add /></IconButton>
+                                                    </div>
+                                                </div>
+                                            </Card>
+                                        </Grid>
+                                        <Grid item xs={12}>
+                                            <Card>
+                                                <div className='widget-header'>Assessment Questions</div>
+                                                <div className='changelog'>
+                                                    <div className='widget-table'>
+                                                        {error &&
+                                                            <div className='error-text'>
+                                                                {error.map((e, i) => {
+                                                                    return <span key={i}>{e}</span>;
+                                                                })}
+                                                            </div>
+                                                        }
+                                                        <TableContainer component={Paper} className='browse-table'>
+                                                            <Table>
+                                                                <TableHead>
+                                                                    <TableRow>
+                                                                        <TableCell align="center">Question #</TableCell>
+                                                                        <TableCell align="center">Filter</TableCell>
+                                                                        <TableCell align="left">Content</TableCell>
+                                                                        <TableCell align="center">Action</TableCell>
+                                                                    </TableRow>
+                                                                </TableHead>
+                                                                <TableBody>
+                                                                    {existingQuestions && existingQuestions.map((q) => {
+                                                                        return (
+                                                                            <TableRow
+                                                                                key={q.question.number}
+                                                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                                            >
+                                                                                <TableCell align="center">
+                                                                                    {q.question.number}
+                                                                                </TableCell>
+                                                                                <TableCell align="center">
+                                                                                    <MuiSelect
+                                                                                        size='small'
+                                                                                        value={q.filter ? q.filter.id : -1}
+                                                                                        onChange={(event) => {
+                                                                                            const newArr = existingQuestions.map(o => {
+                                                                                                if (o.question.id == q.question.id) {
+                                                                                                    if (event.target.value == -1) {
+                                                                                                        return {
+                                                                                                            ...o,
+                                                                                                            filter: null,
+                                                                                                        }
+                                                                                                    }
+                                                                                                    const newFilter = o.question.ratings.find(o => o.filter_id == event.target.value);
+                                                                                                    if (newFilter) {
+                                                                                                        return {
+                                                                                                            ...o,
+                                                                                                            filter: newFilter.filter,
+                                                                                                        }
+                                                                                                    }
+                                                                                                }
+                                                                                                return o;
+                                                                                            })
+                                                                                            setExistingQuestions(newArr);
+                                                                                        }}
+                                                                                    >
+                                                                                        <MenuItem value={-1}><em>Standard</em></MenuItem>
+                                                                                        {q.question.ratings.map((o, i) => {
+                                                                                            if (o.filter)
+                                                                                                return (
+                                                                                                    <MenuItem key={i} value={o.filter.id}>
+                                                                                                        {titleCase(o.filter.type)}: {o.filter.name}
+                                                                                                    </MenuItem>
+                                                                                                );
+                                                                                        })}
+                                                                                    </MuiSelect>
+                                                                                </TableCell>
+                                                                                <TableCell align="left">{q.question.question}</TableCell>
+                                                                                <TableCell align="center">
+                                                                                    <IconButton
+                                                                                        color='default'
+                                                                                        onClick={() => {
+                                                                                            setDeletedQuestions([...deletedQuestions, q]);
+                                                                                            const newExisting = existingQuestions.filter(x => x.id != q.id);
+                                                                                            setExistingQuestions(newExisting);
+                                                                                        }}
+                                                                                    ><Delete /></IconButton>
+                                                                                </TableCell>
+                                                                            </TableRow>
+                                                                        )
+                                                                    })}
+                                                                    {newQuestions && newQuestions.map((q) => {
+                                                                        const uniqueFilters = [...new Map(q.question.ratings.map(r => {
+                                                                            return [r.filter?.type, r.filter]
+                                                                        })).values()];
+                                                                        return (
+                                                                            <TableRow
+                                                                                key={q.question.number}
+                                                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                                            >
+                                                                                <TableCell align="center">
+                                                                                    {q.question.number}
+                                                                                </TableCell>
+                                                                                <TableCell align="center">
+                                                                                    <MuiSelect
+                                                                                        size='small'
+                                                                                        value={q.filterSelection}
+                                                                                        onChange={(event) => {
+                                                                                            const newArr = newQuestions.map(o => {
+                                                                                                if (o.question.id == q.question.id) {
+                                                                                                    return {
+                                                                                                        ...o,
+                                                                                                        filterSelection: Number(event.target.value),
+                                                                                                    }
+                                                                                                }
+                                                                                                return o;
+                                                                                            })
+                                                                                            setNewQuestions(newArr);
+                                                                                        }}
+                                                                                    >
+                                                                                        <MenuItem value={-1}><em>Standard</em></MenuItem>
+                                                                                        {uniqueFilters.map((o, i) => {
+                                                                                            if (o)
+                                                                                                return (
+                                                                                                    <MenuItem key={i} value={o.id}>
+                                                                                                        {titleCase(o.type)}: {o.name}
+                                                                                                    </MenuItem>
+                                                                                                );
+                                                                                            return;
+                                                                                        })}
+                                                                                    </MuiSelect>
+                                                                                </TableCell>
+                                                                                <TableCell align="left">{q.question.question}</TableCell>
+                                                                                <TableCell align="center">
+                                                                                    <IconButton
+                                                                                        color='default'
+                                                                                        onClick={() => {
+                                                                                            const newNew = newQuestions.filter(x => x.id != q.id);
+                                                                                            setNewQuestions(newNew);
+                                                                                        }}
+                                                                                    ><Delete /></IconButton>
+                                                                                </TableCell>
+                                                                            </TableRow>
+                                                                        )
+                                                                    })}
+                                                                </TableBody>
+                                                            </Table>
+                                                        </TableContainer>
+                                                        {addQuestion ?
+                                                            <div className='questions-bank'>
+                                                                <div>
+                                                                    {questions && questions.map((o, i) => {
+                                                                        const existsA = existingQuestions.find(q => q.question.id == o.id);
+                                                                        const existsB = newQuestions.find(q => q.question.id == o.id);
+                                                                        if (existsA || existsB) return undefined;
+                                                                        return (
+                                                                            <Typography
+                                                                                key={i}
+                                                                                className={selectedQuestion && selectedQuestion.id == o.id ? 'active' : ''}
+                                                                                onClick={() => {
+                                                                                    if (selectedQuestion == o) {
+                                                                                        setSelectedQuestion(undefined)
+                                                                                    } else {
+                                                                                        setSelectedQuestion(o)
+                                                                                    }
+                                                                                }}
+                                                                            >
+                                                                                {o.number} - {o.question}
+                                                                            </Typography>
+                                                                        )
+                                                                    })}
+                                                                </div>
+                                                                <Button
+                                                                    variant='contained'
+                                                                    onClick={() => {
+                                                                        if (selectedQuestion) {
+                                                                            const newArr = newQuestions;
+                                                                            newArr.push({ question: selectedQuestion, filterSelection: -1 } as QuestionType)
+                                                                            setSelectedQuestion(undefined);
+                                                                            setNewQuestions(newArr);
+                                                                        }
+                                                                        setAddQuestion(false);
+                                                                    }}
+                                                                >
+                                                                    <Add />Add Question to Assessment
+                                                                </Button>
+                                                            </div> :
+                                                            <Button variant='contained' onClick={() => { setAddQuestion(true) }}>
+                                                                <Add />Add Question
+                                                            </Button>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </Card>
+                                        </Grid>
+                                    </Grid>
+                                </div>
+                            </div>
+                        </div>
+                    </Form>
+                )}
+            </Formik>
+        </Layout>
+    );
 };
 
 export default Assessment;

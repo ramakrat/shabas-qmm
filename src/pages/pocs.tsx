@@ -10,7 +10,6 @@ import PocModal from "~/components/Administrator/MainModals/PocModal";
 import BrowseTable, { TableColumn } from "~/components/Common/BrowseTable";
 import Layout from "~/components/Layout/Layout";
 import { useSession } from "next-auth/react";
-import AccessDenied from "~/components/Common/AccessDenied";
 
 type PocType = (
     Poc & {
@@ -137,32 +136,26 @@ const BrowsePocs: NextPage = () => {
         }
     }
 
-    if (session?.user && session.user.role == 'ADMIN') {
-        return (
-            <Layout active='pocs' admin>
-                <div className='dashboard'>
-                    <div className='browse-add'>
-                        <Button
-                            variant='contained'
-                            endIcon={<Add />}
-                            onClick={() => { setPOCData(undefined); setPOCModal(true) }}
-                        >
-                            New POC
-                        </Button>
-                    </div>
-                    <BrowseTable
-                        dataList={convertTableData(pocs) ?? []}
-                        tableInfoColumns={columns}
-                    />
-                    <PocModal open={pocModal} setOpen={setPOCModal} data={pocData} />
+    return (
+        <Layout active='pocs' session={session} requiredRoles={['ADMIN']}>
+            <div className='dashboard'>
+                <div className='browse-add'>
+                    <Button
+                        variant='contained'
+                        endIcon={<Add />}
+                        onClick={() => { setPOCData(undefined); setPOCModal(true) }}
+                    >
+                        New POC
+                    </Button>
                 </div>
-            </Layout>
-        );
-    } else {
-        return (
-            <AccessDenied />
-        )
-    }
+                <BrowseTable
+                    dataList={convertTableData(pocs) ?? []}
+                    tableInfoColumns={columns}
+                />
+                <PocModal open={pocModal} setOpen={setPOCModal} data={pocData} />
+            </div>
+        </Layout>
+    );
 };
 
 export default BrowsePocs;

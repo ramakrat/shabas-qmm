@@ -22,7 +22,6 @@ import SiteSpecificModal from '~/components/Administrator/QuestionFilters/SiteSp
 import ChangelogTable from '~/components/Common/ChangelogTable';
 import { underscoreToTitle } from '~/utils/utils';
 import { useSession } from 'next-auth/react';
-import AccessDenied from '~/components/Common/AccessDenied';
 
 interface GuideType {
     id?: number;
@@ -634,20 +633,235 @@ const Question: NextPage = () => {
         </>)
     }
 
-    if (session?.user && session.user.role == 'ADMIN') {
-        if (inUse) {
-            return (
-                <Layout active='questions' admin>
+    if (inUse) {
+        return (
+            <Layout active='questions' session={session} requiredRoles={['ADMIN']}>
+                <div className='assessment'>
+                    <div className='assessment-content'>
+                        <Card className='context'>
+                            <div className='question-number'>
+                                <Typography>Question # : </Typography>
+                                <Typography>{question}</Typography>
+                                <div className='question-status'>
+                                    <div className={'active-signature ' + (active ? 'active' : '')} />
+                                    {active ? 'Active (In Use)' : 'Inactive (In Use)'}
+                                </div>
+                            </div>
+                        </Card>
+                        <div className='assessment-form'>
+                            <Grid container spacing={2}>
+                                <Grid item xs={7}>
+                                    <Card className='question-content'>
+                                        <div className='widget-header'>General</div>
+                                        <div className='widget-body information-list'>
+                                            <div>
+                                                <Typography>Question Content:</Typography>
+                                                <Typography>{data?.question}</Typography>
+                                            </div>
+                                        </div>
+                                        <div className='filters'>
+                                            <ToggleButtonGroup
+                                                exclusive
+                                                size='small'
+                                                value={filterType}
+                                                onChange={(_event, value: string) => { if (value) { setFilterType(value); setFilterSelection(null); } }}
+                                            >
+                                                <ToggleButton value='default'>Default</ToggleButton>
+                                                <ToggleButton value='business-type'>Business Type</ToggleButton>
+                                                <ToggleButton value='manufacturing-type'>Manufacturing Type</ToggleButton>
+                                                <ToggleButton value='site-specific'>Site Specific</ToggleButton>
+                                            </ToggleButtonGroup>
+                                            {filterSelect()}
+                                        </div>
+                                        {!(filterType != 'default' && filterSelection == null) &&
+                                            <div className='widget-body information-list'>
+                                                <div>
+                                                    <Typography>Level 1:</Typography>
+                                                    <Typography>{questionData.criteria1}</Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography>Progression Statement:</Typography>
+                                                    <Typography>{questionData.progression1}</Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography>Level 2:</Typography>
+                                                    <Typography>{questionData.criteria2}</Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography>Progression Statement:</Typography>
+                                                    <Typography>{questionData.progression2}</Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography>Level 3:</Typography>
+                                                    <Typography>{questionData.criteria3}</Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography>Progression Statement:</Typography>
+                                                    <Typography>{questionData.progression3}</Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography>Level 4:</Typography>
+                                                    <Typography>{questionData.criteria4}</Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography>Progression Statement:</Typography>
+                                                    <Typography>{questionData.progression4}</Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography>Level 5:</Typography>
+                                                    <Typography>{questionData.criteria5}</Typography>
+                                                </div>
+                                            </div>
+                                        }
+                                    </Card>
+                                </Grid>
+                                <Grid item xs={5}>
+                                    <Card className='reference'>
+                                        <div className='widget-header'>General Information</div>
+                                        <div className='widget-body information-list'>
+                                            <div>
+                                                <Typography>Pillar:</Typography>
+                                                <Typography>{questionData.pillar}</Typography>
+                                            </div>
+                                            <div>
+                                                <Typography>Practice Area:</Typography>
+                                                <Typography>{questionData.practiceArea}</Typography>
+                                            </div>
+                                            <div>
+                                                <Typography>Topic Area:</Typography>
+                                                <Typography>{questionData.topicArea}</Typography>
+                                            </div>
+                                            <div>
+                                                <Typography>Priority:</Typography>
+                                                <Typography>{priorityIndicator(questionData.priority)}</Typography>
+                                            </div>
+                                            <div>
+                                                <Typography>Hint:</Typography>
+                                                <Typography>{questionData.hint}</Typography>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div className='widget-header'>Interview Guide</div>
+                                            <div className='widget-body information-list'>
+                                                {existingGuide?.map((r, i) => {
+                                                    return (
+                                                        <div key={i}>
+                                                            <Typography>{i + 1}.</Typography>
+                                                            <Typography>{r.interview_question}</Typography>
+                                                        </div>
+                                                    )
+                                                })}
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div className='widget-header'>References</div>
+                                            <div className='widget-body information-list'>
+                                                {existingReferences?.map((r, i) => {
+                                                    return (
+                                                        <div key={i}>
+                                                            <Typography>{i + 1}.</Typography>
+                                                            <Typography>{r.citation}</Typography>
+                                                        </div>
+                                                    )
+                                                })}
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div className='widget-header'>SME Information</div>
+                                            <div className='widget-body information-list'>
+                                                <div>
+                                                    <Typography>First Name: </Typography>
+                                                    <Typography>{questionData.smeFirstName}</Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography>Last Name</Typography>
+                                                    <Typography>{questionData.smeLastName}</Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography>Phone Number</Typography>
+                                                    <Typography>{questionData.smePhone}</Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography>Email</Typography>
+                                                    <Typography>{questionData.smeEmail}</Typography>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div className='widget-header'>Details</div>
+                                            <div className='widget-body information-list'>
+                                                <div>
+                                                    <Typography>Owned By:</Typography>
+                                                    <Typography></Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography>Updated At:</Typography>
+                                                    <Typography>{data?.updated_at.toLocaleString()}</Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography>Updated By:</Typography>
+                                                    <Typography>{data?.updated_by}</Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography>Created At:</Typography>
+                                                    <Typography>{data?.created_at.toLocaleString()}</Typography>
+                                                </div>
+                                                <div>
+                                                    <Typography>Created By:</Typography>
+                                                    <Typography>{data?.created_by}</Typography>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </Card>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Card>
+                                        <div className='widget-header'>Changelog</div>
+                                        <ChangelogTable changelogs={fullChangelog} fileName={`Question${data ? data.id : ''} Changelog`} />
+                                    </Card>
+                                </Grid>
+                            </Grid>
+                        </div>
+                    </div>
+                </div>
+            </Layout>
+        )
+    }
+    return (
+        <Layout active='questions' session={session} requiredRoles={['ADMIN']}>
+            <Formik
+                enableReinitialize
+                initialValues={questionData}
+                validationSchema={validationSchema}
+                validateOnBlur={false}
+                validateOnChange={false}
+                onSubmit={handleSubmit}
+            >
+                <Form>
                     <div className='assessment'>
                         <div className='assessment-content'>
                             <Card className='context'>
                                 <div className='question-number'>
                                     <Typography>Question # : </Typography>
-                                    <Typography>{question}</Typography>
+                                    <Field
+                                        name='number' label='' size='small'
+                                        placeholder='Number...'
+                                        component={TextField}
+                                    />
                                     <div className='question-status'>
                                         <div className={'active-signature ' + (active ? 'active' : '')} />
-                                        {active ? 'Active (In Use)' : 'Inactive (In Use)'}
+                                        {active ? 'Active' : 'Inactive'}
                                     </div>
+                                </div>
+                                <div>
+                                    <Button
+                                        variant='contained'
+                                        color={active ? 'error' : 'success'}
+                                        onClick={() => handleActive()}
+                                    >
+                                        {active ? 'Deactivate' : 'Activate'}
+                                    </Button>
+                                    <Button variant='contained' type='submit'>Save</Button>
                                 </div>
                             </Card>
                             <div className='assessment-form'>
@@ -655,11 +869,13 @@ const Question: NextPage = () => {
                                     <Grid item xs={7}>
                                         <Card className='question-content'>
                                             <div className='widget-header'>General</div>
-                                            <div className='widget-body information-list'>
-                                                <div>
-                                                    <Typography>Question Content:</Typography>
-                                                    <Typography>{data?.question}</Typography>
-                                                </div>
+                                            <div className='widget-body widget-form'>
+                                                <Typography>Question Content</Typography>
+                                                <Field
+                                                    name='question' label='' size='small' multiline
+                                                    placeholder='Question Content...'
+                                                    component={TextField}
+                                                />
                                             </div>
                                             <div className='filters'>
                                                 <ToggleButtonGroup
@@ -676,43 +892,61 @@ const Question: NextPage = () => {
                                                 {filterSelect()}
                                             </div>
                                             {!(filterType != 'default' && filterSelection == null) &&
-                                                <div className='widget-body information-list'>
-                                                    <div>
-                                                        <Typography>Level 1:</Typography>
-                                                        <Typography>{questionData.criteria1}</Typography>
-                                                    </div>
-                                                    <div>
-                                                        <Typography>Progression Statement:</Typography>
-                                                        <Typography>{questionData.progression1}</Typography>
-                                                    </div>
-                                                    <div>
-                                                        <Typography>Level 2:</Typography>
-                                                        <Typography>{questionData.criteria2}</Typography>
-                                                    </div>
-                                                    <div>
-                                                        <Typography>Progression Statement:</Typography>
-                                                        <Typography>{questionData.progression2}</Typography>
-                                                    </div>
-                                                    <div>
-                                                        <Typography>Level 3:</Typography>
-                                                        <Typography>{questionData.criteria3}</Typography>
-                                                    </div>
-                                                    <div>
-                                                        <Typography>Progression Statement:</Typography>
-                                                        <Typography>{questionData.progression3}</Typography>
-                                                    </div>
-                                                    <div>
-                                                        <Typography>Level 4:</Typography>
-                                                        <Typography>{questionData.criteria4}</Typography>
-                                                    </div>
-                                                    <div>
-                                                        <Typography>Progression Statement:</Typography>
-                                                        <Typography>{questionData.progression4}</Typography>
-                                                    </div>
-                                                    <div>
-                                                        <Typography>Level 5:</Typography>
-                                                        <Typography>{questionData.criteria5}</Typography>
-                                                    </div>
+                                                <div className='widget-body widget-form'>
+                                                    <Typography>Level 1</Typography>
+                                                    <Field
+                                                        name='criteria1' label='' size='small' multiline
+                                                        placeholder='Criteria...'
+                                                        component={TextField}
+                                                    />
+                                                    <Typography>Progression Statement</Typography>
+                                                    <Field
+                                                        name='progression1' label='' size='small' multiline
+                                                        placeholder='Progression statement...'
+                                                        component={TextField}
+                                                    />
+                                                    <Typography>Level 2</Typography>
+                                                    <Field
+                                                        name='criteria2' label='' size='small' multiline
+                                                        placeholder='Criteria...'
+                                                        component={TextField}
+                                                    />
+                                                    <Typography>Progression Statement</Typography>
+                                                    <Field
+                                                        name='progression2' label='' size='small' multiline
+                                                        placeholder='Progression statement...'
+                                                        component={TextField}
+                                                    />
+                                                    <Typography>Level 3</Typography>
+                                                    <Field
+                                                        name='criteria3' label='' size='small' multiline
+                                                        placeholder='Criteria...'
+                                                        component={TextField}
+                                                    />
+                                                    <Typography>Progression Statement</Typography>
+                                                    <Field
+                                                        name='progression3' label='' size='small' multiline
+                                                        placeholder='Progression statement...'
+                                                        component={TextField}
+                                                    />
+                                                    <Typography>Level 4</Typography>
+                                                    <Field
+                                                        name='criteria4' label='' size='small' multiline
+                                                        placeholder='Criteria...'
+                                                        component={TextField}
+                                                    />
+                                                    <Typography>Progression Statement</Typography>
+                                                    <Field
+                                                        name='progression4' label='' size='small' multiline
+                                                        placeholder='Progression statement...'
+                                                        component={TextField}
+                                                    />
+                                                    <Typography>Level 5</Typography>
+                                                    <Field
+                                                        name='criteria5' label='' size='small' multiline
+                                                        placeholder='Criteria...'
+                                                        component={TextField}
+                                                    />
                                                 </div>
                                             }
                                         </Card>
@@ -720,36 +954,162 @@ const Question: NextPage = () => {
                                     <Grid item xs={5}>
                                         <Card className='reference'>
                                             <div className='widget-header'>General Information</div>
-                                            <div className='widget-body information-list'>
-                                                <div>
-                                                    <Typography>Pillar:</Typography>
-                                                    <Typography>{questionData.pillar}</Typography>
-                                                </div>
-                                                <div>
-                                                    <Typography>Practice Area:</Typography>
-                                                    <Typography>{questionData.practiceArea}</Typography>
-                                                </div>
-                                                <div>
-                                                    <Typography>Topic Area:</Typography>
-                                                    <Typography>{questionData.topicArea}</Typography>
-                                                </div>
-                                                <div>
-                                                    <Typography>Priority:</Typography>
-                                                    <Typography>{priorityIndicator(questionData.priority)}</Typography>
-                                                </div>
-                                                <div>
-                                                    <Typography>Hint:</Typography>
-                                                    <Typography>{questionData.hint}</Typography>
-                                                </div>
+                                            <div className='widget-body widget-form'>
+                                                <Grid container spacing={1}>
+                                                    <Grid item xs={6}>
+                                                        <Typography>Pillar</Typography>
+                                                        <Field
+                                                            name='pillar' label='' size='small'
+                                                            placeholder='Pillar...'
+                                                            component={TextField}
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={6}>
+                                                        <Typography>Practice Area</Typography>
+                                                        <Field
+                                                            name='practiceArea' label='' size='small'
+                                                            placeholder='Practice Area...'
+                                                            component={TextField}
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={6}>
+                                                        <Typography>Topic Area</Typography>
+                                                        <Field
+                                                            name='topicArea' label='' size='small'
+                                                            placeholder='Topic Area...'
+                                                            component={TextField}
+                                                        />
+                                                    </Grid>
+                                                    <Grid item xs={6}>
+                                                        <Typography>Priority</Typography>
+                                                        <Field
+                                                            name='priority' label='' size='small'
+                                                            component={Select}
+                                                        >
+                                                            <MenuItem value=''><em>Select priority...</em></MenuItem>
+                                                            <MenuItem value='low'>
+                                                                <div className='priority'>
+                                                                    <ArrowDownward color='success' />
+                                                                    Low
+                                                                </div>
+                                                            </MenuItem>
+                                                            <MenuItem value='medium'>
+                                                                <div className='priority'>
+                                                                    <HorizontalRule color='primary' />
+                                                                    Medium
+                                                                </div>
+                                                            </MenuItem>
+                                                            <MenuItem value='high'>
+                                                                <div className='priority'>
+                                                                    <ArrowUpward color='error' />
+                                                                    High
+                                                                </div>
+                                                            </MenuItem>
+                                                        </Field>
+                                                    </Grid>
+                                                    <Grid item xs={12}>
+                                                        <Typography>Hint</Typography>
+                                                        <Field
+                                                            name='hint' label='' size='small'
+                                                            placeholder='Hint...'
+                                                            component={TextField}
+                                                        />
+                                                    </Grid>
+                                                </Grid>
                                             </div>
                                             <div>
                                                 <div className='widget-header'>Interview Guide</div>
-                                                <div className='widget-body information-list'>
-                                                    {existingGuide?.map((r, i) => {
+                                                <div className='widget-body'>
+                                                    {existingGuide.map((o, i) => {
                                                         return (
-                                                            <div key={i}>
-                                                                <Typography>{i + 1}.</Typography>
-                                                                <Typography>{r.interview_question}</Typography>
+                                                            <div key={i} className='input-row'>
+                                                                <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
+                                                                <MuiTextField
+                                                                    placeholder='Guide...' size='small'
+                                                                    value={o.interview_question}
+                                                                    onChange={(event) => handleGuideChange(o.num, event.target.value, true)}
+                                                                />
+                                                                <IconButton
+                                                                    color='default'
+                                                                    onClick={() => {
+                                                                        const newDeleted = deletedGuides;
+                                                                        newDeleted.push(o);
+                                                                        setDeletedGuides(newDeleted);
+
+                                                                        let count = 0;
+                                                                        const newExisting: GuideType[] = []
+                                                                        existingGuide.map(x => {
+                                                                            if (x.id != o.id) {
+                                                                                count++;
+                                                                                newExisting.push({
+                                                                                    ...x,
+                                                                                    num: count,
+                                                                                })
+                                                                            }
+                                                                        });
+                                                                        setExistingGuide(newExisting);
+
+                                                                        const newNew: GuideType[] = []
+                                                                        newGuide.map(x => {
+                                                                            count++;
+                                                                            newNew.push({
+                                                                                ...x,
+                                                                                num: count,
+                                                                            })
+                                                                        });
+                                                                        setNewGuide(newNew);
+                                                                    }}
+                                                                ><Delete /></IconButton>
+                                                            </div>
+                                                        )
+                                                    })}
+                                                    {newGuide.map((o, i) => {
+                                                        if (i == newGuide.length - 1)
+                                                            return (
+                                                                <div key={i} className='input-row'>
+                                                                    <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
+                                                                    <MuiTextField
+                                                                        placeholder='Guide...' size='small'
+                                                                        value={o.interview_question}
+                                                                        onChange={(event) => handleGuideChange(o.num, event.target.value)}
+                                                                    />
+                                                                    <IconButton
+                                                                        onClick={() => {
+                                                                            const last = newGuide[newGuide.length - 1];
+                                                                            if (last) setNewGuide([...newGuide, { num: last.num + 1, interview_question: '' }])
+                                                                        }}
+                                                                    ><Add /></IconButton>
+                                                                </div>
+                                                            )
+                                                        return (
+                                                            <div key={i} className='input-row'>
+                                                                <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
+                                                                <MuiTextField
+                                                                    placeholder='Guide...' size='small'
+                                                                    value={o.interview_question}
+                                                                    onChange={(event) => handleGuideChange(o.num, event.target.value)}
+                                                                />
+                                                                <IconButton
+                                                                    color='default'
+                                                                    onClick={() => {
+                                                                        if (newGuide[0]) {
+                                                                            let newIndex = (newGuide[0]?.num) - 1;
+                                                                            const removed: GuideType[] = [];
+                                                                            newGuide.forEach(d => {
+                                                                                if (d.num != o.num) {
+                                                                                    newIndex++;
+                                                                                    removed.push({
+                                                                                        ...d,
+                                                                                        num: newIndex,
+                                                                                    })
+                                                                                }
+                                                                                return;
+
+                                                                            });
+                                                                            setNewGuide(removed);
+                                                                        }
+                                                                    }}
+                                                                ><Delete /></IconButton>
                                                             </div>
                                                         )
                                                     })}
@@ -757,12 +1117,97 @@ const Question: NextPage = () => {
                                             </div>
                                             <div>
                                                 <div className='widget-header'>References</div>
-                                                <div className='widget-body information-list'>
-                                                    {existingReferences?.map((r, i) => {
+                                                <div className='widget-body'>
+                                                    {existingReferences.map((o, i) => {
                                                         return (
-                                                            <div key={i}>
-                                                                <Typography>{i + 1}.</Typography>
-                                                                <Typography>{r.citation}</Typography>
+                                                            <div key={i} className='input-row'>
+                                                                <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
+                                                                <MuiTextField
+                                                                    placeholder='Reference...' size='small'
+                                                                    value={o.citation}
+                                                                    onChange={(event) => handleReferenceChange(o.num, event.target.value, true)}
+                                                                />
+                                                                <IconButton
+                                                                    color='default'
+                                                                    onClick={() => {
+                                                                        const newDeleted = deletedReferences;
+                                                                        newDeleted.push(o);
+                                                                        setDeletedReferences(newDeleted);
+
+                                                                        let count = 0;
+                                                                        const newExisting: ReferenceType[] = []
+                                                                        existingReferences.map(x => {
+                                                                            if (x.id != o.id) {
+                                                                                count++;
+                                                                                newExisting.push({
+                                                                                    ...x,
+                                                                                    num: count,
+                                                                                })
+                                                                            }
+                                                                        });
+                                                                        setExistingReferences(newExisting);
+
+                                                                        const newNew: ReferenceType[] = []
+                                                                        newReferences.map(x => {
+                                                                            count++;
+                                                                            newNew.push({
+                                                                                ...x,
+                                                                                num: count,
+                                                                            })
+                                                                        });
+                                                                        setNewReferences(newNew);
+                                                                    }}
+                                                                ><Delete /></IconButton>
+                                                            </div>
+                                                        )
+                                                    })}
+                                                    {newReferences.map((o, i) => {
+                                                        if (i == newReferences.length - 1)
+                                                            return (
+                                                                <div key={i} className='input-row'>
+                                                                    <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
+                                                                    <MuiTextField
+                                                                        placeholder='Reference...' size='small'
+                                                                        value={o.citation}
+                                                                        onChange={(event) => handleReferenceChange(o.num, event.target.value)}
+                                                                    />
+                                                                    <IconButton
+                                                                        onClick={() => {
+                                                                            const last = newReferences[newReferences.length - 1];
+                                                                            if (last) setNewReferences([...newReferences, { num: last.num + 1, citation: '' }])
+                                                                        }}
+                                                                    ><Add /></IconButton>
+                                                                </div>
+                                                            )
+                                                        return (
+                                                            <div key={i} className='input-row'>
+                                                                <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
+                                                                <MuiTextField
+                                                                    placeholder='Reference...' size='small'
+                                                                    value={o.citation}
+                                                                    onChange={(event) => handleReferenceChange(o.num, event.target.value)}
+                                                                />
+                                                                <IconButton
+                                                                    color='default'
+                                                                    onClick={() => {
+                                                                        if (newReferences[0]) {
+                                                                            let newIndex = (newReferences[0]?.num) - 1;
+                                                                            const removed: ReferenceType[] = [];
+                                                                            newReferences.forEach(d => {
+                                                                                if (d.num != o.num) {
+                                                                                    newIndex++;
+                                                                                    removed.push({
+                                                                                        ...d,
+                                                                                        num: newIndex,
+                                                                                    })
+                                                                                }
+                                                                                return;
+
+                                                                            });
+                                                                            setNewReferences(removed);
+                                                                        }
+                                                                    }}
+                                                                ><Delete /></IconButton>
                                                             </div>
                                                         )
                                                     })}
@@ -770,23 +1215,41 @@ const Question: NextPage = () => {
                                             </div>
                                             <div>
                                                 <div className='widget-header'>SME Information</div>
-                                                <div className='widget-body information-list'>
-                                                    <div>
-                                                        <Typography>First Name: </Typography>
-                                                        <Typography>{questionData.smeFirstName}</Typography>
-                                                    </div>
-                                                    <div>
-                                                        <Typography>Last Name</Typography>
-                                                        <Typography>{questionData.smeLastName}</Typography>
-                                                    </div>
-                                                    <div>
-                                                        <Typography>Phone Number</Typography>
-                                                        <Typography>{questionData.smePhone}</Typography>
-                                                    </div>
-                                                    <div>
-                                                        <Typography>Email</Typography>
-                                                        <Typography>{questionData.smeEmail}</Typography>
-                                                    </div>
+                                                <div className='widget-body widget-form'>
+                                                    <Grid container spacing={1}>
+                                                        <Grid item xs={6}>
+                                                            <Typography>First Name</Typography>
+                                                            <Field
+                                                                name='smeFirstName' label='' size='small'
+                                                                placeholder='First Name...'
+                                                                component={TextField}
+                                                            />
+                                                        </Grid>
+                                                        <Grid item xs={6}>
+                                                            <Typography>Last Name</Typography>
+                                                            <Field
+                                                                name='smeLastName' label='' size='small'
+                                                                placeholder='Last Name...'
+                                                                component={TextField}
+                                                            />
+                                                        </Grid>
+                                                        <Grid item xs={6}>
+                                                            <Typography>Phone Number</Typography>
+                                                            <Field
+                                                                name='smePhone' label='' size='small'
+                                                                placeholder='Phone Number...'
+                                                                component={TextField}
+                                                            />
+                                                        </Grid>
+                                                        <Grid item xs={6}>
+                                                            <Typography>Email</Typography>
+                                                            <Field
+                                                                name='smeEmail' label='' size='small'
+                                                                placeholder='Email...'
+                                                                component={TextField}
+                                                            />
+                                                        </Grid>
+                                                    </Grid>
                                                 </div>
                                             </div>
                                             <div>
@@ -826,483 +1289,13 @@ const Question: NextPage = () => {
                             </div>
                         </div>
                     </div>
-                </Layout>
-            )
-        }
-        return (
-            <Layout active='questions' admin>
-                <Formik
-                    enableReinitialize
-                    initialValues={questionData}
-                    validationSchema={validationSchema}
-                    validateOnBlur={false}
-                    validateOnChange={false}
-                    onSubmit={handleSubmit}
-                >
-                    <Form>
-                        <div className='assessment'>
-                            <div className='assessment-content'>
-                                <Card className='context'>
-                                    <div className='question-number'>
-                                        <Typography>Question # : </Typography>
-                                        <Field
-                                            name='number' label='' size='small'
-                                            placeholder='Number...'
-                                            component={TextField}
-                                        />
-                                        <div className='question-status'>
-                                            <div className={'active-signature ' + (active ? 'active' : '')} />
-                                            {active ? 'Active' : 'Inactive'}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <Button
-                                            variant='contained'
-                                            color={active ? 'error' : 'success'}
-                                            onClick={() => handleActive()}
-                                        >
-                                            {active ? 'Deactivate' : 'Activate'}
-                                        </Button>
-                                        <Button variant='contained' type='submit'>Save</Button>
-                                    </div>
-                                </Card>
-                                <div className='assessment-form'>
-                                    <Grid container spacing={2}>
-                                        <Grid item xs={7}>
-                                            <Card className='question-content'>
-                                                <div className='widget-header'>General</div>
-                                                <div className='widget-body widget-form'>
-                                                    <Typography>Question Content</Typography>
-                                                    <Field
-                                                        name='question' label='' size='small' multiline
-                                                        placeholder='Question Content...'
-                                                        component={TextField}
-                                                    />
-                                                </div>
-                                                <div className='filters'>
-                                                    <ToggleButtonGroup
-                                                        exclusive
-                                                        size='small'
-                                                        value={filterType}
-                                                        onChange={(_event, value: string) => { if (value) { setFilterType(value); setFilterSelection(null); } }}
-                                                    >
-                                                        <ToggleButton value='default'>Default</ToggleButton>
-                                                        <ToggleButton value='business-type'>Business Type</ToggleButton>
-                                                        <ToggleButton value='manufacturing-type'>Manufacturing Type</ToggleButton>
-                                                        <ToggleButton value='site-specific'>Site Specific</ToggleButton>
-                                                    </ToggleButtonGroup>
-                                                    {filterSelect()}
-                                                </div>
-                                                {!(filterType != 'default' && filterSelection == null) &&
-                                                    <div className='widget-body widget-form'>
-                                                        <Typography>Level 1</Typography>
-                                                        <Field
-                                                            name='criteria1' label='' size='small' multiline
-                                                            placeholder='Criteria...'
-                                                            component={TextField}
-                                                        />
-                                                        <Typography>Progression Statement</Typography>
-                                                        <Field
-                                                            name='progression1' label='' size='small' multiline
-                                                            placeholder='Progression statement...'
-                                                            component={TextField}
-                                                        />
-                                                        <Typography>Level 2</Typography>
-                                                        <Field
-                                                            name='criteria2' label='' size='small' multiline
-                                                            placeholder='Criteria...'
-                                                            component={TextField}
-                                                        />
-                                                        <Typography>Progression Statement</Typography>
-                                                        <Field
-                                                            name='progression2' label='' size='small' multiline
-                                                            placeholder='Progression statement...'
-                                                            component={TextField}
-                                                        />
-                                                        <Typography>Level 3</Typography>
-                                                        <Field
-                                                            name='criteria3' label='' size='small' multiline
-                                                            placeholder='Criteria...'
-                                                            component={TextField}
-                                                        />
-                                                        <Typography>Progression Statement</Typography>
-                                                        <Field
-                                                            name='progression3' label='' size='small' multiline
-                                                            placeholder='Progression statement...'
-                                                            component={TextField}
-                                                        />
-                                                        <Typography>Level 4</Typography>
-                                                        <Field
-                                                            name='criteria4' label='' size='small' multiline
-                                                            placeholder='Criteria...'
-                                                            component={TextField}
-                                                        />
-                                                        <Typography>Progression Statement</Typography>
-                                                        <Field
-                                                            name='progression4' label='' size='small' multiline
-                                                            placeholder='Progression statement...'
-                                                            component={TextField}
-                                                        />
-                                                        <Typography>Level 5</Typography>
-                                                        <Field
-                                                            name='criteria5' label='' size='small' multiline
-                                                            placeholder='Criteria...'
-                                                            component={TextField}
-                                                        />
-                                                    </div>
-                                                }
-                                            </Card>
-                                        </Grid>
-                                        <Grid item xs={5}>
-                                            <Card className='reference'>
-                                                <div className='widget-header'>General Information</div>
-                                                <div className='widget-body widget-form'>
-                                                    <Grid container spacing={1}>
-                                                        <Grid item xs={6}>
-                                                            <Typography>Pillar</Typography>
-                                                            <Field
-                                                                name='pillar' label='' size='small'
-                                                                placeholder='Pillar...'
-                                                                component={TextField}
-                                                            />
-                                                        </Grid>
-                                                        <Grid item xs={6}>
-                                                            <Typography>Practice Area</Typography>
-                                                            <Field
-                                                                name='practiceArea' label='' size='small'
-                                                                placeholder='Practice Area...'
-                                                                component={TextField}
-                                                            />
-                                                        </Grid>
-                                                        <Grid item xs={6}>
-                                                            <Typography>Topic Area</Typography>
-                                                            <Field
-                                                                name='topicArea' label='' size='small'
-                                                                placeholder='Topic Area...'
-                                                                component={TextField}
-                                                            />
-                                                        </Grid>
-                                                        <Grid item xs={6}>
-                                                            <Typography>Priority</Typography>
-                                                            <Field
-                                                                name='priority' label='' size='small'
-                                                                component={Select}
-                                                            >
-                                                                <MenuItem value=''><em>Select priority...</em></MenuItem>
-                                                                <MenuItem value='low'>
-                                                                    <div className='priority'>
-                                                                        <ArrowDownward color='success' />
-                                                                        Low
-                                                                    </div>
-                                                                </MenuItem>
-                                                                <MenuItem value='medium'>
-                                                                    <div className='priority'>
-                                                                        <HorizontalRule color='primary' />
-                                                                        Medium
-                                                                    </div>
-                                                                </MenuItem>
-                                                                <MenuItem value='high'>
-                                                                    <div className='priority'>
-                                                                        <ArrowUpward color='error' />
-                                                                        High
-                                                                    </div>
-                                                                </MenuItem>
-                                                            </Field>
-                                                        </Grid>
-                                                        <Grid item xs={12}>
-                                                            <Typography>Hint</Typography>
-                                                            <Field
-                                                                name='hint' label='' size='small'
-                                                                placeholder='Hint...'
-                                                                component={TextField}
-                                                            />
-                                                        </Grid>
-                                                    </Grid>
-                                                </div>
-                                                <div>
-                                                    <div className='widget-header'>Interview Guide</div>
-                                                    <div className='widget-body'>
-                                                        {existingGuide.map((o, i) => {
-                                                            return (
-                                                                <div key={i} className='input-row'>
-                                                                    <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
-                                                                    <MuiTextField
-                                                                        placeholder='Guide...' size='small'
-                                                                        value={o.interview_question}
-                                                                        onChange={(event) => handleGuideChange(o.num, event.target.value, true)}
-                                                                    />
-                                                                    <IconButton
-                                                                        color='default'
-                                                                        onClick={() => {
-                                                                            const newDeleted = deletedGuides;
-                                                                            newDeleted.push(o);
-                                                                            setDeletedGuides(newDeleted);
-
-                                                                            let count = 0;
-                                                                            const newExisting: GuideType[] = []
-                                                                            existingGuide.map(x => {
-                                                                                if (x.id != o.id) {
-                                                                                    count++;
-                                                                                    newExisting.push({
-                                                                                        ...x,
-                                                                                        num: count,
-                                                                                    })
-                                                                                }
-                                                                            });
-                                                                            setExistingGuide(newExisting);
-
-                                                                            const newNew: GuideType[] = []
-                                                                            newGuide.map(x => {
-                                                                                count++;
-                                                                                newNew.push({
-                                                                                    ...x,
-                                                                                    num: count,
-                                                                                })
-                                                                            });
-                                                                            setNewGuide(newNew);
-                                                                        }}
-                                                                    ><Delete /></IconButton>
-                                                                </div>
-                                                            )
-                                                        })}
-                                                        {newGuide.map((o, i) => {
-                                                            if (i == newGuide.length - 1)
-                                                                return (
-                                                                    <div key={i} className='input-row'>
-                                                                        <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
-                                                                        <MuiTextField
-                                                                            placeholder='Guide...' size='small'
-                                                                            value={o.interview_question}
-                                                                            onChange={(event) => handleGuideChange(o.num, event.target.value)}
-                                                                        />
-                                                                        <IconButton
-                                                                            onClick={() => {
-                                                                                const last = newGuide[newGuide.length - 1];
-                                                                                if (last) setNewGuide([...newGuide, { num: last.num + 1, interview_question: '' }])
-                                                                            }}
-                                                                        ><Add /></IconButton>
-                                                                    </div>
-                                                                )
-                                                            return (
-                                                                <div key={i} className='input-row'>
-                                                                    <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
-                                                                    <MuiTextField
-                                                                        placeholder='Guide...' size='small'
-                                                                        value={o.interview_question}
-                                                                        onChange={(event) => handleGuideChange(o.num, event.target.value)}
-                                                                    />
-                                                                    <IconButton
-                                                                        color='default'
-                                                                        onClick={() => {
-                                                                            if (newGuide[0]) {
-                                                                                let newIndex = (newGuide[0]?.num) - 1;
-                                                                                const removed: GuideType[] = [];
-                                                                                newGuide.forEach(d => {
-                                                                                    if (d.num != o.num) {
-                                                                                        newIndex++;
-                                                                                        removed.push({
-                                                                                            ...d,
-                                                                                            num: newIndex,
-                                                                                        })
-                                                                                    }
-                                                                                    return;
-
-                                                                                });
-                                                                                setNewGuide(removed);
-                                                                            }
-                                                                        }}
-                                                                    ><Delete /></IconButton>
-                                                                </div>
-                                                            )
-                                                        })}
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <div className='widget-header'>References</div>
-                                                    <div className='widget-body'>
-                                                        {existingReferences.map((o, i) => {
-                                                            return (
-                                                                <div key={i} className='input-row'>
-                                                                    <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
-                                                                    <MuiTextField
-                                                                        placeholder='Reference...' size='small'
-                                                                        value={o.citation}
-                                                                        onChange={(event) => handleReferenceChange(o.num, event.target.value, true)}
-                                                                    />
-                                                                    <IconButton
-                                                                        color='default'
-                                                                        onClick={() => {
-                                                                            const newDeleted = deletedReferences;
-                                                                            newDeleted.push(o);
-                                                                            setDeletedReferences(newDeleted);
-
-                                                                            let count = 0;
-                                                                            const newExisting: ReferenceType[] = []
-                                                                            existingReferences.map(x => {
-                                                                                if (x.id != o.id) {
-                                                                                    count++;
-                                                                                    newExisting.push({
-                                                                                        ...x,
-                                                                                        num: count,
-                                                                                    })
-                                                                                }
-                                                                            });
-                                                                            setExistingReferences(newExisting);
-
-                                                                            const newNew: ReferenceType[] = []
-                                                                            newReferences.map(x => {
-                                                                                count++;
-                                                                                newNew.push({
-                                                                                    ...x,
-                                                                                    num: count,
-                                                                                })
-                                                                            });
-                                                                            setNewReferences(newNew);
-                                                                        }}
-                                                                    ><Delete /></IconButton>
-                                                                </div>
-                                                            )
-                                                        })}
-                                                        {newReferences.map((o, i) => {
-                                                            if (i == newReferences.length - 1)
-                                                                return (
-                                                                    <div key={i} className='input-row'>
-                                                                        <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
-                                                                        <MuiTextField
-                                                                            placeholder='Reference...' size='small'
-                                                                            value={o.citation}
-                                                                            onChange={(event) => handleReferenceChange(o.num, event.target.value)}
-                                                                        />
-                                                                        <IconButton
-                                                                            onClick={() => {
-                                                                                const last = newReferences[newReferences.length - 1];
-                                                                                if (last) setNewReferences([...newReferences, { num: last.num + 1, citation: '' }])
-                                                                            }}
-                                                                        ><Add /></IconButton>
-                                                                    </div>
-                                                                )
-                                                            return (
-                                                                <div key={i} className='input-row'>
-                                                                    <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
-                                                                    <MuiTextField
-                                                                        placeholder='Reference...' size='small'
-                                                                        value={o.citation}
-                                                                        onChange={(event) => handleReferenceChange(o.num, event.target.value)}
-                                                                    />
-                                                                    <IconButton
-                                                                        color='default'
-                                                                        onClick={() => {
-                                                                            if (newReferences[0]) {
-                                                                                let newIndex = (newReferences[0]?.num) - 1;
-                                                                                const removed: ReferenceType[] = [];
-                                                                                newReferences.forEach(d => {
-                                                                                    if (d.num != o.num) {
-                                                                                        newIndex++;
-                                                                                        removed.push({
-                                                                                            ...d,
-                                                                                            num: newIndex,
-                                                                                        })
-                                                                                    }
-                                                                                    return;
-
-                                                                                });
-                                                                                setNewReferences(removed);
-                                                                            }
-                                                                        }}
-                                                                    ><Delete /></IconButton>
-                                                                </div>
-                                                            )
-                                                        })}
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <div className='widget-header'>SME Information</div>
-                                                    <div className='widget-body widget-form'>
-                                                        <Grid container spacing={1}>
-                                                            <Grid item xs={6}>
-                                                                <Typography>First Name</Typography>
-                                                                <Field
-                                                                    name='smeFirstName' label='' size='small'
-                                                                    placeholder='First Name...'
-                                                                    component={TextField}
-                                                                />
-                                                            </Grid>
-                                                            <Grid item xs={6}>
-                                                                <Typography>Last Name</Typography>
-                                                                <Field
-                                                                    name='smeLastName' label='' size='small'
-                                                                    placeholder='Last Name...'
-                                                                    component={TextField}
-                                                                />
-                                                            </Grid>
-                                                            <Grid item xs={6}>
-                                                                <Typography>Phone Number</Typography>
-                                                                <Field
-                                                                    name='smePhone' label='' size='small'
-                                                                    placeholder='Phone Number...'
-                                                                    component={TextField}
-                                                                />
-                                                            </Grid>
-                                                            <Grid item xs={6}>
-                                                                <Typography>Email</Typography>
-                                                                <Field
-                                                                    name='smeEmail' label='' size='small'
-                                                                    placeholder='Email...'
-                                                                    component={TextField}
-                                                                />
-                                                            </Grid>
-                                                        </Grid>
-                                                    </div>
-                                                </div>
-                                                <div>
-                                                    <div className='widget-header'>Details</div>
-                                                    <div className='widget-body information-list'>
-                                                        <div>
-                                                            <Typography>Owned By:</Typography>
-                                                            <Typography></Typography>
-                                                        </div>
-                                                        <div>
-                                                            <Typography>Updated At:</Typography>
-                                                            <Typography>{data?.updated_at.toLocaleString()}</Typography>
-                                                        </div>
-                                                        <div>
-                                                            <Typography>Updated By:</Typography>
-                                                            <Typography>{data?.updated_by}</Typography>
-                                                        </div>
-                                                        <div>
-                                                            <Typography>Created At:</Typography>
-                                                            <Typography>{data?.created_at.toLocaleString()}</Typography>
-                                                        </div>
-                                                        <div>
-                                                            <Typography>Created By:</Typography>
-                                                            <Typography>{data?.created_by}</Typography>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </Card>
-                                        </Grid>
-                                        <Grid item xs={12}>
-                                            <Card>
-                                                <div className='widget-header'>Changelog</div>
-                                                <ChangelogTable changelogs={fullChangelog} fileName={`Question${data ? data.id : ''} Changelog`} />
-                                            </Card>
-                                        </Grid>
-                                    </Grid>
-                                </div>
-                            </div>
-                        </div>
-                        <BusinessTypeModal open={addBusinessType} setOpen={setAddBusinessType} />
-                        <ManufacturingTypeModal open={addManufacturingType} setOpen={setAddManufacturingType} />
-                        <SiteSpecificModal open={addSiteSpecific} setOpen={setAddSiteSpecific} />
-                    </Form>
-                </Formik>
-            </Layout>
-        );
-    } else {
-        return (
-            <AccessDenied />
-        )
-    }
+                    <BusinessTypeModal open={addBusinessType} setOpen={setAddBusinessType} />
+                    <ManufacturingTypeModal open={addManufacturingType} setOpen={setAddManufacturingType} />
+                    <SiteSpecificModal open={addSiteSpecific} setOpen={setAddSiteSpecific} />
+                </Form>
+            </Formik>
+        </Layout>
+    );
 };
 
 export default Question;

@@ -1,16 +1,14 @@
 import React from "react";
-import type { Client, Engagement, Poc, Site, User } from "@prisma/client";
+import type { User } from "@prisma/client";
 
 import { Button, IconButton } from "@mui/material";
 import { Add, Edit } from "@mui/icons-material";
 
 import { api } from "~/utils/api";
 import { NextPage } from "next";
-import PocModal from "~/components/Administrator/MainModals/PocModal";
 import BrowseTable, { TableColumn } from "~/components/Common/BrowseTable";
 import Layout from "~/components/Layout/Layout";
 import { useSession } from "next-auth/react";
-import AccessDenied from "~/components/Common/AccessDenied";
 
 
 interface TableData {
@@ -81,32 +79,26 @@ const Management: NextPage = () => {
         }
     }
 
-    if (session?.user && session.user.role == 'ADMIN') {
-        return (
-            <Layout admin>
-                <div className='dashboard'>
-                    <div className='browse-add'>
-                        <Button
-                            variant='contained'
-                            endIcon={<Add />}
-                            onClick={() => { setUserData(undefined); setUserModal(true) }}
-                        >
-                            New User
-                        </Button>
-                    </div>
-                    <BrowseTable
-                        dataList={convertTableData(users) ?? []}
-                        tableInfoColumns={columns}
-                    />
-                    {/* <PocModal open={userModal} setOpen={setUserModal} data={userData} /> */}
+    return (
+        <Layout session={session} requiredRoles={['ADMIN']}>
+            <div className='dashboard'>
+                <div className='browse-add'>
+                    <Button
+                        variant='contained'
+                        endIcon={<Add />}
+                        onClick={() => { setUserData(undefined); setUserModal(true) }}
+                    >
+                        New User
+                    </Button>
                 </div>
-            </Layout>
-        );
-    } else {
-        return (
-            <AccessDenied />
-        )
-    }
+                <BrowseTable
+                    dataList={convertTableData(users) ?? []}
+                    tableInfoColumns={columns}
+                />
+                {/* <PocModal open={userModal} setOpen={setUserModal} data={userData} /> */}
+            </div>
+        </Layout>
+    );
 };
 
 export default Management;

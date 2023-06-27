@@ -11,7 +11,6 @@ import SiteModal from "~/components/Administrator/MainModals/SiteModal";
 import BrowseTable, { TableColumn } from "~/components/Common/BrowseTable";
 import Layout from "~/components/Layout/Layout";
 import { useSession } from "next-auth/react";
-import AccessDenied from "~/components/Common/AccessDenied";
 
 interface ClientTableData {
     id: number;

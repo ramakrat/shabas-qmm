@@ -10,15 +10,16 @@ import { useRouter } from 'next/router';
 import { signOut } from 'next-auth/react';
 
 interface Props {
+    session: any;
+    requiredRoles?: string[];
     active?: string;
     children?: React.ReactNode;
-    admin?: boolean;
-    empty?: boolean;
+    accessDenied?: boolean;
 }
 
 export const Layout: React.FC<Props> = (props) => {
 
-    const { active, children, admin, empty } = props;
+    const { active, children, session, requiredRoles, accessDenied } = props;
 
     const router = useRouter();
 
@@ -35,7 +36,8 @@ export const Layout: React.FC<Props> = (props) => {
         await router.push(`/api/auth/signin`);
     }
 
-    const [adminRole, setAdminRole] = React.useState<boolean>(admin ?? false);
+    const permitted = requiredRoles?.includes(session.user.role) && !accessDenied;
+    const [adminRole, setAdminRole] = React.useState<boolean>(session.user.role == 'admin');
 
     // TODO: Make dynamic
     const totalClient = api.client.getTotalCount.useQuery().data;
@@ -45,26 +47,43 @@ export const Layout: React.FC<Props> = (props) => {
     const totalPOC = api.poc.getTotalCount.useQuery(true).data;
     const totalQuestion = api.question.getTotalCount.useQuery(true).data;
 
-    if (empty) {
+    if (!permitted) {
         return (
-            <div className='header'>
-                <div className='nav-items'>
-                    <Link href='/' className='logo'>
-                        <Image src={logo} alt={'Shabas Logo'} height={45} />
-                    </Link>
-                </div>
-                <IconButton onClick={handleClick}>
-                    <Settings />
-                </IconButton>
-                <Menu
-                    anchorEl={anchorEl}
-                    open={open}
-                    onClose={handleClose}
-                >
-                    <MenuItem onClick={handleClose}>Profile</MenuItem>
-                    <MenuItem onClick={() => { router.push('/management'); handleClose(); }}>User Management</MenuItem>
-                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                </Menu>
+            <div>
+                <Head>
+                    <title>Shabas QMM</title>
+                    <meta name="description" content="Shabas QMM" />
+                    <link rel="icon" href="/favicon.ico" />
+                </Head>
+                <main className='content-body'>
+                    <div className='header'>
+                        <div className='nav-items'>
+                            <Link href='/' className='logo'>
+                                <Image src={logo} alt={'Shabas Logo'} height={45} />
+                            </Link>
+                        </div>
+                        <IconButton onClick={handleClick}>
+                            <Settings />
+                        </IconButton>
+                        <Menu
+                            anchorEl={anchorEl}
+                            open={open}
+                            onClose={handleClose}
+                        >
+                            <MenuItem onClick={handleClose}>Profile</MenuItem>
+                            <MenuItem onClick={() => { router.push('/management'); handleClose(); }}>User Management</MenuItem>
+                            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                        </Menu>
+                    </div>
+                    <div className='page-message'>
+                        <span className='title'>
+                            Access Denied
+                        </span>
+                        <span className='subheading'>
+                            Contact an administrator if this is unexpected.
+                        </span>
+                    </div>
+                </main>
             </div>
         )
     }

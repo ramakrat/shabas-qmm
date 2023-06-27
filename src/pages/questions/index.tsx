@@ -11,7 +11,6 @@ import Layout from "~/components/Layout/Layout";
 import QuestionModal from '~/components/Administrator/MainModals/QuestionModal';
 import BrowseTable, { TableColumn } from '~/components/Common/BrowseTable';
 import { useSession } from 'next-auth/react';
-import AccessDenied from '~/components/Common/AccessDenied';
 
 interface TableData {
     number: string;
@@ -94,34 +93,28 @@ const Question: NextPage = () => {
         }
     }
 
-    if (session?.user && session.user.role == 'ADMIN') {
-        return (
-            <>
-                <Layout active='questions' admin>
-                    <div className='dashboard'>
-                        <div className='browse-add'>
-                            <Button
-                                variant='contained'
-                                endIcon={<Add />}
-                                onClick={() => { setQuestionModal(true) }}
-                            >
-                                New Question
-                            </Button>
-                        </div>
-                        <BrowseTable
-                            dataList={convertTableData(questions) ?? []}
-                            tableInfoColumns={columns}
-                        />
+    return (
+        <>
+            <Layout active='questions' session={session} requiredRoles={['ADMIN']}>
+                <div className='dashboard'>
+                    <div className='browse-add'>
+                        <Button
+                            variant='contained'
+                            endIcon={<Add />}
+                            onClick={() => { setQuestionModal(true) }}
+                        >
+                            New Question
+                        </Button>
                     </div>
-                </Layout>
-                <QuestionModal open={questionModal} setOpen={setQuestionModal} />
-            </>
-        );
-    } else {
-        return (
-            <AccessDenied />
-        )
-    }
+                    <BrowseTable
+                        dataList={convertTableData(questions) ?? []}
+                        tableInfoColumns={columns}
+                    />
+                </div>
+            </Layout>
+            <QuestionModal open={questionModal} setOpen={setQuestionModal} />
+        </>
+    );
 };
 
 export default Question;
