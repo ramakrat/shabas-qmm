@@ -15,11 +15,6 @@
             font-weight: 600;
             text-transform: uppercase;
         }
-
-        button {
-            padding: 6px;
-            margin: -8px;
-        }
     }
 
     .MuiTableBody-root {
@@ -74,6 +69,15 @@
                     box-shadow: 0px 0px 0px 0.5px #ADADAD;
                 }
             }
+        }
+
+        .expand-button {
+            position: absolute;
+            right: 10px;
+            background-color: #757575;
+            padding: 1px;
+            margin: -6px;
+            border: 1.5px white solid;
         }
     }
 

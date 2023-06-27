@@ -69,16 +69,14 @@ const ExpandableSection = (tableInfoColumns: any[], obj: any, idx: number, child
                                 align={header.align}
                             >
                                 {header.displayValue}
+                                {(i + 1) == tableInfoColumns.length && child &&
+                                    <IconButton onClick={() => setExpanded(!expanded)} color="inherit" className='expand-button'>
+                                        {expanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+                                    </IconButton>
+                                }
                             </TableCell>
                         );
                     })}
-                    <TableCell key={'expandButton-' + idx} align='center'>
-                        {child &&
-                            <IconButton onClick={() => setExpanded(!expanded)} color="inherit">
-                                {expanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-                            </IconButton>
-                        }
-                    </TableCell>
                 </TableRow>
             </TableHead>
             <TableBody key={'body-' + idx}>
