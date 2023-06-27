@@ -7,6 +7,7 @@ import { Settings } from '@mui/icons-material';
 import logo from './logo.png';
 import { api } from '~/utils/api';
 import { useRouter } from 'next/router';
+import { signOut } from 'next-auth/react';
 
 interface Props {
     active?: string;
@@ -29,6 +30,10 @@ export const Layout: React.FC<Props> = (props) => {
     const handleClose = () => {
         setAnchorEl(null);
     };
+    const handleLogout = async () => {
+        signOut();
+        await router.push(`/api/auth/signin`);
+    }
 
     const [adminRole, setAdminRole] = React.useState<boolean>(admin ?? false);
 
@@ -58,13 +63,12 @@ export const Layout: React.FC<Props> = (props) => {
                 >
                     <MenuItem onClick={handleClose}>Profile</MenuItem>
                     <MenuItem onClick={() => { router.push('/management'); handleClose(); }}>User Management</MenuItem>
-                    <MenuItem onClick={handleClose}>Logout</MenuItem>
+                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 </Menu>
             </div>
         )
     }
     return (
-
         <div>
             <Head>
                 <title>Shabas QMM</title>
@@ -135,7 +139,7 @@ export const Layout: React.FC<Props> = (props) => {
                     >
                         <MenuItem onClick={handleClose}>Profile</MenuItem>
                         <MenuItem onClick={() => { router.push('/management'); handleClose(); }}>User Management</MenuItem>
-                        <MenuItem onClick={handleClose}>Logout</MenuItem>
+                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
                     </Menu>
                 </div>
                 {children}
