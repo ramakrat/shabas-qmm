@@ -100,39 +100,37 @@ const BrowseTable: React.FC<Props> = (props) => {
 
     if (expandable) {
         return (
-            <>
-                <TableContainer component={Paper} className='browse-table expandable'>
-                    <Table size="small" stickyHeader>
-                        {dataList.map((obj, idx) => {
-                            return ExpandableSection(tableInfoColumns, obj, idx, obj.child as React.ReactNode)
-                        })}
-                        {dataList.length === 0 && <>
-                            <TableHead className="table-header">
-                                <TableRow>
-                                    {tableInfoColumns.map((header, i) => {
-                                        return (
-                                            <TableCell
-                                                key={'header-' + i}
-                                                className={`primary-cell`}
-                                                align={header.align}
-                                            >
-                                                {header.displayValue}
-                                            </TableCell>
-                                        );
-                                    })}
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                <TableRow>
-                                    <TableCell colSpan={tableInfoColumns.length + 1} className='empty-table-body'>
-                                        No data to display.
-                                    </TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </>}
-                    </Table>
-                </TableContainer>
-            </>
+            <TableContainer component={Paper} className='browse-table expandable'>
+                <Table size="small" stickyHeader>
+                    {dataList.map((obj, idx) => {
+                        return ExpandableSection(tableInfoColumns, obj, idx, obj.child as React.ReactNode)
+                    })}
+                    {dataList.length === 0 && <>
+                        <TableHead className="table-header">
+                            <TableRow>
+                                {tableInfoColumns.map((header, i) => {
+                                    return (
+                                        <TableCell
+                                            key={'header-' + i}
+                                            className={`primary-cell`}
+                                            align={header.align}
+                                        >
+                                            {header.displayValue}
+                                        </TableCell>
+                                    );
+                                })}
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            <TableRow>
+                                <TableCell colSpan={tableInfoColumns.length + 1} className='empty-table-body'>
+                                    No data to display.
+                                </TableCell>
+                            </TableRow>
+                        </TableBody>
+                    </>}
+                </Table>
+            </TableContainer>
         );
     }
     return (
@@ -141,6 +139,7 @@ const BrowseTable: React.FC<Props> = (props) => {
                 <TableHead className="table-header">
                     <TableRow>
                         {tableInfoColumns.map((header, i) => {
+                            if (header.type == 'onClick') return;
                             return (
                                 <TableCell
                                     key={'header-' + i}
@@ -162,6 +161,7 @@ const BrowseTable: React.FC<Props> = (props) => {
                                 onClick={obj.onClick ?? undefined}
                             >
                                 {tableInfoColumns.map(column => {
+                                    if (column.type == 'onClick') return;
                                     let cellData = obj[column.type];
                                     if (column.format === 'date') {
                                         cellData = dateInputFormat(obj[column.type], true, true);
