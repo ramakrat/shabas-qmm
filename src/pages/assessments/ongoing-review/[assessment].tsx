@@ -15,7 +15,7 @@ const ReviewAssessment: NextPage = () => {
     const userCanAccess = api.assessmentUser.existsOnAssessment.useQuery({ userId: Number(session?.user.id), assessmentId: Number(assessment) }).data;
 
     return (
-        <Layout active='review-assessments' session={session} requiredRoles={['LEAD_ASSESSOR']} accessDenied={!userCanAccess}>
+        <Layout active='review-ongoing-assessments' session={session} requiredRoles={['LEAD_ASSESSOR']} accessDenied={!userCanAccess}>
             <AssessmentForm assessment={Number(assessment)} status='ongoing-review' userId={Number(session?.user.id)} />
         </Layout>
     );

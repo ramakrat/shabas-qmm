@@ -98,12 +98,12 @@ export const Layout: React.FC<Props> = (props) => {
                             Ongoing Assessments
                         </span>
                     </Link>
-                    <Link href={'/assessments/ongoing-review'} className={'nav-item ' + (active == 'review-assessments' ? 'active' : '')}>
+                    <Link href={'/assessments/ongoing-review'} className={'nav-item ' + (active == 'review-ongoing-assessments' ? 'active' : '')}>
                         <span className='label'>
                             Review Ongoing Assessments
                         </span>
                     </Link>
-                    <Link href={'/assessments/oversight-review'} className={'nav-item ' + (active == 'review-assessments' ? 'active' : '')}>
+                    <Link href={'/assessments/oversight-review'} className={'nav-item ' + (active == 'review-oversight-assessments' ? 'active' : '')}>
                         <span className='label'>
                             Review Oversight Assessments
                         </span>

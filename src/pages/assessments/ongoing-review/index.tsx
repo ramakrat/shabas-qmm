@@ -8,7 +8,7 @@ const CompletedAssessments: NextPage = () => {
     const { data: session } = useSession();
 
     return (
-        <Layout active='review-assessments' session={session} requiredRoles={['LEAD_ASSESSOR']}>
+        <Layout active='review-ongoing-assessments' session={session} requiredRoles={['LEAD_ASSESSOR']}>
             <BrowseAssessmentForms status='ongoing-review' userId={Number(session?.user.id)} />
         </Layout>
     )
