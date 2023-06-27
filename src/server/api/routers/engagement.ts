@@ -189,12 +189,12 @@ export const engagementRouter = createTRPCRouter({
                     assessments: {
                         include: { poc: true },
                         where: {
+                            OR: filters,
                             assessment_users: {
                                 some: {
                                     user_id: input.userId,
                                 }
                             },
-                            OR: filters
                         }
                     },
                     client: true,
@@ -204,20 +204,14 @@ export const engagementRouter = createTRPCRouter({
                 where: {
                     assessments: {
                         some: {
+                            OR: filters,
                             assessment_users: {
                                 some: {
                                     user_id: input.userId,
                                 }
-                            }
+                            },
                         }
-                    },
-                    OR: [{
-                        assessments: {
-                            some: {
-                                OR: filters
-                            }
-                        }
-                    }]
+                    }
                 }
             });
         }),
