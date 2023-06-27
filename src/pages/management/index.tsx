@@ -1,14 +1,14 @@
 import React from "react";
+import { NextPage } from "next";
+import { useSession } from "next-auth/react";
 import type { User } from "@prisma/client";
 
 import { Button, IconButton } from "@mui/material";
 import { Add, Edit } from "@mui/icons-material";
 
 import { api } from "~/utils/api";
-import { NextPage } from "next";
-import BrowseTable, { TableColumn } from "~/components/Common/BrowseTable";
 import Layout from "~/components/Layout/Layout";
-import { useSession } from "next-auth/react";
+import BrowseTable, { TableColumn } from "~/components/Table/BrowseTable";
 
 
 interface TableData {

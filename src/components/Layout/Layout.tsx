@@ -2,14 +2,14 @@ import * as React from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Button, IconButton, Menu, MenuItem, Switch } from '@mui/material';
-import { ArrowDownward, KeyboardArrowDown, Settings } from '@mui/icons-material';
-import logo from './logo.png';
-import { api } from '~/utils/api';
 import { useRouter } from 'next/router';
-import { signOut } from 'next-auth/react';
 import { Session } from 'next-auth';
+import { signOut } from 'next-auth/react';
+import { Button, IconButton, Menu, MenuItem } from '@mui/material';
+import { KeyboardArrowDown, Settings } from '@mui/icons-material';
+import { api } from '~/utils/api';
 import { underscoreToTitle } from '~/utils/utils';
+import logo from './logo.png';
 
 interface Props {
     session: Session | null;
@@ -63,7 +63,7 @@ export const Layout: React.FC<Props> = (props) => {
                         <span className='label'>POC</span>
                         <span className='count'>{totalPOC ?? 0}</span>
                     </Link>
-                    <Link href={'/assessments'} className={'nav-item ' + (active == 'assessments' ? 'active' : '')}>
+                    <Link href={'/engagements'} className={'nav-item ' + (active == 'assessments' ? 'active' : '')}>
                         <span className='label'>Engagements</span>
                         <span className='count'>{totalEngagement ?? 0}</span>
                         <span className='label child-label'>/ Assessments</span>
@@ -73,7 +73,7 @@ export const Layout: React.FC<Props> = (props) => {
                         <span className='label'>Question</span>
                         <span className='count'>{totalQuestion ?? 0}</span>
                     </Link>
-                    <Link href={'/completed-assessments'} className={'nav-item ' + (active == 'completed-assessments' ? 'active' : '')}>
+                    <Link href={'/assessments/completed'} className={'nav-item ' + (active == 'completed-assessments' ? 'active' : '')}>
                         <span className='label'>
                             Completed Assessments
                         </span>
@@ -83,7 +83,7 @@ export const Layout: React.FC<Props> = (props) => {
         }
         if (role == 'ASSESSOR') {
             return (
-                <Link href={'/ongoing-assessments'} className={'nav-item ' + (active == 'ongoing-assessments' ? 'active' : '')}>
+                <Link href={'/assessments/ongoing'} className={'nav-item ' + (active == 'ongoing-assessments' ? 'active' : '')}>
                     <span className='label'>
                         Ongoing Assessments
                     </span>
@@ -93,14 +93,19 @@ export const Layout: React.FC<Props> = (props) => {
         if (role == 'LEAD_ASSESSOR') {
             return (
                 <>
-                    <Link href={'/ongoing-assessments'} className={'nav-item ' + (active == 'ongoing-assessments' ? 'active' : '')}>
+                    <Link href={'/assessments/ongoing'} className={'nav-item ' + (active == 'ongoing-assessments' ? 'active' : '')}>
                         <span className='label'>
                             Ongoing Assessments
                         </span>
                     </Link>
-                    <Link href={'/review-assessments'} className={'nav-item ' + (active == 'review-assessments' ? 'active' : '')}>
+                    <Link href={'/assessments/ongoing-review'} className={'nav-item ' + (active == 'review-assessments' ? 'active' : '')}>
                         <span className='label'>
-                            Review Assessments
+                            Review Ongoing Assessments
+                        </span>
+                    </Link>
+                    <Link href={'/assessments/oversight-review'} className={'nav-item ' + (active == 'review-assessments' ? 'active' : '')}>
+                        <span className='label'>
+                            Review Oversight Assessments
                         </span>
                     </Link>
                 </>
@@ -108,7 +113,7 @@ export const Layout: React.FC<Props> = (props) => {
         }
         if (role == 'OVERSIGHT_ASSESSOR') {
             return (
-                <Link href={'/oversight-assessments'} className={'nav-item ' + (active == 'oversight-assessments' ? 'active' : '')}>
+                <Link href={'/assessments/oversight'} className={'nav-item ' + (active == 'oversight-assessments' ? 'active' : '')}>
                     <span className='label'>
                         Oversight Assessments
                     </span>
@@ -159,6 +164,7 @@ export const Layout: React.FC<Props> = (props) => {
                             <Link href='/' className='logo'>
                                 <Image src={logo} alt={'Shabas Logo'} height={45} />
                             </Link>
+                            {session && getRoleNavItems(session.user.role)}
                         </div>
                         {userFeatures}
                     </div>

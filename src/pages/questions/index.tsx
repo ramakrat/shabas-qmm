@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { type NextPage } from "next";
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import { Question } from '@prisma/client';
 
 import { Button } from '@mui/material';
@@ -8,9 +9,8 @@ import { Add } from '@mui/icons-material';
 
 import { api } from "~/utils/api";
 import Layout from "~/components/Layout/Layout";
-import QuestionModal from '~/components/Administrator/MainModals/QuestionModal';
-import BrowseTable, { TableColumn } from '~/components/Common/BrowseTable';
-import { useSession } from 'next-auth/react';
+import QuestionModal from '~/components/Modal/Objects/QuestionModal';
+import BrowseTable, { TableColumn } from '~/components/Table/BrowseTable';
 
 interface TableData {
     number: string;

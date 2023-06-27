@@ -1,7 +1,7 @@
 import { type NextPage } from "next";
-import Layout from "~/components/Layout/Layout";
-import BrowseAssessmentForms from "~/components/Assessor/BrowseAssessmentForms";
 import { useSession } from "next-auth/react";
+import Layout from "~/components/Layout/Layout";
+import BrowseAssessmentForms from "~/components/Assessment/BrowseAssessmentForms";
 
 const OngoingAssessments: NextPage = () => {
     const { data: session } = useSession();

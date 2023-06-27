@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { type NextPage } from "next";
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import type { AssessmentQuestion, AssessmentUser, Engagement, Filter, Question, Rating, Site, User } from '@prisma/client';
 
 import * as yup from "yup";
@@ -10,15 +11,14 @@ import Select from "~/components/Form/Select";
 
 import {
     Button, Card, Grid, IconButton, MenuItem, Select as MuiSelect,
-    TextField as MuiTextField, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow
+    Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow
 } from '@mui/material';
 import { Add, Delete } from '@mui/icons-material';
 
 import { api } from "~/utils/api";
 import Layout from "~/components/Layout/Layout";
 import { dateInputFormat, titleCase } from '~/utils/utils';
-import StatusChip from '~/components/Common/StatusChip';
-import { useSession } from 'next-auth/react';
+import StatusChip, { AssessmentStatus } from '~/components/Table/StatusChip';
 
 interface QuestionType {
     id?: number;
@@ -106,10 +106,6 @@ const Assessment: NextPage = () => {
     const leadAssessor = data?.assessment_users.find(o => o.user.role == 'LEAD_ASSESSOR')
     const assessors = data?.assessment_users.filter(o => o.user.role == 'ASSESSOR')
 
-
-    console.log(oversightAssessor)
-    console.log(leadAssessor)
-    console.log(assessors)
 
     // =========== Input Field States ===========
 
@@ -363,7 +359,7 @@ const Assessment: NextPage = () => {
                             successCounter++;
                         }
                     })
-                    if (successCounter == 5) router.push(`/assessments/${data.id}`)
+                    if (successCounter == 5) router.push(`/engagements/assessment/${data.id}`)
                 }
             })
 
@@ -381,7 +377,7 @@ const Assessment: NextPage = () => {
                                 <Typography>{data.id}</Typography>
                             </div>
                             <div>
-                                <StatusChip status={data.status as any} />
+                                <StatusChip status={data.status as AssessmentStatus} />
                             </div>
                         </Card>
                         <div className='assessment-form'>

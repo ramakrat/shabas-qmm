@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { type NextPage } from "next";
 import Router, { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import type { Filter } from '@prisma/client';
 
 import * as yup from "yup";
@@ -12,16 +13,15 @@ import {
     Button, Card, Grid, IconButton, MenuItem, Select as MuiSelect,
     TextField as MuiTextField, ToggleButton, ToggleButtonGroup, Typography
 } from '@mui/material';
-import { Add, ArrowDownward, ArrowDropDown, ArrowDropUp, ArrowUpward, Delete, HorizontalRule } from '@mui/icons-material';
+import { Add, ArrowDownward, ArrowUpward, Delete, HorizontalRule } from '@mui/icons-material';
 
 import { api } from "~/utils/api";
-import Layout from "~/components/Layout/Layout";
-import BusinessTypeModal from '~/components/Administrator/QuestionFilters/BusinessTypeModal';
-import ManufacturingTypeModal from '~/components/Administrator/QuestionFilters/ManufacturingTypeModal';
-import SiteSpecificModal from '~/components/Administrator/QuestionFilters/SiteSpecificModal';
-import ChangelogTable from '~/components/Common/ChangelogTable';
 import { underscoreToTitle } from '~/utils/utils';
-import { useSession } from 'next-auth/react';
+import Layout from "~/components/Layout/Layout";
+import ChangelogTable from '~/components/Table/ChangelogTable';
+import BusinessTypeModal from '~/components/Modal/QuestionFilters/BusinessTypeModal';
+import ManufacturingTypeModal from '~/components/Modal/QuestionFilters/ManufacturingTypeModal';
+import SiteSpecificModal from '~/components/Modal/QuestionFilters/SiteSpecificModal';
 
 interface GuideType {
     id?: number;

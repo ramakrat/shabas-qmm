@@ -1,8 +1,8 @@
 import React from "react";
 import { NextPage } from "next";
 import { useSession } from "next-auth/react";
-import Layout from "~/components/Layout/Layout";
 import { Card } from "@mui/material";
+import Layout from "~/components/Layout/Layout";
 
 const Homepage: NextPage = () => {
 
@@ -15,7 +15,7 @@ const Homepage: NextPage = () => {
                     <span className='title'>
                         Welcome to Shabas QMM
                     </span>
-                    <span className='subtitle'>
+                    <span className='subheading'>
                         Select a feature at the top to get started
                     </span>
                 </Card>

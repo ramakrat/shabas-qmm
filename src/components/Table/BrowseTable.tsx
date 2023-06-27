@@ -1,8 +1,9 @@
 import React from "react";
 import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import StatusChip from "./StatusChip";
 import { KeyboardArrowUp, KeyboardArrowDown } from "@mui/icons-material";
 import { dateInputFormat } from "~/utils/utils";
+import StatusChip from "./StatusChip";
+
 
 export interface TableColumn {
     type: string;

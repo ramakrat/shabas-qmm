@@ -1,15 +1,15 @@
 import React from "react";
+import { NextPage } from "next";
+import { useSession } from "next-auth/react";
 import type { Client, Engagement, Poc, Site, User } from "@prisma/client";
 
 import { Button, IconButton } from "@mui/material";
 import { Add, Edit } from "@mui/icons-material";
 
 import { api } from "~/utils/api";
-import { NextPage } from "next";
-import PocModal from "~/components/Administrator/MainModals/PocModal";
-import BrowseTable, { TableColumn } from "~/components/Common/BrowseTable";
 import Layout from "~/components/Layout/Layout";
-import { useSession } from "next-auth/react";
+import PocModal from "~/components/Modal/Objects/PocModal";
+import BrowseTable, { TableColumn } from "~/components/Table/BrowseTable";
 
 type PocType = (
     Poc & {

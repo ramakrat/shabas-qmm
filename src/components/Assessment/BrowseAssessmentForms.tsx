@@ -1,8 +1,8 @@
 import { useRouter } from "next/router";
 import type { Engagement, Poc, Assessment, Client, EngagementPoc } from "@prisma/client";
 import { api } from "~/utils/api";
-import BrowseTable, { type TableColumn } from "../Common/BrowseTable";
-import { AssessmentStatus } from "../Common/StatusChip";
+import BrowseTable, { type TableColumn } from "../Table/BrowseTable";
+import { AssessmentStatus } from "../Table/StatusChip";
 
 interface Props {
     status: AssessmentStatus;
@@ -122,13 +122,13 @@ const BrowseAssessmentForms: React.FC<Props> = (props) => {
 
     const handleOnClick = async (id: number) => {
         if (status == 'ongoing')
-            await push(`/ongoing-assessments/${id}`);
+            await push(`/assessments/ongoing/${id}`);
         if (status == 'ongoing-review')
-            await push(`/review-assessments/${id}`);
+            await push(`/assessments/ongoing-review/${id}`);
         if (status == 'oversight')
-            await push(`/oversight-assessments/${id}`);
+            await push(`/assessments/oversight/${id}`);
         if (status == 'completed')
-            await push(`/completed-assessments/${id}`);
+            await push(`/assessments/completed/${id}`);
     }
 
     const convertTableData = (data?: EngagementAssessmentType[]) => {

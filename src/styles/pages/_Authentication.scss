@@ -57,19 +57,16 @@
         justify-content: center;
         align-items: center;
         box-shadow: shadows(3);
+    }
 
-        .title {
-            font-size: 2rem;
-            text-align: center;
-        }
 
-        .subtitle {
-            padding-top: 10px;
-            font-size: 1.3rem;
-        }
+    .title {
+        font-size: 2rem;
+        text-align: center;
     }
 
     .subheading {
+        padding-top: 10px;
         font-size: 1.2rem;
         text-align: center;
     }

@@ -1,23 +1,25 @@
 import * as React from 'react';
-import Router, { useRouter } from 'next/router';
-import type { Answer, Assessment, AssessmentQuestion, Engagement, Filter, InterviewGuide, Question, Rating, Reference, User } from '@prisma/client';
+import { useRouter } from 'next/router';
+import type {
+    Answer, Assessment, AssessmentQuestion, Engagement, Filter,
+    InterviewGuide, Question, Rating, Reference, User
+} from '@prisma/client';
 
 import * as yup from "yup";
 import { Field, Form, Formik } from "formik";
-import TextField from '~/components/Form/TextField';
-
 import { Button, Card, Grid, IconButton, MenuItem, Typography } from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
 import { api } from "~/utils/api";
-import QuestionsSidebar from '~/components/Assessor/QuestionsSidebar';
-import Select from '~/components/Form/Select';
-import ChangelogTable from '~/components/Common/ChangelogTable';
-import ConfirmModal from '../Common/ConfirmModal';
-import MessageModal from '../Common/MessageModal';
 import { priorityIndicator } from '~/pages/questions/[question]';
-import BrowseTable, { TableColumn } from '../Common/BrowseTable';
-import { AssessmentStatus } from '../Common/StatusChip';
+import Select from '../Form/Select';
+import TextField from '../Form/TextField';
+import { AssessmentStatus } from '../Table/StatusChip';
+import ChangelogTable from '../Table/ChangelogTable';
+import BrowseTable, { TableColumn } from '../Table/BrowseTable';
+import ConfirmModal from '../Modal/Common/ConfirmModal';
+import MessageModal from '../Modal/Common/MessageModal';
+import QuestionsSidebar from '../Assessment/QuestionsSidebar';
 
 type AssessmentType = (
     Assessment & {
@@ -244,7 +246,7 @@ const AssessmentForm: React.FC<Props> = (props) => {
                     status: 'ongoing-review',
                 }, {
                     async onSuccess() {
-                        await push(`/review-assessments/${data.id}`)
+                        await push(`/assessments/ongoing-review/${data.id}`)
                     }
                 })
             if (status == 'ongoing-review')
@@ -253,7 +255,7 @@ const AssessmentForm: React.FC<Props> = (props) => {
                     status: 'oversight',
                 }, {
                     async onSuccess() {
-                        await push(`/oversight-assessments/${data.id}`)
+                        await push(`/assessments/oversight/${data.id}`)
                     }
                 })
             if (status == 'oversight')
@@ -262,7 +264,7 @@ const AssessmentForm: React.FC<Props> = (props) => {
                     status: 'completed',
                 }, {
                     async onSuccess() {
-                        await push(`/completed-assessments/${data.id}`)
+                        await push(`/assessments/completed/${data.id}`)
                     }
                 })
         }

@@ -1,16 +1,16 @@
 import React from "react";
+import { NextPage } from "next";
+import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
 import type { Assessment, Client, Engagement, EngagementPoc, Poc } from "@prisma/client";
 
 import { Button, Card, IconButton } from "@mui/material";
 import { Add, Edit, Visibility } from "@mui/icons-material";
 
 import { api } from "~/utils/api";
-import { NextPage } from "next";
 import Layout from "~/components/Layout/Layout";
-import EngagementModal from "~/components/Administrator/MainModals/EngagementModal";
-import BrowseTable, { TableColumn } from "~/components/Common/BrowseTable";
-import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
+import EngagementModal from "~/components/Modal/Objects/EngagementModal";
+import BrowseTable, { TableColumn } from "~/components/Table/BrowseTable";
 
 interface EngagementTableData {
     id: number;
@@ -179,11 +179,11 @@ const BrowseAssessments: NextPage = () => {
 
                         assessments.forEach(assessment => {
                             const actions = assessment.status == 'created' ? (
-                                <IconButton onClick={() => { router.push(`/assessments/${assessment.id}`) }}>
+                                <IconButton onClick={() => { router.push(`/engagements/assessment/${assessment.id}`) }}>
                                     <Edit fontSize='small' />
                                 </IconButton>
                             ) : (
-                                <IconButton onClick={() => { router.push(`/assessments/${assessment.id}`) }}>
+                                <IconButton onClick={() => { router.push(`/engagements/assessment/${assessment.id}`) }}>
                                     <Visibility fontSize='small' />
                                 </IconButton>
                             )
@@ -274,7 +274,7 @@ const BrowseAssessments: NextPage = () => {
                         <Button
                             variant='contained'
                             endIcon={<Add />}
-                            onClick={() => router.push('/assessments/new')}
+                            onClick={() => router.push('/engagements/assessment/new')}
                         >
                             New Assessment
                         </Button>

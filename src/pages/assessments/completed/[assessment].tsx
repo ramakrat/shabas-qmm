@@ -1,17 +1,20 @@
 import * as React from 'react';
 import { type NextPage } from "next";
 import { useRouter } from 'next/router';
-import type { Answer, Assessment, AssessmentQuestion, Engagement, Filter, InterviewGuide, Question, Rating, Reference } from '@prisma/client';
-import * as XLSX from 'xlsx';
+import { useSession } from 'next-auth/react';
+import type { 
+    Answer, Assessment, AssessmentQuestion, Engagement, Filter, 
+    InterviewGuide, Question, Rating, Reference 
+} from '@prisma/client';
 
+import * as XLSX from 'xlsx';
 import { Card, Grid, Typography } from '@mui/material';
 
 import { api } from "~/utils/api";
 import Layout from "~/components/Layout/Layout";
-import QuestionsSidebar from '~/components/Assessor/QuestionsSidebar';
-import ChangelogTable from '~/components/Common/ChangelogTable';
-import { priorityIndicator } from '../questions/[question]';
-import { useSession } from 'next-auth/react';
+import ChangelogTable from '~/components/Table/ChangelogTable';
+import QuestionsSidebar from '~/components/Assessment/QuestionsSidebar';
+import { priorityIndicator } from '../../questions/[question]';
 
 const CompletedAssessment: NextPage = () => {
 
