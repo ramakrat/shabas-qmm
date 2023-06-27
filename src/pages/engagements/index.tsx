@@ -141,18 +141,20 @@ const BrowseAssessments: NextPage = () => {
 
     const [createdFilter, setCreatedFilter] = React.useState<boolean>(true);
     const [ongoingFilter, setOngoingFilter] = React.useState<boolean>(true);
-    const [assessorReviewFilter, setAssessorReviewFilter] = React.useState<boolean>(true);
+    const [ongoingReviewFilter, setOngoingReviewFilter] = React.useState<boolean>(true);
     const [oversightFilter, setOversightFilter] = React.useState<boolean>(true);
-    const [clientReviewFilter, setClientReviewFilter] = React.useState<boolean>(true);
+    const [oversightReviewFilter, setOversightReviewFilter] = React.useState<boolean>(true);
     const [completedFilter, setCompletedFilter] = React.useState<boolean>(true);
 
     const filterObject = () => {
         const filters = [];
         if (createdFilter) filters.push({ status: 'created' })
         if (ongoingFilter) filters.push({ status: 'ongoing' })
-        if (assessorReviewFilter) filters.push({ status: 'ongoing-review' })
+        if (ongoingReviewFilter) filters.push({ status: 'ongoing-review' })
         if (oversightFilter) filters.push({ status: 'oversight' })
-        if (clientReviewFilter) filters.push({ status: 'client-review' })
+        if (oversightReviewFilter) filters.push({ status: 'oversight-review' })
+        // if () filters.push({ status: 'client' })
+        // if () filters.push({ status: 'client-review' })
         if (completedFilter) filters.push({ status: 'completed' })
         return filters;
     }
@@ -245,17 +247,17 @@ const BrowseAssessments: NextPage = () => {
                                 <span className='label'>Ongoing</span>
                                 <span className='count'>{assessmentStatusCounts.ongoing}</span>
                             </div>
-                            <div className={'assessments-filter ongoing-review ' + (assessorReviewFilter ? 'active' : '')} onClick={() => setAssessorReviewFilter(!assessorReviewFilter)}>
-                                <span className='label'>Assessor Review</span>
-                                <span className='count'>{assessmentStatusCounts.assessorReview}</span>
+                            <div className={'assessments-filter ongoing-review ' + (ongoingReviewFilter ? 'active' : '')} onClick={() => setOngoingReviewFilter(!ongoingReviewFilter)}>
+                                <span className='label'>Ongoing Review</span>
+                                <span className='count'>{assessmentStatusCounts.ongoingReview}</span>
                             </div>
                             <div className={'assessments-filter oversight ' + (oversightFilter ? 'active' : '')} onClick={() => setOversightFilter(!oversightFilter)}>
                                 <span className='label'>Oversight</span>
                                 <span className='count'>{assessmentStatusCounts.oversight}</span>
                             </div>
-                            <div className={'assessments-filter client-review ' + (clientReviewFilter ? 'active' : '')} onClick={() => setClientReviewFilter(!clientReviewFilter)}>
-                                <span className='label'>Client Review</span>
-                                <span className='count'>{assessmentStatusCounts.clientReview}</span>
+                            <div className={'assessments-filter oversight-review ' + (oversightReviewFilter ? 'active' : '')} onClick={() => setOversightReviewFilter(!oversightReviewFilter)}>
+                                <span className='label'>Oversight Review</span>
+                                <span className='count'>{assessmentStatusCounts.oversightReview}</span>
                             </div>
                             <div className={'assessments-filter completed ' + (completedFilter ? 'active' : '')} onClick={() => setCompletedFilter(!completedFilter)}>
                                 <span className='label'>Completed</span>

@@ -6,7 +6,7 @@ import { api } from '~/utils/api';
 import Layout from "~/components/Layout/Layout";
 import AssessmentForm from '~/components/Assessment/AssessmentForm';
 
-const ReviewOngoingAssessment: NextPage = () => {
+const ReviewOversightAssessment: NextPage = () => {
 
     const { data: session } = useSession();
 
@@ -15,10 +15,10 @@ const ReviewOngoingAssessment: NextPage = () => {
     const userCanAccess = api.assessmentUser.existsOnAssessment.useQuery({ userId: Number(session?.user.id), assessmentId: Number(assessment) }).data;
 
     return (
-        <Layout active='review-ongoing-assessments' session={session} requiredRoles={['LEAD_ASSESSOR']} accessDenied={!userCanAccess}>
-            <AssessmentForm assessment={Number(assessment)} status='ongoing-review' userId={Number(session?.user.id)} />
+        <Layout active='review-oversight-assessments' session={session} requiredRoles={['LEAD_ASSESSOR']} accessDenied={!userCanAccess}>
+            <AssessmentForm assessment={Number(assessment)} status='oversight-review' userId={Number(session?.user.id)} />
         </Layout>
     );
 };
 
-export default ReviewOngoingAssessment;
+export default ReviewOversightAssessment;

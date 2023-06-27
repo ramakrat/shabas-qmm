@@ -168,14 +168,14 @@ export const assessmentRouter = createTRPCRouter({
                 const ongoing = await ctx.prisma.assessment.count({
                     where: { status: 'ongoing' }
                 });
-                const assessorReview = await ctx.prisma.assessment.count({
+                const ongoingReview = await ctx.prisma.assessment.count({
                     where: { status: 'ongoing-review' }
                 });
                 const oversight = await ctx.prisma.assessment.count({
                     where: { status: 'oversight' }
                 });
-                const clientReview = await ctx.prisma.assessment.count({
-                    where: { status: 'client-review' }
+                const oversightReview = await ctx.prisma.assessment.count({
+                    where: { status: 'oversight-review' }
                 });
                 const completed = await ctx.prisma.assessment.count({
                     where: { status: 'completed' }
@@ -184,9 +184,9 @@ export const assessmentRouter = createTRPCRouter({
                 return {
                     created: created,
                     ongoing: ongoing,
-                    assessorReview: assessorReview,
+                    ongoingReview: ongoingReview,
                     oversight: oversight,
-                    clientReview: clientReview,
+                    oversightReview: oversightReview,
                     completed: completed,
                 };
             }
