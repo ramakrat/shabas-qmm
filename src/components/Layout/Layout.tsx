@@ -120,7 +120,19 @@ export const Layout: React.FC<Props> = (props) => {
     }
 
     const userFeatures = () => {
-        const menu = (
+        return (<>
+            {session?.user.name ?
+                <Button onClick={handleClick} className='user-button'>
+                    <div className='user-name'>
+                        <span>{session.user.name}</span>
+                        <span>{underscoreToTitle(session.user.role)}</span>
+                    </div>
+                    <KeyboardArrowDown />
+                </Button> :
+                <IconButton onClick={handleClick}>
+                    <Settings />
+                </IconButton>
+            }
             <Menu
                 anchorEl={anchorEl}
                 open={open}
@@ -130,36 +142,31 @@ export const Layout: React.FC<Props> = (props) => {
                 {session?.user.role == 'ADMIN' && <MenuItem onClick={() => { router.push('/management'); handleClose(); }}>User Management</MenuItem>}
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
-        )
-
-        if (session?.user.name) {
-            return (<>
-                <Button onClick={handleClick} className='user-button'>
-                    <div className='user-name'>
-                        <span>{session.user.name}</span>
-                        <span>{underscoreToTitle(session.user.role)}</span>
-                    </div>
-                    <KeyboardArrowDown />
-                </Button>
-                {menu}
-            </>)
-        }
-        if (session) {
-            return (<>
-                <IconButton onClick={handleClick}>
-                    <Settings />
-                </IconButton>
-                {menu}
-            </>)
-        }
-        return (<>
-            <Button onClick={() => router.push(`/api/auth/signin`)} className='user-button'>
-                Login
-            </Button>
-            {menu}
         </>)
     }
 
+    if (!session) {
+        <div>
+            <Head>
+                <title>Shabas QMM</title>
+                <meta name="description" content="Shabas QMM" />
+                <link rel="icon" href="/favicon.ico" />
+            </Head>
+            <main className='content-body'>
+                <div className='header'>
+                    <div className='nav-items'>
+                        <Link href='/' className='logo'>
+                            <Image src={logo} alt={'Shabas Logo'} height={45} />
+                        </Link>
+                    </div>
+
+                    <Button onClick={() => router.push(`/api/auth/signin`)} className='user-button'>
+                        Login
+                    </Button>
+                </div>
+            </main>
+        </div>
+    }
     if (!permitted) {
         return (
             <div>
