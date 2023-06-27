@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { Session } from 'next-auth';
 import { signOut } from 'next-auth/react';
-import { Button, IconButton, Menu, MenuItem } from '@mui/material';
+import { Button, Card, IconButton, Menu, MenuItem } from '@mui/material';
 import { KeyboardArrowDown, Settings } from '@mui/icons-material';
 import { api } from '~/utils/api';
 import { underscoreToTitle } from '~/utils/utils';
@@ -160,10 +160,19 @@ export const Layout: React.FC<Props> = (props) => {
                                 <Image src={logo} alt={'Shabas Logo'} height={45} />
                             </Link>
                         </div>
-
                         <Button onClick={() => router.push(`/api/auth/signin`)} className='user-button'>
                             Login
                         </Button>
+                    </div>
+                    <div className='page-message'>
+                        <Card>
+                            <span className='title'>
+                                Welcome to Shabas QMM
+                            </span>
+                            <span className='subheading'>
+                                Login to get started
+                            </span>
+                        </Card>
                     </div>
                 </main>
             </div>
