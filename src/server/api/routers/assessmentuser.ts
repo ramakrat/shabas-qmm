@@ -135,9 +135,10 @@ export const assessmentUserRouter = createTRPCRouter({
                     const role = o.user.role;
                     const status = o.assessment.status;
                     const roleMatchStatus = status == 'created' && role == 'ASSESSOR' ||
-                        status == 'ongoing' && role == 'ASSESSOR' ||
+                        status == 'ongoing' && (role == 'ASSESSOR' || role == 'LEAD_ASSESSOR') ||
                         status == 'ongoing-review' && role == 'LEAD_ASSESSOR' ||
-                        status == 'oversight' && role == 'OVERSIGHT_ASSESSOR';
+                        status == 'oversight' && role == 'OVERSIGHT_ASSESSOR' ||
+                        status == 'oversight-review' && role == 'LEAD_ASSESSOR';
                     return roleMatchStatus;
                 }
                 return false;
