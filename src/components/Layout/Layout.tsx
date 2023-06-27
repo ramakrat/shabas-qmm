@@ -8,9 +8,10 @@ import logo from './logo.png';
 import { api } from '~/utils/api';
 import { useRouter } from 'next/router';
 import { signOut } from 'next-auth/react';
+import { Session } from 'next-auth';
 
 interface Props {
-    session: any;
+    session: Session | null;
     requiredRoles?: string[];
     active?: string;
     children?: React.ReactNode;
@@ -36,8 +37,8 @@ export const Layout: React.FC<Props> = (props) => {
         await router.push(`/api/auth/signin`);
     }
 
-    const permitted = requiredRoles?.includes(session.user.role) && !accessDenied;
-    const [adminRole, setAdminRole] = React.useState<boolean>(session.user.role == 'admin');
+    const permitted = session?.user.role && requiredRoles?.includes(session.user.role) && !accessDenied;
+    const [adminRole, setAdminRole] = React.useState<boolean>(session?.user.role == 'ADMIN');
 
     // TODO: Make dynamic
     const totalClient = api.client.getTotalCount.useQuery().data;
