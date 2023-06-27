@@ -301,7 +301,7 @@ model AssessmentQuestion {
     assessment    Assessment @relation(fields: [assessment_id], references: [id], onDelete: Restrict)
     filter_id     Int?
     filter        Filter?    @relation(fields: [filter_id], references: [id], onDelete: Restrict)
-    answers        Answer[]
+    answers       Answer[]
 
     @@index([question_id])
     @@index([assessment_id])
@@ -315,6 +315,7 @@ model Answer {
     created_by String
     updated_by String
 
+    status    String?
     rating    String?
     rationale String?
     notes     String? // Ongoing Notes, Review Improvement Suggestions, Oversight Comments

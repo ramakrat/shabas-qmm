@@ -129,8 +129,7 @@ const AssessmentForm: React.FC<Props> = (props) => {
     }, [data])
     React.useEffect(() => {
         if (selectedAssessmentQuestion && userId && !userAnswer) {
-            console.log(userAnswer)
-            createAnswer.mutate({ assessmentQuestionId: selectedAssessmentQuestion.id, userId: userId }, {
+            createAnswer.mutate({ assessmentQuestionId: selectedAssessmentQuestion.id, userId: userId, status: status }, {
                 onSuccess(data) {
                     setAnswer({
                         ...answer,
@@ -165,6 +164,7 @@ const AssessmentForm: React.FC<Props> = (props) => {
         user: string;
         rating: string;
         rationale: string;
+        notes: string;
     }
 
     const columns: TableColumn[] = [{
@@ -176,6 +176,9 @@ const AssessmentForm: React.FC<Props> = (props) => {
     }, {
         type: 'rationale',
         displayValue: 'Rationale',
+    }, {
+        type: 'notes',
+        displayValue: 'Notes',
     }];
     const convertTableData = (data?: any[]) => {
         if (data) {
@@ -185,6 +188,7 @@ const AssessmentForm: React.FC<Props> = (props) => {
                     user: obj.user.first_name + ' ' + obj.user.last_name,
                     rating: obj.rating ?? '',
                     rationale: obj.rationale ?? '',
+                    notes: obj.notes ?? '',
                 })
             })
             return newData;
@@ -259,6 +263,15 @@ const AssessmentForm: React.FC<Props> = (props) => {
                     }
                 })
             if (status == 'oversight')
+                statusChange.mutate({
+                    id: data.id,
+                    status: 'oversight-review',
+                }, {
+                    async onSuccess() {
+                        await push(`/assessments/oversight-review/${data.id}`)
+                    }
+                })
+            if (status == 'oversight-review')
                 statusChange.mutate({
                     id: data.id,
                     status: 'completed',
@@ -456,7 +469,25 @@ const AssessmentForm: React.FC<Props> = (props) => {
                                                     <div className='widget-header'>Assessor Answers</div>
                                                     <div className='widget-table'>
                                                         <BrowseTable
-                                                            dataList={convertTableData(selectedAssessmentQuestion.answers.filter(a => a.user?.role == 'ASSESSOR')) ?? []}
+                                                            dataList={convertTableData(selectedAssessmentQuestion.answers.filter(a => a.status == 'ongoing')) ?? []}
+                                                            tableInfoColumns={columns}
+                                                        />
+                                                    </div>
+                                                </>}
+                                                {status == 'oversight' && <>
+                                                    <div className='widget-header'>Lead Assessor Answers</div>
+                                                    <div className='widget-table'>
+                                                        <BrowseTable
+                                                            dataList={convertTableData(selectedAssessmentQuestion.answers.filter(a => a.status == 'ongoing-review')) ?? []}
+                                                            tableInfoColumns={columns}
+                                                        />
+                                                    </div>
+                                                </>}
+                                                {status == 'oversight-review' && <>
+                                                    <div className='widget-header'>Oversight Assessor Answers</div>
+                                                    <div className='widget-table'>
+                                                        <BrowseTable
+                                                            dataList={convertTableData(selectedAssessmentQuestion.answers.filter(a => a.status == 'oversight')) ?? []}
                                                             tableInfoColumns={columns}
                                                         />
                                                     </div>

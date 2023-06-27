@@ -127,6 +127,8 @@ const BrowseAssessmentForms: React.FC<Props> = (props) => {
             await push(`/assessments/ongoing-review/${id}`);
         if (status == 'oversight')
             await push(`/assessments/oversight/${id}`);
+        if (status == 'oversight-review')
+            await push(`/assessments/oversight-review/${id}`);
         if (status == 'completed')
             await push(`/assessments/completed/${id}`);
     }
