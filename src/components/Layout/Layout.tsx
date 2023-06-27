@@ -51,35 +51,33 @@ export const Layout: React.FC<Props> = (props) => {
 
     const getRoleNavItems = (role: string) => {
         if (role == 'ADMIN') {
-            return (
-                <>
-                    <Link href={'/clients'} className={'nav-item ' + (active == 'clients' ? 'active' : '')}>
-                        <span className='label'>Clients</span>
-                        <span className='count'>{totalClient ?? 0}</span>
-                        <span className='label child-label'>/ Sites</span>
-                        <span className='count'>{totalSite ?? 0}</span>
-                    </Link>
-                    <Link href={'/pocs'} className={'nav-item ' + (active == 'pocs' ? 'active' : '')}>
-                        <span className='label'>POC</span>
-                        <span className='count'>{totalPOC ?? 0}</span>
-                    </Link>
-                    <Link href={'/engagements'} className={'nav-item ' + (active == 'assessments' ? 'active' : '')}>
-                        <span className='label'>Engagements</span>
-                        <span className='count'>{totalEngagement ?? 0}</span>
-                        <span className='label child-label'>/ Assessments</span>
-                        <span className='count'>{totalAssessment ?? 0}</span>
-                    </Link>
-                    <Link href={'/questions'} className={'nav-item ' + (active == 'questions' ? 'active' : '')}>
-                        <span className='label'>Question</span>
-                        <span className='count'>{totalQuestion ?? 0}</span>
-                    </Link>
-                    <Link href={'/assessments/completed'} className={'nav-item ' + (active == 'completed-assessments' ? 'active' : '')}>
-                        <span className='label'>
-                            Completed Assessments
-                        </span>
-                    </Link>
-                </>
-            )
+            return (<>
+                <Link href={'/clients'} className={'nav-item ' + (active == 'clients' ? 'active' : '')}>
+                    <span className='label'>Clients</span>
+                    <span className='count'>{totalClient ?? 0}</span>
+                    <span className='label child-label'>/ Sites</span>
+                    <span className='count'>{totalSite ?? 0}</span>
+                </Link>
+                <Link href={'/pocs'} className={'nav-item ' + (active == 'pocs' ? 'active' : '')}>
+                    <span className='label'>POC</span>
+                    <span className='count'>{totalPOC ?? 0}</span>
+                </Link>
+                <Link href={'/engagements'} className={'nav-item ' + (active == 'assessments' ? 'active' : '')}>
+                    <span className='label'>Engagements</span>
+                    <span className='count'>{totalEngagement ?? 0}</span>
+                    <span className='label child-label'>/ Assessments</span>
+                    <span className='count'>{totalAssessment ?? 0}</span>
+                </Link>
+                <Link href={'/questions'} className={'nav-item ' + (active == 'questions' ? 'active' : '')}>
+                    <span className='label'>Question</span>
+                    <span className='count'>{totalQuestion ?? 0}</span>
+                </Link>
+                <Link href={'/assessments/completed'} className={'nav-item ' + (active == 'completed-assessments' ? 'active' : '')}>
+                    <span className='label'>
+                        Completed Assessments
+                    </span>
+                </Link>
+            </>)
         }
         if (role == 'ASSESSOR') {
             return (
@@ -91,25 +89,23 @@ export const Layout: React.FC<Props> = (props) => {
             )
         }
         if (role == 'LEAD_ASSESSOR') {
-            return (
-                <>
-                    <Link href={'/assessments/ongoing'} className={'nav-item ' + (active == 'ongoing-assessments' ? 'active' : '')}>
-                        <span className='label'>
-                            Ongoing Assessments
-                        </span>
-                    </Link>
-                    <Link href={'/assessments/ongoing-review'} className={'nav-item ' + (active == 'review-ongoing-assessments' ? 'active' : '')}>
-                        <span className='label'>
-                            Review Ongoing Assessments
-                        </span>
-                    </Link>
-                    <Link href={'/assessments/oversight-review'} className={'nav-item ' + (active == 'review-oversight-assessments' ? 'active' : '')}>
-                        <span className='label'>
-                            Review Oversight Assessments
-                        </span>
-                    </Link>
-                </>
-            )
+            return (<>
+                <Link href={'/assessments/ongoing'} className={'nav-item ' + (active == 'ongoing-assessments' ? 'active' : '')}>
+                    <span className='label'>
+                        Ongoing Assessments
+                    </span>
+                </Link>
+                <Link href={'/assessments/ongoing-review'} className={'nav-item ' + (active == 'review-ongoing-assessments' ? 'active' : '')}>
+                    <span className='label'>
+                        Review Ongoing Assessments
+                    </span>
+                </Link>
+                <Link href={'/assessments/oversight-review'} className={'nav-item ' + (active == 'review-oversight-assessments' ? 'active' : '')}>
+                    <span className='label'>
+                        Review Oversight Assessments
+                    </span>
+                </Link>
+            </>)
         }
         if (role == 'OVERSIGHT_ASSESSOR') {
             return (
@@ -123,20 +119,8 @@ export const Layout: React.FC<Props> = (props) => {
         return undefined;
     }
 
-    const userFeatures = (
-        <>
-            {session?.user.name ?
-                <Button onClick={handleClick} className='user-button'>
-                    <div className='user-name'>
-                        <span>{session.user.name}</span>
-                        <span>{underscoreToTitle(session.user.role)}</span>
-                    </div>
-                    <KeyboardArrowDown />
-                </Button> :
-                <IconButton onClick={handleClick}>
-                    <Settings />
-                </IconButton>
-            }
+    const userFeatures = () => {
+        const menu = (
             <Menu
                 anchorEl={anchorEl}
                 open={open}
@@ -146,9 +130,35 @@ export const Layout: React.FC<Props> = (props) => {
                 {session?.user.role == 'ADMIN' && <MenuItem onClick={() => { router.push('/management'); handleClose(); }}>User Management</MenuItem>}
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
-        </>
+        )
 
-    )
+        if (session?.user.name) {
+            return (<>
+                <Button onClick={handleClick} className='user-button'>
+                    <div className='user-name'>
+                        <span>{session.user.name}</span>
+                        <span>{underscoreToTitle(session.user.role)}</span>
+                    </div>
+                    <KeyboardArrowDown />
+                </Button>
+                {menu}
+            </>)
+        }
+        if (session) {
+            return (<>
+                <IconButton onClick={handleClick}>
+                    <Settings />
+                </IconButton>
+                {menu}
+            </>)
+        }
+        return (<>
+            <Button onClick={() => router.push(`/api/auth/signin`)} className='user-button'>
+                Login
+            </Button>
+            {menu}
+        </>)
+    }
 
     if (!permitted) {
         return (
@@ -166,7 +176,7 @@ export const Layout: React.FC<Props> = (props) => {
                             </Link>
                             {session && getRoleNavItems(session.user.role)}
                         </div>
-                        {userFeatures}
+                        {userFeatures()}
                     </div>
                     <div className='page-message'>
                         <span className='title'>
@@ -195,7 +205,7 @@ export const Layout: React.FC<Props> = (props) => {
                         </Link>
                         {getRoleNavItems(session.user.role)}
                     </div>
-                    {userFeatures}
+                    {userFeatures()}
                 </div>
                 {children}
             </main>
