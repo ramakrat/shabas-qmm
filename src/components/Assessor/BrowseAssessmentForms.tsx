@@ -2,9 +2,10 @@ import { useRouter } from "next/router";
 import type { Engagement, Poc, Assessment, Client, EngagementPoc } from "@prisma/client";
 import { api } from "~/utils/api";
 import BrowseTable, { type TableColumn } from "../Common/BrowseTable";
+import { AssessmentStatus } from "../Common/StatusChip";
 
 interface Props {
-    status: 'ongoing' | 'assessor-review' | 'oversight' | 'client-review' | 'completed';
+    status: AssessmentStatus;
     userId?: number;
 }
 
@@ -122,7 +123,7 @@ const BrowseAssessmentForms: React.FC<Props> = (props) => {
     const handleOnClick = async (id: number) => {
         if (status == 'ongoing')
             await push(`/ongoing-assessments/${id}`);
-        if (status == 'assessor-review')
+        if (status == 'ongoing-review')
             await push(`/review-assessments/${id}`);
         if (status == 'oversight')
             await push(`/oversight-assessments/${id}`);

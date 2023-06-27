@@ -108,7 +108,7 @@ export const engagementRouter = createTRPCRouter({
                                         AND: [
                                             { status: 'created' },
                                             { status: 'ongoing' },
-                                            { status: 'assessor-review' },
+                                            { status: 'ongoing-review' },
                                             { status: 'oversight' },
                                             { status: 'client-review' },
                                             { status: 'completed' },

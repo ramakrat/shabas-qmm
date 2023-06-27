@@ -9,7 +9,7 @@ const CompletedAssessments: NextPage = () => {
 
     return (
         <Layout active='review-assessments' session={session} requiredRoles={['LEAD_ASSESSOR']}>
-            <BrowseAssessmentForms status='assessor-review' userId={Number(session?.user.id)} />
+            <BrowseAssessmentForms status='ongoing-review' userId={Number(session?.user.id)} />
         </Layout>
     )
 }

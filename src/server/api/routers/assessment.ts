@@ -169,7 +169,7 @@ export const assessmentRouter = createTRPCRouter({
                     where: { status: 'ongoing' }
                 });
                 const assessorReview = await ctx.prisma.assessment.count({
-                    where: { status: 'assessor-review' }
+                    where: { status: 'ongoing-review' }
                 });
                 const oversight = await ctx.prisma.assessment.count({
                     where: { status: 'oversight' }

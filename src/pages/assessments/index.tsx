@@ -150,7 +150,7 @@ const BrowseAssessments: NextPage = () => {
         const filters = [];
         if (createdFilter) filters.push({ status: 'created' })
         if (ongoingFilter) filters.push({ status: 'ongoing' })
-        if (assessorReviewFilter) filters.push({ status: 'assessor-review' })
+        if (assessorReviewFilter) filters.push({ status: 'ongoing-review' })
         if (oversightFilter) filters.push({ status: 'oversight' })
         if (clientReviewFilter) filters.push({ status: 'client-review' })
         if (completedFilter) filters.push({ status: 'completed' })
@@ -245,7 +245,7 @@ const BrowseAssessments: NextPage = () => {
                                 <span className='label'>Ongoing</span>
                                 <span className='count'>{assessmentStatusCounts.ongoing}</span>
                             </div>
-                            <div className={'assessments-filter assessor-review ' + (assessorReviewFilter ? 'active' : '')} onClick={() => setAssessorReviewFilter(!assessorReviewFilter)}>
+                            <div className={'assessments-filter ongoing-review ' + (assessorReviewFilter ? 'active' : '')} onClick={() => setAssessorReviewFilter(!assessorReviewFilter)}>
                                 <span className='label'>Assessor Review</span>
                                 <span className='count'>{assessmentStatusCounts.assessorReview}</span>
                             </div>

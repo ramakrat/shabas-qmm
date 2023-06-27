@@ -16,7 +16,7 @@ const ReviewAssessment: NextPage = () => {
 
     return (
         <Layout active='review-assessments' session={session} requiredRoles={['LEAD_ASSESSOR']} accessDenied={!userCanAccess}>
-            <AssessmentForm assessment={Number(assessment)} status='assessor-review' userId={Number(session?.user.id)} />
+            <AssessmentForm assessment={Number(assessment)} status='ongoing-review' userId={Number(session?.user.id)} />
         </Layout>
     );
 };

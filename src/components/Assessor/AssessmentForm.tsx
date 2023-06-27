@@ -17,6 +17,7 @@ import ConfirmModal from '../Common/ConfirmModal';
 import MessageModal from '../Common/MessageModal';
 import { priorityIndicator } from '~/pages/questions/[question]';
 import BrowseTable, { TableColumn } from '../Common/BrowseTable';
+import { AssessmentStatus } from '../Common/StatusChip';
 
 type AssessmentType = (
     Assessment & {
@@ -56,7 +57,7 @@ const validationSchemaOversight = yup.object().shape({
 
 interface Props {
     assessment: number;
-    status: 'ongoing' | 'assessor-review' | 'oversight' | 'client-review';
+    status: AssessmentStatus
     userId: number;
 }
 
@@ -240,13 +241,13 @@ const AssessmentForm: React.FC<Props> = (props) => {
             if (status == 'ongoing')
                 statusChange.mutate({
                     id: data.id,
-                    status: 'assessor-review',
+                    status: 'ongoing-review',
                 }, {
                     async onSuccess() {
                         await push(`/review-assessments/${data.id}`)
                     }
                 })
-            if (status == 'assessor-review')
+            if (status == 'ongoing-review')
                 statusChange.mutate({
                     id: data.id,
                     status: 'oversight',
@@ -336,7 +337,7 @@ const AssessmentForm: React.FC<Props> = (props) => {
                                                 <div className='widget-sub-header'>
                                                     <div className='rating-input'>
                                                         {status == 'ongoing' && <Typography>Rating:</Typography>}
-                                                        {status == 'assessor-review' && <Typography>Consensus Rating:</Typography>}
+                                                        {status == 'ongoing-review' && <Typography>Consensus Rating:</Typography>}
                                                         {status == 'oversight' && <Typography>Oversight Rating:</Typography>}
                                                         <Field
                                                             name='rating' label='' size='small'
@@ -379,7 +380,7 @@ const AssessmentForm: React.FC<Props> = (props) => {
                                                 }
                                                 <div className='widget-header'>Details</div>
                                                 <div className='widget-body widget-form'>
-                                                    {status == 'ongoing' || status == 'assessor-review' && <>
+                                                    {status == 'ongoing' || status == 'ongoing-review' && <>
                                                         <Typography>Rationale</Typography>
                                                         <Field
                                                             name='rationale' label='' size='small' multiline
@@ -388,7 +389,7 @@ const AssessmentForm: React.FC<Props> = (props) => {
                                                         />
                                                     </>}
                                                     {status == 'ongoing' && <Typography>Notes</Typography>}
-                                                    {status == 'assessor-review' && <Typography>Improvement Suggestions</Typography>}
+                                                    {status == 'ongoing-review' && <Typography>Improvement Suggestions</Typography>}
                                                     {status == 'oversight' && <Typography>Oversight Comments</Typography>}
                                                     <Field
                                                         name='notes' label='' size='small' multiline
@@ -449,7 +450,7 @@ const AssessmentForm: React.FC<Props> = (props) => {
                                                         }
                                                     </div>
                                                 </>}
-                                                {status == 'assessor-review' && <>
+                                                {status == 'ongoing-review' && <>
                                                     <div className='widget-header'>Assessor Answers</div>
                                                     <div className='widget-table'>
                                                         <BrowseTable

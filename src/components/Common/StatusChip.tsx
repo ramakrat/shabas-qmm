@@ -1,7 +1,10 @@
 import { hyphenToTitle } from "~/utils/utils";
 
+export type AssessmentStatus = 'ongoing' | 'ongoing-review' | 'oversight' | 'oversight-review' | 'client' | 'client-review' | 'completed';
+export type EngagementStatus = 'pending' | 'open' | 'closed';
+
 interface Props {
-    status: 'created' | 'ongoing' | 'assessor-review' | 'oversight' | 'client-review' | 'completed' | 'pending' | 'open' | 'closed';
+    status: AssessmentStatus & EngagementStatus;
 }
 
 const StatusChip: React.FC<Props> = (props) => {
