@@ -26,7 +26,7 @@ model Client {
     state          String
     country        String
     zip_code       String
-    description    String
+    description    String @db.MediumText
 
     sites       Site[]
     pocs        Poc[]
@@ -40,7 +40,7 @@ model Site {
     created_by String
     updated_by String
 
-    description    String
+    description    String @db.MediumText
     name           String
     street_address String
     city           String
@@ -222,7 +222,7 @@ model Engagement {
     created_by String
     updated_by String
 
-    description String
+    description String   @db.MediumText
     status      String
     start_date  DateTime
     end_date    DateTime
@@ -256,7 +256,7 @@ model Assessment {
     created_by String
     updated_by String
 
-    description String
+    description String   @db.MediumText
     status      String
     start_date  DateTime
     end_date    DateTime
