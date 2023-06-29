@@ -122,6 +122,8 @@ const PocModal: React.FC<Props> = (props) => {
                 work_phone: values.workPhone,
                 email: values.email,
                 client_id: values.type == 'client' ? Number(values.typeId) : undefined,
+                engagement_id: values.type == 'engagement' ? Number(values.typeId) : undefined,
+                site_id: values.type == 'site' ? Number(values.typeId) : undefined,
             }, {
                 onSuccess() {
                     setOpen(false);
@@ -137,6 +139,8 @@ const PocModal: React.FC<Props> = (props) => {
                 work_phone: values.workPhone,
                 email: values.email,
                 client_id: values.type == 'client' ? Number(values.typeId) : undefined,
+                engagement_id: values.type == 'engagement' ? Number(values.typeId) : undefined,
+                site_id: values.type == 'site' ? Number(values.typeId) : undefined,
             }, {
                 onSuccess() {
                     setOpen(false);
