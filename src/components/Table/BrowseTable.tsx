@@ -21,36 +21,29 @@ interface Props {
     expandable?: boolean;
 }
 
+const cell = (obj: any, column: any, idx: number) => {
+    if (column.type == 'onClick') return;
+    let cellData = obj[column.type];
+    if (column.format === 'date') {
+        cellData = dateInputFormat(obj[column.type], true, true);
+    } else if (column.format === 'status' && obj[column.type]) {
+        cellData = <StatusChip status={obj[column.type]} />;
+    } else if (column.format === 'jsx-element') {
+        cellData = obj[column.type];
+    } else if (cellData.toString().length > 75) {
+        cellData = cellData.toString().slice(0, 75) + '...';
+    }
+    return (
+        <TableCell key={column.type + '-' + idx} align={column.align} className={obj[column.type] == '' ? 'null' : ''}>
+            {cellData}
+        </TableCell>
+    )
+}
+
 const Row = (tableInfoColumns: any[], obj: any, idx: number) => {
     return (
         <TableRow key={'row-' + idx}>
-            {tableInfoColumns.map(column => {
-                if (column.format === 'date') {
-                    return (
-                        <TableCell key={column.type + '-' + idx} align={column.align}>
-                            {dateInputFormat(obj[column.type], true, true)}
-                        </TableCell>
-                    )
-                } else if (column.format === 'status') {
-                    return (
-                        obj[column.type] ?
-                            <TableCell key={column.type + '-' + idx} align={column.align}>
-                                <StatusChip status={obj[column.type]} />
-                            </TableCell> : <TableCell key={column.type + '-' + idx} />
-                    )
-                } else if (column.format === 'jsx-element') {
-                    return (
-                        <TableCell key={column.type + '-' + idx} align={column.align}>
-                            {obj[column.type]}
-                        </TableCell>
-                    )
-                }
-                return (
-                    <TableCell key={column.type + '-' + idx} align={column.align} className={obj[column.type] == '' ? 'null' : ''}>
-                        {(obj[column.type])}
-                    </TableCell>
-                )
-            })}
+            {tableInfoColumns.map(column => cell(obj, column, idx))}
         </TableRow>
     )
 }
@@ -159,22 +152,7 @@ const BrowseTable: React.FC<Props> = (props) => {
                                 className={obj.onClick ? 'clickable-table-row' : ''}
                                 onClick={obj.onClick ?? undefined}
                             >
-                                {tableInfoColumns.map(column => {
-                                    if (column.type == 'onClick') return;
-                                    let cellData = obj[column.type];
-                                    if (column.format === 'date') {
-                                        cellData = dateInputFormat(obj[column.type], true, true);
-                                    } else if (column.format === 'status' && obj[column.type]) {
-                                        cellData = <StatusChip status={obj[column.type]} />;
-                                    } else if (column.format === 'jsx-element') {
-                                        cellData = obj[column.type];
-                                    }
-                                    return (
-                                        <TableCell key={column.type + '-' + idx} align={column.align} className={obj[column.type] == '' ? 'null' : ''}>
-                                            {cellData}
-                                        </TableCell>
-                                    )
-                                })}
+                                {tableInfoColumns.map(column => cell(obj, column, idx))}
                             </TableRow>
                         )
                     })}
