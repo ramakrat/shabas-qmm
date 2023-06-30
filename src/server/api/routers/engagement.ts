@@ -85,7 +85,12 @@ export const engagementRouter = createTRPCRouter({
                 return ctx.prisma.engagement.findMany({
                     include: {
                         assessments: {
-                            include: { poc: true },
+                            include: {
+                                poc: true,
+                                assessment_users: {
+                                    include: { user: true }
+                                },
+                            },
                             where: {
                                 OR: input.filters
                             }
@@ -123,7 +128,12 @@ export const engagementRouter = createTRPCRouter({
             return ctx.prisma.engagement.findMany({
                 include: {
                     assessments: {
-                        include: { poc: true },
+                        include: {
+                            poc: true,
+                            assessment_users: {
+                                include: { user: true }
+                            },
+                        },
                         where: {
                             OR: input.filters
                         }
@@ -163,7 +173,12 @@ export const engagementRouter = createTRPCRouter({
                 return ctx.prisma.engagement.findMany({
                     include: {
                         assessments: {
-                            include: { poc: true },
+                            include: {
+                                poc: true,
+                                assessment_users: {
+                                    include: { user: true }
+                                },
+                            },
                             where: {
                                 OR: filters
                             }
@@ -187,7 +202,12 @@ export const engagementRouter = createTRPCRouter({
             return ctx.prisma.engagement.findMany({
                 include: {
                     assessments: {
-                        include: { poc: true },
+                        include: {
+                            poc: true,
+                            assessment_users: {
+                                include: { user: true }
+                            },
+                        },
                         where: {
                             OR: filters,
                             assessment_users: {

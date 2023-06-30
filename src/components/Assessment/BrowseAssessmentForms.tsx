@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import type { Engagement, Poc, Assessment, Client, EngagementPoc } from "@prisma/client";
+import type { Engagement, Poc, Assessment, Client, EngagementPoc, AssessmentUser, User } from "@prisma/client";
 import { api } from "~/utils/api";
 import BrowseTable, { type TableColumn } from "../Table/BrowseTable";
 import { AssessmentStatus } from "../Table/StatusChip";
@@ -104,11 +104,18 @@ type EngagementAssessmentType = (
     Engagement & {
         client: Client;
         pocs: Poc[];
-        assessments: (Assessment & {
-            poc: Poc | null;
-        })[];
+        assessments: AssessmentType[];
         engagement_pocs: (EngagementPoc & {
             poc: Poc | null;
+        })[];
+    }
+)
+
+type AssessmentType = (
+    Assessment & {
+        poc: Poc | null;
+        assessment_users: (AssessmentUser & {
+            user: User;
         })[];
     }
 )
@@ -133,43 +140,52 @@ const BrowseAssessmentForms: React.FC<Props> = (props) => {
             await push(`/assessments/completed/${id}`);
     }
 
-    const convertTableData = (data?: EngagementAssessmentType[]) => {
-        if (data) {
+    const convertTableData = (engagements?: EngagementAssessmentType[]) => {
+        if (engagements) {
             const newData: EngagementTableData[] = [];
-            data.forEach(obj => {
+            
+            engagements.forEach(engagement => {
 
-                const convertAssessmentTableData = (data?: (Assessment & { poc: Poc | null; })[]) => {
-                    if (data) {
+                const convertAssessmentTableData = (assessments?: AssessmentType[]) => {
+                    if (assessments) {
                         const newAssessmentData: AssessmentTableData[] = [];
-                        data.forEach(d => {
+                        
+                        assessments.forEach(assessment => {
+                            let assessorList = '';
+                            assessment.assessment_users.forEach(u => {
+                                if (assessorList.length != 0) {
+                                    assessorList = assessorList.concat(', ')
+                                }
+                                assessorList = assessorList.concat(u.user.first_name + ' ' + u.user.last_name)
+                            })
                             newAssessmentData.push({
-                                id: d.id,
-                                site: d.site_id.toString(),
-                                startDate: d.start_date,
-                                endDate: d.end_date,
-                                clientPoc: d.poc ? `${d.poc.first_name} ${d.poc.last_name}` : '',
-                                assessors: '',
-                                status: d.status,
-                                onClick: () => handleOnClick(d.id),
+                                id: assessment.id,
+                                site: assessment.site_id.toString(),
+                                startDate: assessment.start_date,
+                                endDate: assessment.end_date,
+                                clientPoc: assessment.poc ? `${assessment.poc.first_name} ${assessment.poc.last_name}` : '',
+                                assessors: assessorList,
+                                status: assessment.status,
+                                onClick: () => handleOnClick(assessment.id),
                             })
                         })
                         return newAssessmentData;
                     }
                 }
 
-                const existingClientPoc = obj.engagement_pocs.find(o => o.poc?.client_id);
-                const existingShabasPoc = obj.engagement_pocs.find(o => !o.poc?.client_id);
+                const existingClientPoc = engagement.engagement_pocs.find(o => o.poc?.client_id);
+                const existingShabasPoc = engagement.engagement_pocs.find(o => !o.poc?.client_id);
 
                 newData.push({
-                    id: obj.id,
-                    client: `${obj.client_id} - ${obj.client.name}`,
-                    startDate: obj.start_date,
-                    endDate: obj.end_date,
+                    id: engagement.id,
+                    client: `${engagement.client_id} - ${engagement.client.name}`,
+                    startDate: engagement.start_date,
+                    endDate: engagement.end_date,
                     clientPoc: existingClientPoc ? `${existingClientPoc.poc?.first_name} ${existingClientPoc.poc?.last_name}` : '',
                     shabasPoc: existingShabasPoc ? `${existingShabasPoc.poc?.first_name} ${existingShabasPoc.poc?.last_name}` : '',
-                    status: obj.status,
-                    child: obj.assessments.length > 0 && <BrowseTable
-                        dataList={convertAssessmentTableData(obj.assessments) ?? []}
+                    status: engagement.status,
+                    child: engagement.assessments.length > 0 && <BrowseTable
+                        dataList={convertAssessmentTableData(engagement.assessments) ?? []}
                         tableInfoColumns={assessmentColumns}
                     />
                 })

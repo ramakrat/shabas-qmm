@@ -2,7 +2,7 @@ import React from "react";
 import { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
-import type { Assessment, Client, Engagement, EngagementPoc, Poc } from "@prisma/client";
+import type { Assessment, AssessmentUser, Client, Engagement, EngagementPoc, Poc, User } from "@prisma/client";
 
 import { Button, Card, IconButton } from "@mui/material";
 import { Add, Edit, Visibility } from "@mui/icons-material";
@@ -118,8 +118,15 @@ type EngagementAssessmentType = (
         engagement_pocs: (EngagementPoc & {
             poc: Poc;
         })[];
-        assessments: (Assessment & {
-            poc: Poc | null;
+        assessments: AssessmentType[];
+    }
+)
+
+type AssessmentType = (
+    Assessment & {
+        poc: Poc | null;
+        assessment_users: (AssessmentUser & {
+            user: User;
         })[];
     }
 )
@@ -175,11 +182,19 @@ const BrowseAssessments: NextPage = () => {
 
             engagements.forEach(engagement => {
 
-                const convertAssessmentTableData = (assessments?: (Assessment & { poc: Poc | null; })[]) => {
+                const convertAssessmentTableData = (assessments?: AssessmentType[]) => {
                     if (assessments) {
                         const newAssessmentData: AssessmentTableData[] = [];
 
                         assessments.forEach(assessment => {
+                            let assessorList = '';
+                            assessment.assessment_users.forEach(u => {
+                                if (assessorList.length != 0) {
+                                    assessorList = assessorList.concat(', ')
+                                }
+                                assessorList = assessorList.concat(u.user.first_name + ' ' + u.user.last_name)
+                            })
+
                             const actions = assessment.status == 'created' ? (
                                 <IconButton onClick={() => { router.push(`/engagements/assessment/${assessment.id}`) }}>
                                     <Edit fontSize='small' />
@@ -196,7 +211,7 @@ const BrowseAssessments: NextPage = () => {
                                 startDate: assessment.start_date,
                                 endDate: assessment.end_date,
                                 clientPoc: assessment.poc ? `${assessment.poc.first_name} ${assessment.poc.last_name}` : '',
-                                assessors: '',
+                                assessors: assessorList,
                                 status: assessment.status,
                                 actions: actions,
                             })
