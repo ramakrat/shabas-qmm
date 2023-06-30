@@ -284,3 +284,10 @@ export const underscoreToTitle = (str: string) => {
 export const hyphenToTitle = (str: string) => {
     return str.replace(/-/g, ' ').replace(/(?: |\b)(\w)/g, function (key) { return key.toUpperCase() });
 }
+
+export const truncate = (str: string, numChar: number) => {
+    if (str.length > numChar) {
+        return str.slice(0, numChar) + '...';
+    }
+    return str;
+}

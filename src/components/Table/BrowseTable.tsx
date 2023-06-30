@@ -1,7 +1,7 @@
 import React from "react";
 import { IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { KeyboardArrowUp, KeyboardArrowDown } from "@mui/icons-material";
-import { dateInputFormat } from "~/utils/utils";
+import { dateInputFormat, truncate } from "~/utils/utils";
 import StatusChip from "./StatusChip";
 
 
@@ -30,12 +30,10 @@ const cell = (obj: any, column: any, idx: number) => {
         cellData = <StatusChip status={obj[column.type]} />;
     } else if (column.format === 'jsx-element') {
         cellData = obj[column.type];
-    } else if (cellData.toString().length > 75) {
-        cellData = cellData.toString().slice(0, 75) + '...';
     }
     return (
         <TableCell key={column.type + '-' + idx} align={column.align} className={obj[column.type] == '' ? 'null' : ''}>
-            {cellData}
+            {truncate(cellData.toString(), 75)}
         </TableCell>
     )
 }
