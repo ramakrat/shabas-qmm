@@ -17,7 +17,7 @@ import { Add, Delete } from '@mui/icons-material';
 
 import { api } from "~/utils/api";
 import Layout from "~/components/Layout/Layout";
-import { dateInputFormat, titleCase } from '~/utils/utils';
+import { dateInputFormat, titleCase, truncate } from '~/utils/utils';
 import StatusChip, { AssessmentStatus } from '~/components/Table/StatusChip';
 
 interface QuestionType {
@@ -132,7 +132,8 @@ const Assessment: NextPage = () => {
     const [addQuestion, setAddQuestion] = React.useState<boolean>(false);
     const [selectedQuestion, setSelectedQuestion] = React.useState<Question | undefined>(undefined);
 
-    const [error, setError] = React.useState<string[] | undefined>(undefined);
+    const [questionError, setQuestionError] = React.useState<string | undefined>(undefined);
+    const [assessorError, setAssessorError] = React.useState<string | undefined>(undefined);
 
     const assessorSelections = existingAssessors.map(o => o.user).concat(newAssessors).map(o => o.id);
     const assessorOptions = allAssessors?.filter(a => {
@@ -417,13 +418,6 @@ const Assessment: NextPage = () => {
                                     <Card>
                                         <div className='widget-header'>Assessment Questions</div>
                                         <div className='changelog'>
-                                            {error &&
-                                                <div className='error-text'>
-                                                    {error.map((e, i) => {
-                                                        return <span key={i}>{e}</span>;
-                                                    })}
-                                                </div>
-                                            }
                                             <TableContainer component={Paper} className='browse-table'>
                                                 <Table>
                                                     <TableHead>
@@ -518,18 +512,13 @@ const Assessment: NextPage = () => {
                                                 <Button variant='contained' type='submit'>Save</Button>
                                             </> :
                                             <Button variant='contained' type='submit' onClick={() => {
-                                                const errStr = [];
                                                 if (Object.keys(formikProps.errors).length > 0) {
-                                                    errStr.push(`Cannot create assessment with errors in "General Information" form.`);
-                                                }
-                                                if (existingQuestions.length < 1 && newQuestions.length < 1) {
-                                                    errStr.push(`Assessments must contain ${'\n'} at least 1 question.`);
-                                                }
-
-                                                if (errStr.length > 1) {
-                                                    setError(errStr)
-                                                } else {
-                                                    setError(undefined);
+                                                    if ((existingQuestions.length + newQuestions.length) < 1) {
+                                                        setQuestionError(`Requires at least 1 Question`);
+                                                    }
+                                                    if ((existingAssessors.length + newAssessors.length) < 1) {
+                                                        setAssessorError(`Requires at least 1 Assessor`);
+                                                    }
                                                 }
                                             }}>
                                                 Create
@@ -570,7 +559,7 @@ const Assessment: NextPage = () => {
                                                                 {engagements && engagements.map((engagement: Engagement) => {
                                                                     return (
                                                                         <MenuItem value={engagement.id} key={engagement.id}>
-                                                                            {engagement.id} - {engagement.description}
+                                                                            {engagement.id} - {truncate(engagement.description, 50)}
                                                                         </MenuItem>
                                                                     )
                                                                 })}
@@ -712,21 +701,24 @@ const Assessment: NextPage = () => {
                                                             }}
                                                         ><Add /></IconButton>
                                                     </div>
+                                                    {assessorError &&
+                                                        <div className='error-text'>
+                                                            <span>{assessorError}</span>
+                                                        </div>
+                                                    }
                                                 </div>
                                             </Card>
                                         </Grid>
                                         <Grid item xs={12}>
                                             <Card>
                                                 <div className='widget-header'>Assessment Questions</div>
+                                                {questionError &&
+                                                    <div className='error-text'>
+                                                        <span>{questionError}</span>
+                                                    </div>
+                                                }
                                                 <div className='changelog'>
                                                     <div className='widget-table'>
-                                                        {error &&
-                                                            <div className='error-text'>
-                                                                {error.map((e, i) => {
-                                                                    return <span key={i}>{e}</span>;
-                                                                })}
-                                                            </div>
-                                                        }
                                                         <TableContainer component={Paper} className='browse-table'>
                                                             <Table>
                                                                 <TableHead>
