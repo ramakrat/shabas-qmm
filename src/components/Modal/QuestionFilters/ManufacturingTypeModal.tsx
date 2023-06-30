@@ -51,7 +51,7 @@ const ManufacturingTypeModal: React.FC<Props> = (props) => {
                     <Form>
                         <Card>
                             <CardHeader
-                                title={'Create New API Segment'}
+                                title={'Create New Manufacturing Type'}
                                 action={
                                     <IconButton onClick={() => setOpen(false)}>
                                         <Close />

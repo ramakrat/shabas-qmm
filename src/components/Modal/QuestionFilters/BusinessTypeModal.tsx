@@ -52,7 +52,7 @@ const BusinessTypeModal: React.FC<Props> = (props) => {
                     <Form>
                         <Card>
                             <CardHeader
-                                title={'Create New Industry'}
+                                title={'Create New Business Type'}
                                 action={
                                     <IconButton onClick={() => setOpen(false)}>
                                         <Close />
