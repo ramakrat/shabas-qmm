@@ -11,6 +11,7 @@ datasource db {
     relationMode = "prisma"
 }
 
+
 // ================ OBJECT MODELS ================
 
 model Client {
@@ -352,6 +353,7 @@ model Changelog {
     @@index([question_id])
     @@index([answer_id])
 }
+
 
 // ================ AUTHENTICATION ================
 
