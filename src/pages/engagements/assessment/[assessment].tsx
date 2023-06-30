@@ -197,7 +197,8 @@ const Assessment: NextPage = () => {
 
     const handleSubmit = (values: FormValues) => {
 
-        if (existingQuestions.length < 1 && newQuestions.length < 1) return;
+        if ((existingQuestions.length + newQuestions.length) < 1) return;
+        if ((existingAssessors.length + newAssessors.length) < 1) return;
 
         if (data) {
             update.mutate({
@@ -515,9 +516,13 @@ const Assessment: NextPage = () => {
                                                 if (Object.keys(formikProps.errors).length > 0) {
                                                     if ((existingQuestions.length + newQuestions.length) < 1) {
                                                         setQuestionError(`Requires at least 1 Question`);
+                                                    } else {
+                                                        setQuestionError(undefined);
                                                     }
                                                     if ((existingAssessors.length + newAssessors.length) < 1) {
                                                         setAssessorError(`Requires at least 1 Assessor`);
+                                                    } else {
+                                                        setAssessorError(undefined);
                                                     }
                                                 }
                                             }}>
