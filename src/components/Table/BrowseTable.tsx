@@ -30,10 +30,12 @@ const cell = (obj: any, column: any, idx: number) => {
         cellData = <StatusChip status={obj[column.type]} />;
     } else if (column.format === 'jsx-element') {
         cellData = obj[column.type];
+    } else if (column.format === 'long-desc') {
+        cellData = truncate(cellData.toString(), 75);
     }
     return (
         <TableCell key={column.type + '-' + idx} align={column.align} className={obj[column.type] == '' ? 'null' : ''}>
-            {truncate(cellData.toString(), 75)}
+            {cellData}
         </TableCell>
     )
 }
