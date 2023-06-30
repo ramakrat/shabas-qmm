@@ -39,6 +39,8 @@ const QuestionModal: React.FC<Props> = (props) => {
 
     const { open, setOpen } = props;
 
+    const router = useRouter();
+
     // =========== Input Field States ===========
 
     const [question, setQuestion] = React.useState<FormValues>({
@@ -67,7 +69,6 @@ const QuestionModal: React.FC<Props> = (props) => {
         })
     }, [open])
 
-    const { reload } = useRouter();
     const handleSubmit = (
         values: FormValues,
         formikHelpers: FormikHelpers<FormValues>,
@@ -82,9 +83,8 @@ const QuestionModal: React.FC<Props> = (props) => {
             hint: values.hint,
             priority: values.priority,
         }, {
-            onSuccess() {
-                setOpen(false);
-                reload();
+            onSuccess(data) {
+                router.push(`/questions/${data.id}`)
             },
             onError(err) {
                 if (err.shape?.code == -32603)
