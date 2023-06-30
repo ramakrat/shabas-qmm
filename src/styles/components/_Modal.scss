@@ -127,9 +127,9 @@
     flex-direction: column;
     font-family: 'Roboto' !important;
     font-size: 0.8rem;
-    font-style: italic;
-    text-align: center;
+    line-height: 1.66;
+    text-align: left;
     color: palette(error, main);
     width: 100%;
-    padding: 10px 0px 20px;
+    padding: 3px 0px 3px 14px;
 }
