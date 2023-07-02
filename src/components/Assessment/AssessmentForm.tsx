@@ -352,7 +352,7 @@ const AssessmentForm: React.FC<Props> = (props) => {
                                                 <div className='widget-sub-header'>
                                                     <div className='rating-input'>
                                                         {status == 'ongoing' && <Typography>Rating:</Typography>}
-                                                        {status == 'ongoing-review' && <Typography>Consensus Rating:</Typography>}
+                                                        {(status == 'ongoing-review' || status == 'oversight-review') && <Typography>Consensus Rating:</Typography>}
                                                         {status == 'oversight' && <Typography>Oversight Rating:</Typography>}
                                                         <Field
                                                             name='rating' label='' size='small'
@@ -395,7 +395,7 @@ const AssessmentForm: React.FC<Props> = (props) => {
                                                 }
                                                 <div className='widget-header'>Details</div>
                                                 <div className='widget-body widget-form'>
-                                                    {status == 'ongoing' || status == 'ongoing-review' && <>
+                                                    {(status == 'ongoing' || status == 'ongoing-review' || status == 'oversight-review') && <>
                                                         <Typography>Rationale</Typography>
                                                         <Field
                                                             name='rationale' label='' size='small' multiline
@@ -404,7 +404,7 @@ const AssessmentForm: React.FC<Props> = (props) => {
                                                         />
                                                     </>}
                                                     {status == 'ongoing' && <Typography>Notes</Typography>}
-                                                    {status == 'ongoing-review' && <Typography>Improvement Suggestions</Typography>}
+                                                    {(status == 'ongoing-review' || status == 'oversight-review') && <Typography>Improvement Suggestions</Typography>}
                                                     {status == 'oversight' && <Typography>Oversight Comments</Typography>}
                                                     <Field
                                                         name='notes' label='' size='small' multiline
