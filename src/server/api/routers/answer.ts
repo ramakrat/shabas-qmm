@@ -15,17 +15,29 @@ const inputType = z.object({
 export const answerRouter = createTRPCRouter({
     create: protectedProcedure
         .input(z.object({ assessmentQuestionId: z.number(), userId: z.number(), status: z.string() }))
-        .mutation(({ input, ctx }) => {
-            return ctx.prisma.answer.create({
-                data: {
+        .mutation(async ({ input, ctx }) => {
+            const existingAnswer = await ctx.prisma.answer.findFirst({
+                where: {
                     assessment_question_id: input.assessmentQuestionId,
                     user_id: input.userId,
                     status: input.status,
-                    start_time: new Date(),
-                    updated_by: '',
-                    created_by: '',
-                },
+                }
             })
+            if (!existingAnswer)
+                return ctx.prisma.answer.create({
+                    data: {
+                        assessment_question_id: input.assessmentQuestionId,
+                        user_id: input.userId,
+                        status: input.status,
+                        start_time: new Date(),
+                        updated_by: '',
+                        created_by: '',
+                    },
+                })
+            throw {
+                code: 409,
+                message: 'Answer already exists for this user, assessment, and assessment status.'
+            }
         }),
     update: protectedProcedure
         .input(inputType)
