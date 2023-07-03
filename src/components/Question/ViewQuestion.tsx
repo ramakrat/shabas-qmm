@@ -147,26 +147,19 @@ const ViewQuestion: React.FC<Props> = (props) => {
                 setExistingGuide(existingArray);
             }
         }
+
         if (ratingData) {
-            for (let i = 1; i <= 5; i++) {
-                const currRating = ratingData.find(o => o.level_number == i.toString());
-                if (currRating) {
-                    newQuestionData = {
-                        ...newQuestionData,
-                        ['level' + i.toString()]: currRating.id,
-                        ['criteria' + i.toString()]: currRating.criteria,
-                        ['progression' + i.toString()]: currRating.progression_statement,
-                    }
-                }
-            }
-        } else {
-            for (let i = 1; i <= 5; i++) {
-                newQuestionData = {
-                    ...newQuestionData,
-                    ['level' + i.toString()]: undefined,
-                    ['criteria' + i.toString()]: '',
-                    ['progression' + i.toString()]: '',
-                }
+            newQuestionData = {
+                ...newQuestionData,
+                criteria1: ratingData.criteria_1 ?? '',
+                progression1: ratingData.progression_statement_1 ?? '',
+                criteria2: ratingData.criteria_1 ?? '',
+                progression2: ratingData.progression_statement_2 ?? '',
+                criteria3: ratingData.criteria_1 ?? '',
+                progression3: ratingData.progression_statement_3 ?? '',
+                criteria4: ratingData.criteria_1 ?? '',
+                progression4: ratingData.progression_statement_4 ?? '',
+                criteria5: ratingData.criteria_1 ?? '',
             }
         }
 

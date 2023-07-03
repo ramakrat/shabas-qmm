@@ -44,7 +44,6 @@ export const SelectFilter: React.FC<Props> = (props) => {
     }, [filterType, businessTypes, manufacturingTypes, siteSpecifics])
 
 
-
     return (<>
         <ToggleButtonGroup
             exclusive

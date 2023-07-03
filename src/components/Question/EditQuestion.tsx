@@ -39,19 +39,15 @@ interface FormValues {
     topicArea: string;
     priority: string;
     hint: string;
-    level1?: number;
+    rating?: number;
     criteria1: string;
     progression1: string;
-    level2?: number;
     criteria2: string;
     progression2: string;
-    level3?: number;
     criteria3: string;
     progression3: string;
-    level4?: number;
     criteria4: string;
     progression4: string;
-    level5?: number;
     criteria5: string;
     sme?: number;
     smeFirstName: string;
@@ -104,7 +100,7 @@ const EditQuestion: React.FC<Props> = (props) => {
         question: any;
         guides: any[];
         references: any[];
-        ratings: any[];
+        ratings: any;
         sme: any;
     }
 
@@ -114,7 +110,7 @@ const EditQuestion: React.FC<Props> = (props) => {
             guides: data?.interview_guides,
             references: data?.references,
             ratings: ratingData,
-            sme: data?.smes[0],
+            sme: data?.sme,
         } as AllValues;
     }
 
@@ -203,8 +199,8 @@ const EditQuestion: React.FC<Props> = (props) => {
     const createSME = api.sme.create.useMutation();
     const updateSME = api.sme.update.useMutation();
 
-    const createRatings = api.rating.createArray.useMutation();
-    const updateRatings = api.rating.updateArray.useMutation();
+    const createRating = api.rating.create.useMutation();
+    const updateRating = api.rating.update.useMutation();
 
     const createChangelog = api.changelog.create.useMutation();
 
@@ -221,11 +217,22 @@ const EditQuestion: React.FC<Props> = (props) => {
                 priority: data.priority,
                 hint: data.hint,
 
-                sme: data.smes[0].id ?? '',
-                smeFirstName: data.smes[0].first_name ?? '',
-                smeLastName: data.smes[0].last_name ?? '',
-                smeEmail: data.smes[0].email ?? '',
-                smePhone: data.smes[0].mobile_phone ?? '',
+                rating: ratingData?.id ?? undefined,
+                criteria1: ratingData?.criteria_1 ?? '',
+                progression1: ratingData?.progression_statement_1 ?? '',
+                criteria2: ratingData?.criteria_2 ?? '',
+                progression2: ratingData?.progression_statement_2 ?? '',
+                criteria3: ratingData?.criteria_3 ?? '',
+                progression3: ratingData?.progression_statement_3 ?? '',
+                criteria4: ratingData?.criteria_4 ?? '',
+                progression4: ratingData?.progression_statement_4 ?? '',
+                criteria5: ratingData?.criteria_5 ?? '',
+
+                sme: data.sme?.id ?? '',
+                smeFirstName: data.sme?.first_name ?? '',
+                smeLastName: data.sme?.last_name ?? '',
+                smeEmail: data.sme?.email ?? '',
+                smePhone: data.sme?.mobile_phone ?? '',
             }
 
             if (data.references) {
@@ -267,28 +274,6 @@ const EditQuestion: React.FC<Props> = (props) => {
                     }
                 });
                 setNewGuide(array);
-            }
-        }
-        if (ratingData) {
-            for (let i = 1; i <= 5; i++) {
-                const currRating = ratingData.find(o => o.level_number == i.toString());
-                if (currRating) {
-                    newQuestionData = {
-                        ...newQuestionData,
-                        ['level' + i.toString()]: currRating.id,
-                        ['criteria' + i.toString()]: currRating.criteria,
-                        ['progression' + i.toString()]: currRating.progression_statement,
-                    }
-                }
-            }
-        } else {
-            for (let i = 1; i <= 5; i++) {
-                newQuestionData = {
-                    ...newQuestionData,
-                    ['level' + i.toString()]: undefined,
-                    ['criteria' + i.toString()]: '',
-                    ['progression' + i.toString()]: '',
-                }
             }
         }
 
@@ -457,41 +442,43 @@ const EditQuestion: React.FC<Props> = (props) => {
 
             // ----------- Rating -----------
 
-            const mappedRatings: any[] = [];
-            for (let i = 1; i <= 5; i++) {
-                mappedRatings.push({
-                    id: (values as any)[`level${i}`],
-                    active: true,
-                    level_number: i.toString(),
-                    criteria: (values as any)[`criteria${i}`],
-                    progression_statement: (values as any)[`progression${i}`],
+            if (values.rating) {
+                updateRating.mutate({
+                    id: values.rating,
                     question_id: data.id,
-                    filter_id: (filterType != 'default' && filterSelection) ? filterSelection.id : undefined,
-                })
-            }
-            if (ratingData && ratingData.length > 1) {
-                updateRatings.mutate(mappedRatings, {
-                    onSuccess() {
-                        mappedRatings.forEach(g => {
-                            const former = initialValues().ratings.find(formerObject => formerObject.id == g.id);
-                            if (former) compareChanges(g, former, `Rating ${g.level_number}: `);
-                        })
+                    criteria_1: values.criteria1,
+                    progression_statement_1: values.progression1,
+                    criteria_2: values.criteria2,
+                    progression_statement_2: values.progression2,
+                    criteria_3: values.criteria3,
+                    progression_statement_3: values.progression3,
+                    criteria_4: values.criteria4,
+                    progression_statement_4: values.progression4,
+                    criteria_5: values.criteria5,
+                }, {
+                    onSuccess(success) {
+                        compareChanges(success, initialValues().ratings, `Ratings: `);
                     }
                 });
             } else {
-                createRatings.mutate(mappedRatings, {
-                    onSuccess(data) {
-                        let newQuestionData = questionData;
-                        for (let i = 1; i <= 5; i++) {
-                            const currRating = data.find(o => o.level_number == i.toString());
-                            if (currRating) {
-                                newQuestionData = {
-                                    ...newQuestionData,
-                                    ['level' + i.toString()]: currRating.id,
-                                }
-                            }
-                        }
-                        setQuestionData(newQuestionData);
+                createRating.mutate({
+                    question_id: data.id,
+                    filter_id: (filterType != 'default' && filterSelection) ? filterSelection.id : undefined,
+                    criteria_1: values.criteria1,
+                    progression_statement_1: values.progression1,
+                    criteria_2: values.criteria2,
+                    progression_statement_2: values.progression2,
+                    criteria_3: values.criteria3,
+                    progression_statement_3: values.progression3,
+                    criteria_4: values.criteria4,
+                    progression_statement_4: values.progression4,
+                    criteria_5: values.criteria5,
+                }, {
+                    onSuccess(success) {
+                        setQuestionData({
+                            ...questionData,
+                            rating: success.id,
+                        });
                     }
                 });
             }

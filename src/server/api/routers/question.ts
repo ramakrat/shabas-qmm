@@ -96,7 +96,7 @@ export const questionRouter = createTRPCRouter({
                 include: {
                     interview_guides: true,
                     references: true,
-                    smes: true,
+                    sme: true,
                     ratings: true,
                     changelogs: true,
                 }

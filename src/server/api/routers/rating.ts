@@ -5,12 +5,16 @@ import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 const inputType = z.object({
     id: z.number().optional(),
-    active: z.boolean(),
-    level_number: z.string(),
-    criteria: z.string(),
-    progression_statement: z.string().optional(),
+    criteria_1: z.string(),
+    progression_statement_1: z.string().optional(),
+    criteria_2: z.string(),
+    progression_statement_2: z.string().optional(),
+    criteria_3: z.string(),
+    progression_statement_3: z.string().optional(),
+    criteria_4: z.string(),
+    progression_statement_4: z.string().optional(),
+    criteria_5: z.string(),
     question_id: z.number(),
-    site_id: z.number().optional(),
     filter_id: z.number().optional(),
 })
 
@@ -20,51 +24,21 @@ export const ratingRouter = createTRPCRouter({
         .mutation(({ input, ctx }) => {
             return ctx.prisma.rating.create({
                 data: {
-                    active: input.active,
-                    level_number: input.level_number,
-                    criteria: input.criteria,
-                    progression_statement: input.progression_statement ?? '',
+                    criteria_1: input.criteria_1,
+                    progression_statement_1: input.progression_statement_1 ?? '',
+                    criteria_2: input.criteria_2,
+                    progression_statement_2: input.progression_statement_2 ?? '',
+                    criteria_3: input.criteria_3,
+                    progression_statement_3: input.progression_statement_3 ?? '',
+                    criteria_4: input.criteria_4,
+                    progression_statement_4: input.progression_statement_4 ?? '',
+                    criteria_5: input.criteria_5,
                     question_id: input.question_id,
-                    site_id: input.site_id,
                     filter_id: input.filter_id,
                     created_by: '',
                     updated_by: '',
                 }
             })
-        }),
-    createArray: protectedProcedure
-        .input(z.array(inputType))
-        .mutation(async ({ input, ctx }) => {
-            const returnData = [];
-            for (const o of input) {
-                try {
-                    const data = await ctx.prisma.rating.create({
-                        data: {
-                            active: o.active,
-                            level_number: o.level_number,
-                            criteria: o.criteria,
-                            progression_statement: o.progression_statement ?? '',
-                            question_id: o.question_id,
-                            site_id: o.site_id,
-                            filter_id: o.filter_id,
-                            created_by: '',
-                            updated_by: '',
-                        }
-                    })
-                    returnData.push(data);
-                } catch (e) {
-                    if (e instanceof Prisma.PrismaClientKnownRequestError) {
-                        // The .code property can be accessed in a type-safe manner
-                        if (e.code === 'P2002') {
-                            console.log(
-                                'There is a unique constraint violation.'
-                            )
-                        }
-                    }
-                    throw e;
-                }
-            }
-            return returnData;
         }),
     update: protectedProcedure
         .input(inputType)
@@ -72,60 +46,30 @@ export const ratingRouter = createTRPCRouter({
             return ctx.prisma.rating.update({
                 where: { id: input.id },
                 data: {
-                    active: input.active,
-                    level_number: input.level_number,
-                    criteria: input.criteria,
-                    progression_statement: input.progression_statement,
+                    criteria_1: input.criteria_1,
+                    progression_statement_1: input.progression_statement_1 ?? '',
+                    criteria_2: input.criteria_2,
+                    progression_statement_2: input.progression_statement_2 ?? '',
+                    criteria_3: input.criteria_3,
+                    progression_statement_3: input.progression_statement_3 ?? '',
+                    criteria_4: input.criteria_4,
+                    progression_statement_4: input.progression_statement_4 ?? '',
+                    criteria_5: input.criteria_5,
                     question_id: input.question_id,
-                    site_id: input.site_id,
                     filter_id: input.filter_id,
                     updated_at: new Date(),
                     updated_by: '',
                 },
             })
         }),
-    updateArray: protectedProcedure
-        .input(z.array(inputType))
-        .mutation(async ({ input, ctx }) => {
-            for (const o of input) {
-                try {
-                    await ctx.prisma.rating.update({
-                        where: { id: o.id },
-                        data: {
-                            active: o.active,
-                            level_number: o.level_number,
-                            criteria: o.criteria,
-                            progression_statement: o.progression_statement,
-                            question_id: o.question_id,
-                            site_id: o.site_id,
-                            filter_id: o.filter_id,
-                            created_by: '',
-                            updated_by: '',
-                        }
-                    })
-                } catch (e) {
-                    if (e instanceof Prisma.PrismaClientKnownRequestError) {
-                        // The .code property can be accessed in a type-safe manner
-                        if (e.code === 'P2002') {
-                            console.log(
-                                'There is a unique constraint violation.'
-                            )
-                        }
-                    }
-                    throw e;
-                }
-            }
-            return undefined;
-        }),
     getByQuestionFilter: protectedProcedure
         .input(z.object({ questionId: z.number().optional(), filterId: z.number().optional() }))
         .query(({ input, ctx }) => {
-            return ctx.prisma.rating.findMany({
+            return ctx.prisma.rating.findFirst({
                 where: {
                     question_id: input.questionId,
                     filter_id: input.filterId ?? null,
                 },
-                orderBy: { level_number: 'asc' }
             });
         }),
     getById: protectedProcedure

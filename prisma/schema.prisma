@@ -11,7 +11,6 @@ datasource db {
     relationMode = "prisma"
 }
 
-
 // ================ OBJECT MODELS ================
 
 model Client {
@@ -54,7 +53,6 @@ model Site {
     filter    Filter?
 
     pocs             Poc[]
-    ratings          Rating[]
     interview_guides InterviewGuide[]
     assessments      Assessment[]
 
@@ -109,11 +107,13 @@ model Question {
     hint          String
     priority      String
 
+    smeId Int?
+    sme   Sme?
+
+    ratings              Rating[]
     references           Reference[]
-    smes                 Sme[]
     interview_guides     InterviewGuide[]
     assessment_questions AssessmentQuestion[]
-    ratings              Rating[]
     changelogs           Changelog[]
 }
 
@@ -124,20 +124,22 @@ model Rating {
     created_by String
     updated_by String
 
-    active                Boolean
-    level_number          String
-    criteria              String
-    progression_statement String
+    criteria_1              String
+    progression_statement_1 String
+    criteria_2              String
+    progression_statement_2 String
+    criteria_3              String
+    progression_statement_3 String
+    criteria_4              String
+    progression_statement_4 String
+    criteria_5              String
 
     question_id Int
     question    Question @relation(fields: [question_id], references: [id], onDelete: Cascade)
-    site_id     Int?
-    site        Site?    @relation(fields: [site_id], references: [id], onDelete: Restrict)
     filter_id   Int?
     filter      Filter?  @relation(fields: [filter_id], references: [id], onDelete: Restrict)
 
     @@index([question_id])
-    @@index([site_id])
     @@index([filter_id])
 }
 
@@ -168,7 +170,7 @@ model Sme {
     mobile_phone String
     email        String
 
-    question_id Int
+    question_id Int      @unique
     question    Question @relation(fields: [question_id], references: [id], onDelete: Cascade)
 
     @@index([question_id])
@@ -353,7 +355,6 @@ model Changelog {
     @@index([question_id])
     @@index([answer_id])
 }
-
 
 // ================ AUTHENTICATION ================
 
