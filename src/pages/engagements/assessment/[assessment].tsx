@@ -99,9 +99,6 @@ const Assessment: NextPage = () => {
     const allLeadAssessors = api.user.getAllByRole.useQuery('LEAD_ASSESSOR').data;
     const allAssessors = api.user.getAllByRole.useQuery('ASSESSOR').data;
 
-    const existingOversightAssessor = data?.assessment_users.find(o => o.user.role == 'ADMIN');
-    const existingLeadAssessor = data?.assessment_users.find(o => o.user.role == 'LEAD_ASSESSOR');
-
     const oversightAssessor = data?.assessment_users.find(o => o.user.role == 'OVERSIGHT_ASSESSOR')
     const leadAssessor = data?.assessment_users.find(o => o.user.role == 'LEAD_ASSESSOR')
     const assessors = data?.assessment_users.filter(o => o.user.role == 'ASSESSOR')
@@ -196,7 +193,6 @@ const Assessment: NextPage = () => {
 
 
     const handleSubmit = (values: FormValues) => {
-
         if ((existingQuestions.length + newQuestions.length) < 1) return;
         if ((existingAssessors.length + newAssessors.length) < 1) return;
 
@@ -243,9 +239,9 @@ const Assessment: NextPage = () => {
 
                     // Update Lead and Oversight
 
-                    if (existingOversightAssessor) {
+                    if (oversightAssessor) {
                         updateAssessmentUser.mutate({
-                            id: existingOversightAssessor.id,
+                            id: oversightAssessor.id,
                             user_id: Number(values.oversightAssessorId),
                             assessment_id: data.id,
                         }, {
@@ -262,9 +258,9 @@ const Assessment: NextPage = () => {
                         })
                     }
 
-                    if (existingLeadAssessor) {
+                    if (leadAssessor) {
                         updateAssessmentUser.mutate({
-                            id: existingLeadAssessor.id,
+                            id: leadAssessor.id,
                             user_id: Number(values.leadAssessorId),
                             assessment_id: data.id,
                         }, {
@@ -284,7 +280,7 @@ const Assessment: NextPage = () => {
                     existingAssessors.forEach(o =>
                         updateAssessmentUser.mutate({
                             id: o.id,
-                            user_id: Number(o.id),
+                            user_id: Number(o.user.id),
                             assessment_id: data.id,
                         })
                     )
@@ -321,7 +317,6 @@ const Assessment: NextPage = () => {
                 poc_id: Number(values.pocId),
             }, {
                 onSuccess(data) {
-                    let successCounter = 1;
                     createQuestions.mutate(newQuestions.map(o => {
                         return {
                             question_id: o.question.id,
@@ -330,15 +325,15 @@ const Assessment: NextPage = () => {
                         }
                     }), {
                         onSuccess() {
-                            successCounter++;
                         }
                     })
+
+
                     createAssessmentUser.mutate({
                         user_id: Number(values.oversightAssessorId),
                         assessment_id: data.id,
                     }, {
                         onSuccess() {
-                            successCounter++;
                         }
                     })
 
@@ -347,7 +342,6 @@ const Assessment: NextPage = () => {
                         assessment_id: data.id,
                     }, {
                         onSuccess() {
-                            successCounter++;
                         }
                     })
 
@@ -358,10 +352,10 @@ const Assessment: NextPage = () => {
                         }
                     }), {
                         onSuccess() {
-                            successCounter++;
                         }
                     })
-                    if (successCounter == 5) router.push(`/engagements/assessment/${data.id}`)
+
+                    router.push(`/engagements/assessment/${data.id}`)
                 }
             })
 
@@ -458,13 +452,13 @@ const Assessment: NextPage = () => {
                                             <Typography>Oversight Assessor</Typography>
                                             <div className='input-row read-only'>
                                                 <span className='content'>
-                                                    {existingOversightAssessor?.user.first_name + ' ' + existingOversightAssessor?.user.last_name}
+                                                    {oversightAssessor?.user.first_name + ' ' + oversightAssessor?.user.last_name}
                                                 </span>
                                             </div>
                                             <Typography>Lead Assessor</Typography>
                                             <div className='input-row read-only'>
                                                 <span className='content'>
-                                                    {existingLeadAssessor?.user.first_name + ' ' + existingLeadAssessor?.user.last_name}
+                                                    {leadAssessor?.user.first_name + ' ' + leadAssessor?.user.last_name}
                                                 </span>
                                             </div>
                                             <Typography>Assessors</Typography>
@@ -507,28 +501,21 @@ const Assessment: NextPage = () => {
                                         {data && <Typography>{data.id}</Typography>}
                                     </div>
                                     <div>
-                                        {data ?
-                                            <>
-                                                <StatusChip status='created' />
-                                                <Button variant='contained' type='submit'>Save</Button>
-                                            </> :
-                                            <Button variant='contained' type='submit' onClick={() => {
-                                                if (Object.keys(formikProps.errors).length > 0) {
-                                                    if ((existingQuestions.length + newQuestions.length) < 1) {
-                                                        setQuestionError(`Requires at least 1 Question`);
-                                                    } else {
-                                                        setQuestionError(undefined);
-                                                    }
-                                                    if ((existingAssessors.length + newAssessors.length) < 1) {
-                                                        setAssessorError(`Requires at least 1 Assessor`);
-                                                    } else {
-                                                        setAssessorError(undefined);
-                                                    }
-                                                }
-                                            }}>
-                                                Create
-                                            </Button>
-                                        }
+                                        {data && <StatusChip status='created' />}
+                                        <Button variant='contained' type='submit' onClick={() => {
+                                            if ((existingQuestions.length + newQuestions.length) < 1) {
+                                                setQuestionError(`Requires at least 1 Question`);
+                                            } else {
+                                                setQuestionError(undefined);
+                                            }
+                                            if ((existingAssessors.length + newAssessors.length) < 1) {
+                                                setAssessorError(`Requires at least 1 Assessor`);
+                                            } else {
+                                                setAssessorError(undefined);
+                                            }
+                                        }}>
+                                            {data ? 'Save' : 'Create'}
+                                        </Button>
                                     </div>
                                 </Card>
                                 <div className='assessment-form'>
