@@ -363,15 +363,16 @@ const EditQuestion: React.FC<Props> = (props) => {
             }), {
                 onSuccess(data) {
                     const newExistingArray = existingGuide;
+                    const lastNum = existingReferences.length + 1;
                     data.forEach((o, i) => {
                         newExistingArray.push({
                             id: o.id,
-                            num: existingGuide.length + i + 1,
+                            num: lastNum + i,
                             interview_question: o.interview_question,
                         })
                     });
                     setExistingGuide(newExistingArray);
-                    setNewGuide([{ num: 1, interview_question: '' }]);
+                    setNewGuide([{ num: newExistingArray.length + 1, interview_question: '' }]);
                 }
             });
             deleteGuides.mutate(deletedGuides.map(o => o.id), {
@@ -414,15 +415,16 @@ const EditQuestion: React.FC<Props> = (props) => {
             }), {
                 onSuccess(data) {
                     const newExistingArray = existingReferences;
+                    const lastNum = existingReferences.length + 1;
                     data.forEach((o, i) => {
                         newExistingArray.push({
                             id: o.id,
-                            num: existingReferences.length + i + 1,
+                            num: lastNum + i,
                             citation: o.citation,
                         });
                     });
                     setExistingReferences(newExistingArray);
-                    setNewReferences([{ num: 1, citation: '' }]);
+                    setNewReferences([{ num: newExistingArray.length + 1, citation: '' }]);
                 }
             });
             deleteReferences.mutate(deletedReferences.map(o => o.id), {
