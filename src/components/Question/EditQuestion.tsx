@@ -96,7 +96,7 @@ const EditQuestion: React.FC<Props> = (props) => {
     const [filterSelection, setFilterSelection] = React.useState<Filter | null>(null);
 
     const ratingData = api.rating.getByQuestionFilter.useQuery({
-        questionId: data.id,
+        questionId: data?.id,
         filterId: (filterType != 'default' && filterSelection) ? filterSelection.id : undefined,
     }).data;
 
@@ -220,18 +220,12 @@ const EditQuestion: React.FC<Props> = (props) => {
                 topicArea: data.topic_area,
                 priority: data.priority,
                 hint: data.hint,
-            }
 
-
-            if (data.smes[0]) {
-                newQuestionData = {
-                    ...newQuestionData,
-                    sme: data.smes[0].id,
-                    smeFirstName: data.smes[0].first_name,
-                    smeLastName: data.smes[0].last_name,
-                    smeEmail: data.smes[0].email,
-                    smePhone: data.smes[0].mobile_phone,
-                }
+                sme: data.smes[0].id ?? '',
+                smeFirstName: data.smes[0].first_name ?? '',
+                smeLastName: data.smes[0].last_name ?? '',
+                smeEmail: data.smes[0].email ?? '',
+                smePhone: data.smes[0].mobile_phone ?? '',
             }
 
             if (data.references) {
@@ -594,6 +588,9 @@ const EditQuestion: React.FC<Props> = (props) => {
                                         </div>
                                         {!(filterType != 'default' && filterSelection == null) &&
                                             <div className='widget-body widget-form'>
+                                                <div className='informational-text'>
+                                                    Please save changes before editing or creating a different set of filtered ratings.
+                                                </div>
                                                 <Typography>Level 1</Typography>
                                                 <Field
                                                     name='criteria1' label='' size='small' multiline

@@ -15,10 +15,9 @@ const Question: NextPage = () => {
     const { question } = useRouter().query;
 
     const { data } = api.question.getByIdInclude.useQuery({ id: Number(question) });
+    
     const inUse = api.assessmentQuestion.getByQuestionUsage.useQuery(Number(question)).data ? true : false;
 
-
-    // =========== Retrieve Form Context ===========
 
     if (inUse) {
         return (

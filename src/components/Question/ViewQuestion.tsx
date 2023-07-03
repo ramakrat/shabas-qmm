@@ -62,7 +62,7 @@ const ViewQuestion: React.FC<Props> = (props) => {
     const [filterSelection, setFilterSelection] = React.useState<Filter | null>(null);
 
     const ratingData = api.rating.getByQuestionFilter.useQuery({
-        questionId: data.id,
+        questionId: data?.id,
         filterId: (filterType != 'default' && filterSelection) ? filterSelection.id : undefined,
     }).data;
 
