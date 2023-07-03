@@ -88,6 +88,20 @@ export const questionRouter = createTRPCRouter({
                 where: { id: input.id }
             });
         }),
+    getByIdInclude: protectedProcedure
+        .input(z.object({ id: z.number() }))
+        .query(({ input, ctx }) => {
+            return ctx.prisma.question.findUnique({
+                where: { id: input.id },
+                include: {
+                    interview_guides: true,
+                    references: true,
+                    smes: true,
+                    ratings: true,
+                    changelogs: true,
+                }
+            });
+        }),
     getAllActiveInclude: protectedProcedure
         .input(z.boolean().optional())
         .query(({ ctx }) => {

@@ -1,14 +1,15 @@
 import React from "react";
 
 import * as yup from "yup";
-import { Field, Form, Formik, FormikErrors, FormikHelpers } from "formik";
+import { Field, Form, Formik, FormikHelpers } from "formik";
 import TextField from "../../Form/TextField";
 
 import { Button, Card, CardActions, CardContent, CardHeader, IconButton, MenuItem, Modal } from "@mui/material";
-import { ArrowDownward, ArrowUpward, Close, HorizontalRule } from "@mui/icons-material";
+import { Close } from "@mui/icons-material";
 import { api } from "~/utils/api";
 import { useRouter } from "next/router";
 import Select from "~/components/Form/Select";
+import PriorityIndicator from "~/components/Question/PriorityIndicator";
 
 interface Props {
     open: boolean;
@@ -145,22 +146,13 @@ const QuestionModal: React.FC<Props> = (props) => {
                                 >
                                     <MenuItem value=''><em>Select priority...</em></MenuItem>
                                     <MenuItem value='low'>
-                                        <div className='priority'>
-                                            <ArrowDownward color='success' />
-                                            Low
-                                        </div>
+                                        <PriorityIndicator priority='low' />
                                     </MenuItem>
                                     <MenuItem value='medium'>
-                                        <div className='priority'>
-                                            <HorizontalRule color='primary' />
-                                            Medium
-                                        </div>
+                                        <PriorityIndicator priority='medium' />
                                     </MenuItem>
                                     <MenuItem value='high'>
-                                        <div className='priority'>
-                                            <ArrowUpward color='error' />
-                                            High
-                                        </div>
+                                        <PriorityIndicator priority='high' />
                                     </MenuItem>
                                 </Field>
                             </CardContent>
