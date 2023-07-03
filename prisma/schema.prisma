@@ -53,7 +53,6 @@ model Site {
     filter    Filter?
 
     pocs             Poc[]
-    interview_guides InterviewGuide[]
     assessments      Assessment[]
 
     @@index([client_id])
@@ -188,13 +187,10 @@ model InterviewGuide {
 
     question_id Int
     question    Question @relation(fields: [question_id], references: [id], onDelete: Cascade)
-    site_id     Int
-    site        Site     @relation(fields: [site_id], references: [id], onDelete: Restrict)
     filter_id   Int
     filter      Filter   @relation(fields: [filter_id], references: [id], onDelete: Restrict)
 
     @@index([question_id])
-    @@index([site_id])
     @@index([filter_id])
 }
 
