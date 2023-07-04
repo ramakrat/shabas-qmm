@@ -281,7 +281,7 @@ model AssessmentUser {
     user_id       Int
     user          User       @relation(fields: [user_id], references: [id], onDelete: Restrict)
     assessment_id Int
-    assessment    Assessment @relation(fields: [assessment_id], references: [id], onDelete: Restrict)
+    assessment    Assessment @relation(fields: [assessment_id], references: [id], onDelete: Cascade)
 
     @@index([user_id])
     @@index([assessment_id])
@@ -297,7 +297,7 @@ model AssessmentQuestion {
     question_id   Int
     question      Question   @relation(fields: [question_id], references: [id], onDelete: Cascade)
     assessment_id Int
-    assessment    Assessment @relation(fields: [assessment_id], references: [id], onDelete: Restrict)
+    assessment    Assessment @relation(fields: [assessment_id], references: [id], onDelete: Cascade)
     filter_id     Int?
     filter        Filter?    @relation(fields: [filter_id], references: [id], onDelete: Restrict)
     answers       Answer[]

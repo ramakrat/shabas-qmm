@@ -201,4 +201,13 @@ export const assessmentRouter = createTRPCRouter({
 
             return counts;
         }),
+    deleteById: protectedProcedure
+        .input(z.number())
+        .mutation(({ input, ctx }) => {
+            return ctx.prisma.assessment.delete({
+                where: {
+                    id: input
+                }
+            });
+        }),
 });

@@ -76,4 +76,13 @@ export const clientRouter = createTRPCRouter({
         .query(({ ctx }) => {
             return ctx.prisma.client.count();
         }),
+    deleteById: protectedProcedure
+        .input(z.number())
+        .mutation(({ input, ctx }) => {
+            return ctx.prisma.client.delete({
+                where: {
+                    id: input
+                }
+            });
+        }),
 });

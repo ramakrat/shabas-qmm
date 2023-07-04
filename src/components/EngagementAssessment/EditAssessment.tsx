@@ -16,6 +16,7 @@ import { Add, Delete } from '@mui/icons-material';
 import { api } from "~/utils/api";
 import { dateInputFormat, titleCase, truncate } from '~/utils/utils';
 import StatusChip from '~/components/Table/StatusChip';
+import ConfirmModal from '../Modal/Common/ConfirmModal';
 
 interface QuestionType {
     id?: number;
@@ -130,6 +131,8 @@ const EditAssessment: React.FC<Props> = (props) => {
     const [questionError, setQuestionError] = React.useState<string | undefined>(undefined);
     const [assessorError, setAssessorError] = React.useState<string | undefined>(undefined);
 
+    const [deleteModal, setDeleteModal] = React.useState<boolean>(false);
+
     const assessorSelections = existingAssessors.map(o => o.user).concat(newAssessors).map(o => o.id);
     const assessorOptions = allAssessors?.filter(a => {
         return !assessorSelections.includes(a.id);
@@ -189,6 +192,7 @@ const EditAssessment: React.FC<Props> = (props) => {
     const updateAssessmentUsers = api.assessmentUser.updateArray.useMutation();
     const deleteAssessmentUsers = api.assessmentUser.deleteArray.useMutation();
 
+    const deleteAssessment = api.assessment.deleteById.useMutation();
 
     const handleSubmit = (values: FormValues) => {
         if ((existingQuestions.length + newQuestions.length) < 1) return;
@@ -360,7 +364,7 @@ const EditAssessment: React.FC<Props> = (props) => {
         }
     }
 
-    return (
+    return (<>
         <Formik
             enableReinitialize
             initialValues={assessmentData}
@@ -380,6 +384,9 @@ const EditAssessment: React.FC<Props> = (props) => {
                                 </div>
                                 <div>
                                     {data && <StatusChip status='created' />}
+                                    <Button variant='contained' color='error' onClick={() => setDeleteModal(true)}>
+                                        Delete
+                                    </Button>
                                     <Button variant='contained' type='submit' onClick={() => {
                                         if ((existingQuestions.length + newQuestions.length) < 1) {
                                             setQuestionError(`Requires at least 1 Question`);
@@ -771,7 +778,14 @@ const EditAssessment: React.FC<Props> = (props) => {
                 </Form>
             )}
         </Formik>
-    );
+        <ConfirmModal
+            title={`Delete Assessment ${data?.id}`}
+            message='Are you sure you want to permanently delete this assessment?'
+            handleConfirm={() => { deleteAssessment.mutate(data?.id); router.push('/engagements') }}
+            open={deleteModal}
+            setOpen={setDeleteModal}
+        />
+    </>);
 };
 
 export default EditAssessment;

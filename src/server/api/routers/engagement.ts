@@ -235,4 +235,13 @@ export const engagementRouter = createTRPCRouter({
                 }
             });
         }),
+    deleteById: protectedProcedure
+        .input(z.number())
+        .mutation(({ input, ctx }) => {
+            return ctx.prisma.engagement.delete({
+                where: {
+                    id: input
+                }
+            });
+        }),
 });

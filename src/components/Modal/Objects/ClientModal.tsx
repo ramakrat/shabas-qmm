@@ -10,7 +10,8 @@ import { Button, Card, CardActions, CardContent, CardHeader, IconButton, MenuIte
 import { Close } from "@mui/icons-material";
 import { Countries } from "~/utils/utils";
 import { api } from "~/utils/api";
-import { useRouter } from "next/router";
+import router, { useRouter } from "next/router";
+import ConfirmModal from "../Common/ConfirmModal";
 
 interface Props {
     open: boolean;
@@ -43,6 +44,7 @@ const ClientModal: React.FC<Props> = (props) => {
     const { open, setOpen, data } = props;
 
     // =========== Input Field States ===========
+
 
     const [client, setClient] = React.useState<FormValues>({
         name: '',
@@ -121,8 +123,13 @@ const ClientModal: React.FC<Props> = (props) => {
         }
     }
 
+    // =========== Deletion Management ===========
 
-    return (
+    const [deleteModal, setDeleteModal] = React.useState<boolean>(false);
+    const [deleteError, setDeleteError] = React.useState<string | undefined>(undefined);
+    const deleteClient = api.client.deleteById.useMutation();
+
+    return (<>
         <Modal open={open} onClose={() => setOpen(false)} className='create-modal'>
             <div>
                 <Formik
@@ -184,7 +191,10 @@ const ClientModal: React.FC<Props> = (props) => {
                                 />
                             </CardContent>
                             <CardActions>
-                                <Button variant='contained' color='error' onClick={() => setOpen(false)}>Cancel</Button>
+                                <div>
+                                    <Button variant='contained' color='inherit' onClick={() => setOpen(false)}>Cancel</Button>
+                                    <Button variant='contained' color='error' onClick={() => setDeleteModal(true)}>Delete</Button>
+                                </div>
                                 {data ?
                                     <Button variant='contained' type='submit'>Save</Button> :
                                     <Button variant='contained' type='submit'>Create</Button>
@@ -195,7 +205,25 @@ const ClientModal: React.FC<Props> = (props) => {
                 </Formik>
             </div>
         </Modal>
-    )
+        <ConfirmModal
+            title={`Delete Client ${data?.id}`}
+            message='Are you sure you want to permanently delete this client?'
+            errorMessage={deleteError}
+            handleConfirm={() => {
+                deleteClient.mutate(Number(data?.id), {
+                    onError(err) {
+                        setDeleteError(err.message);
+                    },
+                    onSuccess() {
+                        setDeleteError(undefined);
+                        router.push('/clients');
+                    }
+                });
+            }}
+            open={deleteModal}
+            setOpen={setDeleteModal}
+        />
+    </>)
 }
 
 export default ClientModal;

@@ -9,7 +9,8 @@ import Select from "../../Form/Select";
 import { Button, Card, CardActions, CardContent, CardHeader, IconButton, MenuItem, Modal } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { api } from "~/utils/api";
-import { useRouter } from "next/router";
+import router, { useRouter } from "next/router";
+import ConfirmModal from "../Common/ConfirmModal";
 
 interface Props {
     open: boolean;
@@ -204,7 +205,13 @@ const PocModal: React.FC<Props> = (props) => {
         return undefined;
     }
 
-    return (
+    // =========== Deletion Management ===========
+
+    const [deleteModal, setDeleteModal] = React.useState<boolean>(false);
+    const [deleteError, setDeleteError] = React.useState<string | undefined>(undefined);
+    const deletePoc = api.poc.deleteById.useMutation();
+
+    return (<>
         <Modal open={open} onClose={() => setOpen(false)} className='create-modal'>
             <div>
                 <Formik
@@ -271,7 +278,10 @@ const PocModal: React.FC<Props> = (props) => {
                                     />
                                 </CardContent>
                                 <CardActions>
-                                    <Button variant='contained' color='error' onClick={() => setOpen(false)}>Cancel</Button>
+                                    <div>
+                                        <Button variant='contained' color='inherit' onClick={() => setOpen(false)}>Cancel</Button>
+                                        <Button variant='contained' color='error' onClick={() => setDeleteModal(true)}>Delete</Button>
+                                    </div>
                                     {data ?
                                         <Button variant='contained' type='submit'>Save</Button> :
                                         <Button variant='contained' type='submit'>Create</Button>
@@ -283,7 +293,25 @@ const PocModal: React.FC<Props> = (props) => {
                 </Formik>
             </div>
         </Modal>
-    )
+        <ConfirmModal
+            title={`Delete POC ${data?.id}`}
+            message='Are you sure you want to permanently delete this POC?'
+            errorMessage={deleteError}
+            handleConfirm={() => {
+                deletePoc.mutate(Number(data?.id), {
+                    onError(err) {
+                        setDeleteError(err.message);
+                    },
+                    onSuccess() {
+                        setDeleteError(undefined);
+                        router.push('/pocs');
+                    }
+                });
+            }}
+            open={deleteModal}
+            setOpen={setDeleteModal}
+        />
+    </>)
 }
 
 export default PocModal;

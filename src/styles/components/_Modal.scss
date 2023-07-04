@@ -77,16 +77,24 @@
             border: 1px solid palette(greyscale, 400);
         }
 
-        
+
     }
 
     .MuiCardActions-root {
         display: flex;
         justify-content: space-between;
         padding-top: 15px;
+
+        >div {
+            button {
+                &:not(:last-child) {
+                    margin-right: 10px;
+                }
+            }
+        }
     }
 
-    
+
 }
 
 
@@ -132,4 +140,16 @@
     color: palette(error, main);
     width: 100%;
     padding: 3px 0px 3px 14px;
+}
+
+.error-message {
+    display: flex;
+    flex-direction: column;
+    font-family: 'Roboto' !important;
+    font-size: 0.8rem;
+    line-height: 1.66;
+    text-align: left;
+    color: palette(error, main);
+    width: 100%;
+    padding: 15px 0px 5px;
 }

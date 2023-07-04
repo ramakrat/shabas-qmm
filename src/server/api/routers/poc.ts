@@ -101,4 +101,13 @@ export const pocRouter = createTRPCRouter({
         .query(({ ctx }) => {
             return ctx.prisma.poc.count();
         }),
+    deleteById: protectedProcedure
+        .input(z.number())
+        .mutation(({ input, ctx }) => {
+            return ctx.prisma.poc.delete({
+                where: {
+                    id: input
+                }
+            });
+        }),
 });

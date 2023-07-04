@@ -126,4 +126,13 @@ export const questionRouter = createTRPCRouter({
         .query(({ ctx }) => {
             return ctx.prisma.question.count();
         }),
+    deleteById: protectedProcedure
+        .input(z.number())
+        .mutation(({ input, ctx }) => {
+            return ctx.prisma.question.delete({
+                where: {
+                    id: input
+                }
+            });
+        }),
 });

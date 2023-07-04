@@ -19,6 +19,8 @@ import ChangelogTable from '~/components/Table/ChangelogTable';
 import SelectFilter from '~/components/Question/SelectFilter';
 import PriorityIndicator from './PriorityIndicator';
 import InputList from './InputList';
+import ConfirmModal from '../Modal/Common/ConfirmModal';
+import router from 'next/router';
 
 interface GuideType {
     id?: number;
@@ -533,7 +535,13 @@ const EditQuestion: React.FC<Props> = (props) => {
     }
 
 
-    return (
+    // =========== Deletion Management ===========
+
+    const [deleteModal, setDeleteModal] = React.useState<boolean>(false);
+    const [deleteError, setDeleteError] = React.useState<string | undefined>(undefined);
+    const deleteQuestion = api.question.deleteById.useMutation();
+
+    return (<>
         <Formik
             enableReinitialize
             initialValues={questionData}
@@ -561,11 +569,12 @@ const EditQuestion: React.FC<Props> = (props) => {
                             <div>
                                 <Button
                                     variant='contained'
-                                    color={data?.active ? 'error' : 'success'}
+                                    color={data?.active ? 'inherit' : 'success'}
                                     onClick={() => handleActive()}
                                 >
                                     {data?.active ? 'Deactivate' : 'Activate'}
                                 </Button>
+                                <Button variant='contained' color='error' onClick={() => setDeleteModal(true)}>Delete</Button>
                                 <Button variant='contained' type='submit'>Save</Button>
                             </div>
                         </Card>
@@ -816,7 +825,25 @@ const EditQuestion: React.FC<Props> = (props) => {
                 </div>
             </Form>
         </Formik>
-    );
+        <ConfirmModal
+            title={`Delete Question ${data?.id}`}
+            message='Are you sure you want to permanently delete this question?'
+            errorMessage={deleteError}
+            handleConfirm={() => {
+                deleteQuestion.mutate(Number(data?.id), {
+                    onError(err) {
+                        setDeleteError(err.message);
+                    },
+                    onSuccess() {
+                        setDeleteError(undefined);
+                        router.push('/clients');
+                    }
+                });
+            }}
+            open={deleteModal}
+            setOpen={setDeleteModal}
+        />
+    </>)
 };
 
 export default EditQuestion;

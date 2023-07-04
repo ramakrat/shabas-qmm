@@ -86,4 +86,13 @@ export const siteRouter = createTRPCRouter({
         .query(({ ctx }) => {
             return ctx.prisma.site.count();
         }),
+    deleteById: protectedProcedure
+        .input(z.number())
+        .mutation(({ input, ctx }) => {
+            return ctx.prisma.site.delete({
+                where: {
+                    id: input
+                }
+            });
+        }),
 });
