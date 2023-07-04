@@ -139,69 +139,6 @@ export const Layout: React.FC<Props> = (props) => {
         </>)
     }
 
-    if (!session) {
-        return (
-            <div>
-                <Head>
-                    <title>Shabas QMM</title>
-                    <meta name="description" content="Shabas QMM" />
-                    <link rel="icon" href="/favicon.ico" />
-                </Head>
-                <main className='content-body'>
-                    <div className='header'>
-                        <div className='nav-items'>
-                            <Link href='/' className='logo'>
-                                <Image src={logo} alt={'Shabas Logo'} height={45} />
-                            </Link>
-                        </div>
-                        <Button onClick={() => router.push(`/api/auth/signin`)} className='user-button'>
-                            Login
-                        </Button>
-                    </div>
-                    <div className='page-message'>
-                        <Card>
-                            <span className='title'>
-                                Welcome to Shabas QMM
-                            </span>
-                            <span className='subheading'>
-                                Login to get started
-                            </span>
-                        </Card>
-                    </div>
-                </main>
-            </div>
-        )
-    }
-    if (!permitted) {
-        return (
-            <div>
-                <Head>
-                    <title>Shabas QMM</title>
-                    <meta name="description" content="Shabas QMM" />
-                    <link rel="icon" href="/favicon.ico" />
-                </Head>
-                <main className='content-body'>
-                    <div className='header'>
-                        <div className='nav-items'>
-                            <Link href='/' className='logo'>
-                                <Image src={logo} alt={'Shabas Logo'} height={45} />
-                            </Link>
-                            {session && getRoleNavItems(session.user.role)}
-                        </div>
-                        {userFeatures()}
-                    </div>
-                    <div className='page-message'>
-                        <span className='title'>
-                            Access Denied
-                        </span>
-                        <span className='subheading'>
-                            Contact an administrator if this is unexpected.
-                        </span>
-                    </div>
-                </main>
-            </div>
-        )
-    }
     return (
         <div>
             <Head>
@@ -215,11 +152,37 @@ export const Layout: React.FC<Props> = (props) => {
                         <Link href='/' className='logo'>
                             <Image src={logo} alt={'Shabas Logo'} height={45} />
                         </Link>
-                        {getRoleNavItems(session.user.role)}
+                        {session ? getRoleNavItems(session.user.role) :
+                            <Button onClick={() => router.push(`/api/auth/signin`)} className='user-button'>
+                                Login
+                            </Button>
+                        }
                     </div>
-                    {userFeatures()}
+                    {session && userFeatures()}
                 </div>
-                {children}
+                {!session &&
+                    <div className='page-message'>
+                        <Card>
+                            <span className='title'>
+                                Welcome to Shabas QMM
+                            </span>
+                            <span className='subheading'>
+                                Login to get started
+                            </span>
+                        </Card>
+                    </div>
+                }
+                {!permitted &&
+                    <div className='page-message'>
+                        <span className='title'>
+                            Access Denied
+                        </span>
+                        <span className='subheading'>
+                            Contact an administrator if this is unexpected.
+                        </span>
+                    </div>
+                }
+                {(session && permitted) && children}
             </main>
         </div>
     )
