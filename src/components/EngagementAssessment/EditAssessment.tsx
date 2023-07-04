@@ -196,7 +196,7 @@ const EditAssessment: React.FC<Props> = (props) => {
 
     const handleSubmit = (values: FormValues) => {
         if ((existingQuestions.length + newQuestions.length) < 1) return;
-        if ((existingAssessors.length + newAssessors.length) < 1) return;
+        if (((existingAssessors.length + newAssessors.length) < 1) && (selectedAssessor == undefined || selectedAssessor == -1)) return;
 
         if (data) {
             update.mutate({
@@ -279,6 +279,8 @@ const EditAssessment: React.FC<Props> = (props) => {
                         })
                     }
 
+                    // Update Assessors
+
                     existingAssessors.forEach(o =>
                         updateAssessmentUser.mutate({
                             id: o.id,
@@ -302,6 +304,15 @@ const EditAssessment: React.FC<Props> = (props) => {
                             setNewAssessors([]);
                         }
                     })
+                    if (selectedAssessor) {
+                        createAssessmentUser.mutate({
+                            user_id: Number(selectedAssessor),
+                            assessment_id: data.id,
+                        }, {
+                            onSuccess() {
+                            }
+                        })
+                    }
                     deleteAssessmentUsers.mutate(deletedAssessors.map(o => o.id), {
                         onSuccess() {
                             setDeletedAssessors([]);
@@ -356,6 +367,15 @@ const EditAssessment: React.FC<Props> = (props) => {
                         onSuccess() {
                         }
                     })
+                    if (selectedAssessor) {
+                        createAssessmentUser.mutate({
+                            user_id: Number(selectedAssessor),
+                            assessment_id: data.id,
+                        }, {
+                            onSuccess() {
+                            }
+                        })
+                    }
 
                     router.push(`/engagements/assessment/${data.id}`)
                 }
@@ -393,7 +413,7 @@ const EditAssessment: React.FC<Props> = (props) => {
                                         } else {
                                             setQuestionError(undefined);
                                         }
-                                        if ((existingAssessors.length + newAssessors.length) < 1) {
+                                        if (((existingAssessors.length + newAssessors.length) < 1) && (selectedAssessor == undefined || selectedAssessor == -1)) {
                                             setAssessorError(`Requires at least 1 Assessor`);
                                         } else {
                                             setAssessorError(undefined);
@@ -556,7 +576,6 @@ const EditAssessment: React.FC<Props> = (props) => {
                                                         value={selectedAssessor ?? -1}
                                                         onChange={(event) => {
                                                             setSelectedAssessor(Number(event.target.value))
-                                                            // setNewAssessors([...newAssessors, allAssessors.find(o => o.id == event.target.value]);
                                                         }}
                                                     >
                                                         <MenuItem value={-1}><em>Select a user...</em></MenuItem>
