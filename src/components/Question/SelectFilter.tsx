@@ -91,9 +91,15 @@ export const SelectFilter: React.FC<Props> = (props) => {
                 }
             </Select>
         </>}
-        <BusinessTypeModal open={addBusinessType} setOpen={setAddBusinessType} />
-        <ManufacturingTypeModal open={addManufacturingType} setOpen={setAddManufacturingType} />
-        <SiteSpecificModal open={addSiteSpecific} setOpen={setAddSiteSpecific} />
+        {addBusinessType &&
+            <BusinessTypeModal open={addBusinessType} setOpen={setAddBusinessType} />
+        }
+        {addManufacturingType &&
+            <ManufacturingTypeModal open={addManufacturingType} setOpen={setAddManufacturingType} />
+        }
+        {addSiteSpecific &&
+            <SiteSpecificModal open={addSiteSpecific} setOpen={setAddSiteSpecific} />
+        }
     </>)
 }
 

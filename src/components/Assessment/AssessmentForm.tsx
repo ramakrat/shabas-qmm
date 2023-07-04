@@ -527,8 +527,12 @@ const AssessmentForm: React.FC<Props> = (props) => {
                     </Form>
                 )}
             </Formik>
-            <ConfirmModal message={`Are you sure you want to submit ongoing assessment ${assessment}?`} open={confirmSubmitModal} setOpen={setConfirmSubmitModal} handleConfirm={handleSubmitAssesment} />
-            <MessageModal message={`Assessment ${assessment} cannot be submitted because there are unfinished question forms.`} open={messageModal} setOpen={setMessageModal} />
+            {confirmSubmitModal &&
+                <ConfirmModal message={`Are you sure you want to submit ongoing assessment ${assessment}?`} open={confirmSubmitModal} setOpen={setConfirmSubmitModal} handleConfirm={handleSubmitAssesment} />
+            }
+            {messageModal &&
+                <MessageModal message={`Assessment ${assessment} cannot be submitted because there are unfinished question forms.`} open={messageModal} setOpen={setMessageModal} />
+            }
         </div>
     );
 };

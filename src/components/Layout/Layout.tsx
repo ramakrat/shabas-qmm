@@ -41,36 +41,30 @@ export const Layout: React.FC<Props> = (props) => {
     const permitted = session?.user.role && requiredRoles?.includes(session.user.role) && !accessDenied;
 
     // TODO: Make dynamic
-    const totalClient = api.client.getTotalCount.useQuery().data;
-    const totalSite = api.site.getTotalCount.useQuery(true).data;
-    const totalEngagement = api.engagement.getTotalCount.useQuery(true).data;
-    const totalAssessment = api.assessment.getTotalCount.useQuery(true).data;
-    const totalPOC = api.poc.getTotalCount.useQuery(true).data;
-    const totalQuestion = api.question.getTotalCount.useQuery(true).data;
-
+    const totals = api.shabas.getAdminDashboardObjectTotals.useQuery(true).data;
 
     const getRoleNavItems = (role: string) => {
         if (role == 'ADMIN') {
             return (<>
                 <Link href={'/clients'} className={'nav-item ' + (active == 'clients' ? 'active' : '')}>
                     <span className='label'>Clients</span>
-                    <span className='count'>{totalClient ?? 0}</span>
+                    <span className='count'>{totals?.clients ?? 0}</span>
                     <span className='label child-label'>/ Sites</span>
-                    <span className='count'>{totalSite ?? 0}</span>
+                    <span className='count'>{totals?.sites ?? 0}</span>
                 </Link>
                 <Link href={'/pocs'} className={'nav-item ' + (active == 'pocs' ? 'active' : '')}>
                     <span className='label'>POC</span>
-                    <span className='count'>{totalPOC ?? 0}</span>
+                    <span className='count'>{totals?.pocs ?? 0}</span>
                 </Link>
                 <Link href={'/engagements'} className={'nav-item ' + (active == 'assessments' ? 'active' : '')}>
                     <span className='label'>Engagements</span>
-                    <span className='count'>{totalEngagement ?? 0}</span>
+                    <span className='count'>{totals?.engagements ?? 0}</span>
                     <span className='label child-label'>/ Assessments</span>
-                    <span className='count'>{totalAssessment ?? 0}</span>
+                    <span className='count'>{totals?.assessments ?? 0}</span>
                 </Link>
                 <Link href={'/questions'} className={'nav-item ' + (active == 'questions' ? 'active' : '')}>
                     <span className='label'>Question</span>
-                    <span className='count'>{totalQuestion ?? 0}</span>
+                    <span className='count'>{totals?.questions ?? 0}</span>
                 </Link>
                 <Link href={'/assessments/completed'} className={'nav-item ' + (active == 'completed-assessments' ? 'active' : '')}>
                     <span className='label'>

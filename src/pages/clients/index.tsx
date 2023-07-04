@@ -183,8 +183,12 @@ const BrowseClients: NextPage = () => {
                     tableInfoColumns={clientColumns}
                     expandable
                 />
-                <ClientModal open={clientModal} setOpen={setClientModal} data={clientData} />
-                <SiteModal open={siteModal} setOpen={setSiteModal} data={siteData} />
+                {clientModal &&
+                    <ClientModal open={clientModal} setOpen={setClientModal} data={clientData} />
+                }
+                {siteModal &&
+                    <SiteModal open={siteModal} setOpen={setSiteModal} data={siteData} />
+                }
             </div>
         </Layout>
     );

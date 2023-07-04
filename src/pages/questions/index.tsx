@@ -112,7 +112,9 @@ const Question: NextPage = () => {
                     />
                 </div>
             </Layout>
-            <QuestionModal open={questionModal} setOpen={setQuestionModal} />
+            {questionModal &&
+                <QuestionModal open={questionModal} setOpen={setQuestionModal} />
+            }
         </>
     );
 };

@@ -199,7 +199,7 @@ const EditAssessment: React.FC<Props> = (props) => {
         if (((existingAssessors.length + newAssessors.length) < 1) && (selectedAssessor == -1)) return;
 
         const validAssessor = allAssessors?.find(o => o.id == selectedAssessor);
-        
+
         if (data) {
             update.mutate({
                 id: data.id,
@@ -799,13 +799,15 @@ const EditAssessment: React.FC<Props> = (props) => {
                 </Form>
             )}
         </Formik>
-        <ConfirmModal
-            title={`Delete Assessment ${data?.id}`}
-            message='Are you sure you want to permanently delete this assessment?'
-            handleConfirm={() => { deleteAssessment.mutate(data?.id); router.push('/engagements') }}
-            open={deleteModal}
-            setOpen={setDeleteModal}
-        />
+        {deleteModal &&
+            <ConfirmModal
+                title={`Delete Assessment ${data?.id}`}
+                message='Are you sure you want to permanently delete this assessment?'
+                handleConfirm={() => { deleteAssessment.mutate(data?.id); router.push('/engagements') }}
+                open={deleteModal}
+                setOpen={setDeleteModal}
+            />
+        }
     </>);
 };
 

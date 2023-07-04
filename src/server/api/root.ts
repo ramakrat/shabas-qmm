@@ -16,6 +16,7 @@ import { engagementpocRouter } from "./routers/engagementpoc";
 import { changelogRouter } from "./routers/changelog";
 import { userRouter } from "./routers/user";
 import { assessmentUserRouter } from "./routers/assessmentuser";
+import { shabasRouter } from "./routers/shabas";
 
 /**
  * This is the primary router for your server.
@@ -23,6 +24,7 @@ import { assessmentUserRouter } from "./routers/assessmentuser";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
+    shabas: shabasRouter,
     client: clientRouter,
     site: siteRouter,
     assessment: assessmentRouter,

@@ -825,24 +825,26 @@ const EditQuestion: React.FC<Props> = (props) => {
                 </div>
             </Form>
         </Formik>
-        <ConfirmModal
-            title={`Delete Question ${data?.id}`}
-            message='Are you sure you want to permanently delete this question?'
-            errorMessage={deleteError}
-            handleConfirm={() => {
-                deleteQuestion.mutate(Number(data?.id), {
-                    onError(err) {
-                        setDeleteError(err.message);
-                    },
-                    onSuccess() {
-                        setDeleteError(undefined);
-                        router.push('/questions');
-                    }
-                });
-            }}
-            open={deleteModal}
-            setOpen={setDeleteModal}
-        />
+        {deleteModal &&
+            <ConfirmModal
+                title={`Delete Question ${data?.id}`}
+                message='Are you sure you want to permanently delete this question?'
+                errorMessage={deleteError}
+                handleConfirm={() => {
+                    deleteQuestion.mutate(Number(data?.id), {
+                        onError(err) {
+                            setDeleteError(err.message);
+                        },
+                        onSuccess() {
+                            setDeleteError(undefined);
+                            router.push('/questions');
+                        }
+                    });
+                }}
+                open={deleteModal}
+                setOpen={setDeleteModal}
+            />
+        }
     </>)
 };
 

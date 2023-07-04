@@ -95,7 +95,6 @@ const Management: NextPage = () => {
                     dataList={convertTableData(users) ?? []}
                     tableInfoColumns={columns}
                 />
-                {/* <PocModal open={userModal} setOpen={setUserModal} data={userData} /> */}
             </div>
         </Layout>
     );

@@ -302,7 +302,9 @@ const BrowseAssessments: NextPage = () => {
                     tableInfoColumns={engagementColumns}
                     expandable
                 />
-                <EngagementModal open={engagementModal} setOpen={setEngagementModal} data={engagementData} />
+                {engagementModal &&
+                    <EngagementModal open={engagementModal} setOpen={setEngagementModal} data={engagementData} />
+                }
             </div>
         </Layout>
     );

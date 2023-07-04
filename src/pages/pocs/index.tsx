@@ -152,7 +152,9 @@ const BrowsePocs: NextPage = () => {
                     dataList={convertTableData(pocs) ?? []}
                     tableInfoColumns={columns}
                 />
-                <PocModal open={pocModal} setOpen={setPOCModal} data={pocData} />
+                {pocModal &&
+                    <PocModal open={pocModal} setOpen={setPOCModal} data={pocData} />
+                }
             </div>
         </Layout>
     );

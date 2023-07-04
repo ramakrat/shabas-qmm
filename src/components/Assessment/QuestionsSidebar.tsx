@@ -121,7 +121,9 @@ const QuestionsSidebar: React.FC<Props> = (props) => {
                     </div>
                 </div>
             </Card>
-            <QuestionModal open={questionModal} setOpen={setQuestionModal} />
+            {questionModal &&
+                <QuestionModal open={questionModal} setOpen={setQuestionModal} />
+            }
         </>
     )
 }
