@@ -115,35 +115,37 @@ const ViewAssessment: React.FC<Props> = (props) => {
                             <Card>
                                 <div className='widget-header'>Assessment Questions</div>
                                 <div className='changelog'>
-                                    <TableContainer component={Paper} className='browse-table'>
-                                        <Table>
-                                            <TableHead>
-                                                <TableRow>
-                                                    <TableCell align="center">Question #</TableCell>
-                                                    <TableCell align="center">Filter</TableCell>
-                                                    <TableCell align="left">Content</TableCell>
-                                                </TableRow>
-                                            </TableHead>
-                                            <TableBody>
-                                                {data.assessment_questions.map((q: { question: { number: string; question: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | React.PromiseLikeOfReactNode | null | undefined; }; filter: { toString: () => string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | React.PromiseLikeOfReactNode | null | undefined; }; }) => {
-                                                    return (
-                                                        <TableRow
-                                                            key={q.question.number}
-                                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                                        >
-                                                            <TableCell align="center">
-                                                                {q.question.number}
-                                                            </TableCell>
-                                                            <TableCell align="center">
-                                                                {q.filter ? q.filter.toString() : 'Standard'}
-                                                            </TableCell>
-                                                            <TableCell align="left">{q.question.question}</TableCell>
-                                                        </TableRow>
-                                                    )
-                                                })}
-                                            </TableBody>
-                                        </Table>
-                                    </TableContainer>
+                                    <div className='widget-table'>
+                                        <TableContainer component={Paper} className='browse-table'>
+                                            <Table>
+                                                <TableHead>
+                                                    <TableRow>
+                                                        <TableCell align="center">Question #</TableCell>
+                                                        <TableCell align="center">Filter</TableCell>
+                                                        <TableCell align="left">Content</TableCell>
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody>
+                                                    {data.assessment_questions.map((q: { question: { number: string; question: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | React.PromiseLikeOfReactNode | null | undefined; }; filter: { toString: () => string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | React.PromiseLikeOfReactNode | null | undefined; }; }) => {
+                                                        return (
+                                                            <TableRow
+                                                                key={q.question.number}
+                                                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                                            >
+                                                                <TableCell align="center">
+                                                                    {q.question.number}
+                                                                </TableCell>
+                                                                <TableCell align="center">
+                                                                    {q.filter ? q.filter.toString() : 'Standard'}
+                                                                </TableCell>
+                                                                <TableCell align="left">{q.question.question}</TableCell>
+                                                            </TableRow>
+                                                        )
+                                                    })}
+                                                </TableBody>
+                                            </Table>
+                                        </TableContainer>
+                                    </div>
                                 </div>
                             </Card>
                         </Grid>

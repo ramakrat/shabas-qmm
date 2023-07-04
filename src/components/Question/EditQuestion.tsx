@@ -836,7 +836,7 @@ const EditQuestion: React.FC<Props> = (props) => {
                     },
                     onSuccess() {
                         setDeleteError(undefined);
-                        router.push('/clients');
+                        router.push('/questions');
                     }
                 });
             }}
