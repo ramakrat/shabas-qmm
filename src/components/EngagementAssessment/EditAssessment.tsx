@@ -15,7 +15,7 @@ import { Add, Delete } from '@mui/icons-material';
 
 import { api } from "~/utils/api";
 import { dateInputFormat, titleCase, truncate } from '~/utils/utils';
-import StatusChip, { AssessmentStatus } from '~/components/Table/StatusChip';
+import StatusChip from '~/components/Table/StatusChip';
 
 interface QuestionType {
     id?: number;
