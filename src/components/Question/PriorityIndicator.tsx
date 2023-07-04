@@ -31,7 +31,11 @@ export const PriorityIndicator: React.FC<Props> = (props) => {
             </div>
         )
     }
-    return priority;
+    return (
+        <div>
+            {priority}
+        </div>
+    )
 }
 
 export default PriorityIndicator;

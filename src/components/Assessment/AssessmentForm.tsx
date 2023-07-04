@@ -11,7 +11,6 @@ import { Button, Card, Grid, IconButton, MenuItem, Typography } from '@mui/mater
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
 import { api } from "~/utils/api";
-import { priorityIndicator } from '~/pages/questions/[question]';
 import Select from '../Form/Select';
 import TextField from '../Form/TextField';
 import { AssessmentStatus } from '../Table/StatusChip';
@@ -20,6 +19,7 @@ import BrowseTable, { TableColumn } from '../Table/BrowseTable';
 import ConfirmModal from '../Modal/Common/ConfirmModal';
 import MessageModal from '../Modal/Common/MessageModal';
 import QuestionsSidebar from '../Assessment/QuestionsSidebar';
+import PriorityIndicator from "~/components/Question/PriorityIndicator";
 
 type AssessmentType = (
     Assessment & {
@@ -372,25 +372,42 @@ const AssessmentForm: React.FC<Props> = (props) => {
                                                 </div>
                                                 {(showRating && ratings) &&
                                                     <div className='widget-body information-list'>
-                                                        {ratings.length > 0 ?
-                                                            ratings.map((r, i) => {
-                                                                return (
-                                                                    <>
-                                                                        <div key={'level-' + i}>
-                                                                            <Typography>Level {r.level_number}:</Typography>
-                                                                            <Typography>{r.criteria}</Typography>
-                                                                        </div>
-                                                                        {i !== ratings.length - 1 &&
-                                                                            <div key={'progression-' + i}>
-                                                                                <Typography>Progression Statement:</Typography>
-                                                                                <Typography>{r.progression_statement}</Typography>
-                                                                            </div>
-                                                                        }
-                                                                    </>
-                                                                )
-                                                            }) :
-                                                            'None'
-                                                        }
+                                                        <div>
+                                                            <Typography>Level 1:</Typography>
+                                                            <Typography>{ratings.criteria_1}</Typography>
+                                                        </div>
+                                                        <div>
+                                                            <Typography>Progression Statement:</Typography>
+                                                            <Typography>{ratings.progression_statement_1}</Typography>
+                                                        </div>
+                                                        <div>
+                                                            <Typography>Level 2:</Typography>
+                                                            <Typography>{ratings.criteria_2}</Typography>
+                                                        </div>
+                                                        <div>
+                                                            <Typography>Progression Statement:</Typography>
+                                                            <Typography>{ratings.progression_statement_2}</Typography>
+                                                        </div>
+                                                        <div>
+                                                            <Typography>Level 3:</Typography>
+                                                            <Typography>{ratings.criteria_3}</Typography>
+                                                        </div>
+                                                        <div>
+                                                            <Typography>Progression Statement:</Typography>
+                                                            <Typography>{ratings.progression_statement_3}</Typography>
+                                                        </div>
+                                                        <div>
+                                                            <Typography>Level 4:</Typography>
+                                                            <Typography>{ratings.criteria_4}</Typography>
+                                                        </div>
+                                                        <div>
+                                                            <Typography>Progression Statement:</Typography>
+                                                            <Typography>{ratings.progression_statement_4}</Typography>
+                                                        </div>
+                                                        <div>
+                                                            <Typography>Level 5:</Typography>
+                                                            <Typography>{ratings.criteria_5}</Typography>
+                                                        </div>
                                                     </div>
                                                 }
                                                 <div className='widget-header'>Details</div>
@@ -432,7 +449,7 @@ const AssessmentForm: React.FC<Props> = (props) => {
                                                     </div>
                                                     <div>
                                                         <Typography>Priority:</Typography>
-                                                        <div>{questionRef ? priorityIndicator(convertToQuestion(questionRef).priority) : undefined}</div>
+                                                        <Typography>{questionRef ? <PriorityIndicator priority={convertToQuestion(questionRef).priority} /> : undefined}</Typography>
                                                     </div>
                                                 </div>
                                                 {status == 'ongoing' && <>

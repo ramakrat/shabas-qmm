@@ -2,9 +2,9 @@ import * as React from 'react';
 import { type NextPage } from "next";
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
-import type { 
-    Answer, Assessment, AssessmentQuestion, Engagement, Filter, 
-    InterviewGuide, Question, Rating, Reference 
+import type {
+    Answer, Assessment, AssessmentQuestion, Engagement, Filter,
+    InterviewGuide, Question, Rating, Reference
 } from '@prisma/client';
 
 import * as XLSX from 'xlsx';
@@ -14,7 +14,7 @@ import { api } from "~/utils/api";
 import Layout from "~/components/Layout/Layout";
 import ChangelogTable from '~/components/Table/ChangelogTable';
 import QuestionsSidebar from '~/components/Assessment/QuestionsSidebar';
-import { priorityIndicator } from '../../questions/[question]';
+import PriorityIndicator from "~/components/Question/PriorityIndicator";
 
 const CompletedAssessment: NextPage = () => {
 
@@ -193,22 +193,46 @@ const CompletedAssessment: NextPage = () => {
                                                     <Typography>Start Time:</Typography>
                                                     <Typography>XYZ</Typography>
                                                 </div>
-                                                {ratings && ratings.map((r, i) => {
-                                                    return (
-                                                        <>
-                                                            <div key={'level-' + i}>
-                                                                <Typography>Level {r.level_number}:</Typography>
-                                                                <Typography>{r.criteria}</Typography>
-                                                            </div>
-                                                            {i !== ratings.length - 1 &&
-                                                                <div key={'progression-' + i}>
-                                                                    <Typography>Progression Statement:</Typography>
-                                                                    <Typography>{r.progression_statement}</Typography>
-                                                                </div>
-                                                            }
-                                                        </>
-                                                    )
-                                                })}
+                                                {ratings &&
+                                                    <div className='widget-body information-list'>
+                                                        <div>
+                                                            <Typography>Level 1:</Typography>
+                                                            <Typography>{ratings.criteria_1}</Typography>
+                                                        </div>
+                                                        <div>
+                                                            <Typography>Progression Statement:</Typography>
+                                                            <Typography>{ratings.progression_statement_1}</Typography>
+                                                        </div>
+                                                        <div>
+                                                            <Typography>Level 2:</Typography>
+                                                            <Typography>{ratings.criteria_2}</Typography>
+                                                        </div>
+                                                        <div>
+                                                            <Typography>Progression Statement:</Typography>
+                                                            <Typography>{ratings.progression_statement_2}</Typography>
+                                                        </div>
+                                                        <div>
+                                                            <Typography>Level 3:</Typography>
+                                                            <Typography>{ratings.criteria_3}</Typography>
+                                                        </div>
+                                                        <div>
+                                                            <Typography>Progression Statement:</Typography>
+                                                            <Typography>{ratings.progression_statement_3}</Typography>
+                                                        </div>
+                                                        <div>
+                                                            <Typography>Level 4:</Typography>
+                                                            <Typography>{ratings.criteria_4}</Typography>
+                                                        </div>
+                                                        <div>
+                                                            <Typography>Progression Statement:</Typography>
+                                                            <Typography>{ratings.progression_statement_4}</Typography>
+                                                        </div>
+                                                        <div>
+                                                            <Typography>Level 5:</Typography>
+                                                            <Typography>{ratings.criteria_5}</Typography>
+                                                        </div>
+                                                    </div>
+                                                }
                                             </div>
                                         </Card>
                                     </Grid>
@@ -230,7 +254,7 @@ const CompletedAssessment: NextPage = () => {
                                                 </div>
                                                 <div>
                                                     <Typography>Priority:</Typography>
-                                                    <Typography>{questionRef ? priorityIndicator(convertToQuestion(questionRef).priority) : undefined}</Typography>
+                                                    <Typography>{questionRef ? <PriorityIndicator priority={convertToQuestion(questionRef).priority} /> : undefined}</Typography>
                                                 </div>
                                             </div>
                                             <div className='widget-header'>Interview Guide</div>
