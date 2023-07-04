@@ -15,7 +15,7 @@ const Assessment: NextPage = () => {
 
     const { assessment } = useRouter().query;
 
-    const data = api.assessment.getByIdInclude.useQuery({ id: assessment ? Number(assessment) : undefined }).data;
+    const {data} = api.assessment.getByIdInclude.useQuery({ id: Number(assessment) });
 
     if (data && data.status != 'created') {
         return (

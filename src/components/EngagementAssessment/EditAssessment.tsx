@@ -119,7 +119,7 @@ const EditAssessment: React.FC<Props> = (props) => {
     const [existingAssessors, setExistingAssessors] = React.useState<AssessmentUserReturnType[]>([]);
     const [newAssessors, setNewAssessors] = React.useState<User[]>([]);
     const [deletedAssessors, setDeletedAssessors] = React.useState<AssessmentUserReturnType[]>([]);
-    const [selectedAssessor, setSelectedAssessor] = React.useState<number | undefined>(undefined);
+    const [selectedAssessor, setSelectedAssessor] = React.useState<number>(-1);
 
     const [existingQuestions, setExistingQuestions] = React.useState<AssessmentQuestionReturnType[]>([]);
     const [newQuestions, setNewQuestions] = React.useState<QuestionType[]>([]);
@@ -196,8 +196,10 @@ const EditAssessment: React.FC<Props> = (props) => {
 
     const handleSubmit = (values: FormValues) => {
         if ((existingQuestions.length + newQuestions.length) < 1) return;
-        if (((existingAssessors.length + newAssessors.length) < 1) && (selectedAssessor == undefined || selectedAssessor == -1)) return;
+        if (((existingAssessors.length + newAssessors.length) < 1) && (selectedAssessor == -1)) return;
 
+        const validAssessor = allAssessors?.find(o => o.id == selectedAssessor);
+        
         if (data) {
             update.mutate({
                 id: data.id,
@@ -304,7 +306,7 @@ const EditAssessment: React.FC<Props> = (props) => {
                             setNewAssessors([]);
                         }
                     })
-                    if (selectedAssessor) {
+                    if (validAssessor) {
                         createAssessmentUser.mutate({
                             user_id: Number(selectedAssessor),
                             assessment_id: data.id,
@@ -367,7 +369,7 @@ const EditAssessment: React.FC<Props> = (props) => {
                         onSuccess() {
                         }
                     })
-                    if (selectedAssessor) {
+                    if (validAssessor) {
                         createAssessmentUser.mutate({
                             user_id: Number(selectedAssessor),
                             assessment_id: data.id,
@@ -413,7 +415,7 @@ const EditAssessment: React.FC<Props> = (props) => {
                                         } else {
                                             setQuestionError(undefined);
                                         }
-                                        if (((existingAssessors.length + newAssessors.length) < 1) && (selectedAssessor == undefined || selectedAssessor == -1)) {
+                                        if (((existingAssessors.length + newAssessors.length) < 1) && (selectedAssessor == -1)) {
                                             setAssessorError(`Requires at least 1 Assessor`);
                                         } else {
                                             setAssessorError(undefined);
@@ -573,7 +575,7 @@ const EditAssessment: React.FC<Props> = (props) => {
                                                 <div className='input-row'>
                                                     <MuiSelect
                                                         size='small'
-                                                        value={selectedAssessor ?? -1}
+                                                        value={selectedAssessor}
                                                         onChange={(event) => {
                                                             setSelectedAssessor(Number(event.target.value))
                                                         }}
@@ -592,7 +594,7 @@ const EditAssessment: React.FC<Props> = (props) => {
                                                             const assessor = allAssessors?.find(o => o.id == selectedAssessor)
                                                             if (assessor) {
                                                                 setNewAssessors([...newAssessors, assessor]);
-                                                                setSelectedAssessor(undefined);
+                                                                setSelectedAssessor(-1);
                                                             }
                                                         }}
                                                     ><Add /></IconButton>
