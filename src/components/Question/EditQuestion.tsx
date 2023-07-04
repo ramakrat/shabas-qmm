@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Router from 'next/router';
-import type { Filter } from '@prisma/client';
+import type { Filter, Question } from '@prisma/client';
 
 import * as yup from "yup";
 import { Field, Form, Formik } from "formik";
@@ -18,6 +18,7 @@ import { underscoreToTitle } from '~/utils/utils';
 import ChangelogTable from '~/components/Table/ChangelogTable';
 import SelectFilter from '~/components/Question/SelectFilter';
 import PriorityIndicator from './PriorityIndicator';
+import InputList from './InputList';
 
 interface GuideType {
     id?: number;
@@ -147,41 +148,6 @@ const EditQuestion: React.FC<Props> = (props) => {
     const [newReferences, setNewReferences] = React.useState<ReferenceType[]>([{ num: 1, citation: '' }]);
     const [deletedReferences, setDeletedReferences] = React.useState<ReferenceType[]>([]);
 
-    const handleGuideChange = (num: number, newVal: string, existing?: boolean) => {
-        const ref = existing ? existingGuide : newGuide;
-        const newArr = ref.map(o => {
-            if (o.num == num) {
-                return {
-                    ...o,
-                    interview_question: newVal,
-                }
-            }
-            return o;
-        });
-        if (existing) {
-            setExistingGuide(newArr);
-        } else {
-            setNewGuide(newArr);
-        }
-    }
-
-    const handleReferenceChange = (num: number, newVal: string, existing?: boolean) => {
-        const ref = existing ? existingReferences : newReferences;
-        const newArr = ref.map(o => {
-            if (o.num == num) {
-                return {
-                    ...o,
-                    citation: newVal,
-                }
-            }
-            return o;
-        });
-        if (existing) {
-            setExistingReferences(newArr);
-        } else {
-            setNewReferences(newArr);
-        }
-    }
 
     // =========== Submission Management ===========
 
@@ -316,6 +282,8 @@ const EditQuestion: React.FC<Props> = (props) => {
         if (data) {
             // ----------- Question -----------
 
+            let newFormState = questionData;
+
             update.mutate({
                 id: data.id,
                 active: data.active,
@@ -327,8 +295,18 @@ const EditQuestion: React.FC<Props> = (props) => {
                 priority: values.priority,
                 hint: values.hint,
             }, {
-                onSuccess(data) {
-                    compareChanges(data, initialValues().question, `Question: `)
+                onSuccess(success: Question) {
+                    newFormState = {
+                        ...newFormState,
+                        number: success.number,
+                        question: success.question,
+                        pillar: success.pillar,
+                        practiceArea: success.practice_area,
+                        topicArea: success.topic_area,
+                        priority: success.priority,
+                        hint: success.hint,
+                    };
+                    compareChanges(success, initialValues().question, `Question: `)
                 }
             })
 
@@ -363,7 +341,7 @@ const EditQuestion: React.FC<Props> = (props) => {
             }), {
                 onSuccess(data) {
                     const newExistingArray = existingGuide;
-                    const lastNum = existingReferences.length + 1;
+                    const lastNum = existingGuide.length + 1;
                     data.forEach((o, i) => {
                         newExistingArray.push({
                             id: o.id,
@@ -459,6 +437,19 @@ const EditQuestion: React.FC<Props> = (props) => {
                     criteria_5: values.criteria5,
                 }, {
                     onSuccess(success) {
+                        newFormState = {
+                            ...newFormState,
+                            rating: success.id,
+                            criteria1: success.criteria_1,
+                            progression1: success.progression_statement_1,
+                            criteria2: success.criteria_2,
+                            progression2: success.progression_statement_2,
+                            criteria3: success.criteria_3,
+                            progression3: success.progression_statement_3,
+                            criteria4: success.criteria_4,
+                            progression4: success.progression_statement_4,
+                            criteria5: success.criteria_5,
+                        };
                         compareChanges(success, initialValues().ratings, `Ratings: `);
                     }
                 });
@@ -477,10 +468,19 @@ const EditQuestion: React.FC<Props> = (props) => {
                     criteria_5: values.criteria5,
                 }, {
                     onSuccess(success) {
-                        setQuestionData({
-                            ...questionData,
+                        newFormState = {
+                            ...newFormState,
                             rating: success.id,
-                        });
+                            criteria1: success.criteria_1,
+                            progression1: success.progression_statement_1,
+                            criteria2: success.criteria_2,
+                            progression2: success.progression_statement_2,
+                            criteria3: success.criteria_3,
+                            progression3: success.progression_statement_3,
+                            criteria4: success.criteria_4,
+                            progression4: success.progression_statement_4,
+                            criteria5: success.criteria_5,
+                        };
                     }
                 });
             }
@@ -497,6 +497,14 @@ const EditQuestion: React.FC<Props> = (props) => {
                     question_id: data.id,
                 }, {
                     onSuccess(success) {
+                        newFormState = {
+                            ...newFormState,
+                            sme: data.id,
+                            smeFirstName: data.first_name,
+                            smeLastName: data.last_name,
+                            smePhone: data.mobile_phone,
+                            smeEmail: data.email,
+                        }
                         compareChanges(success, initialValues().sme, `SME: `)
                     }
                 })
@@ -509,11 +517,18 @@ const EditQuestion: React.FC<Props> = (props) => {
                     question_id: data.id,
                 }, {
                     onSuccess(data) {
-                        setQuestionData({ ...questionData, sme: data.id })
+                        newFormState = {
+                            ...newFormState,
+                            sme: data.id,
+                            smeFirstName: data.first_name,
+                            smeLastName: data.last_name,
+                            smePhone: data.mobile_phone,
+                            smeEmail: data.email,
+                        }
                     }
                 })
             }
-
+            setQuestionData(newFormState)
         }
     }
 
@@ -698,197 +713,29 @@ const EditQuestion: React.FC<Props> = (props) => {
                                         <div>
                                             <div className='widget-header'>Interview Guide</div>
                                             <div className='widget-body'>
-                                                {existingGuide.map((o, i) => {
-                                                    return (
-                                                        <div key={i} className='input-row'>
-                                                            <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
-                                                            <MuiTextField
-                                                                placeholder='Guide...' size='small'
-                                                                value={o.interview_question}
-                                                                onChange={(event) => handleGuideChange(o.num, event.target.value, true)}
-                                                            />
-                                                            <IconButton
-                                                                color='default'
-                                                                onClick={() => {
-                                                                    const newDeleted = deletedGuides;
-                                                                    newDeleted.push(o);
-                                                                    setDeletedGuides(newDeleted);
-
-                                                                    let count = 0;
-                                                                    const newExisting: GuideType[] = []
-                                                                    existingGuide.map(x => {
-                                                                        if (x.id != o.id) {
-                                                                            count++;
-                                                                            newExisting.push({
-                                                                                ...x,
-                                                                                num: count,
-                                                                            })
-                                                                        }
-                                                                    });
-                                                                    setExistingGuide(newExisting);
-
-                                                                    const newNew: GuideType[] = []
-                                                                    newGuide.map(x => {
-                                                                        count++;
-                                                                        newNew.push({
-                                                                            ...x,
-                                                                            num: count,
-                                                                        })
-                                                                    });
-                                                                    setNewGuide(newNew);
-                                                                }}
-                                                            ><Delete /></IconButton>
-                                                        </div>
-                                                    )
-                                                })}
-                                                {newGuide.map((o, i) => {
-                                                    if (i == newGuide.length - 1)
-                                                        return (
-                                                            <div key={i} className='input-row'>
-                                                                <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
-                                                                <MuiTextField
-                                                                    placeholder='Guide...' size='small'
-                                                                    value={o.interview_question}
-                                                                    onChange={(event) => handleGuideChange(o.num, event.target.value)}
-                                                                />
-                                                                <IconButton
-                                                                    onClick={() => {
-                                                                        const last = newGuide[newGuide.length - 1];
-                                                                        if (last) setNewGuide([...newGuide, { num: last.num + 1, interview_question: '' }])
-                                                                    }}
-                                                                ><Add /></IconButton>
-                                                            </div>
-                                                        )
-                                                    return (
-                                                        <div key={i} className='input-row'>
-                                                            <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
-                                                            <MuiTextField
-                                                                placeholder='Guide...' size='small'
-                                                                value={o.interview_question}
-                                                                onChange={(event) => handleGuideChange(o.num, event.target.value)}
-                                                            />
-                                                            <IconButton
-                                                                color='default'
-                                                                onClick={() => {
-                                                                    if (newGuide[0]) {
-                                                                        let newIndex = (newGuide[0]?.num) - 1;
-                                                                        const removed: GuideType[] = [];
-                                                                        newGuide.forEach(d => {
-                                                                            if (d.num != o.num) {
-                                                                                newIndex++;
-                                                                                removed.push({
-                                                                                    ...d,
-                                                                                    num: newIndex,
-                                                                                })
-                                                                            }
-                                                                            return;
-
-                                                                        });
-                                                                        setNewGuide(removed);
-                                                                    }
-                                                                }}
-                                                            ><Delete /></IconButton>
-                                                        </div>
-                                                    )
-                                                })}
+                                                <InputList
+                                                    existingObjects={existingGuide}
+                                                    setExistingObjects={setExistingGuide}
+                                                    newObjects={newGuide}
+                                                    setNewObjects={setNewGuide}
+                                                    deletedObjects={deletedGuides}
+                                                    setDeletedObjects={setDeletedGuides}
+                                                    property='interview_question'
+                                                />
                                             </div>
                                         </div>
                                         <div>
                                             <div className='widget-header'>References</div>
                                             <div className='widget-body'>
-                                                {existingReferences.map((o, i) => {
-                                                    return (
-                                                        <div key={i} className='input-row'>
-                                                            <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
-                                                            <MuiTextField
-                                                                placeholder='Reference...' size='small'
-                                                                value={o.citation}
-                                                                onChange={(event) => handleReferenceChange(o.num, event.target.value, true)}
-                                                            />
-                                                            <IconButton
-                                                                color='default'
-                                                                onClick={() => {
-                                                                    const newDeleted = deletedReferences;
-                                                                    newDeleted.push(o);
-                                                                    setDeletedReferences(newDeleted);
-
-                                                                    let count = 0;
-                                                                    const newExisting: ReferenceType[] = []
-                                                                    existingReferences.map(x => {
-                                                                        if (x.id != o.id) {
-                                                                            count++;
-                                                                            newExisting.push({
-                                                                                ...x,
-                                                                                num: count,
-                                                                            })
-                                                                        }
-                                                                    });
-                                                                    setExistingReferences(newExisting);
-
-                                                                    const newNew: ReferenceType[] = []
-                                                                    newReferences.map(x => {
-                                                                        count++;
-                                                                        newNew.push({
-                                                                            ...x,
-                                                                            num: count,
-                                                                        })
-                                                                    });
-                                                                    setNewReferences(newNew);
-                                                                }}
-                                                            ><Delete /></IconButton>
-                                                        </div>
-                                                    )
-                                                })}
-                                                {newReferences.map((o, i) => {
-                                                    if (i == newReferences.length - 1)
-                                                        return (
-                                                            <div key={i} className='input-row'>
-                                                                <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
-                                                                <MuiTextField
-                                                                    placeholder='Reference...' size='small'
-                                                                    value={o.citation}
-                                                                    onChange={(event) => handleReferenceChange(o.num, event.target.value)}
-                                                                />
-                                                                <IconButton
-                                                                    onClick={() => {
-                                                                        const last = newReferences[newReferences.length - 1];
-                                                                        if (last) setNewReferences([...newReferences, { num: last.num + 1, citation: '' }])
-                                                                    }}
-                                                                ><Add /></IconButton>
-                                                            </div>
-                                                        )
-                                                    return (
-                                                        <div key={i} className='input-row'>
-                                                            <Typography style={{ paddingRight: 10 }}>{o.num}.</Typography>
-                                                            <MuiTextField
-                                                                placeholder='Reference...' size='small'
-                                                                value={o.citation}
-                                                                onChange={(event) => handleReferenceChange(o.num, event.target.value)}
-                                                            />
-                                                            <IconButton
-                                                                color='default'
-                                                                onClick={() => {
-                                                                    if (newReferences[0]) {
-                                                                        let newIndex = (newReferences[0]?.num) - 1;
-                                                                        const removed: ReferenceType[] = [];
-                                                                        newReferences.forEach(d => {
-                                                                            if (d.num != o.num) {
-                                                                                newIndex++;
-                                                                                removed.push({
-                                                                                    ...d,
-                                                                                    num: newIndex,
-                                                                                })
-                                                                            }
-                                                                            return;
-
-                                                                        });
-                                                                        setNewReferences(removed);
-                                                                    }
-                                                                }}
-                                                            ><Delete /></IconButton>
-                                                        </div>
-                                                    )
-                                                })}
+                                                <InputList
+                                                    existingObjects={existingReferences}
+                                                    setExistingObjects={setExistingReferences}
+                                                    newObjects={newReferences}
+                                                    setNewObjects={setNewReferences}
+                                                    deletedObjects={deletedReferences}
+                                                    setDeletedObjects={setDeletedReferences}
+                                                    property='citation'
+                                                />
                                             </div>
                                         </div>
                                         <div>
