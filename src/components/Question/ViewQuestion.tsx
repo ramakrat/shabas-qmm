@@ -108,19 +108,24 @@ const ViewQuestion: React.FC<Props> = (props) => {
                 topicArea: data.topic_area,
                 priority: data.priority,
                 hint: data.hint,
+
+                criteria1: ratingData?.criteria_1 ?? '',
+                progression1: ratingData?.progression_statement_1 ?? '',
+                criteria2: ratingData?.criteria_2 ?? '',
+                progression2: ratingData?.progression_statement_2 ?? '',
+                criteria3: ratingData?.criteria_3 ?? '',
+                progression3: ratingData?.progression_statement_3 ?? '',
+                criteria4: ratingData?.criteria_4 ?? '',
+                progression4: ratingData?.progression_statement_4 ?? '',
+                criteria5: ratingData?.criteria_5 ?? '',
+
+                sme: data.sme?.id ?? '',
+                smeFirstName: data.sme?.first_name ?? '',
+                smeLastName: data.sme?.last_name ?? '',
+                smeEmail: data.sme?.email ?? '',
+                smePhone: data.sme?.mobile_phone ?? '',
             }
 
-
-            if (data.smes[0]) {
-                newQuestionData = {
-                    ...newQuestionData,
-                    sme: data.smes[0].id,
-                    smeFirstName: data.smes[0].first_name,
-                    smeLastName: data.smes[0].last_name,
-                    smeEmail: data.smes[0].email,
-                    smePhone: data.smes[0].mobile_phone,
-                }
-            }
 
             if (data.references) {
                 let count = 0;
@@ -145,21 +150,6 @@ const ViewQuestion: React.FC<Props> = (props) => {
                     }
                 });
                 setExistingGuide(existingArray);
-            }
-        }
-
-        if (ratingData) {
-            newQuestionData = {
-                ...newQuestionData,
-                criteria1: ratingData.criteria_1 ?? '',
-                progression1: ratingData.progression_statement_1 ?? '',
-                criteria2: ratingData.criteria_1 ?? '',
-                progression2: ratingData.progression_statement_2 ?? '',
-                criteria3: ratingData.criteria_1 ?? '',
-                progression3: ratingData.progression_statement_3 ?? '',
-                criteria4: ratingData.criteria_1 ?? '',
-                progression4: ratingData.progression_statement_4 ?? '',
-                criteria5: ratingData.criteria_1 ?? '',
             }
         }
 
