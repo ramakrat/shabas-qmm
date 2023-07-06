@@ -63,6 +63,67 @@ interface Props {
     userId: number;
 }
 
+export interface AnswersTableData {
+    user: string;
+    rating: string;
+    rationale: string;
+    notes: string;
+}
+
+export const answersColumns: TableColumn[] = [{
+    type: 'user',
+    displayValue: 'Assessor',
+}, {
+    type: 'rating',
+    displayValue: 'Rating',
+}, {
+    type: 'rationale',
+    displayValue: 'Rationale',
+}, {
+    type: 'notes',
+    displayValue: 'Notes',
+}];
+
+export const leadAnswersColumns: TableColumn[] = [{
+    type: 'user',
+    displayValue: 'Assessor',
+}, {
+    type: 'rating',
+    displayValue: 'Consensus Rating',
+}, {
+    type: 'rationale',
+    displayValue: 'Rationale',
+}, {
+    type: 'notes',
+    displayValue: 'Improvement Suggestions',
+}];
+
+export const oversightAnswersColumns: TableColumn[] = [{
+    type: 'user',
+    displayValue: 'Assessor',
+}, {
+    type: 'rating',
+    displayValue: 'Oversight Rating',
+}, {
+    type: 'notes',
+    displayValue: 'OversightComments',
+}];
+
+export const convertAnswersTableData = (data?: any[]) => {
+    if (data) {
+        const newData: AnswersTableData[] = [];
+        data.forEach(obj => {
+            newData.push({
+                user: obj.user.first_name + ' ' + obj.user.last_name,
+                rating: obj.rating ?? '',
+                rationale: obj.rationale ?? '',
+                notes: obj.notes ?? '',
+            })
+        })
+        return newData;
+    }
+}
+
 const AssessmentForm: React.FC<Props> = (props) => {
 
     const { assessment, status, userId } = props;
@@ -160,40 +221,7 @@ const AssessmentForm: React.FC<Props> = (props) => {
 
     const changelog = api.changelog.getAllByAnswer.useQuery(answer?.id).data;
 
-    interface TableData {
-        user: string;
-        rating: string;
-        rationale: string;
-        notes: string;
-    }
-
-    const columns: TableColumn[] = [{
-        type: 'user',
-        displayValue: 'Assessor',
-    }, {
-        type: 'rating',
-        displayValue: 'Rating',
-    }, {
-        type: 'rationale',
-        displayValue: 'Rationale',
-    }, {
-        type: 'notes',
-        displayValue: 'Notes',
-    }];
-    const convertTableData = (data?: any[]) => {
-        if (data) {
-            const newData: TableData[] = [];
-            data.forEach(obj => {
-                newData.push({
-                    user: obj.user.first_name + ' ' + obj.user.last_name,
-                    rating: obj.rating ?? '',
-                    rationale: obj.rationale ?? '',
-                    notes: obj.notes ?? '',
-                })
-            })
-            return newData;
-        }
-    }
+    
 
     // =========== Submission Management ===========
 
@@ -486,8 +514,8 @@ const AssessmentForm: React.FC<Props> = (props) => {
                                                     <div className='widget-header'>Assessor Answers</div>
                                                     <div className='widget-table'>
                                                         <BrowseTable
-                                                            dataList={convertTableData(selectedAssessmentQuestion.answers.filter(a => a.status == 'ongoing')) ?? []}
-                                                            tableInfoColumns={columns}
+                                                            dataList={convertAnswersTableData(selectedAssessmentQuestion.answers.filter(a => a.status == 'ongoing')) ?? []}
+                                                            tableInfoColumns={answersColumns}
                                                         />
                                                     </div>
                                                 </>}
@@ -495,8 +523,8 @@ const AssessmentForm: React.FC<Props> = (props) => {
                                                     <div className='widget-header'>Lead Assessor Answers</div>
                                                     <div className='widget-table'>
                                                         <BrowseTable
-                                                            dataList={convertTableData(selectedAssessmentQuestion.answers.filter(a => a.status == 'ongoing-review')) ?? []}
-                                                            tableInfoColumns={columns}
+                                                            dataList={convertAnswersTableData(selectedAssessmentQuestion.answers.filter(a => a.status == 'ongoing-review')) ?? []}
+                                                            tableInfoColumns={leadAnswersColumns}
                                                         />
                                                     </div>
                                                 </>}
@@ -504,8 +532,8 @@ const AssessmentForm: React.FC<Props> = (props) => {
                                                     <div className='widget-header'>Oversight Assessor Answers</div>
                                                     <div className='widget-table'>
                                                         <BrowseTable
-                                                            dataList={convertTableData(selectedAssessmentQuestion.answers.filter(a => a.status == 'oversight')) ?? []}
-                                                            tableInfoColumns={columns}
+                                                            dataList={convertAnswersTableData(selectedAssessmentQuestion.answers.filter(a => a.status == 'oversight')) ?? []}
+                                                            tableInfoColumns={oversightAnswersColumns}
                                                         />
                                                     </div>
                                                 </>}

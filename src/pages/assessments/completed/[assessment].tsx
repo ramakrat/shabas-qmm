@@ -15,6 +15,8 @@ import Layout from "~/components/Layout/Layout";
 import ChangelogTable from '~/components/Table/ChangelogTable';
 import QuestionsSidebar from '~/components/Assessment/QuestionsSidebar';
 import PriorityIndicator from "~/components/Question/PriorityIndicator";
+import { convertAnswersTableData, leadAnswersColumns, oversightAnswersColumns, answersColumns } from '~/components/Assessment/AssessmentForm';
+import BrowseTable from '~/components/Table/BrowseTable';
 
 const CompletedAssessment: NextPage = () => {
 
@@ -189,51 +191,52 @@ const CompletedAssessment: NextPage = () => {
                                                     <Typography>Hint:</Typography>
                                                     <Typography>{questionRef?.hint}</Typography>
                                                 </div>
-                                                <div>
-                                                    <Typography>Start Time:</Typography>
-                                                    <Typography>XYZ</Typography>
-                                                </div>
-                                                {ratings &&
-                                                    <div className='widget-body information-list'>
-                                                        <div>
-                                                            <Typography>Level 1:</Typography>
-                                                            <Typography>{ratings.criteria_1}</Typography>
-                                                        </div>
-                                                        <div>
-                                                            <Typography>Progression Statement:</Typography>
-                                                            <Typography>{ratings.progression_statement_1}</Typography>
-                                                        </div>
-                                                        <div>
-                                                            <Typography>Level 2:</Typography>
-                                                            <Typography>{ratings.criteria_2}</Typography>
-                                                        </div>
-                                                        <div>
-                                                            <Typography>Progression Statement:</Typography>
-                                                            <Typography>{ratings.progression_statement_2}</Typography>
-                                                        </div>
-                                                        <div>
-                                                            <Typography>Level 3:</Typography>
-                                                            <Typography>{ratings.criteria_3}</Typography>
-                                                        </div>
-                                                        <div>
-                                                            <Typography>Progression Statement:</Typography>
-                                                            <Typography>{ratings.progression_statement_3}</Typography>
-                                                        </div>
-                                                        <div>
-                                                            <Typography>Level 4:</Typography>
-                                                            <Typography>{ratings.criteria_4}</Typography>
-                                                        </div>
-                                                        <div>
-                                                            <Typography>Progression Statement:</Typography>
-                                                            <Typography>{ratings.progression_statement_4}</Typography>
-                                                        </div>
-                                                        <div>
-                                                            <Typography>Level 5:</Typography>
-                                                            <Typography>{ratings.criteria_5}</Typography>
-                                                        </div>
-                                                    </div>
-                                                }
                                             </div>
+                                            <div className='widget-sub-header'>
+                                                <div className='rating-input'>
+                                                    <Typography>Rating:</Typography>
+                                                </div>
+                                            </div>
+                                            {ratings &&
+                                                <div className='widget-body information-list'>
+                                                    <div>
+                                                        <Typography>Level 1:</Typography>
+                                                        <Typography>{ratings.criteria_1}</Typography>
+                                                    </div>
+                                                    <div>
+                                                        <Typography>Progression Statement:</Typography>
+                                                        <Typography>{ratings.progression_statement_1}</Typography>
+                                                    </div>
+                                                    <div>
+                                                        <Typography>Level 2:</Typography>
+                                                        <Typography>{ratings.criteria_2}</Typography>
+                                                    </div>
+                                                    <div>
+                                                        <Typography>Progression Statement:</Typography>
+                                                        <Typography>{ratings.progression_statement_2}</Typography>
+                                                    </div>
+                                                    <div>
+                                                        <Typography>Level 3:</Typography>
+                                                        <Typography>{ratings.criteria_3}</Typography>
+                                                    </div>
+                                                    <div>
+                                                        <Typography>Progression Statement:</Typography>
+                                                        <Typography>{ratings.progression_statement_3}</Typography>
+                                                    </div>
+                                                    <div>
+                                                        <Typography>Level 4:</Typography>
+                                                        <Typography>{ratings.criteria_4}</Typography>
+                                                    </div>
+                                                    <div>
+                                                        <Typography>Progression Statement:</Typography>
+                                                        <Typography>{ratings.progression_statement_4}</Typography>
+                                                    </div>
+                                                    <div>
+                                                        <Typography>Level 5:</Typography>
+                                                        <Typography>{ratings.criteria_5}</Typography>
+                                                    </div>
+                                                </div>
+                                            }
                                         </Card>
                                     </Grid>
                                     <Grid item xs={6}>
@@ -278,6 +281,31 @@ const CompletedAssessment: NextPage = () => {
                                                         </div>
                                                     )
                                                 })}
+                                            </div>
+                                        </Card>
+                                    </Grid>
+                                    <Grid item xs={12}>
+                                        <Card className='reference'>
+                                            <div className='widget-header'>Assessor Answers</div>
+                                            <div className='widget-table'>
+                                                <BrowseTable
+                                                    dataList={convertAnswersTableData(selectedAssessmentQuestion.answers.filter(a => a.status == 'ongoing')) ?? []}
+                                                    tableInfoColumns={answersColumns}
+                                                />
+                                            </div>
+                                            <div className='widget-header'>Lead Assessor Answers</div>
+                                            <div className='widget-table'>
+                                                <BrowseTable
+                                                    dataList={convertAnswersTableData(selectedAssessmentQuestion.answers.filter(a => a.status == 'ongoing-review')) ?? []}
+                                                    tableInfoColumns={leadAnswersColumns}
+                                                />
+                                            </div>
+                                            <div className='widget-header'>Oversight Assessor Answers</div>
+                                            <div className='widget-table'>
+                                                <BrowseTable
+                                                    dataList={convertAnswersTableData(selectedAssessmentQuestion.answers.filter(a => a.status == 'oversight')) ?? []}
+                                                    tableInfoColumns={oversightAnswersColumns}
+                                                />
                                             </div>
                                         </Card>
                                     </Grid>
