@@ -5,8 +5,8 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { Session } from 'next-auth';
 import { signOut } from 'next-auth/react';
-import { Button, Card, IconButton, Menu, MenuItem } from '@mui/material';
-import { KeyboardArrowDown, Settings } from '@mui/icons-material';
+import { Button, Card, IconButton, Menu, MenuItem, useMediaQuery } from '@mui/material';
+import { KeyboardArrowDown, MenuSharp, Settings } from '@mui/icons-material';
 import { api } from '~/utils/api';
 import { underscoreToTitle } from '~/utils/utils';
 import logo from './logo.png';
@@ -25,111 +25,109 @@ export const Layout: React.FC<Props> = (props) => {
 
     const router = useRouter();
 
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const open = Boolean(anchorEl);
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
+    const [userAnchorEl, setUserAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [menuAnchorEl, setMenuAnchorEl] = React.useState<null | HTMLElement>(null);
+    const userOpen = Boolean(userAnchorEl);
+    const menuOpen = Boolean(menuAnchorEl);
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>, type: string) => {
+        if (type == 'user') setUserAnchorEl(event.currentTarget);
+        if (type == 'menu') setMenuAnchorEl(event.currentTarget);
     };
     const handleClose = () => {
-        setAnchorEl(null);
+        setUserAnchorEl(null);
+        setMenuAnchorEl(null);
     };
     const handleLogout = async () => {
         signOut();
         await router.push(`/api/auth/signin`);
     }
+    const hidden = useMediaQuery('(min-width: 1300px)');
 
     const permitted = session?.user.role && requiredRoles?.includes(session.user.role) && !accessDenied;
 
     // TODO: Make dynamic
     const totals = api.shabas.getAdminDashboardObjectTotals.useQuery(true).data;
 
-    const getRoleNavItems = (role: string) => {
-        if (role == 'ADMIN') {
-            return (<>
-                <Link href={'/clients'} className={'nav-item ' + (active == 'clients' ? 'active' : '')}>
-                    <span className='label'>Clients</span>
-                    <span className='count'>{totals?.clients ?? 0}</span>
-                    <span className='label child-label'>/ Sites</span>
-                    <span className='count'>{totals?.sites ?? 0}</span>
-                </Link>
-                <Link href={'/pocs'} className={'nav-item ' + (active == 'pocs' ? 'active' : '')}>
-                    <span className='label'>POC</span>
-                    <span className='count'>{totals?.pocs ?? 0}</span>
-                </Link>
-                <Link href={'/engagements'} className={'nav-item ' + (active == 'assessments' ? 'active' : '')}>
-                    <span className='label'>Engagements</span>
-                    <span className='count'>{totals?.engagements ?? 0}</span>
-                    <span className='label child-label'>/ Assessments</span>
-                    <span className='count'>{totals?.assessments ?? 0}</span>
-                </Link>
-                <Link href={'/questions'} className={'nav-item ' + (active == 'questions' ? 'active' : '')}>
-                    <span className='label'>Question</span>
-                    <span className='count'>{totals?.questions ?? 0}</span>
-                </Link>
-                <Link href={'/assessments/completed'} className={'nav-item ' + (active == 'completed-assessments' ? 'active' : '')}>
-                    <span className='label'>
-                        Completed Assessments
-                    </span>
-                </Link>
-            </>)
-        }
-        if (role == 'ASSESSOR') {
-            return (
-                <Link href={'/assessments/ongoing'} className={'nav-item ' + (active == 'ongoing-assessments' ? 'active' : '')}>
-                    <span className='label'>
-                        Ongoing Assessments
-                    </span>
-                </Link>
-            )
-        }
-        if (role == 'LEAD_ASSESSOR') {
-            return (<>
-                <Link href={'/assessments/ongoing'} className={'nav-item ' + (active == 'ongoing-assessments' ? 'active' : '')}>
-                    <span className='label'>
-                        Ongoing Assessments
-                    </span>
-                </Link>
-                <Link href={'/assessments/ongoing-review'} className={'nav-item ' + (active == 'review-ongoing-assessments' ? 'active' : '')}>
-                    <span className='label'>
-                        Review Ongoing Assessments
-                    </span>
-                </Link>
-                <Link href={'/assessments/oversight-review'} className={'nav-item ' + (active == 'review-oversight-assessments' ? 'active' : '')}>
-                    <span className='label'>
-                        Review Oversight Assessments
-                    </span>
-                </Link>
-            </>)
-        }
-        if (role == 'OVERSIGHT_ASSESSOR') {
-            return (
-                <Link href={'/assessments/oversight'} className={'nav-item ' + (active == 'oversight-assessments' ? 'active' : '')}>
-                    <span className='label'>
-                        Oversight Assessments
-                    </span>
-                </Link>
-            )
-        }
-        return undefined;
+    const roleNavItems = {
+        ADMIN: [{
+            link: '/clients',
+            active: active == 'clients',
+            label: <>
+                <span className='label'>Clients</span>
+                <span className='count'>{totals?.clients ?? 0}</span>
+                <span className='label child-label'>/ Sites</span>
+                <span className='count'>{totals?.sites ?? 0}</span>
+            </>,
+        }, {
+            link: '/pocs',
+            active: active == 'pocs',
+            label: <>
+                <span className='label'>POC</span>
+                <span className='count'>{totals?.pocs ?? 0}</span>
+            </>,
+        }, {
+            link: '/engagements',
+            active: active == 'assessments',
+            label: <>
+                <span className='label'>Engagements</span>
+                <span className='count'>{totals?.engagements ?? 0}</span>
+                <span className='label child-label'>/ Assessments</span>
+                <span className='count'>{totals?.assessments ?? 0}</span>
+            </>,
+        }, {
+            link: '/questions',
+            active: active == 'questions',
+            label: <>
+                <span className='label'>Question</span>
+                <span className='count'>{totals?.questions ?? 0}</span>
+            </>,
+        }, {
+            link: '/assessments/completed',
+            active: active == 'completed-assessments',
+            label: <span className='label'>Completed Assessments</span>,
+        }],
+        ASSESSOR: [{
+            link: '/assessments/ongoing',
+            active: active == 'ongoing-assessments',
+            label: <span className='label'>Ongoing Assessments</span>,
+        }],
+        LEAD_ASSESSOR: [{
+            link: '/assessments/ongoing',
+            active: active == 'ongoing-assessments',
+            label: <span className='label'>Ongoing Assessments</span>,
+        }, {
+            link: '/assessments/ongoing-review',
+            active: active == 'review-ongoing-assessments',
+            label: <span className='label'>Review Ongoing Assessments</span>,
+        }, {
+            link: '/assessments/oversight-review',
+            active: active == 'review-oversight-assessments',
+            label: <span className='label'>Review Oversight Assessments</span>,
+        }],
+        OVERSIGHT_ASSESSOR: [{
+            link: '/assessments/oversight',
+            active: active == 'oversight-assessments',
+            label: <span className='label'>Oversight Assessments</span>,
+        }],
     }
 
     const userFeatures = () => {
         return (<>
             {session?.user.name ?
-                <Button onClick={handleClick} className='user-button'>
+                <Button onClick={(event) => handleClick(event, 'user')} className='user-button'>
                     <div className='user-name'>
                         <span>{session.user.name}</span>
                         <span>{underscoreToTitle(session.user.role)}</span>
                     </div>
                     <KeyboardArrowDown />
                 </Button> :
-                <IconButton onClick={handleClick}>
+                <IconButton onClick={(event) => handleClick(event, 'user')}>
                     <Settings />
                 </IconButton>
             }
             <Menu
-                anchorEl={anchorEl}
-                open={open}
+                anchorEl={userAnchorEl}
+                open={userOpen}
                 onClose={handleClose}
             >
                 <MenuItem onClick={handleClose}>Reset Password</MenuItem>
@@ -138,6 +136,7 @@ export const Layout: React.FC<Props> = (props) => {
             </Menu>
         </>)
     }
+
 
     return (
         <div>
@@ -152,13 +151,51 @@ export const Layout: React.FC<Props> = (props) => {
                         <Link href='/' className='logo'>
                             <Image src={logo} alt={'Shabas Logo'} height={45} />
                         </Link>
-                        {session ? getRoleNavItems(session.user.role) :
-                            <Button onClick={() => router.push(`/api/auth/signin`)} className='user-button'>
-                                Login
-                            </Button>
+                        {(session && hidden) &&
+                            roleNavItems[session.user.role].map((o, i) => {
+                                return (
+                                    <Link key={i} href={o.link} className={'nav-item ' + (o.active ? 'active' : '')}>
+                                        {o.label}
+                                    </Link>
+                                )
+                            })
                         }
                     </div>
-                    {session && userFeatures()}
+                    {session ?
+                        <div className='quick-access'>
+                            {userFeatures()}
+                            {!hidden &&
+                                <div>
+                                    <IconButton onClick={(event) => handleClick(event, 'menu')}>
+                                        <MenuSharp />
+                                    </IconButton>
+                                    <Menu
+                                        id="basic-menu"
+                                        anchorEl={menuAnchorEl}
+                                        open={menuOpen}
+                                        onClose={handleClose}
+                                        MenuListProps={{
+                                            'aria-labelledby': 'basic-button',
+                                        }}
+                                    >
+                                        {roleNavItems[session.user.role].map((o, i) => {
+                                            return (
+                                                <MenuItem key={i}>
+                                                    <Link href={o.link} className={'nav-item ' + (o.active ? 'active' : '')}>
+                                                        {o.label}
+                                                    </Link>
+                                                </MenuItem>
+                                            )
+                                        })}
+                                    </Menu>
+                                </div>
+                            }
+                        </div>
+                        :
+                        <Button onClick={() => router.push(`/api/auth/signin`)} className='user-button'>
+                            Login
+                        </Button>
+                    }
                 </div>
                 {!session &&
                     <div className='page-message'>
