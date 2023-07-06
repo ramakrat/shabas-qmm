@@ -339,7 +339,8 @@ const EditAssessment: React.FC<Props> = (props) => {
                             filter_id: o.filterSelection != -1 ? o.filterSelection : undefined,
                         }
                     }), {
-                        onSuccess() {
+                        onSuccess(success) {
+                            setNewQuestions([])
                         }
                     })
 
@@ -375,6 +376,7 @@ const EditAssessment: React.FC<Props> = (props) => {
                             assessment_id: data.id,
                         }, {
                             onSuccess() {
+                                setSelectedAssessor(-1);
                             }
                         })
                     }
@@ -385,6 +387,9 @@ const EditAssessment: React.FC<Props> = (props) => {
 
         }
     }
+
+    console.log(existingQuestions)
+    console.log(newQuestions)
 
     return (<>
         <Formik
