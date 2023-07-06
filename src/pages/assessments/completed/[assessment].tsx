@@ -286,21 +286,28 @@ const CompletedAssessment: NextPage = () => {
                                     </Grid>
                                     <Grid item xs={12}>
                                         <Card className='reference'>
-                                            <div className='widget-header'>Assessor Answers</div>
+                                            <div className='widget-header'>Assessor Answers (Ongoing)</div>
                                             <div className='widget-table'>
                                                 <BrowseTable
                                                     dataList={convertAnswersTableData(selectedAssessmentQuestion.answers.filter(a => a.status == 'ongoing')) ?? []}
                                                     tableInfoColumns={answersColumns}
                                                 />
                                             </div>
-                                            <div className='widget-header'>Lead Assessor Answers</div>
+                                            <div className='widget-header'>Lead Assessor Answers (Ongoing Review)</div>
                                             <div className='widget-table'>
                                                 <BrowseTable
                                                     dataList={convertAnswersTableData(selectedAssessmentQuestion.answers.filter(a => a.status == 'ongoing-review')) ?? []}
                                                     tableInfoColumns={leadAnswersColumns}
                                                 />
                                             </div>
-                                            <div className='widget-header'>Oversight Assessor Answers</div>
+                                            <div className='widget-header'>Oversight Assessor Answers (Oversight)</div>
+                                            <div className='widget-table'>
+                                                <BrowseTable
+                                                    dataList={convertAnswersTableData(selectedAssessmentQuestion.answers.filter(a => a.status == 'oversight')) ?? []}
+                                                    tableInfoColumns={oversightAnswersColumns}
+                                                />
+                                            </div>
+                                            <div className='widget-header'>Oversight Assessor Answers (Oversight Review)</div>
                                             <div className='widget-table'>
                                                 <BrowseTable
                                                     dataList={convertAnswersTableData(selectedAssessmentQuestion.answers.filter(a => a.status == 'oversight')) ?? []}
