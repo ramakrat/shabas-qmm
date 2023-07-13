@@ -7,11 +7,8 @@ import { Field, Form, Formik } from "formik";
 import TextField from '~/components/Form/TextField';
 import Select from '~/components/Form/Select';
 
-import {
-    Button, Card, Grid, IconButton, MenuItem,
-    TextField as MuiTextField, Typography
-} from '@mui/material';
-import { Add, Delete } from '@mui/icons-material';
+import { Button, Card, Grid, MenuItem, Typography } from '@mui/material';
+import { Delete } from '@mui/icons-material';
 
 import { api } from "~/utils/api";
 import { underscoreToTitle } from '~/utils/utils';
@@ -658,6 +655,14 @@ const EditQuestion: React.FC<Props> = (props) => {
                                                     placeholder='Criteria...'
                                                     component={TextField}
                                                 />
+                                                {filterSelection &&
+                                                    <Button
+                                                        color='error'
+                                                        variant='contained'
+                                                    >
+                                                        Delete Filter Ratings
+                                                    </Button>
+                                                }
                                             </div>
                                         }
                                     </Card>
