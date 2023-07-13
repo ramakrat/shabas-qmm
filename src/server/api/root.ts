@@ -1,5 +1,4 @@
 import { createTRPCRouter } from "~/server/api/trpc";
-import { exampleRouter } from "~/server/api/routers/example";
 import { assessmentRouter } from "./routers/assessment";
 import { clientRouter } from "./routers/client";
 import { siteRouter } from "./routers/site";
@@ -15,6 +14,9 @@ import { answerRouter } from "./routers/answer";
 import { pocRouter } from "./routers/poc";
 import { engagementpocRouter } from "./routers/engagementpoc";
 import { changelogRouter } from "./routers/changelog";
+import { userRouter } from "./routers/user";
+import { assessmentUserRouter } from "./routers/assessmentuser";
+import { shabasRouter } from "./routers/shabas";
 
 /**
  * This is the primary router for your server.
@@ -22,7 +24,7 @@ import { changelogRouter } from "./routers/changelog";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-    example: exampleRouter,
+    shabas: shabasRouter,
     client: clientRouter,
     site: siteRouter,
     assessment: assessmentRouter,
@@ -38,6 +40,8 @@ export const appRouter = createTRPCRouter({
     poc: pocRouter,
     engagementPoc: engagementpocRouter,
     changelog: changelogRouter,
+    user: userRouter,
+    assessmentUser: assessmentUserRouter,
 });
 
 // export type definition of API

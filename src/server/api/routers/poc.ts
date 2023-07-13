@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 
 const inputType = z.object({
@@ -18,10 +18,10 @@ const inputType = z.object({
 })
 
 export const pocRouter = createTRPCRouter({
-    create: publicProcedure
+    create: protectedProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
-            return ctx.prisma.pOC.create({
+            return ctx.prisma.poc.create({
                 data: {
                     first_name: input.first_name,
                     last_name: input.last_name,
@@ -38,10 +38,10 @@ export const pocRouter = createTRPCRouter({
                 }
             })
         }),
-    update: publicProcedure
+    update: protectedProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
-            return ctx.prisma.pOC.update({
+            return ctx.prisma.poc.update({
                 where: { id: input.id },
                 data: {
                     first_name: input.first_name,
@@ -59,34 +59,34 @@ export const pocRouter = createTRPCRouter({
                 },
             });
         }),
-    getById: publicProcedure
+    getById: protectedProcedure
         .input(z.object({ id: z.number() }))
         .query(({ input, ctx }) => {
-            return ctx.prisma.pOC.findUnique({
+            return ctx.prisma.poc.findUnique({
                 where: { id: input.id }
             });
         }),
-    getAllInclude: publicProcedure
+    getAllInclude: protectedProcedure
         .input(z.boolean())
         .query(({ ctx }) => {
-            return ctx.prisma.pOC.findMany({
+            return ctx.prisma.poc.findMany({
                 include: {
-                    Client: true,
+                    client: true,
                     engagement: true,
                     site: true,
                     user: true,
                 }
             });
         }),
-    getAll: publicProcedure
+    getAll: protectedProcedure
         .input(z.boolean())
         .query(({ ctx }) => {
-            return ctx.prisma.pOC.findMany();
+            return ctx.prisma.poc.findMany();
         }),
-    getAllClient: publicProcedure
+    getAllClient: protectedProcedure
         .input(z.boolean().optional())
         .query(({ ctx }) => {
-            return ctx.prisma.pOC.findMany({
+            return ctx.prisma.poc.findMany({
                 where: {
                     NOT: [
                         {
@@ -96,9 +96,18 @@ export const pocRouter = createTRPCRouter({
                 }
             });
         }),
-    getTotalCount: publicProcedure
+    getTotalCount: protectedProcedure
         .input(z.boolean().optional())
         .query(({ ctx }) => {
-            return ctx.prisma.pOC.count();
+            return ctx.prisma.poc.count();
+        }),
+    deleteById: protectedProcedure
+        .input(z.number())
+        .mutation(({ input, ctx }) => {
+            return ctx.prisma.poc.delete({
+                where: {
+                    id: input
+                }
+            });
         }),
 });

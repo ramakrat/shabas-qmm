@@ -1,7 +1,8 @@
 import { Prisma } from "@prisma/client";
+import { isEmptyArray } from "formik";
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 
 const inputType = z.object({
@@ -12,7 +13,7 @@ const inputType = z.object({
 })
 
 export const assessmentQuestionRouter = createTRPCRouter({
-    create: publicProcedure
+    create: protectedProcedure
         .input(inputType)
         .mutation(async ({ input, ctx }) => {
             return await ctx.prisma.assessmentQuestion.create({
@@ -25,20 +26,70 @@ export const assessmentQuestionRouter = createTRPCRouter({
                 }
             })
         }),
-    createArray: publicProcedure
+    createArray: protectedProcedure
         .input(z.array(inputType))
         .mutation(async ({ input, ctx }) => {
+            const returnData = [];
             for (const o of input) {
                 try {
-                    await ctx.prisma.assessmentQuestion.create({
+                    const data = await ctx.prisma.assessmentQuestion.create({
                         data: {
                             question_id: o.question_id,
                             assessment_id: o.assessment_id,
                             filter_id: o.filter_id,
                             created_by: '',
                             updated_by: '',
+                        },
+                        include: {
+                            filter: true,
+                            question: {
+                                include: {
+                                    ratings: {
+                                        include: {
+                                            filter: true,
+                                        }
+                                    }
+                                }
+                            }
                         }
                     })
+                    returnData.push(data);
+                } catch (e) {
+                    if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                        // The .code property can be accessed in a type-safe manner
+                        if (e.code === 'P2002') {
+                            console.log(
+                                'There is a unique constraint violation.'
+                            )
+                        }
+                    }
+                    throw e;
+                }
+            }
+            return returnData;
+        }),
+    update: protectedProcedure
+        .input(inputType)
+        .mutation(({ input, ctx }) => {
+            return ctx.prisma.assessmentQuestion.update({
+                where: { id: input.id },
+                data: {
+                    question_id: input.question_id,
+                    assessment_id: input.assessment_id,
+                    filter_id: input.filter_id,
+                    updated_at: new Date(),
+                    updated_by: '',
+                }
+            })
+        }),
+    deleteArray: protectedProcedure
+        .input(z.array(z.number().optional()))
+        .mutation(async ({ input, ctx }) => {
+            for (const o of input) {
+                try {
+                    await ctx.prisma.assessmentQuestion.delete({
+                        where: { id: o },
+                    });
                 } catch (e) {
                     if (e instanceof Prisma.PrismaClientKnownRequestError) {
                         // The .code property can be accessed in a type-safe manner
@@ -53,35 +104,21 @@ export const assessmentQuestionRouter = createTRPCRouter({
             }
             return undefined;
         }),
-    update: publicProcedure
-        .input(inputType)
-        .mutation(({ input, ctx }) => {
-            return ctx.prisma.assessmentQuestion.update({
-                where: { id: input.id },
-                data: {
-                    question_id: input.question_id,
-                    assessment_id: input.assessment_id,
-                    filter_id: input.filter_id,
-                    updated_at: new Date(),
-                    updated_by: '',
-                }
-            })
-        }),
-    getById: publicProcedure
+    getById: protectedProcedure
         .input(z.object({ id: z.number() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.assessmentQuestion.findUnique({
                 where: { id: input.id }
             });
         }),
-    getByQuestionUsage: publicProcedure
+    getByQuestionUsage: protectedProcedure
         .input(z.number())
         .query(({ input, ctx }) => {
             return ctx.prisma.assessmentQuestion.findFirst({
                 where: { question_id: input }
             });
         }),
-    getAll: publicProcedure
+    getAll: protectedProcedure
         .query(({ ctx }) => {
             return ctx.prisma.assessmentQuestion.findMany();
         }),

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import React from 'react';
 import { type FieldProps, getIn } from 'formik';
 import { TextField as MuiTextField, type TextFieldProps } from '@mui/material';

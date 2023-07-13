@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 
 const inputType = z.object({
@@ -11,7 +11,7 @@ const inputType = z.object({
 })
 
 export const filterRouter = createTRPCRouter({
-    create: publicProcedure
+    create: protectedProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
             return ctx.prisma.filter.create({
@@ -24,7 +24,7 @@ export const filterRouter = createTRPCRouter({
                 }
             });
         }),
-    update: publicProcedure
+    update: protectedProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
             return ctx.prisma.filter.update({
@@ -38,35 +38,35 @@ export const filterRouter = createTRPCRouter({
                 }
             });
         }),
-    getAllBusinessTypes: publicProcedure
+    getAllBusinessTypes: protectedProcedure
         .input(z.boolean())
         .query(({ ctx }) => {
             return ctx.prisma.filter.findMany({
                 where: { type: 'business-type' }
             });
         }),
-    getAllManufacturingTypes: publicProcedure
+    getAllManufacturingTypes: protectedProcedure
         .input(z.boolean())
         .query(({ ctx }) => {
             return ctx.prisma.filter.findMany({
                 where: { type: 'manufacturing-type' }
             });
         }),
-    getAllSiteSpecific: publicProcedure
+    getAllSiteSpecific: protectedProcedure
         .input(z.boolean())
         .query(({ ctx }) => {
             return ctx.prisma.filter.findMany({
                 where: { type: 'site-specific' }
             });
         }),
-    getById: publicProcedure
+    getById: protectedProcedure
         .input(z.object({ id: z.number() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.filter.findUnique({
                 where: { id: input.id }
             });
         }),
-    getAll: publicProcedure
+    getAll: protectedProcedure
         .query(({ ctx }) => {
             return ctx.prisma.filter.findMany();
         }),

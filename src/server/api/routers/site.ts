@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 
 const inputType = z.object({
@@ -16,7 +16,7 @@ const inputType = z.object({
 })
 
 export const siteRouter = createTRPCRouter({
-    create: publicProcedure
+    create: protectedProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
             return ctx.prisma.site.create({
@@ -34,7 +34,7 @@ export const siteRouter = createTRPCRouter({
                 }
             });
         }),
-    update: publicProcedure
+    update: protectedProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
             return ctx.prisma.site.update({
@@ -53,15 +53,15 @@ export const siteRouter = createTRPCRouter({
                 },
             });
         }),
-    getById: publicProcedure
+    getById: protectedProcedure
         .input(z.object({ id: z.number() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.site.findUnique({
                 where: { id: input.id }
             });
         }),
-    getAll: publicProcedure
-        .input(z.boolean())
+    getAll: protectedProcedure
+        .input(z.boolean().optional())
         .query(async ({ ctx }) => {
             return await ctx.prisma.site.findMany({
                 include: {
@@ -69,7 +69,7 @@ export const siteRouter = createTRPCRouter({
                 }
             });
         }),
-    getAllNonFilter: publicProcedure
+    getAllNonFilter: protectedProcedure
         .input(z.boolean())
         .query(async ({ ctx }) => {
             return await ctx.prisma.site.findMany({
@@ -77,13 +77,22 @@ export const siteRouter = createTRPCRouter({
                     client: true
                 },
                 where: {
-                    Filter: null
+                    filter: null
                 }
             });
         }),
-    getTotalCount: publicProcedure
+    getTotalCount: protectedProcedure
         .input(z.boolean().optional())
         .query(({ ctx }) => {
             return ctx.prisma.site.count();
+        }),
+    deleteById: protectedProcedure
+        .input(z.number())
+        .mutation(({ input, ctx }) => {
+            return ctx.prisma.site.delete({
+                where: {
+                    id: input
+                }
+            });
         }),
 });

@@ -14,7 +14,11 @@ datasource db {
 // ================ OBJECT MODELS ================
 
 model Client {
-    id Int @id @default(autoincrement())
+    id         Int      @id @default(autoincrement())
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now())
+    created_by String
+    updated_by String
 
     name           String
     street_address String
@@ -22,22 +26,21 @@ model Client {
     state          String
     country        String
     zip_code       String
-    description    String
+    description    String @db.MediumText
 
-    Site       Site[]
-    Engagement Engagement[]
-    POC        POC[]
+    sites       Site[]
+    pocs        Poc[]
+    engagements Engagement[]
+}
 
+model Site {
+    id         Int      @id @default(autoincrement())
     created_at DateTime @default(now())
     updated_at DateTime @default(now())
     created_by String
     updated_by String
-}
 
-model Site {
-    id Int @id @default(autoincrement())
-
-    description    String
+    description    String @db.MediumText
     name           String
     street_address String
     city           String
@@ -46,24 +49,21 @@ model Site {
     zip_code       String
 
     client_id Int
-    client    Client @relation(fields: [client_id], references: [id])
+    client    Client  @relation(fields: [client_id], references: [id], onDelete: Restrict)
+    filter    Filter?
 
-    POC             POC[]
-    Rating          Rating[]
-    Interview_Guide InterviewGuide[]
-    Assessment      Assessment[]
-
-    created_at DateTime @default(now())
-    updated_at DateTime @default(now())
-    created_by String
-    updated_by String
-    Filter     Filter?
+    pocs             Poc[]
+    assessments      Assessment[]
 
     @@index([client_id])
 }
 
-model POC {
-    id Int @id @default(autoincrement())
+model Poc {
+    id         Int      @id @default(autoincrement())
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now())
+    created_by String
+    updated_by String
 
     first_name   String
     last_name    String
@@ -72,24 +72,17 @@ model POC {
     work_phone   String
     email        String
 
-    user_id Int?
-    user    User? @relation(fields: [user_id], references: [id])
-
-    client_id Int?
-    Client    Client? @relation(fields: [client_id], references: [id])
-
+    user_id       Int?
+    user          User?       @relation(fields: [user_id], references: [id], onDelete: Restrict)
+    client_id     Int?
+    client        Client?     @relation(fields: [client_id], references: [id], onDelete: Restrict)
     engagement_id Int?
-    engagement    Engagement? @relation(fields: [engagement_id], references: [id])
+    engagement    Engagement? @relation(fields: [engagement_id], references: [id], onDelete: Restrict)
+    site_id       Int?
+    site          Site?       @relation(fields: [site_id], references: [id], onDelete: Restrict)
 
-    site_id Int?
-    site    Site? @relation(fields: [site_id], references: [id])
-
-    created_at    DateTime        @default(now())
-    updated_at    DateTime        @default(now())
-    created_by    String
-    updated_by    String
-    EngagementPOC EngagementPOC[]
-    Assessment    Assessment[]
+    engagement_pocs EngagementPoc[]
+    assessments     Assessment[]
 
     @@index([user_id])
     @@index([client_id])
@@ -98,10 +91,14 @@ model POC {
 }
 
 model Question {
-    id Int @id @default(autoincrement())
+    id         Int      @id @default(autoincrement())
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now())
+    created_by String
+    updated_by String
 
     active        Boolean
-    number        String
+    number        String  @unique
     question      String
     pillar        String
     practice_area String
@@ -109,187 +106,169 @@ model Question {
     hint          String
     priority      String
 
-    Reference          Reference[]
-    SME                SME[]
-    InterviewGuide     InterviewGuide[]
-    AssessmentQuestion AssessmentQuestion[]
-    Rating             Rating[]
+    smeId Int?
+    sme   Sme?
 
-    created_at DateTime    @default(now())
-    updated_at DateTime    @default(now())
-    created_by String
-    updated_by String
-    Changelog  Changelog[]
+    ratings              Rating[]
+    references           Reference[]
+    interview_guides     InterviewGuide[]
+    assessment_questions AssessmentQuestion[]
+    changelogs           Changelog[]
 }
 
 model Rating {
-    id Int @id @default(autoincrement())
-
-    active                Boolean
-    level_number          String
-    criteria              String
-    progression_statement String
-
-    question_id Int
-    question    Question @relation(fields: [question_id], references: [id])
-
-    site_id Int?
-    site    Site? @relation(fields: [site_id], references: [id])
-
-    filter_id Int?
-    filter    Filter? @relation(fields: [filter_id], references: [id])
-
+    id         Int      @id @default(autoincrement())
     created_at DateTime @default(now())
     updated_at DateTime @default(now())
     created_by String
     updated_by String
 
+    criteria_1              String
+    progression_statement_1 String
+    criteria_2              String
+    progression_statement_2 String
+    criteria_3              String
+    progression_statement_3 String
+    criteria_4              String
+    progression_statement_4 String
+    criteria_5              String
+
+    question_id Int
+    question    Question @relation(fields: [question_id], references: [id], onDelete: Cascade)
+    filter_id   Int?
+    filter      Filter?  @relation(fields: [filter_id], references: [id], onDelete: Restrict)
+
     @@index([question_id])
-    @@index([site_id])
     @@index([filter_id])
 }
 
 model Reference {
-    id Int @id @default(autoincrement())
-
-    citation String
-
-    question_id Int
-    question    Question @relation(fields: [question_id], references: [id])
-
+    id         Int      @id @default(autoincrement())
     created_at DateTime @default(now())
     updated_at DateTime @default(now())
     created_by String
     updated_by String
 
+    citation String
+
+    question_id Int
+    question    Question @relation(fields: [question_id], references: [id], onDelete: Cascade)
+
     @@index([question_id])
 }
 
-model SME {
-    id Int @id @default(autoincrement())
+model Sme {
+    id         Int      @id @default(autoincrement())
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now())
+    created_by String
+    updated_by String
 
     first_name   String
     last_name    String
     mobile_phone String
     email        String
 
-    question_id Int
-    question    Question @relation(fields: [question_id], references: [id])
-
-    created_at DateTime @default(now())
-    updated_at DateTime @default(now())
-    created_by String
-    updated_by String
+    question_id Int      @unique
+    question    Question @relation(fields: [question_id], references: [id], onDelete: Cascade)
 
     @@index([question_id])
 }
 
 model InterviewGuide {
-    id Int @id @default(autoincrement())
+    id         Int      @id @default(autoincrement())
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now())
+    created_by String
+    updated_by String
 
     active             Boolean
     interview_question String
 
     question_id Int
-    question    Question @relation(fields: [question_id], references: [id])
-
-    site_id Int
-    site    Site @relation(fields: [site_id], references: [id])
-
-    filter_id Int
-    filter    Filter @relation(fields: [filter_id], references: [id])
-
-    created_at DateTime @default(now())
-    updated_at DateTime @default(now())
-    created_by String
-    updated_by String
+    question    Question @relation(fields: [question_id], references: [id], onDelete: Cascade)
+    filter_id   Int
+    filter      Filter   @relation(fields: [filter_id], references: [id], onDelete: Restrict)
 
     @@index([question_id])
-    @@index([site_id])
     @@index([filter_id])
 }
 
 model Filter {
-    id Int @id @default(autoincrement())
+    id         Int      @id @default(autoincrement())
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now())
+    created_by String
+    updated_by String
 
     type String
     name String
 
     site_id Int?  @unique
-    site    Site? @relation(fields: [site_id], references: [id])
+    site    Site? @relation(fields: [site_id], references: [id], onDelete: Restrict)
 
-    Rating             Rating[]
-    Interview_Guide    InterviewGuide[]
-    AssessmentQuestion AssessmentQuestion[]
-
-    created_at DateTime @default(now())
-    updated_at DateTime @default(now())
-    created_by String
-    updated_by String
+    ratings              Rating[]
+    interview_guides     InterviewGuide[]
+    assessment_questions AssessmentQuestion[]
 
     @@index([site_id])
 }
 
 model Engagement {
-    id Int @id @default(autoincrement())
+    id         Int      @id @default(autoincrement())
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now())
+    created_by String
+    updated_by String
 
-    description String
+    description String   @db.MediumText
     status      String
     start_date  DateTime
     end_date    DateTime
 
     client_id Int
-    client    Client @relation(fields: [client_id], references: [id])
+    client    Client @relation(fields: [client_id], references: [id], onDelete: Restrict)
 
-    POC        POC[]
-    Assessment Assessment[]
-
-    created_at    DateTime        @default(now())
-    updated_at    DateTime        @default(now())
-    created_by    String
-    updated_by    String
-    EngagementPOC EngagementPOC[]
+    pocs            Poc[]
+    assessments     Assessment[]
+    engagement_pocs EngagementPoc[]
 
     @@index([client_id])
 }
 
-model EngagementPOC {
+model EngagementPoc {
     id Int @id @default(autoincrement())
 
     engagement_id Int
-    engagement    Engagement @relation(fields: [engagement_id], references: [id])
-
-    poc_id Int
-    poc    POC @relation(fields: [poc_id], references: [id])
+    engagement    Engagement @relation(fields: [engagement_id], references: [id], onDelete: Restrict)
+    poc_id        Int
+    poc           Poc        @relation(fields: [poc_id], references: [id], onDelete: Restrict)
 
     @@index([poc_id])
     @@index([engagement_id])
 }
 
 model Assessment {
-    id Int @id @default(autoincrement())
-
-    description String
-    status      String
-    start_date  DateTime
-    end_date    DateTime
-
-    poc_id Int?
-    poc    POC? @relation(fields: [poc_id], references: [id])
-
-    site_id Int
-    site    Site @relation(fields: [site_id], references: [id])
-
-    engagement_id Int
-    engagement    Engagement @relation(fields: [engagement_id], references: [id])
-
-    AssessmentUser     AssessmentUser[]
-    AssessmentQuestion AssessmentQuestion[]
-
+    id         Int      @id @default(autoincrement())
     created_at DateTime @default(now())
     updated_at DateTime @default(now())
     created_by String
     updated_by String
+
+    description String   @db.MediumText
+    status      String
+    start_date  DateTime
+    end_date    DateTime
+
+    poc_id        Int?
+    poc           Poc?       @relation(fields: [poc_id], references: [id], onDelete: Restrict)
+    site_id       Int
+    site          Site       @relation(fields: [site_id], references: [id], onDelete: Restrict)
+    engagement_id Int
+    engagement    Engagement @relation(fields: [engagement_id], references: [id], onDelete: Restrict)
+
+    assessment_users     AssessmentUser[]
+    assessment_questions AssessmentQuestion[]
 
     @@index([site_id])
     @@index([engagement_id])
@@ -299,40 +278,29 @@ model Assessment {
 model AssessmentUser {
     id Int @id @default(autoincrement())
 
-    user_id Int
-    user    User @relation(fields: [user_id], references: [id])
-
+    user_id       Int
+    user          User       @relation(fields: [user_id], references: [id], onDelete: Restrict)
     assessment_id Int
-    assessment    Assessment @relation(fields: [assessment_id], references: [id])
-
-    created_at DateTime @default(now())
-    updated_at DateTime @default(now())
-    created_by String
-    updated_by String
+    assessment    Assessment @relation(fields: [assessment_id], references: [id], onDelete: Cascade)
 
     @@index([user_id])
     @@index([assessment_id])
 }
 
 model AssessmentQuestion {
-    id Int @id @default(autoincrement())
-
-    question_id Int
-    question    Question @relation(fields: [question_id], references: [id])
-
-    assessment_id Int
-    assessment    Assessment @relation(fields: [assessment_id], references: [id])
-
-    filter_id Int?
-    filter    Filter? @relation(fields: [filter_id], references: [id])
-
-    answer Answer?
-
-    created_at DateTime    @default(now())
-    updated_at DateTime    @default(now())
+    id         Int      @id @default(autoincrement())
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now())
     created_by String
     updated_by String
-    Changelog  Changelog[]
+
+    question_id   Int
+    question      Question   @relation(fields: [question_id], references: [id], onDelete: Cascade)
+    assessment_id Int
+    assessment    Assessment @relation(fields: [assessment_id], references: [id], onDelete: Cascade)
+    filter_id     Int?
+    filter        Filter?    @relation(fields: [filter_id], references: [id], onDelete: Restrict)
+    answers       Answer[]
 
     @@index([question_id])
     @@index([assessment_id])
@@ -340,55 +308,28 @@ model AssessmentQuestion {
 }
 
 model Answer {
-    id Int @id @default(autoincrement())
-
-    assessor_rating      String?
-    assessor_explanation String?
-    assessor_evidence    String?
-
-    consensus_rating      String?
-    consensus_explanation String?
-    consensus_evidence    String?
-
-    oversight_concurrence String?
-    oversight_explanation String?
-    oversight_evidence    String?
-
-    client_concurrence String?
-    client_explanation String?
-    client_evidence    String?
-
-    user_id Int?
-    user    User? @relation(fields: [user_id], references: [id])
-
-    assessment_question_id Int                @unique
-    assessment_question    AssessmentQuestion @relation(fields: [assessment_question_id], references: [id])
-
-    StartTime StartTime[]
-
+    id         Int      @id @default(autoincrement())
     created_at DateTime @default(now())
     updated_at DateTime @default(now())
     created_by String
     updated_by String
+
+    status    String?
+    rating    String?
+    rationale String?
+    notes     String? // Ongoing Notes, Review Improvement Suggestions, Oversight Comments
+
+    user_id                Int?
+    user                   User?              @relation(fields: [user_id], references: [id])
+    assessment_question_id Int
+    assessment_question    AssessmentQuestion @relation(fields: [assessment_question_id], references: [id])
+
+    start_time DateTime?
+
+    changelogs Changelog[]
 
     @@index([user_id])
     @@index([assessment_question_id])
-}
-
-model StartTime {
-    id Int @id @default(autoincrement())
-
-    time DateTime
-
-    answer_id Int
-    answer    Answer @relation(fields: [answer_id], references: [id])
-
-    created_at DateTime @default(now())
-    updated_at DateTime @default(now())
-    created_by String
-    updated_by String
-
-    @@index([answer_id])
 }
 
 model Changelog {
@@ -404,73 +345,100 @@ model Changelog {
     question_id Int?
     question    Question? @relation(fields: [question_id], references: [id])
 
-    assessment_question_id Int?
-    assessment_question    AssessmentQuestion? @relation(fields: [assessment_question_id], references: [id])
+    answer_id Int?
+    answer    Answer? @relation(fields: [answer_id], references: [id])
 
     @@index([question_id])
-    @@index([assessment_question_id])
+    @@index([answer_id])
 }
 
 // ================ AUTHENTICATION ================
 
 // Necessary for Next auth
 
-model Account {
-    id                String  @id @default(cuid())
-    userId            String
-    type              String
-    provider          String
-    providerAccountId String
-    refresh_token     String? // @db.Text
-    access_token      String? // @db.Text
-    expires_at        Int?
-    token_type        String?
-    scope             String?
-    id_token          String? // @db.Text
-    session_state     String?
-    user_id           Int
-    user              User    @relation(fields: [user_id], references: [id])
+// model Account {
+//     id                String  @id @default(cuid())
+//     userId            String
+//     type              String
+//     provider          String
+//     providerAccountId String
+//     refresh_token     String? // @db.Text
+//     access_token      String? // @db.Text
+//     expires_at        Int?
+//     token_type        String?
+//     scope             String?
+//     id_token          String? // @db.Text
+//     session_state     String?
+//     user_id           Int
+//     user              User    @relation(fields: [user_id], references: [id])
 
-    @@unique([provider, providerAccountId])
-    @@index([user_id])
+//     @@unique([provider, providerAccountId])
+//     @@index([user_id])
+// }
+
+// model Session {
+//     id           String   @id @default(cuid())
+//     sessionToken String   @unique
+//     userId       String
+//     expires      DateTime
+//     user_id      Int
+//     user         User     @relation(fields: [user_id], references: [id])
+
+//     @@index([user_id])
+// }
+
+// model User {
+//     id              Int              @id @default(autoincrement())
+//     first_name      String
+//     last_name       String
+//     email           String           @unique
+//     emailVerified   DateTime
+//     accounts        Account[]
+//     sessions        Session[]
+//     POC             Poc[]
+//     Assessment_User AssessmentUser[]
+//     Answer          Answer[]
+
+//     role Role @default(ASSESSOR)
+// }
+
+// model VerificationToken {
+//     identifier String
+//     token      String   @unique
+//     expires    DateTime
+
+//     @@unique([identifier, token])
+// }
+
+enum Role {
+    ADMIN
+    ASSESSOR
+    LEAD_ASSESSOR
+    OVERSIGHT_ASSESSOR
+}
+
+model User {
+    id         Int      @id @default(autoincrement())
+    first_name String
+    last_name  String
+    email      String   @unique
+    password   String
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @updatedAt
+
+    role             Role             @default(ASSESSOR)
+    sessions         Session[]
+    pocs             Poc[]
+    assessment_users AssessmentUser[]
+    answers          Answer[]
 }
 
 model Session {
     id           String   @id @default(cuid())
     sessionToken String   @unique
-    userId       String
+    userId       Int
     expires      DateTime
-    user_id      Int
-    user         User     @relation(fields: [user_id], references: [id])
+    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-    @@index([user_id])
-}
-
-model User {
-    id              Int              @id @default(autoincrement())
-    first_name      String
-    last_name       String
-    email           String           @unique
-    emailVerified   DateTime
-    accounts        Account[]
-    sessions        Session[]
-    POC             POC[]
-    Assessment_User AssessmentUser[]
-    Answer          Answer[]
-
-    role Role @default(ASSESSOR)
-}
-
-model VerificationToken {
-    identifier String
-    token      String   @unique
-    expires    DateTime
-
-    @@unique([identifier, token])
-}
-
-enum Role {
-    ADMIN
-    LEAD_ASSESSOR
-    ASSESSOR
+    @@index([userId])
 }

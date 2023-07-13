@@ -1,7 +1,6 @@
-import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 
 const inputType = z.object({
@@ -10,11 +9,11 @@ const inputType = z.object({
     former_value: z.string().optional(),
     new_value: z.string().optional(),
     question_id: z.number().optional(),
-    assessment_question_id: z.number().optional(),
+    answer_id: z.number().optional(),
 })
 
 export const changelogRouter = createTRPCRouter({
-    create: publicProcedure
+    create: protectedProcedure
         .input(inputType)
         .mutation(async ({ input, ctx }) => {
             return await ctx.prisma.changelog.create({
@@ -23,12 +22,13 @@ export const changelogRouter = createTRPCRouter({
                     former_value: input.former_value,
                     new_value: input.new_value,
                     question_id: input.question_id,
-                    assessment_question_id: input.assessment_question_id,
+                    answer_id: input.answer_id,
+                    updated_at: new Date(),
                     updated_by: '',
                 }
             })
         }),
-    update: publicProcedure
+    update: protectedProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
             return ctx.prisma.changelog.update({
@@ -38,48 +38,50 @@ export const changelogRouter = createTRPCRouter({
                     former_value: input.former_value,
                     new_value: input.new_value,
                     question_id: input.question_id,
-                    assessment_question_id: input.assessment_question_id,
+                    answer_id: input.answer_id,
                     updated_at: new Date(),
                     updated_by: '',
                 }
             })
         }),
-    getById: publicProcedure
+    getById: protectedProcedure
         .input(z.object({ id: z.number() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.changelog.findUnique({
                 where: { id: input.id }
             });
         }),
-    getAllByQuestion: publicProcedure
-        .input(z.number().optional())
+    getAllByQuestion: protectedProcedure
+        .input(z.object({ questionId: z.number().optional(), refetch: z.number().optional() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.changelog.findMany({
                 orderBy: { updated_at: 'asc' },
-                where: { question_id: input }
+                where: { question_id: input.questionId }
             });
         }),
-    getAllByAssessment: publicProcedure
+    getAllByAssessment: protectedProcedure
         .input(z.number().optional())
         .query(({ input, ctx }) => {
             return ctx.prisma.changelog.findMany({
                 orderBy: { updated_at: 'asc' },
                 where: {
-                    assessment_question: {
-                        assessment_id: input
+                    answer: {
+                        assessment_question: {
+                            assessment_id: input
+                        }
                     }
                 }
             });
         }),
-    getAllByAssessmentQuestion: publicProcedure
+    getAllByAnswer: protectedProcedure
         .input(z.number().optional())
         .query(({ input, ctx }) => {
             return ctx.prisma.changelog.findMany({
                 orderBy: { updated_at: 'asc' },
-                where: { assessment_question_id: input }
+                where: { answer_id: input }
             });
         }),
-    getAll: publicProcedure
+    getAll: protectedProcedure
         .query(({ ctx }) => {
             return ctx.prisma.changelog.findMany();
         }),

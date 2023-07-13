@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 
 const inputType = z.object({
@@ -10,20 +10,20 @@ const inputType = z.object({
 })
 
 export const engagementpocRouter = createTRPCRouter({
-    create: publicProcedure
+    create: protectedProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
-            return ctx.prisma.engagementPOC.create({
+            return ctx.prisma.engagementPoc.create({
                 data: {
                     engagement_id: input.engagement_id,
                     poc_id: input.poc_id,
                 }
             })
         }),
-    update: publicProcedure
+    update: protectedProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
-            return ctx.prisma.engagementPOC.update({
+            return ctx.prisma.engagementPoc.update({
                 where: { id: input.id },
                 data: {
                     engagement_id: input.engagement_id,
@@ -31,25 +31,25 @@ export const engagementpocRouter = createTRPCRouter({
                 },
             })
         }),
-    getById: publicProcedure
+    getById: protectedProcedure
         .input(z.object({ id: z.number() }))
         .query(({ input, ctx }) => {
-            return ctx.prisma.engagementPOC.findUnique({
+            return ctx.prisma.engagementPoc.findUnique({
                 where: { id: input.id }
             });
         }),
-    getByEngagementId: publicProcedure
+    getByEngagementId: protectedProcedure
         .input(z.object({ id: z.number().optional() }))
         .query(({ input, ctx }) => {
-            return ctx.prisma.engagementPOC.findMany({
+            return ctx.prisma.engagementPoc.findMany({
                 where: { engagement_id: input.id },
                 include: {
                     poc: true
                 }
             });
         }),
-    getAll: publicProcedure
+    getAll: protectedProcedure
         .query(({ ctx }) => {
-            return ctx.prisma.engagementPOC.findMany();
+            return ctx.prisma.engagementPoc.findMany();
         }),
 });

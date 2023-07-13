@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 
 const inputType = z.object({
@@ -14,7 +14,7 @@ const inputType = z.object({
 })
 
 export const interviewGuideRouter = createTRPCRouter({
-    create: publicProcedure
+    create: protectedProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
             return ctx.prisma.interviewGuide.create({
@@ -22,30 +22,30 @@ export const interviewGuideRouter = createTRPCRouter({
                     active: input.active,
                     interview_question: input.interview_question,
                     question_id: input.question_id,
-                    site_id: input.site_id,
                     filter_id: input.filter_id,
                     created_by: '',
                     updated_by: '',
                 }
             })
         }),
-    createArray: publicProcedure
+    createArray: protectedProcedure
         .input(z.array(inputType))
         .mutation(async ({ input, ctx }) => {
+            const returnData = [];
             for (const o of input) {
                 if (o.interview_question != '') {
                     try {
-                        await ctx.prisma.interviewGuide.create({
+                        const data = await ctx.prisma.interviewGuide.create({
                             data: {
                                 active: true,
                                 interview_question: o.interview_question,
                                 question_id: o.question_id,
-                                site_id: o.site_id,
                                 filter_id: o.filter_id,
                                 created_by: '',
                                 updated_by: '',
                             }
                         })
+                        returnData.push(data);
                     } catch (e) {
                         if (e instanceof Prisma.PrismaClientKnownRequestError) {
                             // The .code property can be accessed in a type-safe manner
@@ -59,9 +59,9 @@ export const interviewGuideRouter = createTRPCRouter({
                     }
                 }
             }
-            return undefined;
+            return returnData;
         }),
-    update: publicProcedure
+    update: protectedProcedure
         .input(inputType)
         .mutation(async ({ input, ctx }) => {
             return await ctx.prisma.interviewGuide.update({
@@ -70,14 +70,13 @@ export const interviewGuideRouter = createTRPCRouter({
                     active: input.active,
                     interview_question: input.interview_question,
                     question_id: input.question_id,
-                    site_id: input.site_id,
                     filter_id: input.filter_id,
                     updated_at: new Date(),
                     updated_by: '',
                 },
             })
         }),
-    updateArray: publicProcedure
+    updateArray: protectedProcedure
         .input(z.array(inputType))
         .mutation(async ({ input, ctx }) => {
             for (const o of input) {
@@ -89,7 +88,6 @@ export const interviewGuideRouter = createTRPCRouter({
                                 active: true,
                                 interview_question: o.interview_question,
                                 question_id: o.question_id,
-                                site_id: o.site_id,
                                 filter_id: o.filter_id,
                                 created_by: '',
                                 updated_by: '',
@@ -110,14 +108,14 @@ export const interviewGuideRouter = createTRPCRouter({
             }
             return undefined;
         }),
-    delete: publicProcedure
+    delete: protectedProcedure
         .input(z.number())
         .mutation(({ input, ctx }) => {
             return ctx.prisma.interviewGuide.delete({
                 where: { id: input },
             });
         }),
-    deleteArray: publicProcedure
+    deleteArray: protectedProcedure
         .input(z.array(z.number().optional()))
         .mutation(async ({ input, ctx }) => {
             for (const o of input) {
@@ -139,7 +137,7 @@ export const interviewGuideRouter = createTRPCRouter({
             }
             return undefined;
         }),
-    getByQuestionId: publicProcedure
+    getByQuestionId: protectedProcedure
         .input(z.object({ id: z.number().optional() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.interviewGuide.findMany({
@@ -147,14 +145,14 @@ export const interviewGuideRouter = createTRPCRouter({
                 orderBy: { id: 'asc' }
             });
         }),
-    getById: publicProcedure
+    getById: protectedProcedure
         .input(z.object({ id: z.number().optional() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.interviewGuide.findUnique({
                 where: { id: input.id }
             });
         }),
-    getAll: publicProcedure
+    getAll: protectedProcedure
         .query(({ ctx }) => {
             return ctx.prisma.interviewGuide.findMany();
         }),

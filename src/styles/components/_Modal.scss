@@ -1,5 +1,6 @@
 .create-modal {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     width: 100%;
@@ -10,17 +11,23 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 10px;
+        padding: 20px;
+    }
+
+    &.no-form {
+        .MuiCard-root {
+            max-height: 100%;
+            width: breakpoints(sm);
+        }
     }
 
     form {
         max-height: 100%;
-        max-width: breakpoints(sm);
-        width: 100%;
+        width: breakpoints(sm);
     }
 
     &.lg form {
-        max-width: breakpoints(lg);
+        width: breakpoints(md);
     }
 
     .MuiCard-root {
@@ -34,12 +41,12 @@
         max-height: calc(100vh - 200px);
         overflow-y: auto;
 
+        border-top: 1px solid palette(greyscale, 400);
+        border-bottom: 1px solid palette(greyscale, 400);
+
         .MuiFormControl-root {
             margin: 10px;
         }
-
-        border-top: 1px solid palette(greyscale, 400);
-        border-bottom: 1px solid palette(greyscale, 400);
 
         .form-info {
             display: flex;
@@ -57,7 +64,6 @@
 
         .switch {
             margin: 0px !important;
-
         }
 
         .MuiStepper-root {
@@ -71,40 +77,79 @@
             border: 1px solid palette(greyscale, 400);
         }
 
-        .questions-bank {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            padding-top: 15px;
 
-            .MuiTypography-root {
-                padding: 10px;
-                cursor: pointer;
-            }
-
-            .active {
-                color: white;
-                font-weight: 600;
-                background-color: palette(primary, main);
-                border-radius: 3px;
-            }
-        }
     }
 
     .MuiCardActions-root {
         display: flex;
         justify-content: space-between;
         padding-top: 15px;
+
+        >div {
+            button {
+                &:not(:last-child) {
+                    margin-right: 10px;
+                }
+            }
+        }
     }
 
-    .error-text {
-        font-family: 'Roboto' !important;
-        font-size: 0.8rem;
-        font-style: italic;
-        text-align: center;
-        color: palette(error, main);
-        width: 100%;
-        padding: 10px 0px 20px;
+
+}
+
+
+.confirm-modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+
+
+}
+
+.questions-bank {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    &>div {
+        padding: 15px;
     }
+
+    .MuiTypography-root {
+        padding: 10px;
+        cursor: pointer;
+    }
+
+    .active {
+        color: white;
+        font-weight: 600;
+        background-color: palette(primary, main);
+        border-radius: 3px;
+    }
+}
+
+.error-text {
+    display: flex;
+    flex-direction: column;
+    font-family: 'Roboto' !important;
+    font-size: 0.8rem;
+    line-height: 1.66;
+    text-align: left;
+    color: palette(error, main);
+    width: 100%;
+    padding: 3px 0px 3px 14px;
+}
+
+.error-message {
+    display: flex;
+    flex-direction: column;
+    font-family: 'Roboto' !important;
+    font-size: 0.8rem;
+    line-height: 1.66;
+    text-align: left;
+    color: palette(error, main);
+    width: 100%;
+    padding: 15px 0px 5px;
 }

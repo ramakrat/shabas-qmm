@@ -1,32 +1,101 @@
 import * as React from 'react';
 import { type NextPage } from "next";
 import { useRouter } from 'next/router';
-import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+import { Question } from '@prisma/client';
 
-import { Button, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import { Button } from '@mui/material';
+import { Add } from '@mui/icons-material';
 
 import { api } from "~/utils/api";
 import Layout from "~/components/Layout/Layout";
-import { Add, Edit } from '@mui/icons-material';
-import QuestionModal from '~/components/Modals/QuestionModal';
+import QuestionModal from '~/components/Modal/Objects/QuestionModal';
+import BrowseTable, { TableColumn } from '~/components/Table/BrowseTable';
+
+interface TableData {
+    number: string;
+    question: string;
+    pillar: React.ReactNode;
+    practiceArea: string;
+    topicArea: string;
+    active: React.ReactNode;
+    // inUse: string;
+    onClick: any;
+}
+
+const columns: TableColumn[] = [{
+    type: 'number',
+    displayValue: 'Number',
+    align: 'center',
+}, {
+    type: 'question',
+    displayValue: 'Question',
+    align: 'left',
+}, {
+    type: 'pillar',
+    displayValue: 'pillar',
+    align: 'left',
+}, {
+    type: 'practiceArea',
+    displayValue: 'Practice Area',
+    align: 'left',
+}, {
+    type: 'topicArea',
+    displayValue: 'Topic Area',
+    align: 'left',
+}, {
+    type: 'active',
+    displayValue: 'Active',
+    format: 'jsx-element',
+    align: 'left',
+    // }, {
+    //     type: 'inUse',
+    //     displayValue: 'In Use',
+    //     align: 'left',
+}];
 
 const Question: NextPage = () => {
 
-    const { push } = useRouter();
+    const { data: session } = useSession();
+
     const [questionModal, setQuestionModal] = React.useState<boolean>(false);
 
-    // const setQuestionSelection = (question: number) => {
-    //     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    //     push(`/questions/${question}`);
-    // }
+    const { push } = useRouter();
+
+
 
     // =========== Retrieve Form Context ===========
 
     const questions = api.question.getAll.useQuery(true).data;
 
+    const convertTableData = (data?: Question[]) => {
+        if (data) {
+            const newData: TableData[] = [];
+            data.forEach(obj => {
+                const activeSignature = (
+                    <div className='question-status'>
+                        <div className={'active-signature ' + (obj.active ? 'active' : '')} />
+                        {obj.active ? 'Active' : 'Inactive'}
+                    </div>
+                )
+                newData.push({
+                    number: obj.number,
+                    question: obj.question,
+                    pillar: obj.pillar,
+                    practiceArea: obj.practice_area,
+                    topicArea: obj.topic_area,
+                    active: activeSignature,
+                    // inUse: 'True',
+                    onClick: () => { void push(`/questions/${obj.id}`) },
+                })
+            })
+            return newData;
+        }
+    }
+
     return (
         <>
-            <Layout active='questions'>
+            <Layout active='questions' session={session} requiredRoles={['ADMIN']}>
                 <div className='dashboard'>
                     <div className='browse-add'>
                         <Button
@@ -37,60 +106,15 @@ const Question: NextPage = () => {
                             New Question
                         </Button>
                     </div>
-                    <TableContainer component={Paper}>
-                        <Table sx={{ minWidth: 650 }} size="small">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell align="center">Number</TableCell>
-                                    <TableCell align="left">Question</TableCell>
-                                    <TableCell align="left">Pillar</TableCell>
-                                    <TableCell align="left">Practice Area</TableCell>
-                                    <TableCell align="left">Topic Area</TableCell>
-                                    <TableCell align="left">Active</TableCell>
-                                    <TableCell align="center">Edit</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {questions && questions.map((data, i) => {
-                                    return (
-                                        <TableRow
-                                            key={i}
-                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                        >
-                                            <TableCell align="center">
-                                                {data.number}
-                                            </TableCell>
-                                            <TableCell align="left">
-                                                {data.question}
-                                            </TableCell>
-                                            <TableCell align="left">
-                                                {data.pillar}
-                                            </TableCell>
-                                            <TableCell align="left">
-                                                {data.practice_area}
-                                            </TableCell>
-                                            <TableCell align="left">
-                                                {data.topic_area}
-                                            </TableCell>
-                                            <TableCell align="left">
-                                                {data.active ? 'True' : 'False'}
-                                            </TableCell>
-                                            <TableCell align="center">
-                                                <Link href={`/questions/${data.id}`}>
-                                                    <IconButton>
-                                                        <Edit fontSize='small' />
-                                                    </IconButton>
-                                                </Link>
-                                            </TableCell>
-                                        </TableRow>
-                                    )
-                                })}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                    <BrowseTable
+                        dataList={convertTableData(questions) ?? []}
+                        tableInfoColumns={columns}
+                    />
                 </div>
             </Layout>
-            <QuestionModal open={questionModal} setOpen={setQuestionModal} />
+            {questionModal &&
+                <QuestionModal open={questionModal} setOpen={setQuestionModal} />
+            }
         </>
     );
 };

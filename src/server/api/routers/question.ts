@@ -1,6 +1,7 @@
+import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 const inputType = z.object({
     id: z.number().optional(),
@@ -15,25 +16,38 @@ const inputType = z.object({
 })
 
 export const questionRouter = createTRPCRouter({
-    create: publicProcedure
+    create: protectedProcedure
         .input(inputType)
-        .mutation(({ input, ctx }) => {
-            return ctx.prisma.question.create({
-                data: {
-                    active: input.active,
-                    number: input.number,
-                    question: input.question,
-                    pillar: input.pillar,
-                    practice_area: input.practice_area,
-                    topic_area: input.topic_area,
-                    hint: input.hint,
-                    priority: input.priority,
-                    created_by: '',
-                    updated_by: '',
+        .mutation(async ({ input, ctx }) => {
+            try {
+                const created = ctx.prisma.question.create({
+                    data: {
+                        active: input.active,
+                        number: input.number,
+                        question: input.question,
+                        pillar: input.pillar,
+                        practice_area: input.practice_area,
+                        topic_area: input.topic_area,
+                        hint: input.hint,
+                        priority: input.priority,
+                        created_by: '',
+                        updated_by: '',
+                    }
+                })
+                return created;
+            } catch (e) {
+                if (e instanceof Prisma.PrismaClientKnownRequestError) {
+                    // The .code property can be accessed in a type-safe manner
+                    if (e.code === 'P2002') {
+                        console.log(
+                            'There is a unique constraint violation.'
+                        )
+                    }
                 }
-            })
+                throw e;
+            }
         }),
-    update: publicProcedure
+    update: protectedProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
             return ctx.prisma.question.update({
@@ -52,7 +66,7 @@ export const questionRouter = createTRPCRouter({
                 }
             })
         }),
-    active: publicProcedure
+    active: protectedProcedure
         .input(z.object({
             id: z.number(),
             active: z.boolean(),
@@ -67,20 +81,34 @@ export const questionRouter = createTRPCRouter({
                 }
             })
         }),
-    getById: publicProcedure
+    getById: protectedProcedure
         .input(z.object({ id: z.number() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.question.findUnique({
                 where: { id: input.id }
             });
         }),
-    getAllActiveInclude: publicProcedure
-        .input(z.boolean())
+    getByIdInclude: protectedProcedure
+        .input(z.object({ id: z.number() }))
+        .query(({ input, ctx }) => {
+            return ctx.prisma.question.findUnique({
+                where: { id: input.id },
+                include: {
+                    interview_guides: true,
+                    references: true,
+                    sme: true,
+                    ratings: true,
+                    changelogs: true,
+                }
+            });
+        }),
+    getAllActiveInclude: protectedProcedure
+        .input(z.boolean().optional())
         .query(({ ctx }) => {
             return ctx.prisma.question.findMany({
                 where: { active: true },
                 include: {
-                    Rating: {
+                    ratings: {
                         include: {
                             filter: true
                         }
@@ -88,9 +116,23 @@ export const questionRouter = createTRPCRouter({
                 }
             });
         }),
-    getAll: publicProcedure
+    getAll: protectedProcedure
         .input(z.boolean())
         .query(({ ctx }) => {
             return ctx.prisma.question.findMany();
+        }),
+    getTotalCount: protectedProcedure
+        .input(z.boolean().optional())
+        .query(({ ctx }) => {
+            return ctx.prisma.question.count();
+        }),
+    deleteById: protectedProcedure
+        .input(z.number())
+        .mutation(({ input, ctx }) => {
+            return ctx.prisma.question.delete({
+                where: {
+                    id: input
+                }
+            });
         }),
 });

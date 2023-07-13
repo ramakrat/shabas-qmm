@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure, protectedProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 
 
 const inputType = z.object({
@@ -11,7 +11,7 @@ const inputType = z.object({
 })
 
 export const referenceRouter = createTRPCRouter({
-    create: publicProcedure
+    create: protectedProcedure
         .input(inputType)
         .mutation(async ({ input, ctx }) => {
             return await ctx.prisma.reference.create({
@@ -23,13 +23,14 @@ export const referenceRouter = createTRPCRouter({
                 }
             })
         }),
-    createArray: publicProcedure
+    createArray: protectedProcedure
         .input(z.array(inputType))
         .mutation(async ({ input, ctx }) => {
+            const returnData = [];
             for (const o of input) {
                 if (o.citation != '') {
                     try {
-                        await ctx.prisma.reference.create({
+                        const data = await ctx.prisma.reference.create({
                             data: {
                                 citation: o.citation,
                                 question_id: o.question_id,
@@ -37,6 +38,7 @@ export const referenceRouter = createTRPCRouter({
                                 updated_by: '',
                             }
                         })
+                        returnData.push(data);
                     } catch (e) {
                         if (e instanceof Prisma.PrismaClientKnownRequestError) {
                             // The .code property can be accessed in a type-safe manner
@@ -50,9 +52,9 @@ export const referenceRouter = createTRPCRouter({
                     }
                 }
             }
-            return undefined;
+            return returnData;
         }),
-    update: publicProcedure
+    update: protectedProcedure
         .input(inputType)
         .mutation(({ input, ctx }) => {
             return ctx.prisma.reference.update({
@@ -65,7 +67,7 @@ export const referenceRouter = createTRPCRouter({
                 },
             })
         }),
-    updateArray: publicProcedure
+    updateArray: protectedProcedure
         .input(z.array(inputType))
         .mutation(async ({ input, ctx }) => {
             for (const o of input) {
@@ -95,14 +97,14 @@ export const referenceRouter = createTRPCRouter({
             }
             return undefined;
         }),
-    delete: publicProcedure
+    delete: protectedProcedure
         .input(z.number())
         .mutation(({ input, ctx }) => {
             return ctx.prisma.reference.delete({
                 where: { id: input },
             });
         }),
-    deleteArray: publicProcedure
+    deleteArray: protectedProcedure
         .input(z.array(z.number().optional()))
         .mutation(async ({ input, ctx }) => {
             for (const o of input) {
@@ -125,7 +127,7 @@ export const referenceRouter = createTRPCRouter({
             }
             return undefined;
         }),
-    getByQuestionId: publicProcedure
+    getByQuestionId: protectedProcedure
         .input(z.object({ id: z.number().optional() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.reference.findMany({
@@ -133,14 +135,14 @@ export const referenceRouter = createTRPCRouter({
                 orderBy: { id: 'asc' }
             });
         }),
-    getById: publicProcedure
+    getById: protectedProcedure
         .input(z.object({ id: z.number().optional() }))
         .query(({ input, ctx }) => {
             return ctx.prisma.reference.findUnique({
                 where: { id: input.id }
             });
         }),
-    getAll: publicProcedure
+    getAll: protectedProcedure
         .query(({ ctx }) => {
             return ctx.prisma.reference.findMany();
         }),
